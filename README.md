@@ -1,5 +1,7 @@
 # HappyTails🐾
+
 intall git https://github.com/git-for-windows/git/releases/download/v2.47.1.windows.2/Git-2.47.1.2-64-bit.exe
+
 open git bash : use these comands
 
 `git config --global user.name “[firstname lastname]”` 
