@@ -14,6 +14,4 @@ in command line use :-
 
 ` git clone https://github.com/akshay-ellendula/HappyTails.git `
 
-and enter in to file using linux commands 
-
-Happy codeing👩‍💻👩‍💻
+and enter in to file using linux commands
