@@ -61,17 +61,22 @@ header a {
   background-color: #1a1a1a;
 }
 
-
-
-
-.image-gallery {
-  margin: 5px 75px;
-  padding: 5px; 
+.container {
+  margin: 5px 75px 5px 75px;
+  padding: 5px;
+  width: 1200px;
+  display: flex;
+  column-gap: 30px;
 }
 
 .slider-wrapper {
   position: relative;
-  max-width: 65%;
+  max-width: 100%;
+}
+
+.image_details {
+  width: 65%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .slider {
@@ -116,23 +121,124 @@ header a {
 }
 
 
-
-
-
-.sub-heading {
-  margin: 5px 75px;
-  padding: 5px;
+.details {
+  padding: 20px;
 }
 
-.details {
+
+.dog-details {
   display: grid;
   max-width: 65%;
   grid-template-columns: repeat(2, 1fr);
   row-gap: 1rem;
-  margin: 5px 75px;
   padding: 5px;
 }
 
-.detals p {
-  
+hr {
+  border: 0;
+  height: 1px;
+  background: #333;
+  background-image: linear-gradient(to right, #ccc, #333, #ccc);
+  width: 100%;
+}
+
+.sub-heading {
+  padding: 5px;
+}
+
+.more-details {
+  display: grid;
+  max-width: 65%;
+  grid-template-columns: repeat(3, 1fr);
+  row-gap: 1rem;
+  padding: 5px;
+}
+
+.contact-info {
+  padding: 5px;
+}
+
+.contact-info h2 {
+  margin-bottom: 1rem;
+}
+
+.contact-info p {
+  margin-bottom: 1rem;
+}
+
+.contact-info a {
+  text-decoration: none;
+  color: blue;
+  font-weight: 500;
+}
+
+.share a {
+  margin-right: 10px;
+}
+
+
+
+.chat_location {
+  padding: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  width: 400px;
+}
+
+
+
+
+
+
+
+.footer {
+  background-color: #1a1d26;
+  color: #ffffff;
+  padding: 40px 20px;
+  font-family: 'Outfit', sans-serif;
+  margin-top: 50px;
+}
+
+.footer-container {
+  margin: 50px 75px 50px 75px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+.footer-column {
+  flex: 1;
+  min-width: 200px;
+  margin: 10px;
+}
+
+.footer-column h3 {
+  margin-bottom: 15px;
+}
+
+.footer-column ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-column ul li {
+  margin-bottom: 10px;
+}
+
+.footer-column ul li a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.footer-column ul li a:hover {
+  text-decoration: underline;
+}
+
+.footer-social a {
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.footer-social img {
+  width: 24px;
+  height: 24px;
 }
