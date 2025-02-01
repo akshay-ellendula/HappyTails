@@ -179,16 +179,67 @@ hr {
 
 
 .chat_location {
-  padding: 5px;
+  padding: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  width: 400px;
+  margin-right: -75px;
+}
+
+.price h1 {
+  margin: 5px;
+  padding: 5px;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 
+.description  p {
+  margin-top: 0;
+  margin: 5px;
+  padding: 5px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.chat {
+  padding: 5px;
+}
+
+.chat button {
+  background-color: black;
+  color: #effe8b;
+  text-align: center;
+  border: none;
+  padding: 10px;
+  border-radius: 3px;
+  width: 100%;
+  letter-spacing: 5px;
+  margin-bottom: 20px;
+}
+
+.chat button:hover {
+  cursor: pointer;
+}
+
+.chat_button {
+  display: flex;
+  justify-content: center;
+}
 
 
+.location {
+  padding: 10px;
+}
 
 
+.location h2 {
+  margin-bottom: 10px;
+}
 
 .footer {
   background-color: #1a1d26;
