@@ -66,16 +66,28 @@ header a {
 
 
 
+.breadcrumb {
+    font-size: 18px;
+    font-family: Arial, sans-serif;
+    color: black;
+    background-color: #effe8b;
+    padding: 10px;
+    white-space: nowrap;
+}
 
+.breadcrumb a {
+    text-decoration: none;
+    color: black;
+}
 
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
 
-
-
-
-
-
-
-
+.breadcrumb span {
+    margin: 0 5px;  
+    display: inline-block; 
+}
 
 
 .heading {
@@ -84,20 +96,6 @@ header a {
     width: 100%;
 }
 
-.heading button {
-    width: 100px;
-    padding: 10px;
-    border-radius: 4px;
-    border: none;
-    background-color: #1a1a1a;
-    color: #effe8b;
-    transition: all 0.5s ease;
-}
-
-.heading button:hover {
-    background-color: #effe8b;
-    color: #1a1a1a;
-}
 
 .title{
     width: 100%;

@@ -261,7 +261,6 @@ input:focus {
 
 .services-card button {
     margin-top: 40px;
-    position: relative;
     padding: 10px 20px;
     font-size: 1.2rem;
     font-weight: lighter;
@@ -363,6 +362,24 @@ input:focus {
 
 .shop .card-container .card p {
     margin-bottom: 10px;
+}
+
+.shop button {
+    margin-top: 40px;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: lighter;
+    color: rgba(234, 226, 226, 0.993);
+    background-color:#1a1a1a;
+    border: 1px solid #1a1a1a;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.3s all ease;
+}
+
+.shop button:hover {
+    background-color: transparent;
+    color: #1a1a1a; 
 }
 
 

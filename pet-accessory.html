@@ -19,118 +19,247 @@
                 <a href="#">Login/SignUp</a>
             </div>
         </header>
+    </div>
 
-        <div class="main_container">
-            <div class="filter_container">
-                <h2 style="margin-bottom: 20px;">Filter by</h2>
+    <div class="breadcrumb">
+        <a href="./home.html">Home</a>
+        <span> &gt; </span>
+        <a href="./pet-accessory.html">Accessories</a>
+    </div>
 
-                <div class="product_type filters">
-                    <div class="heading_button">
-                        <h3>Product Type</h3>
-                        <button class="expand-button">+</button>
-                    </div>
-                    <p class="hidden">
-                        <input type="checkbox" id="pet_beds" name="product-type" value="Pet Beds">
-                        <label for="pet_beds">Pet Beds</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="pet_food" name="product-type" value="Pet Food">
-                        <label for="pet_food">Pet Food</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="grooming_supplies" name="product-type" value="Grooming Supplies">
-                        <label for="grooming_supplies">Grooming Supplies</label>
-                    </p>
+    <div class="main_container">
+        <div class="filter_container">
+            <h2 style="margin-bottom: 40px;">Filter by</h2>
+            <div class="product_type filters">
+                <div class="heading_button">
+                    <h3>Product Type</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                <p class="hidden">
+                    <input type="checkbox" id="pet_beds" name="product-type" value="Pet Beds">
+                    <label for="pet_beds">Pet Beds</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="pet_food" name="product-type" value="Pet Food">
+                    <label for="pet_food">Pet Food</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="grooming_supplies" name="product-type" value="Grooming Supplies">
+                    <label for="grooming_supplies">Grooming Supplies</label>
+                </p>
+            </div>
+            <hr>
+            <div class="price filters">
+                <div class="heading_button">
+                    <h3>Price</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                
+                
+                <input type="range" id="price" class="hidden" name="price" min="0" max="5000" value="100" style="width: 100%;">
+                
+                <div class="price_labels hidden">
+                    <span id="min-price">₹250.00</span>
+                    <span id="max-price">₹5000.00</span>    
+                </div>
+                
+            </div>
+            <hr>
+            <div class="color filters">
+                <div class="heading_button">
+                    <h3>Color</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                <p class="hidden">
+                    <input type="checkbox" id="brown" name="color" value="Brown">
+                    <label for="brown">Brown</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="grey" name="color" value="Grey">
+                    <label for="grey">Grey</label>
+                </p>
+            </div>
+            <hr>
+            <div class="size filters">
+                <div class="heading_button">
+                    <h3>Size</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                <p class="hidden">
+                    <input type="checkbox" id="small" name="size" value="small">
+                    <label for="small">Small</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="medium" name="size" value="medium">
+                    <label for="medium">Medium</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="large" name="size" value="large">
+                    <label for="large">Large</label>
+                </p>
+            </div>
+            <hr>
+            <div class="weight filters">
+                <div class="heading_button">
+                    <h3>Weight</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                <p class="hidden">
+                    <input type="checkbox" id="250gm" name="weight" value="250gm">
+                    <label for="250gm">250gm</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="500gm" name="weight" value="500gm">
+                    <label for="500gm">500gm</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="1kg" name="weight" value="1Kg">
+                    <label for="1kg">1Kg</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="2kg" name="weight" value="2Kg">
+                    <label for="2kg">2Kg</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="5kg" name="weight" value="5Kg">
+                    <label for="5kg">5Kg</label>
+                </p>
+            </div>
+        </div>
+        <div class="product_container">
+
+            <div class="product_card">
+
+
+                <img src="./shop/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
                 </div>
 
-                <hr>
 
-                <div class="price filters">
-                    <div class="heading_button">
-                        <h3>Price</h3>
-                        <button class="expand-button">+</button>
-                    </div>
-                    
-                    
-                    <input type="range" id="price" class="hidden" name="price" min="0" max="5000" value="100" style="width: 100%;">
-                    
+            </div>
 
-                    <div class="price_labels hidden">
-                        <span id="min-price">₹250.00</span>
-                        <span id="max-price">₹5000.00</span>    
-                    </div>
-                    
+
+            <div class="product_card">
+
+
+                <img src="./shop/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
                 </div>
 
-                <hr>
 
-                <div class="color filters">
-                    <div class="heading_button">
-                        <h3>Color</h3>
-                        <button class="expand-button">+</button>
-                    </div>
-                    <p class="hidden">
-                        <input type="checkbox" id="brown" name="color" value="Brown">
-                        <label for="brown">Brown</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="grey" name="color" value="Grey">
-                        <label for="grey">Grey</label>
-                    </p>
+            </div>
+
+            
+            <div class="product_card">
+
+
+                <img src="./shop/pet nail clippers in a grey background, make more cuter.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
                 </div>
 
-                <hr>
 
-                <div class="size filters">
-                    <div class="heading_button">
-                        <h3>Size</h3>
-                        <button class="expand-button">+</button>
-                    </div>
-                    <p class="hidden">
-                        <input type="checkbox" id="small" name="size" value="small">
-                        <label for="small">Small</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="medium" name="size" value="medium">
-                        <label for="medium">Medium</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="large" name="size" value="large">
-                        <label for="large">Large</label>
-                    </p>
+            </div>
+
+            <div class="product_card">
+
+
+                <img src="./shop/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
                 </div>
 
-                <hr>
+                
+            </div>
 
-                <div class="weight filters">
-                    <div class="heading_button">
-                        <h3>Weight</h3>
-                        <button class="expand-button">+</button>
-                    </div>
-                    <p class="hidden">
-                        <input type="checkbox" id="250gm" name="weight" value="250gm">
-                        <label for="250gm">250gm</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="500gm" name="weight" value="500gm">
-                        <label for="500gm">500gm</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="1kg" name="weight" value="1Kg">
-                        <label for="1kg">1Kg</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="2kg" name="weight" value="2Kg">
-                        <label for="2kg">2Kg</label>
-                    </p>
-                    <p class="hidden">
-                        <input type="checkbox" id="5kg" name="weight" value="5Kg">
-                        <label for="5kg">5Kg</label>
-                    </p>
+
+            <div class="product_card">
+
+
+                <img src="./shop/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
+                </div>
+
+
+            </div>
+
+            
+            <div class="product_card">
+
+
+                <img src="./shop/pet nail clippers in a grey background, make more cuter.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Pet Stores</a></li>
+                    <li><a href="#">Online Pet Shop</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Pet Grooming</a></li>
+                    <li><a href="#">Dog Training</a></li>
+                    <li><a href="#">Vet Consultation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="#">Become a Groomer</a></li>
+                    <li><a href="#">Become a Dog Trainer</a></li>
+                    <li><a href="#">Become Vet partner</a></li>
+                    <li><a href="#">Pet Store Franchise</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img
+                            src="./socials/facebook-3-logo-svgrepo-com.svg"
+                            alt="Facebook"></a>
+                    <a href="#"><img
+                            src="./socials/instagram-2016-logo-svgrepo-com.svg"
+                            alt="Instagram"></a>
+                    <a href="#"><img
+                            src="./socials/youtube-icon-logo-svgrepo-com.svg"
+                            alt="YouTube"></a>
                 </div>
             </div>
         </div>
-    </div>
+    </footer>
 
 
     <script>

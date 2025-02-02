@@ -65,8 +65,49 @@ div .menu a {
 }
 
 
+
+
+
+
+
+.breadcrumb {
+    font-size: 18px;
+    font-weight: 600;
+    font-family: Arial, sans-serif;
+    color: black;
+    background-color: #effe8b; 
+    padding: 10px;
+    margin-left: 15px;
+    margin-top: 20px;
+    margin-bottom: 50px;
+    
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    color: black;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb span {
+    margin: 0 5px;
+    color: black;
+}
+
+
+
+
+
+
+
+
+
 .main_container {  
-    margin: 50px 75px 35px 20px;
+    margin: 50px 75px 50px 75px;
+    margin-left: 0px;
     display: flex;
     gap: 60px
 }
@@ -75,7 +116,7 @@ div .menu a {
 .filter_container {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    min-width: 300px;
     padding: 20px;
     padding-top: 0;
 }
@@ -107,6 +148,17 @@ hr {
     margin-bottom: 10px;
 }
 
+
+
+
+
+
+
+
+
+
+
+
 .price_labels {
     display: flex;
     justify-content: space-between;
@@ -123,6 +175,7 @@ hr {
     border: none;
     background: #effe8b;
     text-align: center;
+    cursor: pointer;
 }
 
 [type="checkbox"] {
@@ -187,4 +240,104 @@ hr {
     background-size: contain;
     opacity: 0;
     transform: scale(0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.product_container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    flex: 1;
+    row-gap: 50px;
+}
+
+.product_card {
+    box-shadow: 4px 4px 8px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.product_card:hover {
+    transform: scale(1.1);
+}
+
+.product_card img {
+    width: 360px;
+    height: 360px;
+}
+
+.product_card_details {
+    padding: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+.footer {
+    background-color: #1a1d26;
+    color: #ffffff;
+    padding: 40px 20px;
+    font-family: 'Outfit', sans-serif;
+}
+
+.footer-container {
+    margin: 50px 75px 50px 75px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+}
+  
+.footer-column h3 {
+    margin-bottom: 15px;
+}
+  
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+  
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+  
+.footer-column ul li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+  
+.footer-column ul li a:hover {
+    text-decoration: underline;
+}
+  
+.footer-social a {
+    justify-content: center;
+    margin-right: 10px;
+}
+  
+.footer-social img {
+    width: 24px;
+    height: 24px;
 }
