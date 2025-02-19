@@ -227,6 +227,9 @@ input:focus {
     outline: none;
 }
 
+.card a{
+    text-decoration: none;
+}
 .card h2 {
     font-family: "Outfit", sans-serif;
     font-size: 1.5rem;
