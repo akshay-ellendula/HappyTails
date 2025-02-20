@@ -86,6 +86,14 @@ input:focus {
     border-bottom: 2px solid #1a1a1a; 
 }
 
+
+
+
+
+
+
+
+
 .image-card {
     height: 100vh;
 }
@@ -132,7 +140,7 @@ input:focus {
 
 .centered-text button:hover {
     background-color: transparent;
-    color: #1a1a1a; /* Changes text color for contrast */
+    color: #1a1a1a; 
 }
 
 .random-image {
@@ -485,4 +493,125 @@ input:focus {
 .traning-image{
     zoom: 1.8;
     
+}
+
+
+
+
+
+
+
+
+@media (max-width: 768px) {
+    .navbar {
+        margin: 5px 20px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+    }
+
+    .menu-icon {
+        display: block;
+        position: absolute;
+        left: 20px;
+        top: 20px;
+    }
+
+    .badge {
+        margin-top: 10px;
+        font-size: 1.5rem;
+    }
+
+
+    .menu a, .search-bar {
+        display: none;
+    }
+
+    .image-card {
+        height: 70vh;
+    }
+
+    .image1 {
+        height: 75px;
+        width: 75px;
+        top: 90%;
+        left: 65%;
+        z-index: -1;
+    }
+
+    .image2 {
+        height: 75px;
+        width: 75px;
+        top: 55%;
+        left: 15%;
+        z-index: -1;
+    }
+
+    .image3 {
+        height: 75px;
+        width: 75px;
+        top: 15%;
+        left: 15%;
+        z-index: -1;
+    }
+
+    .image4 {
+        height: 75px;
+        width: 75px;
+        
+        z-index: -1;
+    }
+
+    .centered-text h1 {
+        font-size: 2.5rem;
+    }
+
+    .centered-text p {
+        font-size: 1rem;
+    }
+
+    .services-card .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .shop .card-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .shop .card {
+        width: 350px;
+        margin-bottom: 20px;
+    }
+
+    .shop-image {
+        height: 300px;
+        width: 300px;
+    }
+
+    .about-us {
+        flex-direction: column;
+        align-items: center;
+        margin: 50px 20px;
+    }
+
+    .about-us img {
+        width: 100%;
+        height: auto;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
 }

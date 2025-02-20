@@ -9,18 +9,24 @@
     <body>
         <div class="navbar">
             <header>
+                
                 <a href="home.html" class="badge">Happy Tails</a>
                 <div class="search-bar">
                     <img src="./icons/search-alt-svgrepo-com.svg" height="25px" />
                     <input type="text" placeholder="Search.." size="35"
                         style="font-size: 20px;" />
                 </div>
+                
                 <div class="menu">
                     <a herf="">Services</a>
                     <a href="./pet_adoption.html">Shop</a>
                     <a herf="#">Events</a>
                     <a href="./blog.html">Blog</a>
                     <a href="#">Login/SignUp</a>
+                </div>
+
+                <div class="menu-icon" id="menuIcon">
+                    <img src="./icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
                 </div>
             </header>
         </div>
@@ -211,6 +217,18 @@
                 </div>
             </div>
         </footer>
+
+
+        <script>
+            document.getElementById('menuIcon').addEventListener('click', function() {
+                var menu = document.getElementById('menu');
+                if (menu.style.display === 'block') {
+                    menu.style.display = 'none';
+                } else {
+                    menu.style.display = 'block';
+                }
+            });
+        </script>
 
     </body>
 </html>
