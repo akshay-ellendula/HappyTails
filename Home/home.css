@@ -614,4 +614,13 @@ input:focus {
         align-items: center;
         text-align: center;
     }
+
+    .footer-container {
+        margin: 0;
+    }
+
+    .footer-column {
+        min-width: 100%;
+        text-align: center;
+    }
 }
