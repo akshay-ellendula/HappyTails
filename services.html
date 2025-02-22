@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services</title>
+    <link rel="stylesheet" href="./services/services.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="#" class="badge">Happy Tails</a>
+
+            <div class="menu">
+                <a href="./pet_accessory.html">Pet Accessories</a>
+                <a href="./pet_adoption.html">Shop</a>
+                <a href="#">Events</a>
+                <a href="./blog.html">Blog</a>
+                <a href="#">Login/SignUp</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="./home.html">Home</a>
+        <span> &gt; </span>
+        <a href="./services.html">Services</a>
+    </div>
+
+    <div class="main_container">
+        <div class="filter_container">
+            <h2 style="margin-bottom: 40px;">Filter by</h2>
+
+            <div class="services_type filters">
+
+                <div class="heading_button">
+                    <h3>Services Type</h3>
+                    <button class="expand-button">+</button>
+                </div>
+
+                <p class="hidden">
+                    <input type="checkbox" id="Vets" name="Vets" value="Vets">
+                    <label for="Vets">Vet</label>
+                </p>
+
+
+                <p class="hidden">
+                    <input type="checkbox" id="Groomers" name="Groomers" value="Groomers">
+                    <label for="Groomers">Groomers</label>
+                </p>
+
+                <p class="hidden">
+                    <input type="checkbox" id="Pet trainers" name="Pet trainers" value="Pet trainers">
+                    <label for="Pet trainers">Pet trainers</label>
+                </p>
+            </div>
+
+        </div>
+
+        <div class="services_container">
+
+            <div class="services_card">
+
+
+                <img src="./images/pet groomer.jpg" alt="Product Image">
+                <div class="services_card_details">
+                    <h3>Name of Person</h3>
+                    <p>Type of Service: </p>
+                </div>
+
+
+            </div>
+
+
+            <div class="services_card">
+
+
+                <img src="./images/pet trainer.jpg" alt="Product Image">
+                <div class="services_card_details">
+                    <h3>Name of Person</h3>
+                    <p>Type of Service: </p>
+                </div>
+
+
+            </div>
+
+            
+            <div class="services_card">
+
+
+                <img src="./images/vet.jpg" alt="Product Image">
+                <div class="services_card_details">
+                    <h3>Name of Person</h3>
+                    <p>Type of Service: </p>
+                </div>
+
+
+            </div>
+
+            <div class="services_card">
+
+
+                <img src="./images/vet.jpg" alt="Product Image">
+                <div class="services_card_details">
+                    <h3>Name of Person</h3>
+                    <p>Type of Service: </p>
+                </div>
+
+                
+            </div>
+
+
+            <div class="services_card">
+
+
+                <img src="./images/pet groomer.jpg" alt="Product Image">
+                <div class="services_card_details">
+                    <h3>Name of Person</h3>
+                    <p>Type of Service: </p>
+                </div>
+
+
+            </div>
+
+            
+            <div class="services_card">
+
+
+                <img src="./images/pet trainer.jpg" alt="Product Image">
+                <div class="services_card_details">
+                    <h3>Name of Person</h3>
+                    <p>Type of Service: </p>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="./blog.html">Blog</a></li>
+                    <li><a href="./pet_adoption.html">Pet Stores</a></li>
+                    <li><a href="./pet_accessory.html">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Pet Grooming</a></li>
+                    <li><a href="#">Dog Training</a></li>
+                    <li><a href="#">Vet Consultation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="./service_login.html">Become a Groomer</a></li>
+                    <li><a href="./service_login.html">Become a Dog Trainer</a></li>
+                    <li><a href="./service_login.html">Become Vet partner</a></li>
+                    <li><a href="./service_login.html">Pet Store Franchise</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img
+                            src="./icons/facebook-3-logo-svgrepo-com.svg"
+                            alt="Facebook"></a>
+                    <a href="#"><img
+                            src="./icons/instagram-2016-logo-svgrepo-com.svg"
+                            alt="Instagram"></a>
+                    <a href="#"><img
+                            src="./icons/youtube-icon-logo-svgrepo-com.svg"
+                            alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const expandButtons = document.querySelectorAll('.expand-button');
+            
+            expandButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filterSection = this.closest('.filters');
+                    const options = filterSection.querySelectorAll('p, #price, .price_labels');
+
+                    options.forEach(option => {
+                        if(option.classList.contains('hidden')) {
+                            option.classList.remove('hidden');
+                            this.textContent = '-';
+                        }
+                        else {
+                            option.classList.add('hidden');
+                            this.textContent = '+';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>

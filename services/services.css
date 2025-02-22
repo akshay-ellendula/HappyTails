@@ -64,6 +64,28 @@ div .menu a {
     background-color: #1a1a1a;
 }
 
+.search-bar {
+    display: flex;
+    justify-content: center;
+}
+
+.search-bar img {
+    margin-top: 5px;
+    margin-right: 5px;
+}
+
+input {
+    border: none; 
+    outline: none;
+    border-bottom: 2px solid #000;
+    background-color: transparent; 
+    padding: 5px;
+    width: 100%;
+
+} 
+input:focus {
+    border-bottom: 2px solid #1a1a1a; 
+}
 
 
 
@@ -96,11 +118,6 @@ div .menu a {
     margin: 0 5px;
     color: black;
 }
-
-
-
-
-
 
 
 
@@ -156,15 +173,6 @@ hr {
 
 
 
-
-
-
-.price_labels {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
 .hidden {
     display: none;
 }
@@ -190,7 +198,7 @@ hr {
     line-height: 40px;
 }
 
-[type="checkbox"] + label::before {
+[type="checkbox"] + label::before { /* before is the box and after is the checkmark */
     content: "";
     position: absolute;
     left: 0;
@@ -218,7 +226,7 @@ hr {
     top: 0;
     width: 18px;
     height: 18px;
-    background-image: url("./check img/check-svgrepo-com.svg");
+    background-image: url("../icons/check-svgrepo-com.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -234,7 +242,7 @@ hr {
     top: 0;
     width: 18px;
     height: 18px;
-    background-image: url("./check img/check-svgrepo-com.svg");
+    background-image: url("../icons/check-svgrepo-com.svg");
     background-repeat: no-repeat;
     background-position: center;
     background-size: contain;
@@ -246,14 +254,7 @@ hr {
 
 
 
-
-
-
-
-
-
-
-.product_container {
+.services_container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
@@ -261,32 +262,24 @@ hr {
     row-gap: 50px;
 }
 
-.product_card {
+.services_card {
     box-shadow: 4px 4px 8px 10px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease-in-out;
     cursor: pointer;
 }
 
-.product_card:hover {
+.services_card:hover {
     transform: scale(1.07);
 }
 
-.product_card img {
+.services_card img {
     width: 360px;
     height: 360px;
 }
 
-.product_card_details {
+.services_card_details {
     padding: 20px;
 }
-
-
-
-
-
-
-
-
 
 
 
