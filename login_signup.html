@@ -1,20 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="login/login_signup.css">
-    <title>Document</title>
-</head>
-<body>
-    <div class="navbar">
-        <header>
-            <a href="home.html" class="badge">Happy Tails</a>
-            <a href="Account"></a>
-        </header>
-    </div>
-    <div class="container">
-        
-    </div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="login/login_signup.css">
+        <title>login & SignUp</title>
+    </head>
+    <body>
+        <div class="navbar">
+            <header>
+                <a href="home.html" class="badge">Happy Tails</a>
+                <a href="Account"></a>
+            </header>
+        </div>
+        <div class="container" id="container">
+            <div class="form-container sign-up-container">
+                <form action="#">
+                    <h1>Create Account</h1>
+                    <div class="social-container">
+                        <a href="#" class="social"><i></i></a>
+                        <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    </div>
+                    <span>or use your email for registration</span>
+                    <input type="text" placeholder="Name" />
+                    <input type="email" placeholder="Email" />
+                    <input type="password" placeholder="Password" />
+                    <button>Sign Up</button>
+                </form>
+            </div>
+            <div class="form-container sign-in-container">
+                <form action="#">
+                    <h1>Sign in</h1>
+                    <div class="social-container">
+                        <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
+                    </div>
+                    <span>or use your account</span>
+                    <input type="email" placeholder="Email" />
+                    <input type="password" placeholder="Password" />
+                    <a href="#">Forgot your password?</a>
+                    <button>Sign In</button>
+                </form>
+            </div>
+            <div class="overlay-container">
+                <div class="overlay">
+                    <div class="overlay-panel overlay-left">
+                        <h1>Welcome Back!</h1>
+                        <p>To keep connected with us please login with your
+                            personal info</p>
+                        <button class="ghost" id="signIn">Sign In</button>
+                    </div>
+                    <div class="overlay-panel overlay-right">
+                        <h1>Hello, Friend!</h1>
+                        <p>Enter your personal details and start journey with us</p>
+                        <button class="ghost" id="signUp">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="footer-container">
+
+                <div class="footer-column">
+                    <h3>Happy Tails</h3>
+                    <ul>
+                        <li><a href="./blog.html">Blog</a></li>
+                        <li><a href="./pet_adoption.html">Pet Stores</a></li>
+                        <li><a href="./pet_accessory.html">Online Pet
+                                Accessories</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">Pet Grooming</a></li>
+                        <li><a href="#">Dog Training</a></li>
+                        <li><a href="#">Vet Consultation</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Partner</h3>
+                    <ul>
+                        <li><a href="./service_login.html">Become a
+                                Groomer</a></li>
+                        <li><a href="./service_login.html">Become a Dog
+                                Trainer</a></li>
+                        <li><a href="./service_login.html">Become Vet
+                                partner</a></li>
+                        <li><a href="#">Pet Store Franchise</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Policy</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="#"><img
+                                src="./icons/facebook-3-logo-svgrepo-com.svg"
+                                alt="Facebook"></a>
+                        <a href="#"><img
+                                src="./icons/instagram-2016-logo-svgrepo-com.svg"
+                                alt="Instagram"></a>
+                        <a href="#"><img
+                                src="./icons/youtube-icon-logo-svgrepo-com.svg"
+                                alt="YouTube"></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="login/login_signup.js"></script>
+    </body>
 </html>
