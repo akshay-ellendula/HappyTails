@@ -130,6 +130,7 @@ header a {
     display: flex;
     flex: 1;
     gap: 30px;
+    overflow: hidden;
 }
 
 .image_container img {
@@ -186,8 +187,7 @@ span {
 }
 
 .book_btn:hover {
-    background-color: #effe8b;
-    color: #1a1a1a;
+    scale: 1.07;
 }
 
 
