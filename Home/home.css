@@ -4,10 +4,13 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+
 }
 
 body {
     background-color: #effe8b;
+    
 }
 
 .navbar {
@@ -51,6 +54,10 @@ div .menu a {
 .navbar .menu a {
     position: relative;
     transition: 0.1s all ease;
+}
+
+.side-navbar {
+    width: 0;
 }
 
 .navbar .menu a:hover::after {
@@ -500,6 +507,39 @@ input:focus {
 
 
 
+.side-navbar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    background-color: #1a1a1a;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.side-navbar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #ffffff;
+    display: block;
+    transition: 0.3s;
+}
+
+.side-navbar a:hover {
+    color: #effe8b;
+}
+
+.side-navbar .close-btn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 2rem;
+}
+
 
 
 
@@ -508,6 +548,7 @@ input:focus {
 
     body, html {
         overflow-x: hidden;
+        width: 100%;
     }
 
     .navbar {
@@ -532,6 +573,11 @@ input:focus {
 
     .menu a, .search-bar {
         display: none;
+    }
+
+
+    .side-navbar.open {
+        width: 250px; 
     }
 
     .image-card {

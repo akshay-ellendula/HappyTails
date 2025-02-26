@@ -18,7 +18,24 @@
                 <a href="./blog.html">Blog</a>
                 <a href="login_signup.html">Login/SignUp</a>
             </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="./icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="./pet_adoption.html">Shop</a>
+                <a href="./pet_accessory.html">Pet Essentials</a>        
+                <a href="./Events.html">Events</a>
+                <a href="./blog.html">Blog</a>
+                <a href="login_signup.html">Login/SignUp</a>
+            </div>
         </header>
+    </div>
+
+    <div class="mobile_filter">
+        <h2 class="filter_btn">Filters</h2>
     </div>
 
     <div class="breadcrumb">
@@ -196,6 +213,15 @@
 
 
     <script>
+
+        document.getElementById('menuIcon').addEventListener('click', function() {
+                document.getElementById('sideNavbar').classList.toggle('open');
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+                document.getElementById('sideNavbar').classList.remove('open');
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const expandButtons = document.querySelectorAll('.expand-button');
             
@@ -217,5 +243,23 @@
                 });
             });
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const filterBtn = document.querySelector(".filter_btn");
+            const filters = document.querySelector(".filter_container");
+            const closeBtn = document.createElement("button");
+
+            closeBtn.innerText = "✖ Close";
+            closeBtn.classList.add("close-filters");
+            filters.prepend(closeBtn);
+
+            filterBtn.addEventListener("click", function () {
+                filters.classList.add("show");
+            });
+        
+            closeBtn.addEventListener("click", function () {
+                filters.classList.remove("show");
+            });
+    });
     </script>
 </body>
