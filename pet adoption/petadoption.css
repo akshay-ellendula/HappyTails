@@ -442,4 +442,9 @@ header a {
         display: block;
     }
 
+    .footer-container {
+        flex-direction: column;
+        margin-left: 0;
+    }
+
 }

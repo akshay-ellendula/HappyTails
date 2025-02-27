@@ -519,5 +519,9 @@ hr {
         background-color: #1a1a1a;
     }
 
+    .footer-container {
+        flex-direction: column;
+        margin-left: 0;
+    }
 
 }

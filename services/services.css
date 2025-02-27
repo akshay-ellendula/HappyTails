@@ -517,4 +517,9 @@ hr {
         display: block;
         margin-bottom: 50px;
     }
+
+    .footer-container {
+        flex-direction: column;
+        margin-left: 0;
+    }
 }
