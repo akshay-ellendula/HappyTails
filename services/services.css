@@ -403,6 +403,10 @@ hr {
     display: none;
 }
 
+.close-btn {
+    display: none;
+}
+
 @media (max-width: 768px) {
     body, html {
         overflow-x: hidden;
@@ -466,6 +470,15 @@ hr {
         padding: 20px;
         z-index: 1000;
     }
+
+    .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 2rem;
+        cursor: pointer;
+    }
+
     .filter_container.show {
         transform: translateX(0);
     }
@@ -475,5 +488,33 @@ hr {
         background-color: #1a1a1a;
     }
 
+    [type="checkbox"] + label {
+        color: #effe8b;
+    }
+
+    [type="checkbox"] + label::before {
+        outline: 1px solid #effe8b;
+    }
+
+    [type="checkbox"]:checked + label::before {
+        outline: 1px solid #effe8b;
+    }
+
     
+    [type="checkbox"]:checked + label::after {
+        background-image: url("../icons/check-svgrepo-com-yellow.svg");
+
+    }
+    [type="checkbox"]:not(:checked) + label::after {
+        background-image: url("../icons/check-svgrepo-com-yellow.svg");
+    }
+
+    .close-filters {
+        outline: none;
+        border: none;
+        background-color: #1a1a1a;
+        color: #effe8b;
+        display: block;
+        margin-bottom: 50px;
+    }
 }
