@@ -311,14 +311,14 @@ span {
     position: absolute;
     top: 0;
     right: 25px;
-    font-size: 2rem;
-}
-
-
-
-.close-btn {
+    font-size: 2rem;.close-btn {
     display: none;
 }
+}
+
+
+
+
 
 @media (max-width: 768px) {
     body, html {

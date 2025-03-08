@@ -18,14 +18,29 @@
                 <a href="./pet_accessory.html">Pet Essentials</a>
                 <a href="login_signup.html">Login/SignUp</a>
             </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="./icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+              </div>
+  
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="./pet_adoption.html">Shop</a>
+                <a href="./pet_accessory.html">Pet Essentials</a>        
+                <a href="./services.html">Services</a>
+                <a href="./blog.html">Blog</a>
+                <a href="login_signup.html">Login/SignUp</a>
+            </div>
         </header>
     </div>
 
     <div class="container">
         <div class="wrapper">
-            <h1 style="margin-bottom: 100px;">All Posts</h1>
+            <h1 class='post_heading' style="margin-bottom: 100px;">All Posts</h1>
             <div class="post">
-                <img class="main_image" src="./images/blog_image1.jpg" alt="dog">
+                
+                <img  class="main_image" src="./images/blog_image1.jpg" alt="dog">
+
             
                 <div class="content">
                 
@@ -197,6 +212,14 @@
         </div>
     </footer>
 
-    
+    <script>
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.toggle('open');
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+        });
+    </script>
 </body>
 </html>
