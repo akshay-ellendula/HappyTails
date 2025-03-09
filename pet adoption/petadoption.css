@@ -78,11 +78,17 @@ header a {
 
 .breadcrumb {
     font-size: 18px;
+    font-weight: 600;
+    width: 150px;
     font-family: Arial, sans-serif;
     color: black;
-    background-color: #effe8b;
+    background-color: #effe8b; 
     padding: 10px;
+    margin-left: 15px;
+    margin-top: 20px;
+    margin-bottom: 50px;
     white-space: nowrap;
+    
 }
 
 .breadcrumb a {
@@ -95,8 +101,8 @@ header a {
 }
 
 .breadcrumb span {
-    margin: 0 5px;  
-    display: inline-block; 
+    margin: 0 5px;
+    color: black;
 }
 
 

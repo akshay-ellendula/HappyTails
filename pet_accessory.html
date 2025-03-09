@@ -336,6 +336,12 @@
             });
         });
 
+        document.querySelectorAll('.product_card').forEach(card => {
+            card.addEventListener('click', function() { 
+                window.location.href = "./pet_product_details.html";
+            });
+        });
+
 
         document.addEventListener("DOMContentLoaded", function () {
             const filterBtn = document.querySelector(".filter_btn");
