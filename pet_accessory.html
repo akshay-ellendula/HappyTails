@@ -16,6 +16,7 @@
                 <a href="./pet_adoption.html">Shop</a>
                 <a href="./Events.html">Events</a>
                 <a href="./blog.html">Blog</a>
+                <a href="#" id="cart_btn">Cart</a>
                 <a href="login_signup.html">Login/SignUp</a>
             </div>
 
@@ -29,7 +30,129 @@
                 <a href="./pet_adoption.html">Pet Shop</a>        
                 <a href="./Events.html">Events</a>
                 <a href="./blog.html">Blog</a>
+                <a href="#" id="mobile_cart_btn">Cart</a>
                 <a href="login_signup.html">Login/SignUp</a>
+            </div>
+
+            <div id="cart" class="cart">
+                <div class="cart_wrapper">
+                    <div class="cart_header">
+                        <h2>Cart</h2>
+                        <a href="javascript:void(0)" class="close-btn" id="CartcloseBtn">&times;</a>
+                    </div>
+                    <hr>
+                    
+                    <div class="cart_product_container">
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="./images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="./icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="./images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="./icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="./images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="./icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="./images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="./icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="./images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="./icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subtotal">
+                        <hr>
+
+                        <div class="subtotal_details">
+                            <h3>Subtotal</h3>
+                            <p>₹<span>2500</span></p>
+                        </div>
+                        <p class="cart_text">Taxes and shipping are calculated at checkout.</p>
+                        <div class="checkout_button">
+                            <button>Checkout</button>
+                        </div>
+                    </div>
+                    
+                </div>
             </div>
         </header>
     </div>
@@ -340,6 +463,31 @@
             card.addEventListener('click', function() { 
                 window.location.href = "./pet_product_details.html";
             });
+        });
+
+
+        document.getElementById('cart_btn').addEventListener('click', function() {
+            document.getElementById('cart').classList.toggle('open');
+        });
+
+        document.getElementById('mobile_cart_btn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+            document.getElementById('cart').classList.toggle('open');
+        });
+
+        document.getElementById('CartcloseBtn').addEventListener('click', function() {
+            document.getElementById('cart').classList.remove('open');
+        });
+
+        const quantityInput = document.getElementById("quantity");
+        const unitPriceElement = document.getElementById("unit-price");
+        const totalPriceElement = document.getElementById("total-price");
+        
+        quantityInput.addEventListener("input", () => {
+            const unitPrice = parseInt(unitPriceElement.textContent);
+            const quantity = parseInt(quantityInput.value);
+            const totalPrice = unitPrice * quantity;
+            totalPriceElement.textContent = totalPrice;
         });
 
 

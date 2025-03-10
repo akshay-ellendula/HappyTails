@@ -305,6 +305,153 @@ hr {
 
 
 
+
+.cart {
+    height: 100%;
+    width: 550px;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    right: -110%;
+    background-color: #1a1a1a;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding: 30px;
+    padding-top: 20px;
+    color: #effe8b;
+
+}
+
+#CartcloseBtn{
+    color: #effe8b;
+    cursor: pointer;
+    font-size: 2rem;
+    display: block;
+}
+
+.cart_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+
+}
+
+.name_header {
+    display: flex;
+    align-items: center;
+    gap: 70px;
+}
+
+.name_header img {
+    cursor: pointer;
+}
+
+
+.cart_product_container {
+    overflow-y: auto;
+    max-height: 500px;
+    scrollbar-color: #effe8b #1a1a1a;
+}
+
+.cart_product {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 70px;
+}
+
+.cart_image {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+}
+
+.cart_image img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+}
+
+.cart_product_details {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cart_product_details  input{
+    padding: 5px;
+    width: 50px;
+}
+
+.quantity_section {
+    display: flex;
+    align-items: center;
+    gap: 70px;
+}
+
+.cart.open {
+    right: 0;
+}
+
+
+
+hr {
+    border: 0;
+    border-top: 1px solid #effe8b;
+    margin: 10px 0;
+}
+
+.cart_wrapper {
+    position: relative;
+    height: 100vh;
+}
+
+.subtotal {
+    width: 500px;
+    position: absolute;
+    bottom: 0;
+    position: fixed;
+    background-color: #1a1a1a;
+}
+
+.subtotal_details {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0px;
+    font-size: 1.5rem;
+}
+
+.cart_text {
+    font-size: 1rem; 
+    margin-bottom: 15px;  
+}
+
+.checkout_button button {
+    background-color: #effe8b;
+    color: #1a1a1a;
+    width: 100%;
+    border-radius: 8px;
+    padding: 10px 20px;
+    margin-bottom: 30px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.checkout_button button:hover {
+    background-color: #1a1a1a ;
+    color: #effe8b;
+}
+
+
+
+
+
+
+
+
+
+
 .footer {
     background-color: #1a1d26;
     color: #ffffff;
@@ -538,4 +685,28 @@ hr {
         margin-left: 0;
     }
 
+    .cart {
+        width: 250px
+    }
+
+    .cart_image {
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+    }
+
+    .cart_product {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .subtotal {
+        display: flex;
+        flex-direction: column;
+        width: 200px;
+    }
+
+    .subtotal_details h3, .subtotal_details p{
+        font-size: 1.2rem;
+    }
 }
