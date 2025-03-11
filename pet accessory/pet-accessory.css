@@ -319,6 +319,7 @@ hr {
     padding: 30px;
     padding-top: 20px;
     color: #effe8b;
+    overflow-y: hidden;
 
 }
 
