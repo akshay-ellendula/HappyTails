@@ -8,7 +8,7 @@ open git bash : use these comands
 
 `git config --global user.email “[valid-email]”`
 
-<h2> open vs code </h2> 
+<h2> Open vs code </h2> 
 
 in command line use :-
 
