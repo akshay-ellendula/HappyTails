@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="./User Profile/mypets_profile.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="home.html" class="badge">Happy Tails</a>
+    
+            <div class="menu">
+                <a href="./services.html">Services</a>
+                <a href="./pet_accessory.html">Pet Essentials</a>        
+                <a href="./Events.html">Events</a>
+                <a href="./blog.html">Blog</a>
+                <a href="profile.html">Profile</a>
+            </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="./icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="./services.html">Services</a>
+                <a href="./pet_accessory.html">Pet Essentials</a>        
+                <a href="./Events.html">Events</a>
+                <a href="./blog.html">Blog</a>
+                <a href="login_signup.html">Login/SignUp</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="sidebar_btn">
+        <button id="sidebar_btn">More</button>
+    </div>
+
+    <div class="mobile_sidebar">
+        <a href="javascript:void(0)" class="mobile_sidebar_close-btn" id="closeBtn">&times;</a>
+        <div class="myProfile sidebar_divs">
+            <a href="./profile.html">My Profile</a>
+        </div>
+
+        <div class="myPets sidebar_divs">
+            <a href="./mypets_profile.html">My Pets</a>
+        </div>
+
+        <div class="myOrders sidebar_divs">
+            <a href="#">My Orders</a>
+        </div>
+
+        <div class="logout sidebar_divs">`
+            <a href="#">Logout</a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="myProfile sidebar_divs">
+            <a href="./profile.html">My Profile</a>
+        </div>
+
+        <div class="myPets sidebar_divs">
+            <a href="./mypets_profile.html">My Pets</a>
+        </div>
+
+        <div class="myOrders sidebar_divs">
+            <a href="#">My Orders</a>
+        </div>
+
+        <div class="logout sidebar_divs">
+            <a href="#">Logout</a>
+        </div>
+    </div>
+
+    <div class="pets_container">
+        <div class="current_pets">
+            <h2 style="margin-bottom: 30px;">Your Pets</h2>
+            <div class="pet_cards_container">
+                <div class="dog-cards">
+                    <div class="pet-image">
+                        <img src="./images/pup.avif" alt="dog photo" />
+                    </div>
+        
+                    <div class="pet-details">
+                        <h2>Pet Name</h2>
+                        <p>Gender, puppyhood/adulthood</p>
+                        <p>city, state</p>
+                    </div>
+        
+                    <hr/>
+        
+                    <div class="contact-details">
+                        <img src="./icons/profile-circle-svgrepo-com.svg" alt="" height="50">
+                        <div class="name-number">
+                            <p>Name:</p>
+                            <p>Number: <a href="#">Contact Now</a></p>
+                        </div>
+                    </div>
+        
+                    <hr/>
+        
+                    <div class="share-section">
+                        <p>Share with friends -</p>
+                        <div class="social-media">
+                            <a href="#"><img src="./icons/facebook-3-logo-svgrepo-com.svg" alt="facebook" height="30"/></a>
+                            <a href="#"><img src="./icons/instagram-2016-logo-svgrepo-com.svg" alt="instagram" height="30"/></a>
+                            <a href="#"><img src="./icons/twitter-svgrepo-com.svg" alt="twitter" height="30"/></a>
+                            <a href="#"><img src="./icons/whatsapp-color-svgrepo-com.svg" alt="whatsapp" height="30"/></a>
+                        </div>
+                    </div>
+        
+                    <hr/>
+        
+                    <div class="more-details">
+                        <a href="./more-details.html">See More Details <img src="./icons/new-window-svgrepo-com.svg" alt="new tab" height="20"/></a>
+                    </div>    
+                </div>
+            </div>
+        </div>
+        <button style="margin-top: 50px;" onclick="addPet()">Add Pet</button>
+    </div>
+
+
+    <div class="container hidden">
+        <div class="form-container">
+            <form id="petForm">
+                <div class="form-group">
+                    <label>Name of your pet?</label>
+                    <input type="text" name="pet_name" placeholder="Enter name of your pet" required>
+                </div>
+                <div class="form-group">
+                    <label>Age of your pet in years?</label>
+                    <input type="number" name="pet_age" placeholder="Enter Age of your pet in years" required>
+                </div>
+                <div class="form-group">
+                    <label>Weight of your pet in Kg?</label>
+                    <input type="number" name="pet_weight" placeholder="Enter Weight of your pet in Kg" required>
+                </div>
+                <div class="form-group">
+                    <label>Pet Type?</label>
+                    <div class="button-group">
+                        <button type="button" onclick="selectButton(this, 'pet_type', 'Cat')">Cat</button>
+                        <button type="button" onclick="selectButton(this, 'pet_type', 'Dog')">Dog</button>
+                    </div>
+                    <input type="hidden" name="pet_type" id="pet_type" required>
+                </div>
+                <div class="form-group">
+                    <label>Breed of your pet</label>
+                    <select name="pet_breed" required>
+                        <option value="" disabled selected>Select breed here...</option>
+                        <option value="American Shorthair">American Shorthair</option>
+                        <option value="British Shorthair">British Shorthair</option>
+                        <option value="Persian">Persian</option>
+                        <option value="Siamese">Siamese</option>
+                        <option value="Maine Coon">Maine Coon</option>
+                        <option value="Ragdoll">Ragdoll</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Gender of your pet</label>
+                    <div class="button-group">
+                        <button type="button" onclick="selectButton(this, 'pet_gender', 'Male')">Male</button>
+                        <button type="button" onclick="selectButton(this, 'pet_gender', 'Female')">Female</button>
+                    </div>
+                    <input type="hidden" name="pet_gender" id="pet_gender" required>
+                </div>
+                <div class="form-group">
+                    <label>Size of your pet</label>
+                    <div class="button-group">
+                        <button type="button" onclick="selectButton(this, 'pet_size', 'Small')">Small</button>
+                        <button type="button" onclick="selectButton(this, 'pet_size', 'Medium')">Medium</button>
+                        <button type="button" onclick="selectButton(this, 'pet_size', 'Large')">Large</button>
+                    </div>
+                    <input type="hidden" name="pet_size" id="pet_size" required>
+                </div>
+                <div class="form-group">
+                    <label>Aggression of Your Pet</label>
+                    <div class="button-group">
+                        <button type="button" onclick="selectButton(this, 'pet_aggression', 'Low')">Low</button>
+                        <button type="button" onclick="selectButton(this, 'pet_aggression', 'Normal')">Normal</button>
+                        <button type="button" onclick="selectButton(this, 'pet_aggression', 'High')">High</button>
+                    </div>
+                    <input type="hidden" name="pet_aggression" id="pet_aggression" required>
+                </div>
+                <div class="form-group">
+                    <label>Vaccinated</label>
+                    <div class="button-group">
+                        <button type="button" onclick="selectButton(this, 'pet_vaccinated', 'Yes')">Yes</button>
+                        <button type="button" onclick="selectButton(this, 'pet_vaccinated', 'No')">No</button>
+                    </div>
+                    <input type="hidden" name="pet_vaccinated" id="pet_vaccinated" required>
+                </div>
+                <div class="form-group">
+                    <label>Neutered/Spayed</label>
+                    <div class="button-group">
+                        <button type="button" onclick="selectButton(this, 'pet_neutered', 'Yes')">Yes</button>
+                        <button type="button" onclick="selectButton(this, 'pet_neutered', 'No')">No</button>
+                    </div>
+                    <input type="hidden" name="pet_neutered" id="pet_neutered" required>
+                </div>
+                <div class="form-group">
+                    <label>Sociable</label>
+                    <div class="button-group">
+                        <button type="button" onclick="selectButton(this, 'pet_sociable', 'Yes')">Yes</button>
+                        <button type="button" onclick="selectButton(this, 'pet_sociable', 'No')">No</button>
+                    </div>
+                    <input type="hidden" name="pet_sociable" id="pet_sociable" required>
+                </div>
+                <div class="form-group">
+                    <label>Potty trained</label>
+                    <div class="button-group">
+                        <button type="button" onclick="selectButton(this, 'pet_potty_trained', 'Yes')">Yes</button>
+                        <button type="button" onclick="selectButton(this, 'pet_potty_trained', 'No')">No</button>
+                    </div>
+                    <input type="hidden" name="pet_potty_trained" id="pet_potty_trained" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Upload a Photo of Your Pet</label>
+                    <div class="photo_container">
+                        <div class="add_photo">
+                            <img class="add_camera" src="./icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
+                            <p class="hover_text">Upload Photo</p>
+                            <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
+                            <input class="file_upload_input" type="file" id="pet_photo1" accept="image/*">
+                        </div>
+                        <div class="add_photo">
+                            <img class="add_camera" src="./icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
+                            <p class="hover_text">Upload Photo</p>
+                            <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
+                            <input class="file_upload_input" type="file" id="pet_photo2" accept="image/*" >
+                        </div>
+                        <div class="add_photo">
+                            <img class="add_camera" src="./icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
+                            <p class="hover_text">Upload Photo</p>
+                            <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
+                            <input class="file_upload_input" type="file" id="pet_photo3" accept="image/*">
+                        </div>
+                        <div class="add_photo">
+                            <img class="add_camera" src="./icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
+                            <p class="hover_text">Upload Photo</p>
+                            <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
+                            <input class="file_upload_input" type="file" id="pet_photo4" accept="image/*">
+                        </div>
+                        <div class="add_photo">
+                            <img class="add_camera" src="./icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
+                            <p class="hover_text">Upload Photo</p>
+                            <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
+                            <input class="file_upload_input" type="file" id="pet_photo5" accept="image/*" >
+                        </div>
+                        <div class="add_photo">
+                            <img class="add_camera" src="./icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
+                            <p class="hover_text">Upload Photo</p>
+                            <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
+                            <input class="file_upload_input" type="file" id="pet_photo6" accept="image/*" >
+                        </div>
+                        <div class="add_photo">
+                            <img class="add_camera" src="./icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
+                            <p class="hover_text">Upload Photo</p>
+                            <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
+                            <input class="file_upload_input" type="file" id="pet_photo7" accept="image/*" >
+                        </div>
+                        <div class="add_photo">
+                            <img class="add_camera" src="./icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
+                            <p class="hover_text">Upload Photo</p>
+                            <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
+                            <input class="file_upload_input" type="file" id="pet_photo8" accept="image/*" >
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group submit_cancel">
+                    <button type="button" class="cancel" onclick="cancel()">Cancel</button>
+                    <input type="submit" value="Submit">
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="./User Profile/mypets_profile.js"></script>
+</body>
