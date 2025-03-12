@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="./User Profile/profile.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="home.html" class="badge">Happy Tails</a>
+    
+            <div class="menu">
+                <a href="./services.html">Services</a>
+                <a href="./pet_accessory.html">Pet Essentials</a>        
+                <a href="./Events.html">Events</a>
+                <a href="./blog.html">Blog</a>
+                <a href="profile.html">Profile</a>
+            </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="./icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="./services.html">Services</a>
+                <a href="./pet_accessory.html">Pet Essentials</a>        
+                <a href="./Events.html">Events</a>
+                <a href="./blog.html">Blog</a>
+                <a href="login_signup.html">Login/SignUp</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="sidebar_btn">
+        <button id="sidebar_btn">More</button>
+    </div>
+
+    <div class="mobile_sidebar">
+        <a href="javascript:void(0)" class="mobile_sidebar_close-btn" id="closeBtn">&times;</a>
+        <div class="myProfile sidebar_divs">
+            <a href="#">My Profile</a>
+        </div>
+
+        <div class="myPets sidebar_divs">
+            <a href="#">My Pets</a>
+        </div>
+
+        <div class="myOrders sidebar_divs">
+            <a href="#">My Orders</a>
+        </div>
+
+        <div class="logout sidebar_divs">`
+            <a href="#">Logout</a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="myProfile sidebar_divs">
+            <a href="#">My Profile</a>
+        </div>
+
+        <div class="myPets sidebar_divs">
+            <a href="#">My Pets</a>
+        </div>
+
+        <div class="myOrders sidebar_divs">
+            <a href="#">My Orders</a>
+        </div>
+
+        <div class="logout sidebar_divs">
+            <a href="#">Logout</a>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content">
+            <div class="header">
+                <h1>Your Profile</h1>
+                <button id="editButton">Edit</button>
+                <button id="saveButton" style="display: none;">Save</button>
+            </div>
+
+            <div class="change_pic">
+                <img src="./icons/dotted-circle-svgrepo-com.svg" alt="dotted circle" height="100" class="dotted_circle">
+                <img src="./icons/camera-svgrepo-com.svg" alt="camera" height="50" class="camera">
+                <span class="change_pic_text">Change Profile Picture</span>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <span id="nameSpan">Gautam Thota</span>
+                        <input type="text" id="name" name="name" value="Gautam Thota" style="display: none;" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <span id="emailSpan">gautam.thota@example.com</span>
+                        <input type="email" id="email" name="email" value="gautam.thota@example.com" style="display: none;" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <span id="phoneSpan">1234567890</span>
+                        <input type="tel" id="phone" name="phone" value="1234567890" style="display: none;" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <span id="addressSpan">123 Main St</span>
+                        <input type="text" id="address" name="address" value="123 Main St" style="display: none;" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <footer class="footer">
+        <div class="footer-container">
+          
+          <div class="footer-column">
+            <h3>Happy Tails</h3>
+            <ul>
+                <li><a href="./blog.html">Blog</a></li>
+                <li><a href="./pet_adoption.html">Pet Stores</a></li>
+                <li><a href="./pet_accessory.html">Online Pet Accessories</a></li>
+            </ul>
+          </div>
+          
+          
+          <div class="footer-column">
+            <h3>Services</h3>
+            <ul>
+              <li><a href="#">Pet Grooming</a></li>
+              <li><a href="#">Dog Training</a></li>
+              <li><a href="#">Vet Consultation</a></li>
+            </ul>
+          </div>
+          
+
+          <div class="footer-column">
+            <h3>Partner</h3>
+            <ul>
+              <li><a href="./service_login.html">Become a Groomer</a></li>
+              <li><a href="./service_login.html">Become a Dog Trainer</a></li>
+              <li><a href="./service_login.html">Become Vet partner</a></li>
+              <li><a href="#">Pet Store Franchise</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-column">
+            <h3>Policy</h3>
+            <ul>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Refund Policy</a></li>
+              <li><a href="#">Cancellation Policy</a></li>
+              <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+            <div class="footer-social">
+              <a href="#"><img src="./icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+              <a href="#"><img src="./icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+              <a href="#"><img src="./icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
+            </div>
+          </div>
+        </div>
+    </footer>
+</body>
+<script>
+    const editButton = document.getElementById('editButton');
+    const saveButton = document.getElementById('saveButton');
+    const spans = document.querySelectorAll('span');
+    const inputs = document.querySelectorAll('input');
+    const changePicText = document.querySelector('.change_pic_text');
+    const changePic = document.querySelector('.change_pic');
+
+    editButton.addEventListener('click', () => {
+        spans.forEach(span => span.style.display = 'none');
+        inputs.forEach(input => input.style.display = 'block');
+        editButton.style.display = 'none';
+        saveButton.style.display = 'inline-block';
+        changePic.classList.add('edit-mode');
+    });
+
+    saveButton.addEventListener('click', () => {
+        inputs.forEach(input => {
+            const span = document.getElementById(input.id + 'Span');
+            span.textContent = input.value;
+            span.style.display = 'block';
+            input.style.display = 'none';
+        });
+        editButton.style.display = 'inline-block';
+        saveButton.style.display = 'none';
+        changePic.classList.remove('edit-mode');
+    });
+
+    changePic.addEventListener('mouseover', () => {
+        if (changePic.classList.contains('edit-mode')) {
+            changePicText.style.display = 'block';
+        }
+    });
+
+    changePic.addEventListener('mouseout', () => {
+        changePicText.style.display = 'none';
+    });
+
+    document.getElementById('menuIcon').addEventListener('click', function() {
+        document.getElementById('sideNavbar').classList.toggle('open');
+    });
+
+    document.getElementById('closeBtn').addEventListener('click', function() {
+        document.getElementById('sideNavbar').classList.remove('open');
+    });
+
+    document.getElementById('sidebar_btn').addEventListener('click', function() {
+        document.querySelector('.mobile_sidebar').classList.toggle('open');
+    });
+
+    document.querySelector('.mobile_sidebar_close-btn').addEventListener('click', function() {
+        document.querySelector('.mobile_sidebar').classList.remove('open');
+    });
+
+    
+</script>
+</html>
