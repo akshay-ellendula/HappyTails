@@ -495,3 +495,9 @@ input[type="tel"] {
 
     
 }
+
+@media (max-width: 1024px) {
+    .footer {
+        margin-top: 250px;
+    }
+}
