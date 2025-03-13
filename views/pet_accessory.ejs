@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Accessory</title>
+    <link rel="stylesheet" href="/pet accessory/pet-accessory.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+
+            <div class="menu">
+                <a href="/services">Services</a>
+                <a href="/pet_adoption">Shop</a>
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <a href="#" id="cart_btn">Cart</a>
+                <a href="/login_signup">Login/SignUp</a>
+            </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="/services">Services</a>
+                <a href="/pet_adoption">Pet Shop</a>        
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <a href="#" id="mobile_cart_btn">Cart</a>
+                <a href="/login_signup">Login/SignUp</a>
+            </div>
+
+            <div id="cart" class="cart">
+                <div class="cart_wrapper">
+                    <div class="cart_header">
+                        <h2>Cart</h2>
+                        <a href="javascript:void(0)" class="close-btn" id="CartcloseBtn">&times;</a>
+                    </div>
+                    <hr>
+                    
+                    <div class="cart_product_container">
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cart_product">
+                            <div class="cart_image">
+                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
+                            </div>
+                            <div class="cart_product_details">
+                                <div class="name_header">
+                                    <h3>Product Name</h3>
+                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
+                                </div>
+                                <p>Price: ₹<span id="unit-price">2500</span></p>
+                                <p>Color : Brown</p>
+        
+                                <div class="quantity_section">
+                                    <input type="number" id="quantity" min="1" value="1" />
+                                    <p>₹<span id="total-price">2500</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="subtotal">
+                        <hr>
+
+                        <div class="subtotal_details">
+                            <h3>Subtotal</h3>
+                            <p>₹<span>2500</span></p>
+                        </div>
+                        <p class="cart_text">Taxes and shipping are calculated at checkout.</p>
+                        <div class="checkout_button">
+                            <button>Checkout</button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <div class="mobile_filter">
+        <h2 class="filter_btn">Filters</h2>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="/home">Home</a>
+        <span> &gt; </span>
+        <a href="/pet-accessory">Accessories</a>
+    </div>
+
+    <div class="main_container">
+        <div class="filter_container">
+            <h2 style="margin-bottom: 40px;">Filter by</h2>
+            <div class="product_type filters">
+
+                <div class="heading_button">
+                    <h3>Product Type</h3>
+                    <button class="expand-button">+</button>
+                </div>
+
+                <p class="hidden">
+                    <input type="checkbox" id="pet_beds" name="product-type" value="Pet Beds">
+                    <label for="pet_beds">Pet Beds</label>
+                </p>
+
+
+                <p class="hidden">
+                    <input type="checkbox" id="pet_food" name="product-type" value="Pet Food">
+                    <label for="pet_food">Pet Food</label>
+                </p>
+
+                <p class="hidden">
+                    <input type="checkbox" id="grooming_supplies" name="product-type" value="Grooming Supplies">
+                    <label for="grooming_supplies">Grooming Supplies</label>
+                </p>
+            </div>
+
+
+            <hr>
+
+
+            <div class="price filters">
+                <div class="heading_button">
+                    <h3>Price</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                
+                
+                <input type="range" id="price" class="hidden" name="price" min="0" max="5000" value="100" style="width: 100%;">
+                
+                <div class="price_labels hidden">
+                    <span id="min-price">₹250.00</span>
+                    <span id="max-price">₹5000.00</span>    
+                </div>
+                
+            </div>
+
+
+            <hr>
+
+
+            <div class="color filters">
+                <div class="heading_button">
+                    <h3>Color</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                <p class="hidden">
+                    <input type="checkbox" id="brown" name="color" value="Brown">
+                    <label for="brown">Brown</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="grey" name="color" value="Grey">
+                    <label for="grey">Grey</label>
+                </p>
+            </div>
+
+
+            <hr>
+
+
+            <div class="size filters">
+                <div class="heading_button">
+                    <h3>Size</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                <p class="hidden">
+                    <input type="checkbox" id="small" name="size" value="small">
+                    <label for="small">Small</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="medium" name="size" value="medium">
+                    <label for="medium">Medium</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="large" name="size" value="large">
+                    <label for="large">Large</label>
+                </p>
+            </div>
+
+
+            <hr>
+
+
+            <div class="weight filters">
+                <div class="heading_button">
+                    <h3>Weight</h3>
+                    <button class="expand-button">+</button>
+                </div>
+                <p class="hidden">
+                    <input type="checkbox" id="250gm" name="weight" value="250gm">
+                    <label for="250gm">250gm</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="500gm" name="weight" value="500gm">
+                    <label for="500gm">500gm</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="1kg" name="weight" value="1Kg">
+                    <label for="1kg">1Kg</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="2kg" name="weight" value="2Kg">
+                    <label for="2kg">2Kg</label>
+                </p>
+                <p class="hidden">
+                    <input type="checkbox" id="5kg" name="weight" value="5Kg">
+                    <label for="5kg">5Kg</label>
+                </p>
+            </div>
+            
+        </div>
+
+
+        <div class="product_container">
+
+            <div class="product_card autoshow">
+
+
+                <img src="/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
+                </div>
+
+
+            </div>
+
+
+            <div class="product_card autoshow">
+
+
+                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
+                </div>
+
+
+            </div>
+
+            
+            <div class="product_card autoshow">
+
+
+                <img src="/images/pet nail clippers in a grey background, make more cuter.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
+                </div>
+
+
+            </div>
+
+            <div class="product_card autoshow">
+
+
+                <img src="/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
+                </div>
+
+                
+            </div>
+
+
+            <div class=" autoshow product_card">
+
+
+                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
+                </div>
+
+
+            </div>
+
+            
+            <div class="product_card autoshow">
+
+
+                <img src="/images/pet nail clippers in a grey background, make more cuter.jpg" alt="Product Image">
+                <div class="product_card_details">
+                    <h3>Product name</h3>
+                    <p>Product Price</p>
+                </div>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/pet_adoption">Pet Stores</a></li>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="/services">Pet Grooming</a></li>
+                    <li><a href="/services">Dog Training</a></li>
+                    <li><a href="/services">Vet Consultation</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/service_login">Become a Groomer</a></li>
+                    <li><a href="/service_login">Become a Dog Trainer</a></li>
+                    <li><a href="/service_login">Become Vet partner</a></li>
+                    <li><a href="/service_login">Pet Store Franchise</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img
+                            src="/icons/facebook-3-logo-svgrepo-com.svg"
+                            alt="Facebook"></a>
+                    <a href="#"><img
+                            src="/icons/instagram-2016-logo-svgrepo-com.svg"
+                            alt="Instagram"></a>
+                    <a href="#"><img
+                            src="/icons/youtube-icon-logo-svgrepo-com.svg"
+                            alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.toggle('open');
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const expandButtons = document.querySelectorAll('.expand-button');
+            
+            expandButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filterSection = this.closest('.filters');
+                    const options = filterSection.querySelectorAll('p, #price, .price_labels');
+
+                    options.forEach(option => {
+                        if(option.classList.contains('hidden')) {
+                            option.classList.remove('hidden');
+                            this.textContent = '-';
+                        }
+                        else {
+                            option.classList.add('hidden');
+                            this.textContent = '+';
+                        }
+                    });
+                });
+            });
+        });
+
+        document.querySelectorAll('.product_card').forEach(card => {
+            card.addEventListener('click', function() { 
+                window.location.href = "./pet_product_details.html";
+            });
+        });
+
+
+        document.getElementById('cart_btn').addEventListener('click', function() {
+            document.getElementById('cart').classList.toggle('open');
+        });
+
+        document.getElementById('mobile_cart_btn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+            document.getElementById('cart').classList.toggle('open');
+        });
+
+        document.getElementById('CartcloseBtn').addEventListener('click', function() {
+            document.getElementById('cart').classList.remove('open');
+        });
+
+        const quantityInput = document.getElementById("quantity");
+        const unitPriceElement = document.getElementById("unit-price");
+        const totalPriceElement = document.getElementById("total-price");
+        
+        quantityInput.addEventListener("input", () => {
+            const unitPrice = parseInt(unitPriceElement.textContent);
+            const quantity = parseInt(quantityInput.value);
+            const totalPrice = unitPrice * quantity;
+            totalPriceElement.textContent = totalPrice;
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const filterBtn = document.querySelector(".filter_btn");
+            const filters = document.querySelector(".filter_container");
+            const closeBtn = document.createElement("button");
+
+            closeBtn.innerText = "✖ Close";
+            closeBtn.classList.add("close-filters");
+            filters.prepend(closeBtn);
+
+            filterBtn.addEventListener("click", function () {
+                filters.classList.add("show");
+            });
+        
+            closeBtn.addEventListener("click", function () {
+                filters.classList.remove("show");
+            });
+        });
+    </script>
+</body>
+</html>
