@@ -30,4 +30,8 @@ function toggleInclusions() {
       }
   }
   
+  document.getElementById("bookNowBtn").addEventListener("click", function () {
+    window.location.href = "Event-booking-form.html"; 
+});
+
   
