@@ -136,4 +136,65 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        document.getElementById("location").innerText = "Geolocation is not supported by this browser.";
+    }
+}
 
+function showPosition(position) {
+    let latitude = position.coords.latitude;
+    let longitude = position.coords.longitude;
+
+    
+    document.getElementById("location").innerText = `Latitude: ${latitude}, Longitude: ${longitude}`;
+
+    
+    document.getElementById("latitude").value = latitude;
+    document.getElementById("longitude").value = longitude;
+}
+
+function showError(error) {
+    let errorMsg = "";
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            errorMsg = "User denied the request for Geolocation.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            errorMsg = "Location information is unavailable.";
+            break;
+        case error.TIMEOUT:
+            errorMsg = "The request to get user location timed out.";
+            break;
+        case error.UNKNOWN_ERROR:
+            errorMsg = "An unknown error occurred.";
+            break;
+    }
+    document.getElementById("location").innerText = errorMsg;
+}
+
+function setLocation() {
+    if (!document.getElementById("latitude").value || !document.getElementById("longitude").value) {
+        alert("Please get your location before submitting!");
+        event.preventDefault(); // Prevent form submission if location is not set
+    }
+}
+
+
+document.getElementById('menuIcon').addEventListener('click', function() {
+    document.getElementById('sideNavbar').classList.toggle('open');
+});
+
+document.getElementById('closeBtn').addEventListener('click', function() {
+    document.getElementById('sideNavbar').classList.remove('open');
+});
+
+document.getElementById('sidebar_btn').addEventListener('click', function() {
+    document.querySelector('.mobile_sidebar').classList.toggle('open');
+});
+
+document.querySelector('#mobile_sidebar_close-btn').addEventListener('click', function() {
+    document.querySelector('.mobile_sidebar').classList.remove('open');
+});

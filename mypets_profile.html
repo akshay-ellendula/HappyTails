@@ -39,7 +39,7 @@
     </div>
 
     <div class="mobile_sidebar">
-        <a href="javascript:void(0)" class="mobile_sidebar_close-btn" id="closeBtn">&times;</a>
+        <a href="javascript:void(0)" class="close-btn" id="mobile_sidebar_close-btn">&times;</a>
         <div class="myProfile sidebar_divs">
             <a href="./profile.html">My Profile</a>
         </div>
@@ -49,7 +49,7 @@
         </div>
 
         <div class="myOrders sidebar_divs">
-            <a href="#">My Orders</a>
+            <a href="./myorders_profile.html">My Orders</a>
         </div>
 
         <div class="logout sidebar_divs">`
@@ -67,7 +67,7 @@
         </div>
 
         <div class="myOrders sidebar_divs">
-            <a href="#">My Orders</a>
+            <a href="./myorders_profile.html">My Orders</a>
         </div>
 
         <div class="logout sidebar_divs">
@@ -270,6 +270,24 @@
                             <input class="file_upload_input" type="file" id="pet_photo8" accept="image/*" >
                         </div>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Set a Price</label>
+                    <div class="input-container">
+                        <span class="currency">₹</span>
+                        <input type="number" name="pet_price" placeholder="Enter price" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Your Location:</label>
+                    <p id="location">Click "Get Location" to autofill</p>
+
+                    <input type="hidden" id="latitude" name="latitude">
+                    <input type="hidden" id="longitude" name="longitude">
+
+                    <button type="button" class="location_btn" onclick="getLocation()">Get Location</button>
                 </div>
                 
                 <div class="form-group submit_cancel">

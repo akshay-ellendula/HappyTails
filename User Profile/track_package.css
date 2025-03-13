@@ -80,12 +80,29 @@ header a {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .container {
     margin-top: 20px;
     margin-left: 430px; /* Adjust the margin to ensure it comes next to the sidebar */
     padding: 20px;
     margin-right: 75px;
-    max-width: 800px;
     flex: 1;
 }
 
@@ -128,275 +145,96 @@ header a {
     color: #1a1a1a;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-.form-group {
-    margin-bottom: 15px;
-}
-label {
-    font-weight: bold;
-    display: block;
-}
-input, select, button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #1a1a1a;
-    border-radius: 5px;
-}
-.button-group {
-    display: flex;
-    gap: 10px;
-}
-.button-group button {
-    flex: 1;
-    background-color: #effe8b;
-    border: 1px solid #1a1a1a;
-    cursor: pointer;
-}
-.button-group button.active {
-    background-color: #1a1a1a;
-    color: #effe8b;
-    border: none;
-}
-
-.submit_cancel {
-    display: flex;
-    gap: 10px;
-    margin-top: 30px;
-}
-
-.submit_cancel button, .submit_cancel input {
-    width: 50%;
-}
-
-.submit_cancel input {
-    cursor: pointer;
-    background-color: #effe8b;
-    color: #1a1a1a;
-    border: 2px solid #1a1a1a;
-}
-.cancel {
-    background-color: #1a1a1a;
-    color: #effe8b;
-    cursor: pointer;
-}
-
-input, select {
-    background-color: #effe8b;
-    color: #1a1a1a;
-}
-
-::placeholder {
-    color: #1a1a1a;
-}
-
-
-
-
-.current_pets {
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 10px;
-}
-
-
-
-.pet_cards_container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, 350px);
-    gap: 20px;
-    flex: 1;
-    row-gap: 50px;
-    margin-bottom: 30px;
-}
-
-.pets_container {
-    margin-top: 20px;
-    margin-left: 430px;
-    padding: 20px;
-    margin-right: 75px;
-
-}
-
-.pets_container button {
-    margin-top: 10px;
-    background-color: #1a1a1a;
-    color: #effe8b;
-    border: 2px solid #1a1a1a;
-    cursor: pointer;
-    padding: 10px 20px;
-}
-
-
-
-.dog-cards{
-    width: 100%;
-    padding: 10px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-
-
-.pet-image img {
-    width: 100%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.pet-details h2 {
-    margin: 5px 0;
-}
-
-.dog-cards hr {
-    margin: 8px 0;
-    border-color: #1a1a1a;
-}
-
-.contact-details {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-}
-
-.share-section p {
-    margin-bottom: 10px;
-}
-
-.social-media {
-    display: flex;
-    justify-content: space-around;
-}
-
-.more-details {
-    text-align: center;
-}
-
-
-
-
-.photo_container {
-    display: grid;
-    grid-template-columns: repeat(3, 200px);
-    gap: 10px;
-    flex: 1;
-    row-gap: 50px;
-    margin-top: 30px;
-    margin-bottom: 30px;
-
-}
-
-.add_photo {
-    border: #1a1a1a 2px dashed;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    overflow-y: hidden;
-    position: relative;
-}
-
-.hover_text {
-    position: absolute;
-    display: none;
-    color: #effe8b;
-    font-size: 1.2rem;
-    text-align: center;
-}
-
-.add_photo:hover  {
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.add_photo:hover .hover_text {
-    display: block;
-}
-.add_photo.uploaded:hover .hover_text {
-    display: none;
-}
-
-
-
-.add_photo.uploaded .add_camera {
-    display: none !important;
-}
-
-.remove_photo_btn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    color: #effe8b;
-    background-color: #1a1a1a;
-    text-decoration: none;
-    padding: 5px;
-    cursor: pointer;
-    font-size: 2rem;
-    display: none;
-}
-
-.add_photo.uploaded .remove_photo_btn{
-    display: block;
-}
-.file_upload_input {
-    display: none;
-}
-
-
-.input-container {
-    display: flex;
-    align-items: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 5px 20px;
-    width: 100%;
-}
-
-.currency {
-    margin-right: 15px;
-    font-size: 16px;
-    color: #333;
-    margin-top: 5px;
-}
-
-.input-container input {
-    border: none;
-    outline: none;
-    border-radius: 0px;
-    width: 100%;
-    font-size: 16px;
-    border-left: #1a1a1a 1px solid;
-    padding-left: 20px;
-}
-
-label[for="location"] {
+.tracking_header {
     margin-bottom: 20px;
 }
 
-#location {
-    margin-bottom: 10px;
-    font-size: 1.2rem;
+.product_img {
+    width: 200px;
+    height: 200px;
+    overflow-y: hidden;;
 }
-.location_btn {
-    background-color: #1a1a1a;
-    color: #effe8b;
-    border: 2px solid #1a1a1a;
-    cursor: pointer;
-    padding: 10px 20px;
-    margin-top: 10px;
-    width: 300px;
+
+.product_img img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+
 }
+
+.container a {
+    color: #1a1a1a;
+    text-decoration: underline;
+}
+
+hr {
+    margin: 20px 0;
+    border-color: #1a1a1a;
+}
+
+.tracking-info {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.order-details {
+    margin-top: 50px;
+    display: flex;
+    gap: 70px;
+}
+
+.shipping-address {
+    padding: 10px;
+    border: 5px solid #1a1a1a;
+    width: fit-content;
+}
+
+.order-info {
+    padding: 10px;
+    border: 5px solid #1a1a1a;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -444,8 +282,6 @@ label[for="location"] {
     top: 0;
     right: 25px;
 }
-
-
 .sidebar_btn {
     display: none;
 }
@@ -478,7 +314,7 @@ label[for="location"] {
 
 
 
-#mobile_sidebar_close-btn {
+.mobile_sidebar_close-btn {
     position: absolute;
     top: 0;
     right: 25px;
@@ -492,29 +328,12 @@ label[for="location"] {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#mobile_sidebar_close-btn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 2rem;
+}
 
 @media (max-width: 768px) {
     body, html {
@@ -592,34 +411,11 @@ label[for="location"] {
         font-size: 1.2rem;
     }
 
-
-    .pets_container {
-        margin-left: 0px;
-    }
-
-    .pet_cards_container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, 250px);
-        gap: 20px;
-        flex: 1;
-    }
-
     .container {
-        margin-left: 0px;
-    }
-
-    .photo_container {
-       display: block;
-    }
-
-    .footer {
-        margin-top: 50px;
-    }
-
-    .footer-container {
-        flex-direction: column;
         margin-left: 0;
     }
 
-
+    .order-details {
+        flex-direction: column;
+    }
 }
