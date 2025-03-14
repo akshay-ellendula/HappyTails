@@ -99,13 +99,13 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="name">Name:</label>
-                        <span id="nameSpan">Your Name</span>
-                        <input type="text" id="name" name="name" value="Your Name" style="display: none;" required>
+                        <span id="nameSpan"><%= user.user_name %></span>
+                        <input type="text" id="name" name="name" value="<%= user.user_name %>" style="display: none;" required>
                     </div>
                     <div class="form-group">
                         <label for="email">Email:</label>
-                        <span id="emailSpan">Enter your Email</span>
-                        <input type="email" id="email" name="email" value="Enter Your Email" style="display: none;" required>
+                        <span id="emailSpan"><%= user.user_email %></span>
+                        <input type="email" id="email" name="email" value="<%= user.user_email %>" style="display: none;" required>
                     </div>
                 </div>
                 <div class="form-row">

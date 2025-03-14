@@ -39,26 +39,26 @@ pages.forEach(page => {
 
 
 app.post("/signup", (req, res) => {
-    const { name, email, password } = req.body;
+    const { user_name, user_email, user_password } = req.body;
 
     // Check if user already exists
-    if (users.some(user => user.email === email)) {
+    if (users.some(user => user.user_email === user_email)) {
         return res.status(400).json({ message: "User already exists" });
     }
 
     // Store user temporarily
-    users.push({ name, email, password });
-    console.log("User registered:", { name, email });
+    users.push({ user_name, user_email, user_password });
+    console.log("User registered:", { user_name, user_email });
 
     res.status(201).json({ message: "Signup successful" });
 });
 
 // Login route
 app.post("/login", (req, res) => {
-    const { email, password } = req.body;
+    const { user_email, user_password } = req.body;
 
     // Find user
-    const user = users.find(user => user.email === email && user.password === password);
+    const user = users.find(user => user.user_email === user_email && user.user_password === user_password);
 
     if (!user) {
         return res.status(401).json({ message: "Invalid credentials" });
@@ -66,7 +66,7 @@ app.post("/login", (req, res) => {
 
     req.session.user = user;
 
-    res.json({ sucess: true, redirect: "/home"});
+    res.status(200).json({ success: true, redirect: "/home"});
 });
 
 app.get("/logout", (req, res) => {

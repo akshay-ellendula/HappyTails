@@ -22,9 +22,9 @@ document.getElementById("signupForm").addEventListener("submit", async function 
     e.preventDefault();
 
     const formData = {
-        name: this.querySelector("input[type='text']").value,
-        email: this.querySelector("input[type='email']").value,
-        password: this.querySelector("input[type='password']").value,
+        user_name: this.querySelector("input[name='user_name']").value,
+        user_email: this.querySelector("input[name='user_email']").value,
+        user_password: this.querySelector("input[name='user_password']").value,
     };
 
     try {
@@ -45,8 +45,8 @@ document.getElementById("loginForm").addEventListener("submit", async function (
     e.preventDefault();
 
     const formData = {
-        email: this.querySelector("input[type='email']").value,
-        password: this.querySelector("input[type='password']").value,
+        user_email: this.querySelector("input[name='user_email']").value,
+        user_password: this.querySelector("input[name='user_password']").value,
     };
 
     try {
@@ -56,19 +56,15 @@ document.getElementById("loginForm").addEventListener("submit", async function (
             body: JSON.stringify(formData),
         });
 
-        // ✅ First, check if response is JSON (to avoid parsing HTML)
-        const text = await response.text();
-        try {
-            const data = JSON.parse(text); // ✅ Safely parse JSON
-            if (response.ok) {
-                alert("Login Successful!");
-                window.location.href = data.redirect; // ✅ Redirect from JSON
-            } else {
-                alert(data.message || "Login failed!");
-            }
-        } catch (err) {
-            console.error("Server returned non-JSON response:", text); // Log the unexpected response
+        
+        const data = await response.json();
+        if(response.ok) {
+            window.location.href = data.redirect;
         }
+        else { 
+            alert(data.message || "Invalid credentials. Please try again.");
+        }
+        
     } catch (error) {
         console.error("Login Error:", error);
     }
