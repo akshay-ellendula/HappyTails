@@ -16,7 +16,11 @@
                 <a href="/pet_accessory">Pet Essentials</a>        
                 <a href="/Events">Events</a>
                 <a href="/blog">Blog</a>
-                <a href="/login_signup">Login/SignUp</a>
+                <% if (user) { %>
+                    <a href="/profile">Profile</a>
+                <% } else { %>
+                    <a href="/login_signup">Login/SignUp</a>
+                <% } %>
             </div>
 
             <div class="menu-icon" id="menuIcon">
@@ -29,7 +33,11 @@
                 <a href="/pet_accessory">Pet Essentials</a>        
                 <a href="/Events.html">Events</a>
                 <a href="/blog">Blog</a>
-                <a href="/login_signup">Login/SignUp</a>
+                <% if (user) { %>
+                    <a href="/profile">Profile</a>
+                <% } else { %>
+                    <a href="/login_signup">Login/SignUp</a>
+                <% } %>
             </div>
         </header>
     </div>
