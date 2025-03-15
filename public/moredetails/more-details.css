@@ -11,8 +11,11 @@ body {
   background-color: #effe8b;
 }
 
-header {
+.navbar {
   margin: 5px 75px;
+}
+
+header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -64,7 +67,7 @@ header a {
 .container {
   margin: 5px 75px 5px 75px;
   padding: 5px;
-  width: 1200px;
+  max-width: 1200px;
   display: flex;
   column-gap: 30px;
 }
@@ -292,4 +295,110 @@ hr {
 .footer-social img {
   width: 24px;
   height: 24px;
+}
+
+
+
+
+
+.side-navbar {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  background-color: #1a1a1a;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+}
+
+.side-navbar a {
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 1.2rem;
+  color: #ffffff;
+  display: block;
+  transition: 0.3s;
+}
+
+.side-navbar a:hover {
+  color: #effe8b;
+}
+
+.side-navbar .close-btn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 2rem;
+}
+
+
+
+.menu-icon {
+  display: none;
+}
+
+
+
+@media (max-width: 768px) {
+  body, html {
+      overflow-x: hidden;
+  }
+
+  .navbar {
+      margin: 5px 20px;
+  }
+
+  header { 
+      display: flex;
+      padding: 1rem;
+  }
+
+  .menu-icon {
+      padding: 10px;
+      display: block;
+  }
+
+  .badge {
+      width: 100%;
+      text-align: center;
+  }
+
+
+  .menu a, .search-bar {
+      display: none;
+  }
+
+  .side-navbar.open {
+      width: 250px; 
+  }
+
+  .container {
+    width: 100%;
+    margin: 5px 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .image_details {
+      max-width: 350px;
+  }
+
+  .more-details {
+      display: flex;
+      flex-direction: column;
+  }
+
+  .chat_location {
+    width: 350px;
+    margin-right: 0;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    margin-left: 0;
+  }
 }

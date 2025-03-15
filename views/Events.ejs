@@ -8,38 +8,35 @@
 </head>
 <body>
     <div class="navbar">
-        <header>
-            <a href="/home" class="badge">Happy Tails</a>
-
-            <div class="menu">
-                <a href="/services">Services</a>
-                <a href="/pet_adoption">Shop</a>
-                <a href="/blog">Blog</a>
-                <a href="/pet_accessory">Pet Essentials</a>
-                <% if (user) { %>
-                  <a href="/profile">Profile</a>
-                <% } else { %>
-                    <a href="/login_signup">Login/SignUp</a>
-                <% } %>
-            </div>
-
-            <div class="menu-icon" id="menuIcon">
-              <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
-            </div>
-
-          <div class="side-navbar" id="sideNavbar">
-              <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
-              <a href="/pet_adoption">Shop</a>
-              <a href="/pet_accessory">Pet Essentials</a>        
+      <header>
+          <a href="/home" class="badge">Happy Tails</a>
+          <div class="menu">
               <a href="/services">Services</a>
+              <a href="/pet_adoption">Shop</a>
               <a href="/blog">Blog</a>
+              <a href="/pet_accessory">Pet Essentials</a>
               <% if (user) { %>
                 <a href="/profile">Profile</a>
               <% } else { %>
                   <a href="/login_signup">Login/SignUp</a>
               <% } %>
           </div>
-        </header>
+          <div class="menu-icon" id="menuIcon">
+            <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+          </div>
+          <div class="side-navbar" id="sideNavbar">
+            <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+            <a href="/pet_adoption">Shop</a>
+            <a href="/pet_accessory">Pet Essentials</a>        
+            <a href="/services">Services</a>
+            <a href="/blog">Blog</a>
+            <% if (user) { %>
+              <a href="/profile">Profile</a>
+            <% } else { %>
+                <a href="/login_signup">Login/SignUp</a>
+            <% } %>
+          </div>
+      </header>
     </div>
 
     <div class="heading">

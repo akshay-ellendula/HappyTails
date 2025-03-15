@@ -7,21 +7,42 @@
   <link rel="stylesheet" href="/moredetails/more-details.css">
 </head>
 <body>
-    <header>
-        <a href="#" class="badge">Happy Tails</a>
+    <div class="navbar">
+      <header>
+        <a href="/home" class="badge">Happy Tails</a>
 
         <div class="menu">
             <a href="/services.">Services</a>
             <a href="/Events">Events</a>
             <a href="/pet_adoption">Shop</a>
             <a href="/blog">Blog</a>
+            <a href="/Events">Events</a>
             <% if (user) { %>
               <a href="/profile">Profile</a>
             <% } else { %>
                 <a href="/login_signup">Login/SignUp</a>
             <% } %>
         </div>
-    </header>
+
+        <div class="menu-icon" id="menuIcon">
+          <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+        </div>
+
+        <div class="side-navbar" id="sideNavbar">
+          <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+          <a href="/pet_adoption">Shop</a>
+          <a href="/pet_accessory">Pet Essentials</a>  
+          <a href="/Events">Events</a>      
+          <a href="/services">Services</a>
+          <a href="/blog">Blog</a>
+          <% if (user) { %>
+            <a href="/profile">Profile</a>
+          <% } else { %>
+              <a href="/login_signup">Login/SignUp</a>
+          <% } %>
+        </div>
+      </header>
+    </div>
 
 
     <div class="container">
@@ -171,5 +192,15 @@
       </div>
   </footer>
   
+
+  <script>
+    document.getElementById('menuIcon').addEventListener('click', function() {
+          document.getElementById('sideNavbar').classList.toggle('open');
+    });
+
+    document.getElementById('closeBtn').addEventListener('click', function() {
+        document.getElementById('sideNavbar').classList.remove('open');
+    });
+  </script>
 </body>
 </html>
