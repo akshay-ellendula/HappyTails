@@ -1,230 +1,208 @@
-<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services</title>
-    <link rel="stylesheet" href="./services/services.css">
-</head>
-<body>
-    <div class="navbar">
-        <header>
-            <a href="./home.html" class="badge">Happy Tails</a>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Services</title>
+        <link rel="stylesheet" href="./services/services.css">
+    </head>
+    <body>
+        <div class="navbar">
+            <header>
+                <a href="#" class="badge">Happy Tails</a>
 
-            <div class="menu">
-                <a href="./pet_accessory.html">Pet Accessories</a>
-                <a href="./pet_adoption.html">Shop</a>
-                <a href="./Events.html">Events</a>
-                <a href="./blog.html">Blog</a>
-                <a href="login_signup.html">Login/SignUp</a>
-            </div>
+                <div class="menu">
+                    <a href="./pet_accessory.html">Pet Accessories</a>
+                    <a href="./pet_adoption.html">Shop</a>
+                    <a href="#">Events</a>
+                    <a href="./blog.html">Blog</a>
+                    <a href="#">Login/SignUp</a>
+                </div>
+            </header>
+        </div>
 
-            <div class="menu-icon" id="menuIcon">
-                <img src="./icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
-            </div>
+        <div class="breadcrumb">
+            <a href="./home.html">Home</a>
+            <span> &gt; </span>
+            <a href="./services.html">Services</a>
+        </div>
 
-            <div class="side-navbar" id="sideNavbar">
-                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
-                <a href="./pet_adoption.html">Shop</a>
-                <a href="./pet_accessory.html">Pet Essentials</a>        
-                <a href="./Events.html">Events</a>
-                <a href="./blog.html">Blog</a>
-                <a href="login_signup.html">Login/SignUp</a>
-            </div>
-        </header>
-    </div>
+        <div class="main_container">
+            <div class="filter_container">
+                <h2 style="margin-bottom: 40px;">Filter by</h2>
 
-    <div class="mobile_filter">
-        <h2 class="filter_btn">Filters</h2>
-    </div>
+                <div class="services_type filters">
 
-    <div class="breadcrumb">
-        <a href="./home.html">Home</a>
-        <span> &gt; </span>
-        <a href="./services.html">Services</a>
-    </div>
+                    <div class="heading_button">
+                        <h3>Services Type</h3>
+                        <button class="expand-button">+</button>
+                    </div>
 
-    <div class="main_container">
-        <div class="filter_container">
-            <h2 style="margin-bottom: 40px;">Filter by</h2>
+                    <p class="hidden">
+                        <input type="checkbox" id="Vets" name="Vets"
+                            value="Vets">
+                        <label for="Vets">Vet</label>
+                    </p>
 
-            <div class="services_type filters">
+                    <p class="hidden">
+                        <input type="checkbox" id="Groomers" name="Groomers"
+                            value="Groomers">
+                        <label for="Groomers">Groomers</label>
+                    </p>
 
-                <div class="heading_button">
-                    <h3>Services Type</h3>
-                    <button class="expand-button">+</button>
+                    <p class="hidden">
+                        <input type="checkbox" id="Pet trainers"
+                            name="Pet trainers" value="Pet trainers">
+                        <label for="Pet trainers">Pet trainers</label>
+                    </p>
                 </div>
 
-                <p class="hidden">
-                    <input type="checkbox" id="Vets" name="Vets" value="Vets">
-                    <label for="Vets">Vet</label>
-                </p>
-
-
-                <p class="hidden">
-                    <input type="checkbox" id="Groomers" name="Groomers" value="Groomers">
-                    <label for="Groomers">Groomers</label>
-                </p>
-
-                <p class="hidden">
-                    <input type="checkbox" id="Pet trainers" name="Pet trainers" value="Pet trainers">
-                    <label for="Pet trainers">Pet trainers</label>
-                </p>
             </div>
 
+            <div class="services_container">
+
+                <div class="services_card">
+
+                    <img src="./images/pet groomer.jpg" alt="Product Image">
+                    <div class="services_card_details">
+                        <h3>Name of Person</h3>
+                        <p>Type of Service: </p>
+                    </div>
+
+                </div>
+
+                <div class="services_card">
+
+                    <img src="./images/pet trainer.jpg" alt="Product Image">
+                    <div class="services_card_details">
+                        <h3>Name of Person</h3>
+                        <p>Type of Service: </p>
+                    </div>
+
+                </div>
+
+                <div class="services_card">
+
+                    <img src="./images/vet.jpg" alt="Product Image">
+                    <div class="services_card_details">
+                        <h3>Name of Person</h3>
+                        <p>Type of Service: </p>
+                    </div>
+
+                </div>
+
+                <div class="services_card">
+
+                    <img src="./images/vet.jpg" alt="Product Image">
+                    <div class="services_card_details">
+                        <h3>Name of Person</h3>
+                        <p>Type of Service: </p>
+                    </div>
+
+                </div>
+
+                <div class="services_card">
+
+                    <img src="./images/pet groomer.jpg" alt="Product Image">
+                    <div class="services_card_details">
+                        <h3>Name of Person</h3>
+                        <p>Type of Service: </p>
+                    </div>
+
+                </div>
+
+                <div class="services_card">
+
+                    <img src="./images/pet trainer.jpg" alt="Product Image">
+                    <div class="services_card_details">
+                        <h3>Name of Person</h3>
+                        <p>Type of Service: </p>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
-        
-        <div class="services_container">
-            <a href="service_card_details">
-                <img src="images/vet.jpg" alt="">
-                <h3>Dr. Falguni Ashar</h3>
-                <p>Veterinarian, MRCVS BVetMed BSc(Hons)</p>
-                <p>Rating: ⭐5.0 • 5 reviews</p>
-                <p>License verified</p>
-                <div class="timeslots">
-                    <p>Today at 02:00 - ₹4,511</p>
-                    <p>Today at 02:30 - ₹4,511</p>
-            </a>
-            <a href="service_card_details">
-                <img src="images/vet.jpg" alt="">
-                <h3>Dr. Falguni Ashar</h3>
-                <p>Veterinarian, MRCVS BVetMed BSc(Hons)</p>
-                <p>Rating: ⭐5.0 • 5 reviews</p>
-                <p>License verified</p>
-                <div class="timeslots">
-                    <p>Today at 02:00 - ₹4,511</p>
-                    <p>Today at 02:30 - ₹4,511</p>
-            </a>
-            <a href="service_card_details">
-                <img src="images/vet.jpg" alt="">
-                <h3>Dr. Falguni Ashar</h3>
-                <p>Veterinarian, MRCVS BVetMed BSc(Hons)</p>
-                <p>Rating: ⭐5.0 • 5 reviews</p>
-                <p>License verified</p>
-                <div class="timeslots">
-                    <p>Today at 02:00 - ₹4,511</p>
-                    <p>Today at 02:30 - ₹4,511</p>
-            </a>
-            <a href="service_card_details">
-                <img src="images/vet.jpg" alt="">
-                <h3>Dr. Falguni Ashar</h3>
-                <p>Veterinarian, MRCVS BVetMed BSc(Hons)</p>
-                <p>Rating: ⭐5.0 • 5 reviews</p>
-                <p>License verified</p>
-                <div class="timeslots">
-                    <p>Today at 02:00 - ₹4,511</p>
-                    <p>Today at 02:30 - ₹4,511</p>
-            </a>
-            
-        </div>
-    </div>
-    </div>
 
-    <footer class="footer">
-        <div class="footer-container">
+        <footer class="footer">
+            <div class="footer-container">
 
-            <div class="footer-column">
-                <h3>Happy Tails</h3>
-                <ul>
-                    <li><a href="./blog.html">Blog</a></li>
-                    <li><a href="./pet_adoption.html">Pet Stores</a></li>
-                    <li><a href="./pet_accessory.html">Online Pet Accessories</a></li>
-                </ul>
-            </div>
+                <div class="footer-column">
+                    <h3>Happy Tails</h3>
+                    <ul>
+                        <li><a href="./blog.html">Blog</a></li>
+                        <li><a href="./pet_adoption.html">Pet Stores</a></li>
+                        <li><a href="./pet_accessory.html">Online Pet
+                                Accessories</a></li>
+                    </ul>
+                </div>
 
-            <div class="footer-column">
-                <h3>Services</h3>
-                <ul>
-                    <li><a href="#">Pet Grooming</a></li>
-                    <li><a href="#">Dog Training</a></li>
-                    <li><a href="#">Vet Consultation</a></li>
-                </ul>
-            </div>
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">Pet Grooming</a></li>
+                        <li><a href="#">Dog Training</a></li>
+                        <li><a href="#">Vet Consultation</a></li>
+                    </ul>
+                </div>
 
-            <div class="footer-column">
-                <h3>Partner</h3>
-                <ul>
-                    <li><a href="./service_login.html">Become a Groomer</a></li>
-                    <li><a href="./service_login.html">Become a Dog Trainer</a></li>
-                    <li><a href="./service_login.html">Become Vet partner</a></li>
-                    <li><a href="./service_login.html">Pet Store Franchise</a></li>
-                </ul>
-            </div>
+                <div class="footer-column">
+                    <h3>Partner</h3>
+                    <ul>
+                        <li><a href="./service_login.html">Become a
+                                Groomer</a></li>
+                        <li><a href="./service_login.html">Become a Dog
+                                Trainer</a></li>
+                        <li><a href="./service_login.html">Become Vet
+                                partner</a></li>
+                        <li><a href="./service_login.html">Pet Store
+                                Franchise</a></li>
+                    </ul>
+                </div>
 
-            <div class="footer-column">
-                <h3>Policy</h3>
-                <ul>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Refund Policy</a></li>
-                    <li><a href="#">Cancellation Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                </ul>
-                <div class="footer-social">
-                    <a href="#"><img
-                            src="./icons/facebook-3-logo-svgrepo-com.svg"
-                            alt="Facebook"></a>
-                    <a href="#"><img
-                            src="./icons/instagram-2016-logo-svgrepo-com.svg"
-                            alt="Instagram"></a>
-                    <a href="#"><img
-                            src="./icons/youtube-icon-logo-svgrepo-com.svg"
-                            alt="YouTube"></a>
+                <div class="footer-column">
+                    <h3>Policy</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="#"><img
+                                src="./icons/facebook-3-logo-svgrepo-com.svg"
+                                alt="Facebook"></a>
+                        <a href="#"><img
+                                src="./icons/instagram-2016-logo-svgrepo-com.svg"
+                                alt="Instagram"></a>
+                        <a href="#"><img
+                                src="./icons/youtube-icon-logo-svgrepo-com.svg"
+                                alt="YouTube"></a>
+                    </div>
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
-
-
-
-    <script>
-
-        document.getElementById('menuIcon').addEventListener('click', function() {
-                document.getElementById('sideNavbar').classList.toggle('open');
-        });
-
-        document.getElementById('closeBtn').addEventListener('click', function() {
-                document.getElementById('sideNavbar').classList.remove('open');
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const expandButtons = document.querySelectorAll('.expand-button');
-            
-            expandButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const filterSection = this.closest('.filters');
-                    const options = filterSection.querySelectorAll('p, #price, .price_labels');
-
-                    options.forEach(option => {
-                        if(option.classList.contains('hidden')) {
-                            option.classList.remove('hidden');
-                            this.textContent = '-';
-                        }
-                        else {
-                            option.classList.add('hidden');
-                            this.textContent = '+';
-                        }
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const expandButtons = document.querySelectorAll('.expand-button');
+                
+                expandButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const filterSection = this.closest('.filters');
+                        const options = filterSection.querySelectorAll('p, #price, .price_labels');
+    
+                        options.forEach(option => {
+                            if(option.classList.contains('hidden')) {
+                                option.classList.remove('hidden');
+                                this.textContent = '-';
+                            }
+                            else {
+                                option.classList.add('hidden');
+                                this.textContent = '+';
+                            }
+                        });
                     });
                 });
             });
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const filterBtn = document.querySelector(".filter_btn");
-            const filters = document.querySelector(".filter_container");
-            const closeBtn = document.createElement("button");
-
-            closeBtn.innerText = "✖ Close";
-            closeBtn.classList.add("close-filters");
-            filters.prepend(closeBtn);
-
-            filterBtn.addEventListener("click", function () {
-                filters.classList.add("show");
-            });
-        
-            closeBtn.addEventListener("click", function () {
-                filters.classList.remove("show");
-            });
-        });
-    </script>
-</body>
+        </script>
+    </body>
