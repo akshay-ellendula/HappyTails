@@ -221,7 +221,6 @@ input:focus {
 .services-card .card-container {
     display: flex;
     justify-content: space-around; 
-    gap: 30px; 
     width: 100%; 
 }
 
@@ -317,8 +316,7 @@ input:focus {
 
 .shop .card-container {
     display: flex;
-    justify-content: space-around; 
-    gap: 30px; 
+    justify-content: space-around;  
     width: 100%; 
 }
 
@@ -544,6 +542,116 @@ input:focus {
 
 
 
+
+@media (max-width: 1200px) {
+    body, html {
+        overflow-x: hidden;
+        width: 100vw !important;
+    }
+
+    .navbar {
+        margin: 5px 20px;
+    }
+
+    .image1 {
+        width: 200px;
+        height: 200px;
+        top: 70%;
+        left: 75%;
+    }
+
+    .image2 {
+        width: 200px;
+        left: 15%;
+        top: 75%;
+    }
+    
+    
+    .image4 {
+        width: 200px;
+        left: 70%;
+        top: 25%;
+        z-index: -1;
+    }
+
+    .image3 {
+        width: 200px;
+        height: 200px;
+        left: 5%;
+        top: 20%;
+    }
+
+    header { 
+        display: flex;
+        padding: 1rem;
+    }
+
+    .menu-icon {
+        padding: 5px;
+        display: block;
+    }
+
+    .badge {
+        width: 100%;
+        text-align: center;
+    }
+
+
+    .menu a, .search-bar {
+        display: none;
+    }
+
+
+    .side-navbar.open {
+        width: 250px; 
+    }
+
+    
+
+    .card {
+        max-width: 300px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .shop .card {
+        width: 350px;
+        margin-bottom: 20px;
+    }
+
+    .shop {
+        width: 100vw;
+        margin: 0;
+    }
+
+    .services-card {
+        width: 100vw;
+        margin: 0;
+    }
+
+    .content {
+        max-width: 100vw;
+    }
+
+    .shop-image {
+        height: 300px;
+        width: 300px;
+    }
+    
+    .about-us {
+        margin: 200px 25px 50px 25px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
 @media (max-width: 768px) {
 
     body, html {
@@ -665,3 +773,4 @@ input:focus {
         margin-left: 0;
     }
 }
+
