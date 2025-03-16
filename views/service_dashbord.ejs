@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="services/service_dashboard.css">
+        <title>Service providers Dashboard</title>
+    </head>
+    <body>
+        <div class="navbar">
+            <header>
+                <a href="/home" class="badge">Happy Tails</a>
+                <div class="menu">
+                    <a href="#">Profile</a>
+                    <a href="#">Logout</a>
+                </div>
+            </header>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="sidebar">
+                <h2>Dashboard</h2>
+                <ul>
+                    <li><a href="/vet_dashbord">Home</a></li>
+                    <li><a href="/vetpatienthystory">Appointment
+                            History</a></li>
+                    <li><a href="/vet_analytics">Analytics</a></li>
+                </ul>
+            </div>
+
+            <div class="main-content">
+                <div class="welcome-section">
+                    <h1>Welcome back, Smith!</h1>
+                    <p>Today is Saturday, March 15, 2025</p>
+                </div>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>Today's Appointments</h3>
+                        <p>8</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Completed Today</h3>
+                        <p>5</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Money collected</h3>
+                        <p>$200</p>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Upcoming Appointments</h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="appointments">
+                        <div class="appointment-card">
+                            <div class="time-badge">09:30 AM</div>
+                            <h3>Max (Golden Retriever)</h3>
+                            <p><strong>Owner:</strong> John Doe</p>
+                            <p><strong>Service:</strong> Annual Checkup</p>
+                            <p><strong>Location:</strong> Hyderbad</p>
+                            <div class="card-actions">
+                                <a href="/vet_animaldetails"><button class="btn-primary">Start</button></a>
+                                <a href="/vet_animaldetails"><button class="btn-secondary">Modify</button></a>
+                            </div>
+                        </div>
+                        <div class="appointment-card">
+                            <div class="time-badge">11:00 AM</div>
+                            <h3>Luna (Persian Cat)</h3>
+                            <p><strong>Owner:</strong> Sarah Johnson</p>
+                            <p><strong>Service:</strong> Hair wash</p>
+                            <p><strong>Location:</strong> New York</p>
+                            <div class="card-actions">
+                                <a href="/vet_animaldetails"><button class="btn-primary">Start</button></a>
+                                <a href="/vet_animaldetails"><button class="btn-secondary">Modify</button></a>
+                            </div>
+                        </div>
+                        <div class="appointment-card">
+                            <div class="time-badge urgent">01:30 PM</div>
+                            <h3>Rocky (Bulldog)</h3>
+                            <p><strong>Owner:</strong> Michael Brown</p>
+                            <p><strong>Service:</strong> walking </p>
+                            <p><strong>Location:</strong> Mahabubnagar</p>
+                            <div class="card-actions">
+                                <a href="/vet_animaldetails"><button class="btn-primary">Start</button></a>
+                                <a href="/vet_animaldetails"><button class="btn-secondary">Modify</button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2>Recent Patient Activity</h2>
+                        <a href="#" class="view-all">View All</a>
+                    </div>
+                    <div class="patient-activity">
+                        <table>
+                            <thead >
+                                <tr class="table-header">
+                                    <th>Pet</th>
+                                    <th>Owner</th>
+                                    <th>Last Visit</th>
+                                    <th>Reason</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Bella (Labrador)</td>
+                                    <td>Emma Wilson</td>
+                                    <td>Mar 14, 2025</td>
+                                    <td>Skin allergy</td>
+                                    <td><a href="#">View Records</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Charlie (Siamese Cat)</td>
+                                    <td>James Taylor</td>
+                                    <td>Mar 13, 2025</td>
+                                    <td>Annual checkup</td>
+                                    <td><a href="#">View Records</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Cooper (Beagle)</td>
+                                    <td>Linda Martinez</td>
+                                    <td>Mar 12, 2025</td>
+                                    <td>running</td>
+                                    <td><a href="#">View Records</a></td>
+                                </tr>
+                                <tr>
+                                    <td>Daisy (Rabbit)</td>
+                                    <td>Robert Johnson</td>
+                                    <td>Mar 10, 2025</td>
+                                    <td>gromming</td>
+                                    <td><a href="#">View Records</a></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

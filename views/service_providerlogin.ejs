@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HappyTails - Service Provider Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #effe8b;
+            font-family: "Outfit", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            margin: 5px 5%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        header a.badge {
+            text-decoration: none;
+            color: #1a1a1a;
+            font-size: 2rem;
+            font-weight: 500;
+            transition: 0.3s all ease;
+        }
+
+        header a.badge:hover {
+            transform: scale(1.1);
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+                        0 10px 10px rgba(0,0,0,0.22);
+            width: 90%;
+            max-width: 400px;
+            min-height: 480px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-container {
+            padding: 0 30px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            font-weight: bold;
+            margin: 20px 0;
+            color: #1a1a1a;
+            font-size: 1.8rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        label {
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            width: 100%;
+            margin: 10px 0 5px;
+        }
+
+        input, select {
+            background-color: #eee;
+            border: none;
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            border-radius: 5px;
+            font-family: "Outfit", sans-serif;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #1a1a1a;
+        }
+
+        button {
+            cursor: pointer;
+            border-radius: 20px;
+            border: 1px solid #1a1a1a;
+            background-color: #1a1a1a;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 80%;
+        }
+
+        button:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .forgot-password {
+            margin-top: 15px;
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .signup-prompt {
+            margin-top: 25px;
+            font-size: 0.9rem;
+        }
+
+        .signup-link {
+            color: #1a1a1a;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .signup-link:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: #1a1a1a;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .navbar {
+                margin: 0;
+            }
+            
+            header {
+                padding: 1rem;
+            }
+            
+            header a.badge {
+                font-size: 1.7rem;
+            }
+            
+            .container {
+                width: 95%;
+                margin: 10px auto;
+                min-height: 450px;
+            }
+            
+            .form-container {
+                padding: 0 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header a.badge {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                width: 100%;
+                padding: 12px 20px;
+            }
+            
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+        </header>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1>Service Provider Login</h1>
+            <form>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="vet">Veterinarian</option>
+                    <option value="groomer">Groomer</option>
+                    <option value="trainer">Trainer</option>
+                    <option value="event-manager">Event Manager</option>
+                    <option value="store-manager">Store Manager</option>
+                </select>
+
+                <button type="submit">Login</button>
+            </form>
+            <a href="#" class="forgot-password">Forgot password?</a>
+            <div style="margin: 10px; padding: 10px;">
+                <p class="signup-prompt">Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2025 Happy Tails. All rights reserved.
+    </footer>
+</body>
+</html>

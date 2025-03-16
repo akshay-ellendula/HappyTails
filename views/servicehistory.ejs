@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient History</title>
+    <link rel="stylesheet" href="services/vetpatienthystory.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="home.html" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="#">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </header>
+    </div>
+    
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Appointment History</a></li>
+                <li><a href="#">Analytics</a></li>
+            </ul>
+        </div>
+        
+        <div class="patient-history">
+            <h2>Patient History</h2>
+            <div class="search-filter">
+                <input type="text" placeholder="Search by patient or owner...">
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Appointment ID</th>
+                        <th>Date</th>
+                        <th>Patient</th>
+                        <th>Owner</th>
+                        <th>Pet Type</th>
+                        <th>Amount Charged</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <a href="#">
+                            <td>1</td>
+                            <td>Mar 10, 2025</td>
+                            <td>Buddy</td>
+                            <td>John Doe</td>
+                            <td>Dog</td>
+                            <td>$50</td>
+                        </a>
+                    </tr>
+                    <tr>
+                        <a href="#">
+                            <td>2</td>
+                            <td>Mar 05, 2025</td>
+                            <td>Max</td>
+                            <td>Jane Smith</td>
+                            <td>Dog</td>
+                            <td>$75</td>
+                        </a>
+                    </tr>
+                    <tr>
+                        <a href="#">
+                            <td>3</td>
+                            <td>Feb 28, 2025</td>
+                            <td>Bella</td>
+                            <td>Emily Johnson</td>
+                            <td>Cat</td>
+                            <td>$100</td>
+                        </a>
+                    </tr>
+                    <tr>
+                        <a href="#">
+                            <td>4</td>
+                            <td>Feb 15, 2025</td>
+                            <td>Max</td>
+                            <td>Jane Smith</td>
+                            <td>Dog</td>
+                            <td>$60</td>
+                        </a>
+                    </tr>
+                    <tr>
+                        <a href="#">
+                            <td>5</td>
+                            <td>Jan 22, 2025</td>
+                            <td>Charlie</td>
+                            <td>Michael Brown</td>
+                            <td>Dog</td>
+                            <td>$200</td>
+                        </a>
+                    </tr>
+                    <tr>
+                        <a href="#">
+                            <td>6</td>
+                            <td>Jan 10, 2025</td>
+                            <td>Buddy</td>
+                            <td>John Doe</td>
+                            <td>Dog</td>
+                            <td>$40</td>
+                        </a>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination">
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">Next</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
