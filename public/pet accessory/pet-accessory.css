@@ -248,7 +248,13 @@ hr {
 
 
 
-
+.filter_container button[type="submit"] {
+    padding: 10px 20px;
+    border-radius: 30px;
+    background-color: #1a1a1a;
+    color: #effe8b;
+    cursor: pointer;
+}
 
 
 
