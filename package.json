@@ -18,8 +18,10 @@
   },
   "homepage": "https://github.com/akshay-ellendula/HappyTails#readme",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
-    "express-session": "^1.18.1"
+    "express-session": "^1.18.1",
+    "sqlite3": "^5.1.7"
   }
 }

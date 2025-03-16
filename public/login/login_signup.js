@@ -27,3 +27,43 @@ signInToggle.addEventListener('click', () => {
     const badge = document.getElementsByClassName("badge");
     badge[0].style.color = "#1a1a1a";
 });
+
+
+document.getElementById("signInForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+  
+
+    const formData = new FormData(signInForm);
+    const userData = Object.fromEntries(formData.entries());
+    const response = await fetch("/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+    });
+    const result = await response.json();
+    if (response.ok) {
+        window.location.href = result.redirect; // Redirect to home on successful login
+    } 
+    else {
+        alert(result.message);
+    }
+
+});
+
+document.getElementById("signUpForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const formData = new FormData(signUpForm);
+    const userData = Object.fromEntries(formData.entries());
+    const response = await fetch("/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(userData),
+    });
+
+    const result = await response.json();
+    alert(result.message);
+    if (response.ok) {
+        signInToggle.click(); // Switch to login form after successful signup
+    }
+});
