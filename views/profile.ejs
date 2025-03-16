@@ -86,42 +86,46 @@
         <div class="content">
             <div class="header">
                 <h1>Your Profile</h1>
-                <button id="editButton">Edit</button>
-                <button id="saveButton" style="display: none;">Save</button>
             </div>
 
-            <div class="change_pic">
-                <img src="/icons/dotted-circle-svgrepo-com.svg" alt="dotted circle" height="100" class="dotted_circle">
-                <img src="/icons/camera-svgrepo-com.svg" alt="camera" height="50" class="camera">
-                <span class="change_pic_text">Change Profile Picture</span>
-                <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                 <input class="file_upload_input" type="file" id="pet_photo3" accept="image/*">
-            </div>
-            <form>
+            <form id="editProfileForm" enctype="multipart/form-data">
+                <div class="change_pic">
+                    <div class="profile_pic">
+                        <img src="<%= user.profile_pic ? user.profile_pic : '/icons/profile-circle-svgrepo-com.svg' %>" alt="dotted circle" height="100">
+                    </div>
+                    <div class="dotted_circle">
+                        <img src="icons/camera-svgrepo-com.svg" class="camera" height="50" alt="camera photo">
+                        <span class="change_pic_text">Change Profile Picture</span>
+                        <input class="file_upload_input" type="file" id="user_photo_button" accept="image/*" name="profile_pic" hidden>
+                    </div>
+                </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="name">Name:</label>
                         <span id="nameSpan"><%= user.user_name %></span>
-                        <input type="text" id="name" name="name" value="<%= user.user_name %>" style="display: none;" required>
+                        <input type="text" id="name" name="user_name" value="<%= user.user_name %>" style="display: none;">
                     </div>
                     <div class="form-group">
                         <label for="email">Email:</label>
                         <span id="emailSpan"><%= user.user_email %></span>
-                        <input type="email" id="email" name="email" value="<%= user.user_email %>" style="display: none;" required>
+                        <input type="email" id="email" name="user_email" value="<%= user.user_email %>" style="display: none;" readonly>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phone">Phone:</label>
-                        <span id="phoneSpan">Phone Number</span>
-                        <input type="tel" id="phone" name="phone" value="Phone number" style="display: none;" required>
+                        <span id="phoneSpan"><%= user.user_phone || 'Enter Phone Number' %></span>
+                        <input type="tel" id="phone" name="user_phone" value="<%= user.user_phone || '' %>" style="display: none;" required>
                     </div>
                     <div class="form-group">
                         <label for="address">Address:</label>
-                        <span id="addressSpan">Enter Your Address</span>
-                        <input type="text" id="address" name="address" value="Enter Your Address" style="display: none;" required>
+                        <span id="addressSpan"><%= user.user_address || 'Enter Your Address' %></span>
+                        <input type="text" id="address" name="user_address" value="<%= user.user_address || '' %>" style="display: none;" required>
                     </div>
                 </div>
+
+                <button type="button" id="editButton">Edit</button>
+                <button type="submit" id="saveButton" style="display: none;">Save</button>
             </form>
         </div>
     </div>
@@ -177,60 +181,6 @@
         </div>
     </footer>
 </body>
-<script>
-    const editButton = document.getElementById('editButton');
-    const saveButton = document.getElementById('saveButton');
-    const spans = document.querySelectorAll('span');
-    const inputs = document.querySelectorAll('input');
-    const changePicText = document.querySelector('.change_pic_text');
-    const changePic = document.querySelector('.change_pic');
-
-    editButton.addEventListener('click', () => {
-        spans.forEach(span => span.style.display = 'none');
-        inputs.forEach(input => input.style.display = 'block');
-        editButton.style.display = 'none';
-        saveButton.style.display = 'inline-block';
-        changePic.classList.add('edit-mode');
-    });
-
-    saveButton.addEventListener('click', () => {
-        inputs.forEach(input => {
-            const span = document.getElementById(input.id + 'Span');
-            span.textContent = input.value;
-            span.style.display = 'block';
-            input.style.display = 'none';
-        });
-        editButton.style.display = 'inline-block';
-        saveButton.style.display = 'none';
-        changePic.classList.remove('edit-mode');
-    });
-
-    changePic.addEventListener('mouseover', () => {
-        if (changePic.classList.contains('edit-mode')) {
-            changePicText.style.display = 'block';
-        }
-    });
-
-    changePic.addEventListener('mouseout', () => {
-        changePicText.style.display = 'none';
-    });
-
-    document.getElementById('menuIcon').addEventListener('click', function() {
-        document.getElementById('sideNavbar').classList.toggle('open');
-    });
-
-    document.getElementById('closeBtn').addEventListener('click', function() {
-        document.getElementById('sideNavbar').classList.remove('open');
-    });
-
-    document.getElementById('sidebar_btn').addEventListener('click', function() {
-        document.querySelector('.mobile_sidebar').classList.toggle('open');
-    });
-
-    document.querySelector('#mobile_sidebar_close-btn').addEventListener('click', function() {
-        document.querySelector('.mobile_sidebar').classList.remove('open');
-    });
-
-    
+<script src="/User Profile/profile.js">
 </script>
 </html>

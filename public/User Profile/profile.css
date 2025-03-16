@@ -151,19 +151,6 @@ header a {
     margin-bottom: 70px;
 }
 
-.header button {
-    background-color: #1a1a1a;
-    color: #effe8b;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.header button:hover {
-    background-color: #333;
-}
 
 
 
@@ -223,21 +210,70 @@ input[type="tel"] {
     cursor: pointer;
 }
 
+
+.change_pic_text {
+    color: #effe8b;
+    text-align: center;
+}
+
+
+.remove_photo_btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #effe8b;
+    background-color: #1a1a1a;
+    text-decoration: none;
+    padding: 5px;
+    cursor: pointer;
+    font-size: 2rem;
+    display: none;
+}
+
+.dotted_circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border-style: dotted;
+    display: none;
+    position: relative;
+}
+
 .camera {
     position: absolute;
     top: 50%;
     transform: translate(50%, -50%);
 }
 
-.change_pic_text {
-    position: absolute;
-    color: yellow;
-    font-size: 0.9rem;
-    text-align: center;
+.change_pic.edit-mode .dotted_circle {
+    display: block;
+}
+
+.change_pic.edit-mode .profile_pic {
     display: none;
 }
 
+.profile_pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: hidden;
+}
 
+#editProfileForm button {
+    background-color: #1a1a1a;
+    color: #effe8b;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
 
 
