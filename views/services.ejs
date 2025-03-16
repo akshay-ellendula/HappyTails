@@ -1,226 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services</title>
-    <link rel="stylesheet" href="/services/services.css">
-</head>
-<body>
-    <div class="navbar">
-        <header>
-            <a href="/home" class="badge">Happy Tails</a>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Services</title>
+        <link rel="stylesheet" href="/services/services.css">
+    </head>
+    <body>
+        <div class="navbar">
+            <header>
+                <a href="/home" class="badge">Happy Tails</a>
 
-            <div class="menu">
-                <a href="/pet_accessory">Pet Accessories</a>
-                <a href="/pet_adoption">Shop</a>
-                <a href="/Events">Events</a>
-                <a href="/blog">Blog</a>
-                <% if (user) { %>
+                <div class="menu">
+                    <a href="/pet_accessory">Pet Accessories</a>
+                    <a href="/pet_adoption">Shop</a>
+                    <a href="/Events">Events</a>
+                    <a href="/blog">Blog</a>
+                    <% if (user) { %>
                     <a href="/profile">Profile</a>
-                <% } else { %>
+                    <% } else { %>
                     <a href="/my_login">Login/SignUp</a>
-                <% } %>
-            </div>
+                    <% } %>
+                </div>
 
-            <div class="menu-icon" id="menuIcon">
-                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
-            </div>
+                <div class="menu-icon" id="menuIcon">
+                    <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu"
+                        height="25px" />
+                </div>
 
-            <div class="side-navbar" id="sideNavbar">
-                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
-                <a href="/pet_adoption">Shop</a>
-                <a href="/pet_accessory">Pet Essentials</a>        
-                <a href="/Events">Events</a>
-                <a href="/blog">Blog</a>
-                <% if (user) { %>
+                <div class="side-navbar" id="sideNavbar">
+                    <a href="javascript:void(0)" class="close-btn"
+                        id="closeBtn">&times;</a>
+                    <a href="/pet_adoption">Shop</a>
+                    <a href="/pet_accessory">Pet Essentials</a>
+                    <a href="/Events">Events</a>
+                    <a href="/blog">Blog</a>
+                    <% if (user) { %>
                     <a href="/profile">Profile</a>
-                <% } else { %>
+                    <% } else { %>
                     <a href="/my_login">Login/SignUp</a>
-                <% } %>
-            </div>
-        </header>
-    </div>
-
-    <div class="mobile_filter">
-        <h2 class="filter_btn">Filters</h2>
-    </div>
-
-    <div class="breadcrumb">
-        <a href="/home">Home</a>
-        <span> &gt; </span>
-        <a href="/services">Services</a>
-    </div>
-
-    <div class="main_container">
-        <div class="filter_container">
-            <h2 style="margin-bottom: 40px;">Filter by</h2>
-
-            <div class="services_type filters">
-
-                <div class="heading_button">
-                    <h3>Services Type</h3>
-                    <button class="expand-button">+</button>
+                    <% } %>
                 </div>
-
-                <p class="hidden">
-                    <input type="checkbox" id="Vets" name="Vets" value="Vets">
-                    <label for="Vets">Vet</label>
-                </p>
-
-
-                <p class="hidden">
-                    <input type="checkbox" id="Groomers" name="Groomers" value="Groomers">
-                    <label for="Groomers">Groomers</label>
-                </p>
-
-                <p class="hidden">
-                    <input type="checkbox" id="Pet trainers" name="Pet trainers" value="Pet trainers">
-                    <label for="Pet trainers">Pet trainers</label>
-                </p>
-            </div>
-
+            </header>
         </div>
 
-        <div class="services_container">
-
-            <div class="services_card autoshow">
-
-
-                <img src="/images/pet groomer.jpg" alt="Product Image">
-                <div class="services_card_details">
-                    <h3>Name of Person</h3>
-                    <p>Type of Service: </p>
-                </div>
-
-
-            </div>
-
-
-            <div class="services_card autoshow">
-
-
-                <img src="/images/pet trainer.jpg" alt="Product Image">
-                <div class="services_card_details">
-                    <h3>Name of Person</h3>
-                    <p>Type of Service: </p>
-                </div>
-
-
-            </div>
-
-            
-            <div class="services_card autoshow">
-
-
-                <img src="/images/vet.jpg" alt="Product Image">
-                <div class="services_card_details">
-                    <h3>Name of Person</h3>
-                    <p>Type of Service: </p>
-                </div>
-
-
-            </div>
-
-            <div class="services_card autoshow">
-
-
-                <img src="/images/vet.jpg" alt="Product Image">
-                <div class="services_card_details">
-                    <h3>Name of Person</h3>
-                    <p>Type of Service: </p>
-                </div>
-
-                
-            </div>
-
-
-            <div class="services_card autoshow">
-
-
-                <img src="/images/pet groomer.jpg" alt="Product Image">
-                <div class="services_card_details">
-                    <h3>Name of Person</h3>
-                    <p>Type of Service: </p>
-                </div>
-
-
-            </div>
-
-            
-            <div class="services_card autoshow">
-
-
-                <img src="/images/pet trainer.jpg" alt="Product Image">
-                <div class="services_card_details">
-                    <h3>Name of Person</h3>
-                    <p>Type of Service: </p>
-                </div>
-
-
-            </div>
-
+        <div class="mobile_filter">
+            <h2 class="filter_btn">Filters</h2>
         </div>
-    </div>
 
-    <footer class="footer">
-        <div class="footer-container">
+        <div class="breadcrumb">
+            <a href="/home">Home</a>
+            <span> &gt; </span>
+            <a href="/services">Services</a>
+        </div>
 
-            <div class="footer-column">
-                <h3>Happy Tails</h3>
-                <ul>
-                    <li><a href="/blog">Blog</a></li>
-                    <li><a href="/pet_adoption">Pet Stores</a></li>
-                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
-                </ul>
-            </div>
+        <div class="main_container">
+            <div class="filter_container">
+                <h2 style="margin-bottom: 40px;">Filter by</h2>
 
-            <div class="footer-column">
-                <h3>Services</h3>
-                <ul>
-                    <li><a href="/services">Pet Grooming</a></li>
-                    <li><a href="/services">Dog Training</a></li>
-                    <li><a href="/services">Vet Consultation</a></li>
-                </ul>
-            </div>
+                <div class="services_type filters">
 
-            <div class="footer-column">
-                <h3>Partner</h3>
-                <ul>
-                    <li><a href="/service_login">Become a Groomer</a></li>
-                    <li><a href="/service_login">Become a Dog Trainer</a></li>
-                    <li><a href="/service_login">Become Vet partner</a></li>
-                    <li><a href="/service_login">Pet Store Franchise</a></li>
-                </ul>
-            </div>
+                    <div class="heading_button">
+                        <h3>Services Type</h3>
+                        <button class="expand-button">+</button>
+                    </div>
 
-            <div class="footer-column">
-                <h3>Policy</h3>
-                <ul>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Refund Policy</a></li>
-                    <li><a href="#">Cancellation Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                </ul>
-                <div class="footer-social">
-                    <a href="#"><img
-                            src="/icons/facebook-3-logo-svgrepo-com.svg"
-                            alt="Facebook"></a>
-                    <a href="#"><img
-                            src="/icons/instagram-2016-logo-svgrepo-com.svg"
-                            alt="Instagram"></a>
-                    <a href="#"><img
-                            src="/icons/youtube-icon-logo-svgrepo-com.svg"
-                            alt="YouTube"></a>
+                    <p class="hidden">
+                        <input type="checkbox" id="Vets" name="Vets"
+                            value="Vets">
+                        <label for="Vets">Vet</label>
+                    </p>
+
+                    <p class="hidden">
+                        <input type="checkbox" id="Groomers" name="Groomers"
+                            value="Groomers">
+                        <label for="Groomers">Groomers</label>
+                    </p>
+
+                    <p class="hidden">
+                        <input type="checkbox" id="Pet trainers"
+                            name="Pet trainers" value="Pet trainers">
+                        <label for="Pet trainers">Pet trainers</label>
+                    </p>
                 </div>
+
+            </div>
+
+            <div class="services_container">
+
+                <div class="services_card autoshow">
+                    <a href="/service_details"
+                        style="text-decoration: none; color: black;">
+                        <img src="/images/pet trainer.jpg" alt="Product Image">
+                        <div class="services_card_details">
+                            <h3>Name of Person</h3>
+                            <p>Type of Service: </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="services_card autoshow">
+                    <a href="/service_details"
+                        style="text-decoration: none; color: black;">
+                        <img src="/images/pet trainer.jpg" alt="Product Image">
+                        <div class="services_card_details">
+                            <h3>Name of Person</h3>
+                            <p>Type of Service: </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="services_card autoshow">
+                    <a href="/service_details"
+                        style="text-decoration: none; color: black;">
+                        <img src="/images/pet trainer.jpg" alt="Product Image">
+                        <div class="services_card_details">
+                            <h3>Name of Person</h3>
+                            <p>Type of Service: </p>
+                        </div>
+                    </a>
+                </div>
+                <div class="services_card autoshow">
+                    <a href="/service_details"
+                        style="text-decoration: none; color: black;">
+                        <img src="/images/pet trainer.jpg" alt="Product Image">
+                        <div class="services_card_details">
+                            <h3>Name of Person</h3>
+                            <p>Type of Service: </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="services_card autoshow">
+                    <a href="/service_details"
+                        style="text-decoration: none; color: black;">
+                        <img src="/images/pet trainer.jpg" alt="Product Image">
+                        <div class="services_card_details">
+                            <h3>Name of Person</h3>
+                            <p>Type of Service: </p>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="services_card autoshow">
+                    <a href="/service_details"
+                        style="text-decoration: none; color: black;">
+                        <img src="/images/pet trainer.jpg" alt="Product Image">
+                        <div class="services_card_details">
+                            <h3>Name of Person</h3>
+                            <p>Type of Service: </p>
+                        </div>
+                    </a>
+                </div>
+
             </div>
         </div>
-    </footer>
 
+        <footer class="footer">
+            <div class="footer-container">
 
+                <div class="footer-column">
+                    <h3>Happy Tails</h3>
+                    <ul>
+                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/pet_adoption">Pet Stores</a></li>
+                        <li><a href="/pet_accessory">Online Pet
+                                Accessories</a></li>
+                    </ul>
+                </div>
 
+                <div class="footer-column">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="/services">Pet Grooming</a></li>
+                        <li><a href="/services">Dog Training</a></li>
+                        <li><a href="/services">Vet Consultation</a></li>
+                    </ul>
+                </div>
 
-    <script>
+                <div class="footer-column">
+                    <h3>Partner</h3>
+                    <ul>
+                        <li><a href="/service_login">Become a Groomer</a></li>
+                        <li><a href="/service_login">Become a Dog
+                                Trainer</a></li>
+                        <li><a href="/service_login">Become Vet partner</a></li>
+                        <li><a href="/service_login">Pet Store
+                                Franchise</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Policy</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="#"><img
+                                src="/icons/facebook-3-logo-svgrepo-com.svg"
+                                alt="Facebook"></a>
+                        <a href="#"><img
+                                src="/icons/instagram-2016-logo-svgrepo-com.svg"
+                                alt="Instagram"></a>
+                        <a href="#"><img
+                                src="/icons/youtube-icon-logo-svgrepo-com.svg"
+                                alt="YouTube"></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
 
         document.getElementById('menuIcon').addEventListener('click', function() {
                 document.getElementById('sideNavbar').classList.toggle('open');
@@ -270,4 +263,4 @@
             });
         });
     </script>
-</body>
+    </body>
