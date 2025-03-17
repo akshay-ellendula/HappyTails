@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Product Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link href="/ADMIN/admin-products.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Happy Tails</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/admin-dashboard" class="nav-link">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-user" class="nav-link">
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-service-provider" class="nav-link">
+                        <span>Service Providers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-shop-manager" class="nav-link">
+                        <span>Shop Managers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-events" class="nav-link">
+                        <span>Event Managers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-products" class="nav-link active">
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-appointments" class="nav-link">
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Pet Listings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2>Product Management</h2>
+                <div class="user-info">
+                    <div class="avatar">A</div>
+                    <span>Admin User</span>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Total Products</h3>
+                    <div class="number">289</div>
+                    <div class="change">+5% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>In Stock</h3>
+                    <div class="number">234</div>
+                    <div class="change">+3% from previous month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Low Stock</h3>
+                    <div class="number">21</div>
+                    <div class="change">-12% from last week</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Out of Stock</h3>
+                    <div class="number">34</div>
+                    <div class="change">+2 from yesterday</div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="productSearchInput" placeholder="Search products by name or ID...">
+                </div>
+                <button class="filter-btn" id="filterBtn">Filter Options</button>
+            </div>
+
+            <!-- Product Table -->
+            <div class="user-table-container">
+                <div class="table-header">
+                    <h3>Product List</h3>
+                    <button class="action-btn" id="addProductBtn">+ Add Product</button>
+                </div>
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Added Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <!-- Product data will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn active" onclick="changePage(1)">1</button>
+                    <button class="page-btn" onclick="changePage(2)">2</button>
+                    <button class="page-btn" onclick="changePage(3)">3</button>
+                    <button class="page-btn" onclick="changePage(4)">Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/ADMIN/admin-products.js"></script>
+</body>
+</html>

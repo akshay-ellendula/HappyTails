@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Service Provider Details</title>
+    <link href="/ADMIN/admin-sp-details.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="goBack()">← Back to Providers</button>
+            <div class="action-buttons">
+                <button class="edit-btn" onclick="showEditForm()">Edit Provider</button>
+                <button class="suspend-btn" onclick="suspendProvider()">Suspend Provider</button>
+            </div>
+        </div>
+
+        <div id="providerView">
+            <div class="provider-profile">
+                <div class="provider-avatar" id="providerAvatar">A</div>
+                <h2 class="provider-name" id="providerName">Dr. Amy Johnson</h2>
+                <p class="provider-category" id="providerCategory">Veterinarian</p>
+                <div style="clear: both;"></div>
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Basic Information</h3>
+                <table class="details-table">
+                    <tr>
+                        <td>Provider ID:</td>
+                        <td id="providerId">#PRV002</td>
+                    </tr>
+                    <tr>
+                        <td>Joined Date:</td>
+                        <td id="joinedDate">Jan 5, 2022</td>
+                    </tr>
+                    <tr>
+                        <td>Business Address:</td>
+                        <td id="providerAddress">456 Park Avenue, New York, NY</td>
+                    </tr>
+                    <tr>
+                        <td>Contact:</td>
+                        <td id="providerPhone">(555) 987-6543</td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td id="providerEmail">dr.amy@petcare.com</td>
+                    </tr>
+                    <tr>
+                        <td>Services Offered:</td>
+                        <td id="servicesOffered">Veterinary Check-ups, Pet Vaccinations, Surgery, Emergency Care</td>
+                    </tr>
+                    <tr>
+                        <td>Availability:</td>
+                        <td id="availability">Mon-Fri: 9am-6pm, Sat: 10am-4pm</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Licensing & Certification</h3>
+                <table class="details-table">
+                    <tr>
+                        <td>License Number:</td>
+                        <td id="licenseNumber">NYS-VET-12345</td>
+                    </tr>
+                    <tr>
+                        <td>Issuing Authority:</td>
+                        <td id="issuingAuthority">New York State Department of Education</td>
+                    </tr>
+                    <tr>
+                        <td>Expiration Date:</td>
+                        <td id="expirationDate">Dec 31, 2026</td>
+                    </tr>
+                    <tr>
+                        <td>Certification:</td>
+                        <td id="certification">American Veterinary Medical Association (AVMA)</td>
+                    </tr>
+                    <tr>
+                        <td>Insurance Status:</td>
+                        <td id="insuranceStatus">Active - Policy #INS789012</td>
+                    </tr>
+                </table>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Appointment History</h3>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Appt ID</th>
+                            <th>Client</th>
+                            <th>Service Type</th>
+                            <th>Pet Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>APT1001</td>
+                            <td>John Doe</td>
+                            <td>Veterinary Check-up</td>
+                            <td>Max (Dog)</td>
+                            <td>Mar 5, 2025</td>
+                            <td>Completed</td>
+                        </tr>
+                        <tr>
+                            <td>APT1002</td>
+                            <td>Sarah Smith</td>
+                            <td>Pet Vaccination</td>
+                            <td>Whiskers (Cat)</td>
+                            <td>Mar 8, 2025</td>
+                            <td>Completed</td>
+                        </tr>
+                        <tr>
+                            <td>APT1003</td>
+                            <td>Michael Brown</td>
+                            <td>Surgery - Spay</td>
+                            <td>Luna (Dog)</td>
+                            <td>Mar 10, 2025</td>
+                            <td>Completed</td>
+                        </tr>
+                        <tr>
+                            <td>APT1004</td>
+                            <td>Emily Johnson</td>
+                            <td>Emergency Care</td>
+                            <td>Rocky (Dog)</td>
+                            <td>Mar 12, 2025</td>
+                            <td>Completed</td>
+                        </tr>
+                        <tr>
+                            <td>APT1005</td>
+                            <td>David Wilson</td>
+                            <td>Veterinary Check-up</td>
+                            <td>Oliver (Cat)</td>
+                            <td>Mar 14, 2025</td>
+                            <td>Scheduled</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Service Users</h3>
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Name</th>
+                            <th>Pet</th>
+                            <th>Appt ID</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#USR001</td>
+                            <td>John Doe</td>
+                            <td>Max (Dog)</td>
+                            <td>APT1001</td>
+                            <td>Active</td>
+                        </tr>
+                        <tr>
+                            <td>#USR002</td>
+                            <td>Sarah Smith</td>
+                            <td>Whiskers (Cat)</td>
+                            <td>APT1002</td>
+                            <td>Active</td>
+                        </tr>
+                        <tr>
+                            <td>#USR003</td>
+                            <td>Michael Brown</td>
+                            <td>Luna (Dog)</td>
+                            <td>APT1003</td>
+                            <td>Active</td>
+                        </tr>
+                        <tr>
+                            <td>#USR004</td>
+                            <td>Emily Johnson</td>
+                            <td>Rocky (Dog)</td>
+                            <td>APT1004</td>
+                            <td>Active</td>
+                        </tr>
+                        <tr>
+                            <td>#USR005</td>
+                            <td>David Wilson</td>
+                            <td>Oliver (Cat)</td>
+                            <td>APT1005</td>
+                            <td>Scheduled</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Performance Metrics</h3>
+                <table class="details-table">
+                    <tr>
+                        <td>Average Rating:</td>
+                        <td>4.9/5.0</td>
+                    </tr>
+                    <tr>
+                        <td>Appointments Completed:</td>
+                        <td>1,247 (Last 12 months)</td>
+                    </tr>
+                    <tr>
+                        <td>Cancellation Rate:</td>
+                        <td>2.3%</td>
+                    </tr>
+                    <tr>
+                        <td>On-time Performance:</td>
+                        <td>94.8%</td>
+                    </tr>
+                    <tr>
+                        <td>Client Return Rate:</td>
+                        <td>87.2%</td>
+                    </tr>
+                </table>
+
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Financial Summary</h3>
+                <table class="details-table">
+                    <tr>
+                        <td>Revenue (YTD):</td>
+                        <td>$276,450.00</td>
+                    </tr>
+                    <tr>
+                        <td>Platform Fee:</td>
+                        <td>12.5% ($34,556.25)</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Status:</td>
+                        <td>Current</td>
+                    </tr>
+                    <tr>
+                        <td>Last Payment:</td>
+                        <td>$12,345.67 (March 10, 2025)</td>
+                    </tr>
+                    <tr>
+                        <td>Tax Documents:</td>
+                        <td><a href="#">2024 1099-K Available</a></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Edit Form -->
+        <div id="editForm" class="edit-form">
+            <div class="detail-section">
+                <h3 class="section-title">Edit Provider Information</h3>
+                <form id="providerEditForm">
+                    <div class="form-group">
+                        <label for="editName">Name:</label>
+                        <input type="text" id="editName" value="Dr. Amy Johnson">
+                    </div>
+                    <div class="form-group">
+                        <label for="editCategory">Category:</label>
+                        <select id="editCategory">
+                            <option value="Veterinarian" selected>Veterinarian</option>
+                            <option value="Pet Groomer">Pet Groomer</option>
+                            <option value="Pet Trainer">Pet Trainer</option>
+                            <option value="Pet Sitter">Pet Sitter</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email:</label>
+                        <input type="email" id="editEmail" value="dr.amy@petcare.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="editAddress">Business Address:</label>
+                        <input type="text" id="editAddress" value="456 Park Avenue, New York, NY">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone:</label>
+                        <input type="text" id="editPhone" value="(555) 987-6543">
+                    </div>
+                    <div class="form-group">
+                        <label for="editServices">Services Offered:</label>
+                        <textarea id="editServices" rows="3">Veterinary Check-ups, Pet Vaccinations, Surgery, Emergency Care</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAvailability">Availability:</label>
+                        <input type="text" id="editAvailability" value="Mon-Fri: 9am-6pm, Sat: 10am-4pm">
+                    </div>
+                    <div class="form-group">
+                        <label for="editLicense">License Number:</label>
+                        <input type="text" id="editLicense" value="NYS-VET-12345">
+                    </div>
+                    <div class="form-group">
+                        <label for="editExpiration">License Expiration:</label>
+                        <input type="date" id="editExpiration" value="2026-12-31">
+                    </div>
+                    <button type="button" class="save-btn" onclick="saveProviderChanges()">Save Changes</button>
+                    <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/ADMIN/admin-sp-details.js"></script>
+</body>
+</html>

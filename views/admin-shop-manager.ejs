@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Shop Manager Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link href="/ADMIN/admin-shop-manager.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Happy Tails</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/admin-dashboard" class="nav-link">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-user" class="nav-link">
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-service-provider" class="nav-link">
+                        <span>Service Providers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-shop-manager" class="nav-link active">
+                        <span>Shop Managers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-events" class="nav-link">
+                        <span>Event Managers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-products" class="nav-link">
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-appointments" class="nav-link">
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Pet Listings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2>Shop Manager Management</h2>
+                <div class="user-info">
+                    <div class="avatar">A</div>
+                    <span>Admin User</span>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Total Shop Managers</h3>
+                    <div class="number">127</div>
+                    <div class="change">+5% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Revenue Generated</h3>
+                    <div class="number">$143,250</div>
+                    <div class="change">+9% from previous month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <div class="number">1,482</div>
+                    <div class="change">+11% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Today's Orders</h3>
+                    <div class="number">57</div>
+                    <div class="change">+8 from yesterday</div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="managerSearchInput" placeholder="Search managers by name or shop...">
+                </div>
+                <button class="filter-btn" id="filterBtn">Filter Options</button>
+            </div>
+
+            <!-- Manager Table -->
+            <div class="manager-table-container">
+                <div class="table-header">
+                    <h3>Shop Manager List</h3>
+                </div>
+                <table class="manager-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Shop Name</th>
+                            <th>Email</th>
+                            <th>Joined Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="managerTableBody">
+                        <!-- Manager data will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+                
+                <!-- Pagination -->
+                <div class="pagination">
+                    <button class="page-btn active" onclick="changePage(1)">1</button>
+                    <button class="page-btn" onclick="changePage(2)">2</button>
+                    <button class="page-btn" onclick="changePage(3)">3</button>
+                    <button class="page-btn" onclick="changePage(4)">Next</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="/ADMIN/admin-shop-manager.js"></script>
+</body>
+</html>   
