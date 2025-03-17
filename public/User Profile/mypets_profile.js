@@ -36,6 +36,10 @@ document.getElementById("petForm").addEventListener("submit", function(event) {
         missingFields.push("pet image");
     }
 
+    let uploadedImages = Array.from(document.querySelectorAll(".add_photo.uploaded"));
+    if (uploadedImages.length === 0) {
+        missingFields.push("at least one photo");
+    }
 
 
     if (missingFields.length > 0) {
@@ -181,6 +185,62 @@ function setLocation() {
         event.preventDefault(); // Prevent form submission if location is not set
     }
 }
+
+
+window.onload = function () {
+    populateStates();
+};
+
+
+
+
+
+
+const stateCityData = {
+    "Andhra Pradesh": ["Visakhapatnam", "Vijayawada", "Guntur", "Nellore"],
+    "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Salem"],
+    "Uttar Pradesh": ["Lucknow", "Kanpur", "Agra", "Varanasi"],
+    "West Bengal": ["Kolkata", "Howrah", "Durgapur", "Siliguri"],
+    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur"],
+    "Karnataka": ["Bengaluru", "Mysuru", "Hubli", "Mangalore"],
+    // Add more states as needed
+};
+
+document.getElementById('state').addEventListener('change', function () {
+    const selectedState = this.value;
+    populateCities(selectedState);
+});
+
+// Function to populate the state dropdown
+function populateStates() {
+    const stateSelect = document.getElementById('state');
+    stateSelect.innerHTML = '<option value="" disabled selected>Select a state...</option>';
+    Object.keys(stateCityData).forEach(state => {
+        const option = document.createElement('option');
+        option.value = state;
+        option.textContent = state;
+        stateSelect.appendChild(option);
+    });
+}
+
+// Function to populate the city dropdown based on selected state
+function populateCities(selectedState) {
+    const citySelect = document.getElementById('city');
+    citySelect.innerHTML = '<option value="" disabled selected>Select a city...</option>';
+    
+    if (selectedState && stateCityData[selectedState]) {
+        stateCityData[selectedState].forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        });
+    }
+}
+
+
+
 
 
 document.getElementById('menuIcon').addEventListener('click', function() {

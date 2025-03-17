@@ -100,10 +100,10 @@
                     <hr/>
         
                     <div class="contact-details">
-                        <img src="/icons/profile-circle-svgrepo-com.svg" alt="" height="50">
+                        <img src="<%= user.profile_pic ? user.profile_pic : '/icons/profile-circle-svgrepo-com.svg' %>" alt="" height="50" width="50" style="border-radius: 50%;">
                         <div class="name-number">
-                            <p>Name:</p>
-                            <p>Number: <a href="#">Contact Now</a></p>
+                            <p>Name: <%= user.user_name %></p>
+                            <p>Number: <a href="#"><%= user.user_phone %></a></p>
                         </div>
                     </div>
         
@@ -232,49 +232,49 @@
                             <img class="add_camera" src="/icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
                             <p class="hover_text">Upload Photo</p>
                             <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                            <input class="file_upload_input" type="file" id="pet_photo1" accept="image/*">
+                            <input class="file_upload_input" type="file" id="pet_photo1" name="pet_photos" accept="image/*">
                         </div>
                         <div class="add_photo">
                             <img class="add_camera" src="/icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
                             <p class="hover_text">Upload Photo</p>
                             <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                            <input class="file_upload_input" type="file" id="pet_photo2" accept="image/*" >
+                            <input class="file_upload_input" type="file" id="pet_photo2" name="pet_photos" accept="image/*" >
                         </div>
                         <div class="add_photo">
                             <img class="add_camera" src="/icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
                             <p class="hover_text">Upload Photo</p>
                             <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                            <input class="file_upload_input" type="file" id="pet_photo3" accept="image/*">
+                            <input class="file_upload_input" type="file" id="pet_photo3" name="pet_photos" accept="image/*">
                         </div>
                         <div class="add_photo">
                             <img class="add_camera" src="/icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
                             <p class="hover_text">Upload Photo</p>
                             <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                            <input class="file_upload_input" type="file" id="pet_photo4" accept="image/*">
+                            <input class="file_upload_input" type="file" id="pet_photo4" name="pet_photos" accept="image/*">
                         </div>
                         <div class="add_photo">
                             <img class="add_camera" src="/icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
                             <p class="hover_text">Upload Photo</p>
                             <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                            <input class="file_upload_input" type="file" id="pet_photo5" accept="image/*" >
+                            <input class="file_upload_input" type="file" id="pet_photo5" name="pet_photos" accept="image/*" >
                         </div>
                         <div class="add_photo">
                             <img class="add_camera" src="/icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
                             <p class="hover_text">Upload Photo</p>
                             <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                            <input class="file_upload_input" type="file" id="pet_photo6" accept="image/*" >
+                            <input class="file_upload_input" type="file" id="pet_photo6" name="pet_photos" accept="image/*" >
                         </div>
                         <div class="add_photo">
                             <img class="add_camera" src="/icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
                             <p class="hover_text">Upload Photo</p>
                             <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                            <input class="file_upload_input" type="file" id="pet_photo7" accept="image/*" >
+                            <input class="file_upload_input" type="file" id="pet_photo7" name="pet_photos" accept="image/*" >
                         </div>
                         <div class="add_photo">
                             <img class="add_camera" src="/icons/camera-add-photo-svgrepo-com.svg" alt="add photo" height="50" />
                             <p class="hover_text">Upload Photo</p>
                             <a href="javascript:void(0)" class="remove_photo_btn">&times;</a>
-                            <input class="file_upload_input" type="file" id="pet_photo8" accept="image/*" >
+                            <input class="file_upload_input" type="file" id="pet_photo8" name="pet_photos" accept="image/*" >
                         </div>
                     </div>
                 </div>
@@ -285,6 +285,19 @@
                         <span class="currency">₹</span>
                         <input type="number" name="pet_price" placeholder="Enter price" required>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="state">State:</label>
+                    <select id="state" name="state" required>
+                        <option value="" disabled selected>Select a state...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <select id="city" name="city" required>
+                        <option value="" disabled selected>Select a city...</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
