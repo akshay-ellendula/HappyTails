@@ -52,7 +52,7 @@ const pages = [
     'my_orders', 'my_pets', 'pet_accessory', 'pet_adoption', 'pet_product_details',
     'profile', 'service_analytics', 'service_animal_details', 'service_dashbord',
     'service_details', 'service_history', 'service_profile', 'service_provider_login',
-    'service_signup', 'services', 'store_signup', 'track_package'
+    'service_login', 'services', 'store_signup', 'track_package'
 ];
 
 pages.forEach(page => {
@@ -170,3 +170,4 @@ app.listen(3000, () => {
     console.log('Server is running on port 3000');
     console.log('http://localhost:3000/home');
 });
+//
