@@ -39,7 +39,8 @@
                     <div class="profile-container">
                         <div class="profile-header">
                             <div class="profile-avatar">
-                                <img src="/images/vet.jpg" alt="Profile Picture">
+                                <img src="/images/vet.jpg"
+                                    alt="Profile Picture">
                                 <div class="upload-overlay">
                                     <label for="upload-photo">
                                         <span class="upload-icon">+</span>
@@ -73,12 +74,12 @@
                                         <label for="email">Email</label>
                                         <input type="email" id="email"
                                             name="email"
-                                            value="john.smith@happytails.com">
+                                            value="john.smith@happytails.com" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="phone">Phone Number</label>
                                         <input type="tel" id="phone"
-                                            name="phone" value="(555) 123-4567">
+                                            name="phone" value="9391838479">
                                     </div>
                                     <div class="form-group">
                                         <label
@@ -304,6 +305,8 @@
         if (isValid) {
             alert('Profile updated successfully!');
             // form.submit();
+        }else{
+            alert('Profile not updated successfully!');
         }
     });
     
@@ -327,22 +330,12 @@
             showError(lastName, 'Last name should contain only letters and be at least 2 characters long');
             isValid = false;
         }
-        
-        const email = document.getElementById('email');
-        if (!email.value.trim()) {
-            showError(email, 'Email is required');
-            isValid = false;
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
-            showError(email, 'Please enter a valid email address');
-            isValid = false;
-        }
-        
         const phone = document.getElementById('phone');
         if (!phone.value.trim()) {
             showError(phone, 'Phone number is required');
             isValid = false;
-        } else if (!/^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone.value.trim())) {
-            showError(phone, 'Please enter phone number in format: (555) 123-4567');
+        } else if (!/^[0-9]{10,}$/.test(phone.value.trim())) {
+            showError(phone, 'Please enter phone number in format: 1234567890');        
             isValid = false;
         }
         

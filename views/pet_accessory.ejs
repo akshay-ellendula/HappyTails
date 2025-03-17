@@ -381,7 +381,7 @@
 
     <footer class="footer">
         <div class="footer-container">
-
+    
             <div class="footer-column">
                 <h3>Happy Tails</h3>
                 <ul>
@@ -390,7 +390,7 @@
                     <li><a href="/pet_accessory">Online Pet Accessories</a></li>
                 </ul>
             </div>
-
+    
             <div class="footer-column">
                 <h3>Services</h3>
                 <ul>
@@ -399,17 +399,18 @@
                     <li><a href="/services">Vet Consultation</a></li>
                 </ul>
             </div>
-
+    
             <div class="footer-column">
                 <h3>Partner</h3>
                 <ul>
-                    <li><a href="/service_login">Become a Groomer</a></li>
-                    <li><a href="/service_login">Become a Dog Trainer</a></li>
-                    <li><a href="/service_login">Become Vet partner</a></li>
-                    <li><a href="/service_login">Pet Store Franchise</a></li>
+                    <li><a href="/service_signup">Become a Groomer</a></li>
+                    <li><a href="/service_signup">Become a Dog Trainer</a></li>
+                    <li><a href="/service_signup">Become Vet partner</a></li>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event manager</a></li>
                 </ul>
             </div>
-
+    
             <div class="footer-column">
                 <h3>Policy</h3>
                 <ul>
@@ -418,7 +419,7 @@
                     <li><a href="#">Cancellation Policy</a></li>
                     <li><a href="#">Terms & Conditions</a></li>
                 </ul>
-                <div class="footer-social">
+                <div class="footer-social" >
                     <a href="#"><img
                             src="/icons/facebook-3-logo-svgrepo-com.svg"
                             alt="Facebook"></a>
@@ -435,86 +436,105 @@
 
 
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Menu Toggle for Side Navbar
+            const menuIcon = document.getElementById('menuIcon');
+            const sideNavbar = document.getElementById('sideNavbar');
+            const closeBtn = document.getElementById('closeBtn');
 
-        document.getElementById('menuIcon').addEventListener('click', function() {
-            document.getElementById('sideNavbar').classList.toggle('open');
-        });
+            menuIcon.addEventListener('click', function () {
+                sideNavbar.classList.toggle('open');
+            });
 
-        document.getElementById('closeBtn').addEventListener('click', function() {
-            document.getElementById('sideNavbar').classList.remove('open');
-        });
+            closeBtn.addEventListener('click', function () {
+                sideNavbar.classList.remove('open');
+            });
 
+            // Cart Toggle (Desktop and Mobile)
+            const cart = document.getElementById('cart');
+            const cartBtn = document.getElementById('cart_btn');
+            const mobileCartBtn = document.getElementById('mobile_cart_btn');
+            const cartCloseBtn = document.getElementById('CartcloseBtn');
 
-        document.addEventListener("DOMContentLoaded", function() {
+            cartBtn.addEventListener('click', function () {
+                cart.classList.toggle('open');
+            });
+
+            mobileCartBtn.addEventListener('click', function () {
+                sideNavbar.classList.remove('open');
+                cart.classList.toggle('open');
+            });
+
+            cartCloseBtn.addEventListener('click', function () {
+                cart.classList.remove('open');
+            });
+
+            // Filter Expand/Collapse
             const expandButtons = document.querySelectorAll('.expand-button');
-            
             expandButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const filterSection = this.closest('.filters');
                     const options = filterSection.querySelectorAll('p, #price, .price_labels');
-
                     options.forEach(option => {
-                        if(option.classList.contains('hidden')) {
-                            option.classList.remove('hidden');
-                            this.textContent = '-';
-                        }
-                        else {
-                            option.classList.add('hidden');
-                            this.textContent = '+';
-                        }
+                        option.classList.toggle('hidden');
                     });
+                    this.textContent = this.textContent === '+' ? '-' : '+';
                 });
             });
-        });
 
-        document.querySelectorAll('.product_card').forEach(card => {
-            card.addEventListener('click', function() { 
-                window.location.href = "./pet_product_details";
+            // Product Card Click Redirect
+            document.querySelectorAll('.product_card').forEach(card => {
+                card.addEventListener('click', function () {
+                    window.location.href = "/pet_product_details";
+                });
             });
-        });
 
-
-        document.getElementById('cart_btn').addEventListener('click', function() {
-            document.getElementById('cart').classList.toggle('open');
-        });
-
-        document.getElementById('mobile_cart_btn').addEventListener('click', function() {
-            document.getElementById('sideNavbar').classList.remove('open');
-            document.getElementById('cart').classList.toggle('open');
-        });
-
-        document.getElementById('CartcloseBtn').addEventListener('click', function() {
-            document.getElementById('cart').classList.remove('open');
-        });
-
-        const quantityInput = document.getElementById("quantity");
-        const unitPriceElement = document.getElementById("unit-price");
-        const totalPriceElement = document.getElementById("total-price");
-        
-        quantityInput.addEventListener("input", () => {
-            const unitPrice = parseInt(unitPriceElement.textContent);
-            const quantity = parseInt(quantityInput.value);
-            const totalPrice = unitPrice * quantity;
-            totalPriceElement.textContent = totalPrice;
-        });
-
-
-        document.addEventListener("DOMContentLoaded", function () {
+            // Mobile Filter Toggle
             const filterBtn = document.querySelector(".filter_btn");
             const filters = document.querySelector(".filter_container");
-            const closeBtn = document.createElement("button");
-
-            closeBtn.innerText = "✖ Close";
-            closeBtn.classList.add("close-filters");
-            filters.prepend(closeBtn);
+            const closeFiltersBtn = document.createElement("button");
+            closeFiltersBtn.innerText = "✖ Close";
+            closeFiltersBtn.classList.add("close-filters");
+            filters.prepend(closeFiltersBtn);
 
             filterBtn.addEventListener("click", function () {
                 filters.classList.add("show");
             });
-        
-            closeBtn.addEventListener("click", function () {
+
+            closeFiltersBtn.addEventListener("click", function () {
                 filters.classList.remove("show");
             });
+
+            // Cart Quantity and Price Calculation (Fixed for Multiple Items)
+            const cartProducts = document.querySelectorAll('.cart_product');
+            cartProducts.forEach(product => {
+                const quantityInput = product.querySelector('input[type="number"]');
+                const unitPriceElement = product.querySelector('.unit-price'); // Use class instead of id
+                const totalPriceElement = product.querySelector('.total-price'); // Use class instead of id
+
+                // Ensure unique class names (update HTML below to match)
+                quantityInput.addEventListener("input", function () {
+                    const unitPrice = parseInt(unitPriceElement.textContent) || 0;
+                    const quantity = parseInt(quantityInput.value) || 1;
+                    const totalPrice = unitPrice * quantity;
+                    totalPriceElement.textContent = totalPrice;
+
+                    // Update subtotal
+                    updateSubtotal();
+                });
+            });
+
+            // Function to calculate and update subtotal
+            function updateSubtotal() {
+                let subtotal = 0;
+                document.querySelectorAll('.total-price').forEach(total => {
+                    subtotal += parseInt(total.textContent) || 0;
+                });
+                document.querySelector('.subtotal span').textContent = subtotal;
+            }
+
+            // Initial subtotal calculation
+            updateSubtotal();
         });
     </script>
 </body>

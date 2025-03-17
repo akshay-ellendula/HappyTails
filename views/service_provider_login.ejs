@@ -163,6 +163,57 @@
             color: #1a1a1a;
         }
 
+        /* Alert styles */
+        .alert {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(-10px);
+            position: relative;
+            width: 100%;
+        }
+        
+        .alert.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .alert-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .alert-warning {
+            background-color: #fff8e1;
+            color: #ff8f00;
+            border-left: 4px solid #ff8f00;
+        }
+        
+        .input-error {
+            border: 1px solid #c62828 !important;
+            background-color: #ffebee !important;
+        }
+        
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .navbar {
@@ -217,9 +268,9 @@
     <div class="container">
         <div class="form-container">
             <h1>Service Provider Login</h1>
-            <form>
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            <form id="login-form">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
 
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
@@ -246,5 +297,145 @@
     <footer>
         &copy; 2025 Happy Tails. All rights reserved.
     </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the form element
+        const form = document.getElementById('login-form');
+        
+        // Add submit event listener
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Clear previous alerts
+            clearAlerts();
+            
+            // Get form inputs
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const role = document.getElementById('role');
+            
+            // Validate form
+            let isValid = true;
+            
+            // Email validation
+            if (!email.value.trim()) {
+                showError(email, 'Email is required');
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+                showError(email, 'Please enter a valid email address');
+                isValid = false;
+            }
+            
+            // Password validation
+            if (!password.value) {
+                showError(password, 'Password is required');
+                isValid = false;
+            } else if (password.value.length < 6) {
+                showError(password, 'Password must be at least 6 characters');
+                isValid = false;
+            }
+            
+            // Role validation
+            if (!role.value) {
+                showError(role, 'Please select your role');
+                isValid = false;
+            }
+            
+            // If form is valid, submit it
+            if (isValid) {
+                showSuccess('Login successful! Redirecting...');
+                // Simulate redirect after 2 seconds
+                setTimeout(() => {
+                    alert('Form would be submitted here');
+                    // form.submit(); // Uncomment this in production
+                }, 2000);
+            }
+        });
+        
+        // Function to show error message
+        function showError(input, message) {
+            // Add error class to input
+            input.classList.add('input-error', 'shake');
+            
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-error';
+            alert.textContent = message;
+            
+            // Insert alert after input
+            input.parentNode.insertBefore(alert, input.nextSibling);
+            
+            // Show alert with animation
+            setTimeout(() => {
+                alert.classList.add('show');
+            }, 10);
+            
+            // Remove shake animation after it completes
+            setTimeout(() => {
+                input.classList.remove('shake');
+            }, 500);
+        }
+        
+        // Function to show success message
+        function showSuccess(message) {
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.textContent = message;
+            
+            // Insert alert at the top of the form
+            form.prepend(alert);
+            
+            // Show alert with animation
+            setTimeout(() => {
+                alert.classList.add('show');
+            }, 10);
+        }
+        
+        // Function to clear all alerts
+        function clearAlerts() {
+            // Remove all alert elements
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.remove();
+            });
+            
+            // Remove error classes from inputs
+            document.querySelectorAll('.input-error').forEach(input => {
+                input.classList.remove('input-error');
+            });
+        }
+        
+        // Add input event listeners to clear errors on input
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('input-error');
+                const nextSibling = this.nextSibling;
+                if (nextSibling && nextSibling.classList && nextSibling.classList.contains('alert')) {
+                    nextSibling.remove();
+                }
+            });
+        });
+        
+        // Add functionality to "Forgot password" link
+        document.querySelector('.forgot-password').addEventListener('click', function(e) {
+            e.preventDefault();
+            clearAlerts();
+            
+            // Create alert element
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning';
+            alert.textContent = 'Password reset link has been sent to your email.';
+            
+            // Insert alert at the top of the form
+            form.prepend(alert);
+            
+            // Show alert with animation
+            setTimeout(() => {
+                alert.classList.add('show');
+            }, 10);
+        });
+    });
+    </script>
 </body>
 </html>
