@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - Happy Tails</title>
+    <link href="/SHOP/shop-products.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Happy Tails</div>
+        <div class="user-info" id="profile-trigger">
+            <span>Welcome, Vendor</span>
+            <div class="user-avatar">V</div>
+        </div>
+    </div>
+    
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-header">
+            <div class="profile-name">Vendor Name</div>
+            <div class="profile-email">vendor@example.com</div>
+        </div>
+        <ul class="profile-menu">
+            <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/shop-dashboard" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-products" class="active" data-page="products">Products</a></li>
+                <li><a href="/shop-orders" data-page="orders">Orders</a></li>
+                <li><a href="/shop-customers" data-page="customers">Customers</a></li>
+                <li><a href="/shop-analytics" data-page="analytics">Analytics</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content" id="main-content">
+            <div class="page-container active" id="dashboard-page">
+                <div class="title-bar">
+                    <h1 class="dashboard-title">Products</h1>
+                
+                    <div class="filter-container">
+                        <select id="category">
+                            <option>All Categories</option>
+                            <option>Dogs</option>
+                            <option>Cats</option>
+                            <option>Accessories</option>
+                        </select>
+                
+                        <select id="sort">
+                            <option>Sort by: Newest</option>
+                            <option>Sort by: Oldest</option>
+                            <option>Sort by: Price Low to High</option>
+                            <option>Sort by: Price High to Low</option>
+                        </select>
+                    </div>
+                </div>
+                <hr/>
+                <div class="product-grid">
+                    <div class="product-card">
+                        <button class="edit-button" onclick="editProduct('premium-dog-collar')">✎</button>
+                        <img src="./image.jpeg" alt="Dog Collar">
+                        <h3>Premium Dog Collar</h3>
+                        <p>Dog Accessories</p>
+                        <p class="price">$24.99</p>
+                        <p>Stock: 35 &nbsp; | &nbsp; Sold: 128</p>
+                    </div>
+                
+                    <div class="product-card">
+                        <button class="edit-button" onclick="editProduct('cat-climbing-tree')">✎</button>
+                        <img src="./image.jpeg" alt="Cat Tree">
+                        <h3>Cat Climbing Tree</h3>
+                        <p>Cat Accessories</p>
+                        <p class="price">$89.99</p>
+                        <p>Stock: 12 &nbsp; | &nbsp; Sold: 42</p>
+                    </div>
+                
+                    <div class="product-card">
+                        <button class="edit-button" onclick="editProduct('deluxe-bird-cage')">✎</button>
+                        <img src="./image.jpeg" alt="Bird Cage">
+                        <h3>Deluxe Bird Cage</h3>
+                        <p>Bird Accessories</p>
+                        <p class="price">$64.50</p>
+                        <p>Stock: 8 &nbsp; | &nbsp; Sold: 15</p>
+                    </div>
+                
+                    <div class="product-card">
+                        <button class="edit-button" onclick="editProduct('aquarium-filter-system')">✎</button>
+                        <img src="./image.jpeg" alt="Fish Tank">
+                        <h3>Aquarium Filter System</h3>
+                        <p>Fish Accessories</p>
+                        <p class="price">$45.75</p>
+                        <p>Stock: 22 &nbsp; | &nbsp; Sold: 37</p>
+                    </div>
+                
+                </div>
+            </div>
+            <button class="next-page-btn" onclick="goToNextPage()">+</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile dropdown toggle
+            const profileTrigger = document.getElementById('profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            
+            profileTrigger.addEventListener('click', function() {
+                profileDropdown.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+            
+            
+        });
+
+        function goToNextPage() {
+            window.location.href = "shop-product_form"; 
+        }
+        
+        function editProduct(productId) {
+            window.location.href = "shop-product-edit?id=" + productId;
+        }
+    </script>
+</body>
+</html>

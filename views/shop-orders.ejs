@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - Happy Tails</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="/SHOP/shop-orders.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Happy Tails</div>
+        <div class="user-info" id="profile-trigger">
+            <span>Welcome, Vendor</span>
+            <div class="user-avatar">V</div>
+        </div>
+    </div>
+    
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-header">
+            <div class="profile-name">Vendor Name</div>
+            <div class="profile-email">vendor@example.com</div>
+        </div>
+        <ul class="profile-menu">
+            <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/shop-dashboard" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-products"  data-page="products">Products</a></li>
+                <li><a href="/shop-orders" class="active" data-page="orders">Orders</a></li>
+                <li><a href="/shop-customers" data-page="customers">Customers</a></li>
+                <li><a href="/shop-analytics" data-page="analytics">Analytics</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content" id="main-content">
+            <div class="page-container active" id="dashboard-page">
+                <div class="title-bar">
+                    <h1 class="dashboard-title">Orders</h1>               
+            </div>
+            
+            <div class="order-buttons">
+                <button class="order-btn">All Orders</button>
+                <button class="order-btn">Pending</button>
+                <button class="order-btn">Shipped</button>
+                <button class="order-btn">Delivered</button>
+                <button class="order-btn">Cancelled</button>
+            </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Products</th>
+                        <th>Total</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>#ORD-8945</td>
+                        <td>Michael Brown</td>
+                        <td>Premium Dog Collar, Chew Toy</td>
+                        <td>$64.99</td>
+                        <td>Mar 12, 2025</td>
+                        <td><span class="status delivered">Delivered</span></td>
+                        <td>
+                            <i class="fa fa-eye"  data-page="shop-order-details"></i> 
+                            <i class="fa fa-print"></i> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>#ORD-8944</td>
+                        <td>Sarah Johnson</td>
+                        <td>Cat Climbing Tree, Cat Food Bowl</td>
+                        <td>$128.50</td>
+                        <td>Mar 11, 2025</td>
+                        <td><span class="status processing">Processing</span></td>
+                        <td>
+                            <i class="fa fa-eye" data-page="shop-order-details"></i>  
+                            <i class="fa fa-print"></i>  
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>#ORD-8943</td>
+                        <td>David Williams</td>
+                        <td>Bird Cage, Bird Seed Mix</td>
+                        <td>$87.25</td>
+                        <td>Mar 11, 2025</td>
+                        <td><span class="status delivered">Delivered</span></td>
+                        <td>
+                            <i class="fa fa-eye" data-page="shop-order-details"></i>  
+                            <i class="fa fa-print"></i>  
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>#ORD-8942</td>
+                        <td>Emily Davis</td>
+                        <td>Fish Tank Filter, Aquarium Decorations</td>
+                        <td>$105.99</td>
+                        <td>Mar 10, 2025</td>
+                        <td><span class="status pending">Pending</span></td>
+                        <td>
+                            <i class="fa fa-eye" data-page="shop-order-details"></i>  
+                            <i class="fa fa-print"></i>  
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>#ORD-8941</td>
+                        <td>James Wilson</td>
+                        <td>Puppy Training Pads, Dog Shampoo</td>
+                        <td>$42.75</td>
+                        <td>Mar 10, 2025</td>
+                        <td><span class="status delivered">Delivered</span></td>
+                        <td>
+                            <i class="fa fa-eye" data-page="shop-order-details"></i>  
+                            <i class="fa fa-print"></i>  
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>#ORD-8940</td>
+                        <td>Jennifer Taylor</td>
+                        <td>Hamster Cage, Hamster Wheel</td>
+                        <td>$68.25</td>
+                        <td>Mar 9, 2025</td>
+                        <td><span class="status processing">Processing</span></td>
+                        <td>
+                            <i class="fa fa-eye" data-page="shop-order-details"></i>  
+                            <i class="fa fa-print"></i> 
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+
+        </div>
+    </div>
+
+    <script>
+      
+
+      document.addEventListener('DOMContentLoaded', function() {
+    const profileTrigger = document.getElementById('profile-trigger');
+    const profileDropdown = document.getElementById('profile-dropdown');
+
+    profileTrigger.addEventListener('click', function() {
+        profileDropdown.classList.toggle('active');
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+            profileDropdown.classList.remove('active');
+        }
+    });
+
+    document.querySelectorAll(".fa-eye").forEach(viewBtn => {
+        viewBtn.addEventListener("click", function() {
+            let orderPage = this.getAttribute("data-page"); 
+            if (orderPage) {
+                window.open(orderPage, "_blank"); 
+            }
+        });
+    });
+});
+
+      
+    </script>
+</body>
+</html>
