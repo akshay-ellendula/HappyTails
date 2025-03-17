@@ -52,7 +52,9 @@ const pages = [
     'my_orders', 'my_pets', 'pet_accessory', 'pet_adoption', 'pet_product_details',
     'profile', 'service_analytics', 'service_animal_details', 'service_dashbord',
     'service_details', 'service_history', 'service_profile', 'service_provider_login',
-    'service_login', 'services', 'store_signup', 'track_package'
+    'service_login', 'services', 'store_signup', 'track_package','shop-analytics',
+    'shop-customer-details','shop-customers','shop-dashboard','shop-order-details',
+    'shop-orders','shop-product_form','shop-product-edit','shop-products','shop-profile'
 ];
 
 pages.forEach(page => {
