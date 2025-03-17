@@ -447,9 +447,13 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             const expandButtons = document.querySelectorAll('.expand-button');
-            
+
             expandButtons.forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function(event) {
+                    // Prevent event from bubbling up
+                    event.preventDefault();
+                    event.stopPropagation();
+
                     const filterSection = this.closest('.filters');
                     const options = filterSection.querySelectorAll('p, #price, .price_labels');
 
