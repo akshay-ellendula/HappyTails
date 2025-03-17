@@ -69,7 +69,7 @@ const editButton = document.getElementById('editButton');
         const formData = new FormData(this);
         
         // Add profile picture if one was selected
-        if (selectedImageSrc && selectedImageSrc.startsWith('data:image')) {
+        if (selectedImageSrc) {
             fetch(selectedImageSrc)
                 .then(res => res.blob())
                 .then(blob => {
