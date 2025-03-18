@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager - Analytics</title>
+    <link rel="stylesheet" href="/Events/eventmanager_analytics.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="/eventmanager_profile">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="/eventmanager_dashboard">Home</a></li>
+                <li><a href="/eventmanager_events">Events</a></li>
+                <li><a href="/eventmanager_attendees">Attendees</a></li>
+                <li><a href="/eventmanager_profile">Profile</a></li>
+                <li><a href="/eventmanager_analytics" class="active">Analytics</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="page-container active">
+                <div class="title-bar">
+                    <h1 class="dashboard-title">Analytics</h1>
+                </div>
+
+                <div class="time-filter">
+                    <button class="active">All Time</button>
+                    <button>Today</button>
+                    <button>This Week</button>
+                    <button>This Month</button>
+                    <button>Custom</button>
+                </div>
+
+                <h2 class="section-header">Revenue</h2>
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h2>Revenue Overview</h2>
+                        <div class="stat">
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value">$24,850.00</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Today</div>
+                            <div class="stat-value">$1,250.00 <span class="indicator up">+15%</span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Week</div>
+                            <div class="stat-value">$5,320.00 <span class="indicator up">+8%</span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Month</div>
+                            <div class="stat-value">$18,650.00 <span class="indicator up">+12%</span></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h2>Average Service Value</h2>
+                        <div class="stat">
+                            <div class="stat-label">Overall Average</div>
+                            <div class="stat-value">$48.75</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Today</div>
+                            <div class="stat-value">$52.10 <span class="indicator up">+7%</span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Week</div>
+                            <div class="stat-value">$50.25 <span class="indicator up">+3%</span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Month</div>
+                            <div class="stat-value">$49.50 <span class="indicator up">+1.5%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-header">Customers</h2>
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h2>Customer Overview</h2>
+                        <div class="stat">
+                            <div class="stat-label">Total Customers</div>
+                            <div class="stat-value">346</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">New Today</div>
+                            <div class="stat-value">14 <span class="indicator up">+16%</span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">New This Week</div>
+                            <div class="stat-value">48 <span class="indicator up">+10%</span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">New This Month</div>
+                            <div class="stat-value">125 <span class="indicator up">+22%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

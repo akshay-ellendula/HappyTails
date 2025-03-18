@@ -1,0 +1,43 @@
+/* attendees_events.css */
+.dashboard-container {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.appointments {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.appointment-card {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time-badge {
+    background: #effe8b;
+    color: #1a4d70;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.time-badge.urgent {
+    background: #ff4444;
+    color: #ffffff;
+}
+
+.attendee-count {
+    background: #effe8b;
+    color: #1a4d70;
+    padding: 5px;
+    border-radius: 4px;
+    text-align: center;
+}

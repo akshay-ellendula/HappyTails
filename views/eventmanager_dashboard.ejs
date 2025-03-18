@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager - Event Management Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap">
+    <link rel="stylesheet" href="/Events/eventmanager_dashboard.css">
+</head>
+
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="/eventmanager_profile">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="/eventmanager_dashboard" class="active">Home</a></li>
+                <li><a href="/eventmanager_events">Events</a></li>
+                <li><a href="/eventmanager_attendees">Attendees</a></li>
+                <li><a href="/eventmanager_profile">Profile</a></li>
+                <li><a href="/eventmanager_analytics">Analytics</a></li>
+            </ul>
+        </div>
+
+        <!-- Right Side Content -->
+        <div class="main-content">
+            <div class="welcome-section">
+                <h1>Event Manager Dashboard</h1>
+              </div>
+            <!-- Overview Metrics -->
+            <div class="overview">
+                <div class="card">
+                    <h3>Total Earnings</h3>
+                    <p>9,500</p>
+                </div>
+                <div class="card">
+                    <h3>Total Bookings</h3>
+                    <p>25,212</p>
+                </div>
+                <div class="card">
+                    <h3>Total Events</h3>
+                    <p>645</p>
+                </div>
+                <button class="new-event-btn" onclick="openEventForm()">New Event</button>
+            </div>
+
+            <!-- Ongoing and Upcoming Events -->
+            <div class="events-section">
+                <!-- Ongoing Events -->
+                <div class="ongoing-events">
+                    <h2>Ongoing Events <a href="#" class="view-all" data-section="ongoing">View all</a></h2>
+                    <div class="event-card" onclick="showEventDetails('Musical Show', 900, 4500)">
+                        <img src="images/pet fancy dress.webp" alt="Musical Show">
+                        <div class="event-details">
+                            <h3>Fancy Dress Show</h3>
+                            <p>900 Attendees</p>
+                            <p>Started 5 PM</p>
+                        </div>
+                    </div>
+                    <div class="event-card" onclick="showEventDetails('Talent Show', 100, 500)">
+                        <img src="images/dog running.webp" alt="Talent Show">
+                        <div class="event-details">
+                            <h3>Dog Run</h3>
+                            <p>100 Attendees</p>
+                            <p>Started 10 AM</p>
+                        </div>
+                    </div>
+                    <div class="event-card" onclick="showEventDetails('Dancing Competition', 85, 425)">
+                        <img src="images/pet dancing.jpeg" alt="Dancing Competition">
+                        <div class="event-details">
+                            <h3>Dancing Competition</h3>
+                            <p>85 Attendees</p>
+                            <p>Started 1 PM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="upcoming-events">
+                    <h2>Upcoming Events <a href="#" class="view-all" data-section="upcoming">View all</a></h2>
+                    <div class="event-card" onclick="showEventDetails('Art Exhibition', 850, 4250)">
+                        <img src="images/dog agility.jpeg" alt="Art Exhibition">
+                        <div class="event-details">
+                            <h3>Dog Agility Competitions</h3>
+                            <p>March 17, Sun 9:30 AM</p>
+                            <p>85% Booked</p>
+                        </div>
+                    </div>
+                    <div class="event-card" onclick="showEventDetails('Ballet Dance', 740, 3700)">
+                        <img src="images/pet festival.jpeg" alt="Ballet Dance">
+                        <div class="event-details">
+                            <h3>Pet Festival</h3>
+                            <p>March 24, 11:00 AM</p>
+                            <p>74% Booked</p>
+                        </div>
+                    </div>
+                    <div class="event-card" onclick="showEventDetails('La Foresta', 780, 3900)">
+                        <img src="images/pet grooming competition.jpeg" alt="La Foresta">
+                        <div class="event-details">
+                            <h3>Pet Grooming Competition</h3>
+                            <p>April 01, Wed 6:00 PM</p>
+                            <p>78% Booked</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendee List -->
+            <div class="attendee-list">
+                <h2>All Attendee List <a href="#" class="view-all" data-section="attendees">View all</a></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone No</th>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Seats</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendeeTable">
+                        <tr>
+                            <td>Christopher Blake</td>
+                            <td>+946776866876</td>
+                            <td>Musical Show</td>
+                            <td>Feb 25, 2025</td>
+                            <td>5</td>
+                            <td>
+                                <button class="edit-btn">Edit</button>
+                                <button class="delete-btn">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Peter Roy</td>
+                            <td>+943787457878</td>
+                            <td>Talent Show</td>
+                            <td>Feb 20, 2025</td>
+                            <td>1</td>
+                            <td>
+                                <button class="edit-btn">Edit</button>
+                                <button class="delete-btn">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Jake Paul</td>
+                            <td>+941779828690</td>
+                            <td>Art Exhibition</td>
+                            <td>Mar 09, 2025</td>
+                            <td>3</td>
+                            <td>
+                                <button class="edit-btn">Edit</button>
+                                <button class="delete-btn">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Form Modal -->
+    <div class="modal" id="eventFormModal">
+        <div class="modal-content" style="margin-top: 25vh;
+        margin-left: 25vw;
+        width: 50vw;
+        height: 50vh;
+        ">
+            <span class="close-btn" onclick="closeEventForm()">×</span>
+            <h2>Create New Event</h2>
+            <form id="eventForm" onsubmit="submitEvent(event)">
+                <div class="form-group">
+                    <label for="eventPhoto">Event Photo</label>
+                    <input type="file" id="eventPhoto" accept="image" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventName">Event Name</label>
+                    <input type="text" id="eventName" required>
+                </div>
+                <div class="form-group">
+                    <label for="aboutEvent">About the Event</label>
+                    <textarea id="aboutEvent" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Event Guide</label>
+                    <div class="event-guide">
+                        <input type="text" id="language" placeholder="Language" required>
+                        <input type="text" id="duration" placeholder="Duration (e.g., 2h)" required>
+                        <input type="text" id="tickets" placeholder="Ticket Price" required>
+                        <input type="number" id="ageLimit" placeholder="Age Limit" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="instructions">Instructions</label>
+                    <textarea id="instructions" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="venue">Venue</label>
+                    <input type="text" id="venue" required>
+                </div>
+                <div class="form-group">
+                    <label for="terms">Terms and Conditions</label>
+                    <textarea id="terms" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Pets">Music</option>
+                        <option value="Cats">Dance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateTime">Date and Time</label>
+                    <input type="datetime-local" id="dateTime" required>
+                </div>
+                <button type="submit" class="book_btn">Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div class="modal" id="eventDetailsModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEventDetails()">×</span>
+            <h2 id="eventDetailsTitle"></h2>
+            <p><strong>Tickets Sold:</strong> <span id="ticketsSold"></span></p>
+            <p><strong>Revenue Generated:</strong> $<span id="revenueGenerated"></span></p>
+        </div>
+    </div>
+
+    <!-- Edit Attendee Modal -->
+    <div class="modal" id="editAttendeeModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditAttendeeModal()">×</span>
+            <h2>Edit Attendee</h2>
+            <form id="editAttendeeForm" onsubmit="saveAttendee(event)">
+                <div class="form-group">
+                    <label for="editName">Name</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone No</label>
+                    <input type="text" id="editPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEvent">Event</label>
+                    <input type="text" id="editEvent" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDate">Date</label>
+                    <input type="text" id="editDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editSeats">Seats</label>
+                    <input type="number" id="editSeats" required>
+                </div>
+                <button type="submit" class="book_btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Define these functions globally so they're accessible from HTML onclick attributes
+        function openEventForm() {
+            document.getElementById('eventFormModal').style.display = 'block';
+        }
+
+        function closeEventForm() {
+            document.getElementById('eventFormModal').style.display = 'none';
+        }
+
+        function showEventDetails(eventName, ticketsSold, revenue) {
+            document.getElementById('eventDetailsTitle').textContent = eventName;
+            document.getElementById('ticketsSold').textContent = ticketsSold;
+            document.getElementById('revenueGenerated').textContent = revenue.toFixed(2);
+            document.getElementById('eventDetailsModal').style.display = 'block';
+        }
+
+        function closeEventDetails() {
+            document.getElementById('eventDetailsModal').style.display = 'none';
+        }
+
+        function closeEditAttendeeModal() {
+            document.getElementById('editAttendeeModal').style.display = 'none';
+        }
+
+        function submitEvent(event) {
+            event.preventDefault();
+            const eventName = document.getElementById('eventName').value;
+            const aboutEvent = document.getElementById('aboutEvent').value;
+            const language = document.getElementById('language').value;
+            const duration = document.getElementById('duration').value;
+            const tickets = document.getElementById('tickets').value;
+            const ageLimit = document.getElementById('ageLimit').value;
+            const instructions = document.getElementById('instructions').value;
+            const venue = document.getElementById('venue').value;
+            const terms = document.getElementById('terms').value;
+            const category = document.getElementById('category').value;
+            const dateTime = document.getElementById('dateTime').value;
+
+            console.log({
+                eventName,
+                aboutEvent,
+                language,
+                duration,
+                tickets,
+                ageLimit,
+                instructions,
+                venue,
+                terms,
+                category,
+                dateTime
+            });
+
+            alert('Event created successfully!');
+            closeEventForm();
+            document.getElementById('eventForm').reset();
+        }
+
+        function saveAttendee(event) {
+            event.preventDefault();
+            if (currentRow) {
+                currentRow.cells[0].textContent = document.getElementById('editName').value;
+                currentRow.cells[1].textContent = document.getElementById('editPhone').value;
+                currentRow.cells[2].textContent = document.getElementById('editEvent').value;
+                currentRow.cells[3].textContent = document.getElementById('editDate').value;
+                currentRow.cells[4].textContent = document.getElementById('editSeats').value;
+                alert('Attendee updated successfully!');
+                closeEditAttendeeModal();
+                document.getElementById('editAttendeeForm').reset();
+            }
+        }
+
+        // Global variable
+        let currentRow = null;
+
+        // Add event listeners when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add event listeners for the edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    currentRow = this.closest('tr');
+                    document.getElementById('editName').value = currentRow.cells[0].textContent;
+                    document.getElementById('editPhone').value = currentRow.cells[1].textContent;
+                    document.getElementById('editEvent').value = currentRow.cells[2].textContent;
+                    document.getElementById('editDate').value = currentRow.cells[3].textContent;
+                    document.getElementById('editSeats').value = currentRow.cells[4].textContent;
+                    document.getElementById('editAttendeeModal').style.display = 'block';
+                });
+            });
+
+            document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (confirm('Are you sure you want to delete this attendee?')) {
+                        this.closest('tr').remove();
+                        alert('Attendee deleted successfully');
+                    }
+                });
+            });
+
+            // Also add an event listener for the new event button (as a backup)
+            document.querySelector('.new-event-btn').addEventListener('click', openEventForm);
+
+            // Add event listeners for view all buttons
+            document.querySelectorAll('.view-all').forEach(button => {
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    alert(`Viewing all ${section}...`);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

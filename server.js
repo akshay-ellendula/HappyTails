@@ -77,9 +77,8 @@ const pages = [
     'shop-orders','shop-product_form','shop-product-edit','shop-products','shop-profile',
     'admin-appointments','admin-dashboard','admin-em-details','admin-events',
     'admin-product-details','admin-products','admin-service-provider','admin-shop-manager',
-    'admin-sm-details','admin-sp-details','admin-user-details','admin-user', 'admin_login'
-
-
+    'admin-sm-details','admin-sp-details','admin-user-details','admin-user', 'admin_login','eventmanager_dashboard',    
+    'eventmanager_analytics','eventmanager_events','eventmanager_profile','eventmanager_attendees',
 ];
 
 pages.forEach(page => {
@@ -276,4 +275,5 @@ app.listen(3000, () => {
     console.log('http://localhost:3000/service_provider_login');
     console.log('http://localhost:3000/shop-dashboard');
     console.log('http://localhost:3000/admin_login');
+    console.log('http://localhost:3000/eventmanager_dashboard');
 });
