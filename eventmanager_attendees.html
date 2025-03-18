@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager - Attendees</title>
+    <link rel="stylesheet" href="services/vet_dashboard.css">
+    <link rel="stylesheet" href="eventmanager_attendees.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="home.html" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="eventmanager_profile.html">Profile</a>
+                <a href="#">Logout</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="eventmanager_dashboard.html">Home</a></li>
+                <li><a href="eventmanager_events.html">Events</a></li>
+                <li><a href="eventmanager_attendees.html" class="active">Attendees</a></li>
+                <li><a href="eventmanager_profile.html">Profile</a></li>
+                <li><a href="eventmanager_analytics.html">Analytics</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="welcome-section">
+                <h1>Attendees</h1>
+            </div>
+
+            <div class="section">
+                <h2 style="margin-bottom: 10px;">All Registered Attendees (Past & Ongoing)</h2>
+                <div class="appointments">
+                    <div class="appointment-card">
+                        <div class="time-badge">09:30 AM</div>
+                        <h3>John Doe</h3>
+                        <p><strong>Email:</strong> [email protected]</p>
+                        <p><strong>Event:</strong> Concert Night (Feb 15, 2025)</p>
+                        <p><strong>Registration Date:</strong> Feb 10, 2025</p>
+                        <div class="card-actions">
+                            <div class="attendee-count">Total: 500</div>
+                        </div>
+                    </div>
+                    <div class="appointment-card">
+                        <div class="time-badge">11:00 AM</div>
+                        <h3>Jane Smith</h3>
+                        <p><strong>Email:</strong> [email protected]</p>
+                        <p><strong>Event:</strong> Charity Gala (Jan 20, 2025)</p>
+                        <p><strong>Registration Date:</strong> Jan 15, 2025</p>
+                        <div class="card-actions">
+                            <div class="attendee-count">Total: 800</div>
+                        </div>
+                    </div>
+                    <div class="appointment-card">
+                        <div class="time-badge urgent">01:30 PM</div>
+                        <h3>Mike Johnson</h3>
+                        <p><strong>Email:</strong> [email protected]</p>
+                        <p><strong>Event:</strong> Musical Show (Mar 17, 2025)</p>
+                        <p><strong>Registration Date:</strong> Mar 15, 2025</p>
+                        <div class="card-actions">
+                            <div class="attendee-count">Total: 900</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 style="margin-bottom: 10px;">Upcoming Events Attendees</h2>
+                <div class="appointments">
+                    <div class="appointment-card">
+                        <div class="time-badge">09:30 AM</div>
+                        <h3>Alice Brown</h3>
+                        <p><strong>Email:</strong> [email protected]</p>
+                        <p><strong>Event:</strong> Art Exhibition (Mar 20, 2025)</p>
+                        <p><strong>Registration Date:</strong> Mar 16, 2025</p>
+                        <div class="card-actions">
+                            <div class="attendee-count">Registered: 50</div>
+                        </div>
+                    </div>
+                    <div class="appointment-card">
+                        <div class="time-badge">11:00 AM</div>
+                        <h3>Bob Wilson</h3>
+                        <p><strong>Email:</strong> [email protected]</p>
+                        <p><strong>Event:</strong> Ballet Dance (Mar 24, 2025)</p>
+                        <p><strong>Registration Date:</strong> Mar 17, 2025</p>
+                        <div class="card-actions">
+                            <div class="attendee-count">Registered: 20</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let isDarkMode = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const page = link.getAttribute('data-page');
+                link.classList.remove('active');
+                if ((page === 'Home' && currentPage === 'index.html') ||
+                    (page === 'Events' && currentPage === 'events.html') ||
+                    (page === 'Attendees' && currentPage === 'attendees.html') ||
+                    (page === 'Profile' && currentPage === 'profile.html') ||
+                    (page === 'Analytics' && currentPage === 'analytics.html')) {
+                    link.classList.add('active');
+                }
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const page = link.getAttribute('data-page');
+                    if (page === 'Home' || page === 'Events' || page === 'Attendees' || page === 'Profile' || page === 'Analytics') {
+                        if (page === 'Home') window.location.href = 'events_registration.html';
+                        if (page === 'Events') window.location.href = 'eventsmanager_events.html';
+                        if (page === 'Attendees') window.location.href = 'attendees_events.html';
+                        if (page === 'Profile') window.location.href = 'event_manager_profile.html';
+                        if (page === 'Analytics') window.location.href = 'analytics_eventmanager.html';
+                        return;
+                    }
+                    e.preventDefault();
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    alert(`Navigating to ${page} page...`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
