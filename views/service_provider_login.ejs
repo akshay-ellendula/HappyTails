@@ -6,6 +6,7 @@
     <title>HappyTails - Service Provider Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <style>
+        /* Existing styles unchanged */
         * {
             padding: 0;
             margin: 0;
@@ -163,7 +164,6 @@
             color: #1a1a1a;
         }
 
-        /* Alert styles */
         .alert {
             padding: 10px 15px;
             border-radius: 5px;
@@ -214,48 +214,19 @@
             20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
 
-        /* Responsive design */
         @media (max-width: 768px) {
-            .navbar {
-                margin: 0;
-            }
-            
-            header {
-                padding: 1rem;
-            }
-            
-            header a.badge {
-                font-size: 1.7rem;
-            }
-            
-            .container {
-                width: 95%;
-                margin: 10px auto;
-                min-height: 450px;
-            }
-            
-            .form-container {
-                padding: 0 20px;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
+            .navbar { margin: 0; }
+            header { padding: 1rem; }
+            header a.badge { font-size: 1.7rem; }
+            .container { width: 95%; margin: 10px auto; min-height: 450px; }
+            .form-container { padding: 0 20px; }
+            h1 { font-size: 1.5rem; }
         }
 
         @media (max-width: 480px) {
-            header a.badge {
-                font-size: 1.5rem;
-            }
-            
-            button {
-                width: 100%;
-                padding: 12px 20px;
-            }
-            
-            h1 {
-                font-size: 1.3rem;
-            }
+            header a.badge { font-size: 1.5rem; }
+            button { width: 100%; padding: 12px 20px; }
+            h1 { font-size: 1.3rem; }
         }
     </style>
 </head>
@@ -278,10 +249,6 @@
                 <label for="role">Role</label>
                 <select id="role" name="role" required>
                     <option value="" disabled selected>Select your role</option>
-                    <option value="Admin">Admin</option>
-                    <option value="vet">Veterinarian</option>
-                    <option value="groomer">Groomer</option>
-                    <option value="trainer">Trainer</option>
                     <option value="event-manager">Event Manager</option>
                     <option value="store-manager">Store Manager</option>
                 </select>
@@ -300,25 +267,18 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Get the form element
         const form = document.getElementById('login-form');
-        
-        // Add submit event listener
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            
-            // Clear previous alerts
             clearAlerts();
-            
-            // Get form inputs
+
             const email = document.getElementById('email');
             const password = document.getElementById('password');
             const role = document.getElementById('role');
-            
-            // Validate form
             let isValid = true;
-            
-            // Email validation
+
+            // Client-side validation
             if (!email.value.trim()) {
                 showError(email, 'Email is required');
                 isValid = false;
@@ -326,8 +286,7 @@
                 showError(email, 'Please enter a valid email address');
                 isValid = false;
             }
-            
-            // Password validation
+
             if (!password.value) {
                 showError(password, 'Password is required');
                 isValid = false;
@@ -335,78 +294,84 @@
                 showError(password, 'Password must be at least 6 characters');
                 isValid = false;
             }
-            
-            // Role validation
+
             if (!role.value) {
                 showError(role, 'Please select your role');
                 isValid = false;
             }
-            
-            // If form is valid, submit it
-            if (isValid) {
-                showSuccess('Login successful! Redirecting...');
-                // Simulate redirect after 2 seconds
-                setTimeout(() => {
-                    alert('Form would be submitted here');
-                    // form.submit(); // Uncomment this in production
-                }, 2000);
-            }
+
+            if (!isValid) return;
+
+            // Prepare form data
+            const formData = {
+                email: email.value.trim(),
+                password: password.value,
+                role: role.value
+            };
+
+            // Send AJAX request
+            fetch('/service-provider-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showSuccess(data.message || 'Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 2000);
+                } else {
+                    if (data.message === 'Invalid email or password') {
+                        showError(email, data.message);
+                        showError(password, '');
+                    } else {
+                        showError(null, data.message || 'An error occurred. Please try again.');
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError(null, 'An error occurred while logging in. Please try again.');
+            });
         });
-        
-        // Function to show error message
+
+        // Error display function
         function showError(input, message) {
-            // Add error class to input
-            input.classList.add('input-error', 'shake');
-            
-            // Create alert element
-            const alert = document.createElement('div');
-            alert.className = 'alert alert-error';
-            alert.textContent = message;
-            
-            // Insert alert after input
-            input.parentNode.insertBefore(alert, input.nextSibling);
-            
-            // Show alert with animation
-            setTimeout(() => {
-                alert.classList.add('show');
-            }, 10);
-            
-            // Remove shake animation after it completes
-            setTimeout(() => {
-                input.classList.remove('shake');
-            }, 500);
+            if (input) {
+                input.classList.add('input-error', 'shake');
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-error';
+                alert.textContent = message;
+                input.parentNode.insertBefore(alert, input.nextSibling);
+                setTimeout(() => alert.classList.add('show'), 10);
+                setTimeout(() => input.classList.remove('shake'), 500);
+            } else {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-error';
+                alert.textContent = message;
+                form.prepend(alert);
+                setTimeout(() => alert.classList.add('show'), 10);
+            }
         }
-        
-        // Function to show success message
+
+        // Success display function
         function showSuccess(message) {
-            // Create alert element
             const alert = document.createElement('div');
             alert.className = 'alert alert-success';
             alert.textContent = message;
-            
-            // Insert alert at the top of the form
             form.prepend(alert);
-            
-            // Show alert with animation
-            setTimeout(() => {
-                alert.classList.add('show');
-            }, 10);
+            setTimeout(() => alert.classList.add('show'), 10);
         }
-        
-        // Function to clear all alerts
+
+        // Clear alerts function
         function clearAlerts() {
-            // Remove all alert elements
-            document.querySelectorAll('.alert').forEach(alert => {
-                alert.remove();
-            });
-            
-            // Remove error classes from inputs
-            document.querySelectorAll('.input-error').forEach(input => {
-                input.classList.remove('input-error');
-            });
+            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+            document.querySelectorAll('.input-error').forEach(input => input.classList.remove('input-error'));
         }
-        
-        // Add input event listeners to clear errors on input
+
+        // Clear errors on input
         document.querySelectorAll('input, select').forEach(input => {
             input.addEventListener('input', function() {
                 this.classList.remove('input-error');
@@ -416,24 +381,16 @@
                 }
             });
         });
-        
-        // Add functionality to "Forgot password" link
+
+        // Forgot password (placeholder)
         document.querySelector('.forgot-password').addEventListener('click', function(e) {
             e.preventDefault();
             clearAlerts();
-            
-            // Create alert element
             const alert = document.createElement('div');
             alert.className = 'alert alert-warning';
             alert.textContent = 'Password reset link has been sent to your email.';
-            
-            // Insert alert at the top of the form
             form.prepend(alert);
-            
-            // Show alert with animation
-            setTimeout(() => {
-                alert.classList.add('show');
-            }, 10);
+            setTimeout(() => alert.classList.add('show'), 10);
         });
     });
     </script>

@@ -10,10 +10,7 @@
     <div class="navbar">
         <header>
             <a href="/home" class="badge">Happy Tails</a>
-
             <div class="menu">
-                <a href="/services">Services</a>
-                <a href="/pet_adoption">Shop</a>
                 <a href="/Events">Events</a>
                 <a href="/blog">Blog</a>
                 <a href="#" id="cart_btn">Cart</a>
@@ -23,15 +20,11 @@
                     <a href="/my_login">Login/SignUp</a>
                 <% } %>
             </div>
-
             <div class="menu-icon" id="menuIcon">
                 <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
             </div>
-
             <div class="side-navbar" id="sideNavbar">
-                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
-                <a href="/services">Services</a>
-                <a href="/pet_adoption">Pet Shop</a>        
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">×</a>       
                 <a href="/Events">Events</a>
                 <a href="/blog">Blog</a>
                 <a href="#" id="mobile_cart_btn">Cart</a>
@@ -41,15 +34,13 @@
                     <a href="/my_login">Login/SignUp</a>
                 <% } %>
             </div>
-
             <div id="cart" class="cart">
                 <div class="cart_wrapper">
                     <div class="cart_header">
                         <h2>Cart</h2>
-                        <a href="javascript:void(0)" class="close-btn" id="CartcloseBtn">&times;</a>
+                        <a href="javascript:void(0)" class="close-btn" id="CartcloseBtn">×</a>
                     </div>
                     <hr>
-                    
                     <div class="cart_product_container">
                         <div class="cart_product">
                             <div class="cart_image">
@@ -60,96 +51,18 @@
                                     <h3>Product Name</h3>
                                     <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
                                 </div>
-                                <p>Price: ₹<span id="unit-price">2500</span></p>
-                                <p>Color : Brown</p>
-        
+                                <p>Price: ₹<span class="unit-price">2500</span></p>
+                                <p>Color: Brown</p>
                                 <div class="quantity_section">
-                                    <input type="number" id="quantity" min="1" value="1" />
-                                    <p>₹<span id="total-price">2500</span></p>
+                                    <input type="number" class="quantity" min="1" value="1" />
+                                    <p>₹<span class="total-price">2500</span></p>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="cart_product">
-                            <div class="cart_image">
-                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
-                            </div>
-                            <div class="cart_product_details">
-                                <div class="name_header">
-                                    <h3>Product Name</h3>
-                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
-                                </div>
-                                <p>Price: ₹<span id="unit-price">2500</span></p>
-                                <p>Color : Brown</p>
-        
-                                <div class="quantity_section">
-                                    <input type="number" id="quantity" min="1" value="1" />
-                                    <p>₹<span id="total-price">2500</span></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="cart_product">
-                            <div class="cart_image">
-                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
-                            </div>
-                            <div class="cart_product_details">
-                                <div class="name_header">
-                                    <h3>Product Name</h3>
-                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
-                                </div>
-                                <p>Price: ₹<span id="unit-price">2500</span></p>
-                                <p>Color : Brown</p>
-        
-                                <div class="quantity_section">
-                                    <input type="number" id="quantity" min="1" value="1" />
-                                    <p>₹<span id="total-price">2500</span></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="cart_product">
-                            <div class="cart_image">
-                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
-                            </div>
-                            <div class="cart_product_details">
-                                <div class="name_header">
-                                    <h3>Product Name</h3>
-                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
-                                </div>
-                                <p>Price: ₹<span id="unit-price">2500</span></p>
-                                <p>Color : Brown</p>
-        
-                                <div class="quantity_section">
-                                    <input type="number" id="quantity" min="1" value="1" />
-                                    <p>₹<span id="total-price">2500</span></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="cart_product">
-                            <div class="cart_image">
-                                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="product image" />
-                            </div>
-                            <div class="cart_product_details">
-                                <div class="name_header">
-                                    <h3>Product Name</h3>
-                                    <img src="/icons/dustbin.svg" alt="dustbin" height="20" />
-                                </div>
-                                <p>Price: ₹<span id="unit-price">2500</span></p>
-                                <p>Color : Brown</p>
-        
-                                <div class="quantity_section">
-                                    <input type="number" id="quantity" min="1" value="1" />
-                                    <p>₹<span id="total-price">2500</span></p>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Add more cart products as needed -->
                     </div>
-                    
                     <div class="subtotal">
                         <hr>
-
                         <div class="subtotal_details">
                             <h3>Subtotal</h3>
                             <p>₹<span>2500</span></p>
@@ -159,7 +72,6 @@
                             <button>Checkout</button>
                         </div>
                     </div>
-                    
                 </div>
             </div>
         </header>
@@ -171,7 +83,7 @@
 
     <div class="breadcrumb">
         <a href="/home">Home</a>
-        <span> &gt; </span>
+        <span> > </span>
         <a href="/pet_accessory">Accessories</a>
     </div>
 
@@ -297,120 +209,41 @@
             <button type="submit">Apply Filter</button>
         </form>
 
-
         <div class="product_container">
-
-            <div class="product_card autoshow">
-
-
-                <img src="/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg" alt="Product Image">
-                <div class="product_card_details">
-                    <h3>Product name</h3>
-                    <p>Product Price</p>
+            <% products.forEach(product => { %>
+                <div class="product_card autoshow" data-product-id="<%= product.id %>">
+                    <img src="<%= product.image_path || '/images/default-product.jpg' %>" alt="<%= product.product_name %>">
+                    <div class="product_card_details">
+                        <h3><%= product.product_name %></h3>
+                        <p>
+                            <% if (product.sale_price) { %>
+                                ₹<%= product.sale_price %> <span style="text-decoration: line-through; color: #888;">₹<%= product.regular_price %></span>
+                            <% } else { %>
+                                ₹<%= product.regular_price %>
+                            <% } %>
+                        </p>
+                    </div>
                 </div>
-
-
-            </div>
-
-
-            <div class="product_card autoshow">
-
-
-                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="Product Image">
-                <div class="product_card_details">
-                    <h3>Product name</h3>
-                    <p>Product Price</p>
-                </div>
-
-
-            </div>
-
-            
-            <div class="product_card autoshow">
-
-
-                <img src="/images/pet nail clippers in a grey background, make more cuter.jpg" alt="Product Image">
-                <div class="product_card_details">
-                    <h3>Product name</h3>
-                    <p>Product Price</p>
-                </div>
-
-
-            </div>
-
-            <div class="product_card autoshow">
-
-
-                <img src="/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg" alt="Product Image">
-                <div class="product_card_details">
-                    <h3>Product name</h3>
-                    <p>Product Price</p>
-                </div>
-
-                
-            </div>
-
-
-            <div class=" autoshow product_card">
-
-
-                <img src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg" alt="Product Image">
-                <div class="product_card_details">
-                    <h3>Product name</h3>
-                    <p>Product Price</p>
-                </div>
-
-
-            </div>
-
-            
-            <div class="product_card autoshow">
-
-
-                <img src="/images/pet nail clippers in a grey background, make more cuter.jpg" alt="Product Image">
-                <div class="product_card_details">
-                    <h3>Product name</h3>
-                    <p>Product Price</p>
-                </div>
-
-
-            </div>
-
+            <% }); %>
         </div>
     </div>
 
     <footer class="footer">
         <div class="footer-container">
-    
             <div class="footer-column">
                 <h3>Happy Tails</h3>
                 <ul>
                     <li><a href="/blog">Blog</a></li>
-                    <li><a href="/pet_adoption">Pet Stores</a></li>
                     <li><a href="/pet_accessory">Online Pet Accessories</a></li>
                 </ul>
             </div>
-    
-            <div class="footer-column">
-                <h3>Services</h3>
-                <ul>
-                    <li><a href="/services">Pet Grooming</a></li>
-                    <li><a href="/services">Dog Training</a></li>
-                    <li><a href="/services">Vet Consultation</a></li>
-                </ul>
-            </div>
-    
             <div class="footer-column">
                 <h3>Partner</h3>
                 <ul>
-                    <li><a href="/service_signup">Become a Groomer</a></li>
-                    <li><a href="/service_signup">Become a Dog Trainer</a></li>
-                    <li><a href="/service_signup">Become Vet partner</a></li>
                     <li><a href="/store_signup">Pet Store Franchise</a></li>
                     <li><a href="/event_manager_signup">Become an Event manager</a></li>
                 </ul>
             </div>
-    
             <div class="footer-column">
                 <h3>Policy</h3>
                 <ul>
@@ -419,21 +252,14 @@
                     <li><a href="#">Cancellation Policy</a></li>
                     <li><a href="#">Terms & Conditions</a></li>
                 </ul>
-                <div class="footer-social" >
-                    <a href="#"><img
-                            src="/icons/facebook-3-logo-svgrepo-com.svg"
-                            alt="Facebook"></a>
-                    <a href="#"><img
-                            src="/icons/instagram-2016-logo-svgrepo-com.svg"
-                            alt="Instagram"></a>
-                    <a href="#"><img
-                            src="/icons/youtube-icon-logo-svgrepo-com.svg"
-                            alt="YouTube"></a>
+                <div class="footer-social">
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
                 </div>
             </div>
         </div>
     </footer>
-
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -471,18 +297,13 @@
 
             // Filter Expand/Collapse
             const expandButtons = document.querySelectorAll('.expand-button');
-
             expandButtons.forEach(button => {
                 button.addEventListener('click', function(event) {
-                    // Prevent event from bubbling up
                     event.preventDefault();
                     event.stopPropagation();
-
                     const filterSection = this.closest('.filters');
-                    const options = filterSection.querySelectorAll('p, #price, .price_labels');
-                    options.forEach(option => {
-                        option.classList.toggle('hidden');
-                    });
+                    const options = filterSection.querySelectorAll('p, .hidden');
+                    options.forEach(option => option.classList.toggle('hidden'));
                     this.textContent = this.textContent === '+' ? '-' : '+';
                 });
             });
@@ -490,7 +311,8 @@
             // Product Card Click Redirect
             document.querySelectorAll('.product_card').forEach(card => {
                 card.addEventListener('click', function () {
-                    window.location.href = "/pet_product_details";
+                    const productId = this.getAttribute('data-product-id');
+                    window.location.href = `/pet_product_details?id=${productId}`;
                 });
             });
 
@@ -510,36 +332,64 @@
                 filters.classList.remove("show");
             });
 
-            // Cart Quantity and Price Calculation (Fixed for Multiple Items)
+            // Cart Quantity and Price Calculation
             const cartProducts = document.querySelectorAll('.cart_product');
             cartProducts.forEach(product => {
-                const quantityInput = product.querySelector('input[type="number"]');
-                const unitPriceElement = product.querySelector('.unit-price'); // Use class instead of id
-                const totalPriceElement = product.querySelector('.total-price'); // Use class instead of id
+                const quantityInput = product.querySelector('.quantity');
+                const unitPriceElement = product.querySelector('.unit-price');
+                const totalPriceElement = product.querySelector('.total-price');
 
-                // Ensure unique class names (update HTML below to match)
                 quantityInput.addEventListener("input", function () {
-                    const unitPrice = parseInt(unitPriceElement.textContent) || 0;
+                    const unitPrice = parseFloat(unitPriceElement.textContent) || 0;
                     const quantity = parseInt(quantityInput.value) || 1;
                     const totalPrice = unitPrice * quantity;
-                    totalPriceElement.textContent = totalPrice;
-
-                    // Update subtotal
+                    totalPriceElement.textContent = totalPrice.toFixed(2);
                     updateSubtotal();
                 });
             });
 
-            // Function to calculate and update subtotal
             function updateSubtotal() {
                 let subtotal = 0;
                 document.querySelectorAll('.total-price').forEach(total => {
-                    subtotal += parseInt(total.textContent) || 0;
+                    subtotal += parseFloat(total.textContent) || 0;
                 });
-                document.querySelector('.subtotal span').textContent = subtotal;
+                document.querySelector('.subtotal span').textContent = subtotal.toFixed(2);
             }
-
-            // Initial subtotal calculation
             updateSubtotal();
+
+            // Define products as a JavaScript variable
+            
+
+            // Filter Submission
+            const filterForm = document.querySelector('.filter_container');
+            const productCards = document.querySelectorAll('.product_card');
+
+            filterForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(filterForm);
+                const filters = {
+                    productTypes: formData.getAll('product-type'),
+                    minPrice: parseFloat(formData.get('min-price')) || 0,
+                    maxPrice: parseFloat(formData.get('max-price')) || Infinity,
+                    colors: formData.getAll('color'),
+                    sizes: formData.getAll('size'),
+                    weights: formData.getAll('weight')
+                };
+
+                productCards.forEach(card => {
+                    const productId = card.getAttribute('data-product-id');
+                    const product = productsData.find(p => p.id == productId);
+                    const price = product.sale_price || product.regular_price;
+
+                    const matchesType = filters.productTypes.length === 0 || (product.product_type && filters.productTypes.includes(product.product_type));
+                    const matchesPrice = price >= filters.minPrice && price <= filters.maxPrice;
+                    const matchesColor = filters.colors.length === 0 || (product.color && filters.colors.includes(product.color));
+                    const matchesSize = filters.sizes.length === 0 || (product.size && filters.sizes.includes(product.size));
+                    const matchesWeight = filters.weights.length === 0 || (product.weight && filters.weights.includes(product.weight.toString()));
+
+                    card.style.display = (matchesType && matchesPrice && matchesColor && matchesSize && matchesWeight) ? 'block' : 'none';
+                });
+            });
         });
     </script>
 </body>
