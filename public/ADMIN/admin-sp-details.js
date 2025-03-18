@@ -63,3 +63,109 @@
         
         
         
+        function validateForm() {
+            let isValid = true;
+            const name = document.getElementById('editName');
+            const category = document.getElementById('editCategory');
+            const email = document.getElementById('editEmail');
+            const address = document.getElementById('editAddress');
+            const phone = document.getElementById('editPhone');
+            const services = document.getElementById('editServices');
+            const availability = document.getElementById('editAvailability');
+            const license = document.getElementById('editLicense');
+            const expiration = document.getElementById('editExpiration');
+
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
+
+            // Name validation
+            if (name.value.trim().length < 2) {
+                document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
+                isValid = false;
+            }
+
+            // Category validation
+            if (!category.value) {
+                document.getElementById('categoryError').textContent = 'Please select a category';
+                isValid = false;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
+            }
+
+            // Address validation (Indian format)
+            if (address.value.trim().length < 15) {
+                document.getElementById('addressError').textContent = 'Please enter complete address including city and PIN (min 15 chars)';
+                isValid = false;
+            }
+            const pinCodeRegex = /\b\d{6}\b/;
+            if (!pinCodeRegex.test(address.value)) {
+                document.getElementById('addressError').textContent = 'Address must include a valid 6-digit PIN code';
+                isValid = false;
+            }
+
+            // Phone validation (Indian format: +91 followed by 10 digits starting with 6-9)
+            const phoneRegex = /^\+91[6-9][0-9]{9}$/;
+            if (!phoneRegex.test(phone.value)) {
+                document.getElementById('phoneError').textContent = 'Enter valid Indian mobile number (+91XXXXXXXXXX)';
+                isValid = false;
+            }
+
+            // Services validation
+            if (services.value.trim().length < 10) {
+                document.getElementById('servicesError').textContent = 'Please provide detailed services (min 10 characters)';
+                isValid = false;
+            }
+
+            // Availability validation
+            if (availability.value.trim().length < 5) {
+                document.getElementById('availabilityError').textContent = 'Please specify availability (min 5 characters)';
+                isValid = false;
+            }
+
+            // License validation (Indian format: ST-VET-XXXXX)
+            const licenseRegex = /^[A-Z]{2}-[A-Z]{3}-[0-9]{5}$/;
+            if (!licenseRegex.test(license.value)) {
+                document.getElementById('licenseError').textContent = 'License format: XX-XXX-XXXXX (e.g., KA-VET-12345)';
+                isValid = false;
+            }
+
+            // Expiration date validation
+            const today = new Date('2025-03-17');
+            const expDate = new Date(expiration.value);
+            if (expDate <= today) {
+                document.getElementById('expirationError').textContent = 'Expiration date must be in the future';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Form submission handler
+        document.getElementById('providerEditForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (validateForm()) {
+                saveProviderChanges();
+            }
+        });
+
+        // Existing functions
+        function showEditForm() {
+            document.getElementById('providerView').style.display = 'none';
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        function saveProviderChanges() {
+            console.log('Saving provider changes...');
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('providerView').style.display = 'block';
+        }
+
+        function cancelEdit() {
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('providerView').style.display = 'block';
+        }
