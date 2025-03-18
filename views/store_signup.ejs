@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/login/store_signup.css">
     <title>store signup</title>
+    <style>
+        .error {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <div class="navbar">
@@ -14,33 +22,49 @@
         </header>
     </div>
     <div class="container">
-        <form action="#">
-        <h1>Sign Up To Become Happy Tails Store Partner</h1>
-        <p>Please fill this form to create an account</p>
-        <label for="name">Name</label>
-        <input type="text" placeholder="Enter Name" name="name" required>
-        <label for="contactnumber">Contact Number</label>
-        <input type="text" placeholder="Enter Contact Number" name="contactnumber" required>
-        <label for="email">Email</label>
-        <input type="text" placeholder="Enter Email" name="email" required>
-        <label for="password">Password</label>
-        <input type="password" placeholder="Enter Password" name="password" required>
-        <label for="confirmpassword">Confirm Password</label>
-        <input type="password" placeholder="Confirm Password" name="confirmpassword" required>
-        <label for="storename">Store Name</label>
-        <input type="text" placeholder="Enter Store Name" name="storename" required>
-        <label for="storelocation">Store Location</label>
-        <input type="text" placeholder="Enter Store Location" name="storelocation" required>
-        <div class="terms">
-        <input type="checkbox" name="termsandconditions" id="tac">
-        <label for="termsandconditions">I have Read all your <a href="">Terms & Conditions</a>.I wish to Register </label>
-        </div>
-        <button type="submit" class="registerbtn">Register</button>
+        <form action="#" id="signupForm" onsubmit="return validateForm(event)">
+            <h1>Sign Up To Become Happy Tails Store Partner</h1>
+            <p>Please fill this form to create an account</p>
+            
+            <label for="name">Name</label>
+            <input type="text" placeholder="Enter Name" name="name" id="name" required>
+            <div id="nameError" class="error">Name must be at least 2 characters long</div>
+
+            <label for="contactnumber">Contact Number</label>
+            <input type="text" placeholder="Enter Contact Number" name="contactnumber" id="contactnumber" required>
+            <div id="contactError" class="error">Please enter a valid 10-digit phone number</div>
+
+            <label for="email">Email</label>
+            <input type="text" placeholder="Enter Email" name="email" id="email" required>
+            <div id="emailError" class="error">Please enter a valid email address</div>
+
+            <label for="password">Password</label>
+            <input type="password" placeholder="Enter Password" name="password" id="password" required>
+            <div id="passwordError" class="error">Password must be at least 8 characters long and contain a number</div>
+
+            <label for="confirmpassword">Confirm Password</label>
+            <input type="password" placeholder="Confirm Password" name="confirmpassword" id="confirmpassword" required>
+            <div id="confirmPasswordError" class="error">Passwords do not match</div>
+
+            <label for="storename">Store Name</label>
+            <input type="text" placeholder="Enter Store Name" name="storename" id="storename" required>
+            <div id="storeNameError" class="error">Store name must be at least 2 characters long</div>
+
+            <label for="storelocation">Store Location</label>
+            <input type="text" placeholder="Enter Store Location" name="storelocation" id="storelocation" required>
+            <div id="locationError" class="error">Please enter a valid location</div>
+
+            <div class="terms">
+                <input type="checkbox" name="termsandconditions" id="tac">
+                <label for="termsandconditions">I have Read all your <a href="">Terms & Conditions</a>.I wish to Register </label>
+                <div id="termsError" class="error">You must agree to the terms and conditions</div>
+            </div>
+            
+            <button type="submit" class="registerbtn">Register</button>
         </form>
     </div>
     <footer class="footer">
         <div class="footer-container">
-
             <div class="footer-column">
                 <h3>Happy Tails</h3>
                 <ul>
@@ -62,9 +86,9 @@
             <div class="footer-column">
                 <h3>Partner</h3>
                 <ul>
-                    <li><a href="/service_login">Become a Groomer</a></li>
-                    <li><a href="/service_login">Become a Dog Trainer</a></li>
-                    <li><a href="/service_login">Become Vet partner</a></li>
+                    <li><a href="/service_signup">Become a Groomer</a></li>
+                    <li><a href="/service_signup">Become a Dog Trainer</a></li>
+                    <li><a href="/service_signup">Become Vet partner</a></li>
                     <li><a href="#">Pet Store Franchise</a></li>
                 </ul>
             </div>
@@ -78,18 +102,88 @@
                     <li><a href="#">Terms & Conditions</a></li>
                 </ul>
                 <div class="footer-social">
-                    <a href="#"><img
-                            src="/icons/facebook-3-logo-svgrepo-com.svg"
-                            alt="Facebook"></a>
-                    <a href="#"><img
-                            src="/icons/instagram-2016-logo-svgrepo-com.svg"
-                            alt="Instagram"></a>
-                    <a href="#"><img
-                            src="/icons/youtube-icon-logo-svgrepo-com.svg"
-                            alt="YouTube"></a>
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
                 </div>
             </div>
         </div>
     </footer>
+
+    <script>
+        function validateForm(event) {
+            event.preventDefault();
+            let isValid = true;
+            
+            // Reset all error messages
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+
+            // Name validation
+            const name = document.getElementById('name').value;
+            if (name.length < 2) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Contact number validation
+            const contact = document.getElementById('contactnumber').value;
+            const phoneRegex = /^\d{10}$/;
+            if (!phoneRegex.test(contact)) {
+                document.getElementById('contactError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Email validation
+            const email = document.getElementById('email').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Password validation
+            const password = document.getElementById('password').value;
+            const passwordRegex = /^(?=.*\d).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Confirm password validation
+            const confirmPassword = document.getElementById('confirmpassword').value;
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Store name validation
+            const storeName = document.getElementById('storename').value;
+            if (storeName.length < 2) {
+                document.getElementById('storeNameError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Store location validation
+            const storeLocation = document.getElementById('storelocation').value;
+            if (storeLocation.length < 3) {
+                document.getElementById('locationError').style.display = 'block';
+                isValid = false;
+            }
+
+            // Terms and conditions validation
+            const terms = document.getElementById('tac').checked;
+            if (!terms) {
+                document.getElementById('termsError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (isValid) {
+                alert('Form submitted successfully!');
+                // document.getElementById('signupForm').submit(); // Uncomment to actually submit
+            }
+
+            return isValid;
+        }
+    </script>
 </body>
 </html>

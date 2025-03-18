@@ -115,7 +115,7 @@
                     <div class="form-group">
                         <label for="phone">Phone:</label>
                         <span id="phoneSpan"><%= user.user_phone || 'Enter Phone Number' %></span>
-                        <input type="tel" id="phone" name="user_phone" value="<%= user.user_phone || '' %>" style="display: none;" required>
+                        <input type="text" pattern="\d{10}" id="phone" name="user_phone" value="<%= user.user_phone || '' %>" style="display: none;" required>
                     </div>
                     <div class="form-group">
                         <label for="address">Address:</label>

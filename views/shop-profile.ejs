@@ -61,7 +61,7 @@
                     </div>
                     <div class="profile-field">
                         <label>Phone</label>
-                        <p>(555) 123-4567</p>
+                        <p>9090909090</p>
                     </div>
                     <div class="profile-field">
                         <label>Address</label>
@@ -92,7 +92,7 @@
                     </div>
                     <div class="profile-field">
                         <label for="phone">Phone</label>
-                        <input type="tel" id="phone" value="(555) 123-4567">
+                        <input type="tel" id="phone" value="9090909090" pattern="\d{10}"  maxlength="10" required>
                     </div>
                     <div class="profile-field">
                         <label for="address">Address</label>
@@ -170,11 +170,9 @@
         </div>
     </div>
 
-    <script href="/SHOP/shop-profile.js">
+    <script src="/SHOP/shop-profile.js">
 
-    function goBack() {
-    window.history.back();
-}
+
     </script>
   </body>
   </html>
