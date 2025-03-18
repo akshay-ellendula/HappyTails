@@ -242,7 +242,7 @@ app.get('/logout', (req, res) => {
             console.error(err);
             return res.status(500).json({ success: false, message: 'Logout failed' });
         }
-        res.json({ success: true, redirect: '/home' });
+        res.redirect('/home');
     });
 });
 
