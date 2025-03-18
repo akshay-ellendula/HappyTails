@@ -43,3 +43,37 @@ document.addEventListener('DOMContentLoaded', function() {
         profileEdit.classList.add('hidden');
     });
 });
+
+function goBack() {
+    window.history.back();
+}
+
+document.getElementById("phone").addEventListener("input", function () {
+    let phone = this.value;
+    if (!/^\d{10}$/.test(phone)) {
+        this.setCustomValidity("Phone number must be exactly 10 digits.");
+    } else {
+        this.setCustomValidity("");
+    }
+    this.reportValidity(); // Show validation message instantly
+});
+
+document.getElementById("email").addEventListener("input", function () {
+    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(this.value)) {
+        this.setCustomValidity("Please enter a valid email address.");
+    } else {
+        this.setCustomValidity("");
+    }
+    this.reportValidity();
+});
+
+// Ensure validation works on form submission
+document.getElementById("save-btn").addEventListener("click", function (event) {
+    let phoneInput = document.getElementById("phone");
+    let emailInput = document.getElementById("email");
+
+    if (!phoneInput.checkValidity() || !emailInput.checkValidity()) {
+        event.preventDefault(); // Stop form submission
+    }
+});
