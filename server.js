@@ -272,7 +272,7 @@ app.post('/admin-login', (req,res) => {
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
     console.log('http://localhost:3000/home');
-    console.log('http://localhost:3000/service_provider_login');
+    console.log('http://localhost:3000/service_dashbord');
     console.log('http://localhost:3000/shop-dashboard');
     console.log('http://localhost:3000/admin_login');
     console.log('http://localhost:3000/eventmanager_dashboard');
