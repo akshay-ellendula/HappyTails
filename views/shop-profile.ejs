@@ -92,7 +92,7 @@
                     </div>
                     <div class="profile-field">
                         <label for="phone">Phone</label>
-                        <input type="tel" id="phone" value="9090909090" pattern="\d{10}" required>
+                        <input type="tel" id="phone" value="9090909090" pattern="\d{10}"  maxlength="10" required>
                     </div>
                     <div class="profile-field">
                         <label for="address">Address</label>
@@ -174,7 +174,26 @@
 
     function goBack() {
     window.history.back();
-}
+    }
+
+    document.getElementById("phone").addEventListener("input", function () {
+    let phone = this.value;
+    if (!/^\d{10}$/.test(phone)) {
+        this.setCustomValidity("Phone number must be exactly 10 digits.");
+    } else {
+        this.setCustomValidity("");
+    }
+    });
+
+    document.getElementById("email").addEventListener("input", function () {
+    let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(this.value)) {
+        this.setCustomValidity("Please enter a valid email address.");
+    } else {
+        this.setCustomValidity("");
+    }
+    });
+
     </script>
   </body>
   </html>
