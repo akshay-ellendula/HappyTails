@@ -1,17 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Tails - Service Provider Details</title>
     <link href="/ADMIN/admin-sp-details.css" rel="stylesheet">
+    <style>
+        error-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input:invalid:focus,
+        select:invalid:focus,
+        textarea:invalid:focus {
+            border-color: red;
+        }
+
+        input:valid:focus,
+        select:valid:focus,
+        textarea:valid:focus {
+            border-color: green;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
-            <button class="back-button" onclick="goBack()">← Back to Providers</button>
+            <button class="back-button" onclick="goBack()">← Back to
+                Providers</button>
             <div class="action-buttons">
-                <button class="edit-btn" onclick="showEditForm()">Edit Provider</button>
+                <button class="edit-btn" onclick="showEditForm()">Edit
+                    Provider</button>
                 <button class="suspend-btn" onclick="suspendProvider()">Suspend Provider</button>
             </div>
         </div>
@@ -19,7 +47,8 @@
         <div id="providerView">
             <div class="provider-profile">
                 <div class="provider-avatar" id="providerAvatar">A</div>
-                <h2 class="provider-name" id="providerName">Dr. Amy Johnson</h2>
+                <h2 class="provider-name" id="providerName">Dr. Amy
+                    Johnson</h2>
                 <p class="provider-category" id="providerCategory">Veterinarian</p>
                 <div style="clear: both;"></div>
             </div>
@@ -37,7 +66,8 @@
                     </tr>
                     <tr>
                         <td>Business Address:</td>
-                        <td id="providerAddress">456 Park Avenue, New York, NY</td>
+                        <td id="providerAddress">456 Park Avenue, New York,
+                            NY</td>
                     </tr>
                     <tr>
                         <td>Contact:</td>
@@ -49,11 +79,13 @@
                     </tr>
                     <tr>
                         <td>Services Offered:</td>
-                        <td id="servicesOffered">Veterinary Check-ups, Pet Vaccinations, Surgery, Emergency Care</td>
+                        <td id="servicesOffered">Veterinary Check-ups, Pet
+                            Vaccinations, Surgery, Emergency Care</td>
                     </tr>
                     <tr>
                         <td>Availability:</td>
-                        <td id="availability">Mon-Fri: 9am-6pm, Sat: 10am-4pm</td>
+                        <td id="availability">Mon-Fri: 9am-6pm, Sat:
+                            10am-4pm</td>
                     </tr>
                 </table>
             </div>
@@ -67,7 +99,8 @@
                     </tr>
                     <tr>
                         <td>Issuing Authority:</td>
-                        <td id="issuingAuthority">New York State Department of Education</td>
+                        <td id="issuingAuthority">New York State Department
+                            of Education</td>
                     </tr>
                     <tr>
                         <td>Expiration Date:</td>
@@ -75,233 +108,363 @@
                     </tr>
                     <tr>
                         <td>Certification:</td>
-                        <td id="certification">American Veterinary Medical Association (AVMA)</td>
+                        <td id="certification">American Veterinary Medical
+                            Association (AVMA)</td>
                     </tr>
                     <tr>
                         <td>Insurance Status:</td>
-                        <td id="insuranceStatus">Active - Policy #INS789012</td>
-                    </tr>
-                </table>
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h3 class="section-title">Appointment History</h3>
-                <table class="history-table">
-                    <thead>
-                        <tr>
-                            <th>Appt ID</th>
-                            <th>Client</th>
-                            <th>Service Type</th>
-                            <th>Pet Name</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>APT1001</td>
-                            <td>John Doe</td>
-                            <td>Veterinary Check-up</td>
-                            <td>Max (Dog)</td>
-                            <td>Mar 5, 2025</td>
-                            <td>Completed</td>
-                        </tr>
-                        <tr>
-                            <td>APT1002</td>
-                            <td>Sarah Smith</td>
-                            <td>Pet Vaccination</td>
-                            <td>Whiskers (Cat)</td>
-                            <td>Mar 8, 2025</td>
-                            <td>Completed</td>
-                        </tr>
-                        <tr>
-                            <td>APT1003</td>
-                            <td>Michael Brown</td>
-                            <td>Surgery - Spay</td>
-                            <td>Luna (Dog)</td>
-                            <td>Mar 10, 2025</td>
-                            <td>Completed</td>
-                        </tr>
-                        <tr>
-                            <td>APT1004</td>
-                            <td>Emily Johnson</td>
-                            <td>Emergency Care</td>
-                            <td>Rocky (Dog)</td>
-                            <td>Mar 12, 2025</td>
-                            <td>Completed</td>
-                        </tr>
-                        <tr>
-                            <td>APT1005</td>
-                            <td>David Wilson</td>
-                            <td>Veterinary Check-up</td>
-                            <td>Oliver (Cat)</td>
-                            <td>Mar 14, 2025</td>
-                            <td>Scheduled</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="detail-section">
-                <h3 class="section-title">Service Users</h3>
-                <table class="history-table">
-                    <thead>
-                        <tr>
-                            <th>User ID</th>
-                            <th>Name</th>
-                            <th>Pet</th>
-                            <th>Appt ID</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>#USR001</td>
-                            <td>John Doe</td>
-                            <td>Max (Dog)</td>
-                            <td>APT1001</td>
-                            <td>Active</td>
-                        </tr>
-                        <tr>
-                            <td>#USR002</td>
-                            <td>Sarah Smith</td>
-                            <td>Whiskers (Cat)</td>
-                            <td>APT1002</td>
-                            <td>Active</td>
-                        </tr>
-                        <tr>
-                            <td>#USR003</td>
-                            <td>Michael Brown</td>
-                            <td>Luna (Dog)</td>
-                            <td>APT1003</td>
-                            <td>Active</td>
-                        </tr>
-                        <tr>
-                            <td>#USR004</td>
-                            <td>Emily Johnson</td>
-                            <td>Rocky (Dog)</td>
-                            <td>APT1004</td>
-                            <td>Active</td>
-                        </tr>
-                        <tr>
-                            <td>#USR005</td>
-                            <td>David Wilson</td>
-                            <td>Oliver (Cat)</td>
-                            <td>APT1005</td>
-                            <td>Scheduled</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="detail-section">
-                <h3 class="section-title">Performance Metrics</h3>
-                <table class="details-table">
-                    <tr>
-                        <td>Average Rating:</td>
-                        <td>4.9/5.0</td>
-                    </tr>
-                    <tr>
-                        <td>Appointments Completed:</td>
-                        <td>1,247 (Last 12 months)</td>
-                    </tr>
-                    <tr>
-                        <td>Cancellation Rate:</td>
-                        <td>2.3%</td>
-                    </tr>
-                    <tr>
-                        <td>On-time Performance:</td>
-                        <td>94.8%</td>
-                    </tr>
-                    <tr>
-                        <td>Client Return Rate:</td>
-                        <td>87.2%</td>
-                    </tr>
-                </table>
-
-            </div>
-
-            <div class="detail-section">
-                <h3 class="section-title">Financial Summary</h3>
-                <table class="details-table">
-                    <tr>
-                        <td>Revenue (YTD):</td>
-                        <td>$276,450.00</td>
-                    </tr>
-                    <tr>
-                        <td>Platform Fee:</td>
-                        <td>12.5% ($34,556.25)</td>
-                    </tr>
-                    <tr>
-                        <td>Payment Status:</td>
-                        <td>Current</td>
-                    </tr>
-                    <tr>
-                        <td>Last Payment:</td>
-                        <td>$12,345.67 (March 10, 2025)</td>
-                    </tr>
-                    <tr>
-                        <td>Tax Documents:</td>
-                        <td><a href="#">2024 1099-K Available</a></td>
+                        <td id="insuranceStatus">Active - Policy
+                            #INS789012</td>
                     </tr>
                 </table>
             </div>
         </div>
 
-        <!-- Edit Form -->
-        <div id="editForm" class="edit-form">
-            <div class="detail-section">
-                <h3 class="section-title">Edit Provider Information</h3>
-                <form id="providerEditForm">
-                    <div class="form-group">
-                        <label for="editName">Name:</label>
-                        <input type="text" id="editName" value="Dr. Amy Johnson">
-                    </div>
-                    <div class="form-group">
-                        <label for="editCategory">Category:</label>
-                        <select id="editCategory">
-                            <option value="Veterinarian" selected>Veterinarian</option>
-                            <option value="Pet Groomer">Pet Groomer</option>
-                            <option value="Pet Trainer">Pet Trainer</option>
-                            <option value="Pet Sitter">Pet Sitter</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="editEmail">Email:</label>
-                        <input type="email" id="editEmail" value="dr.amy@petcare.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="editAddress">Business Address:</label>
-                        <input type="text" id="editAddress" value="456 Park Avenue, New York, NY">
-                    </div>
-                    <div class="form-group">
-                        <label for="editPhone">Phone:</label>
-                        <input type="text" id="editPhone" value="(555) 987-6543">
-                    </div>
-                    <div class="form-group">
-                        <label for="editServices">Services Offered:</label>
-                        <textarea id="editServices" rows="3">Veterinary Check-ups, Pet Vaccinations, Surgery, Emergency Care</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="editAvailability">Availability:</label>
-                        <input type="text" id="editAvailability" value="Mon-Fri: 9am-6pm, Sat: 10am-4pm">
-                    </div>
-                    <div class="form-group">
-                        <label for="editLicense">License Number:</label>
-                        <input type="text" id="editLicense" value="NYS-VET-12345">
-                    </div>
-                    <div class="form-group">
-                        <label for="editExpiration">License Expiration:</label>
-                        <input type="date" id="editExpiration" value="2026-12-31">
-                    </div>
-                    <button type="button" class="save-btn" onclick="saveProviderChanges()">Save Changes</button>
-                    <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
-                </form>
-            </div>
+        <div class="detail-section">
+            <h3 class="section-title">Appointment History</h3>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Appt ID</th>
+                        <th>Client</th>
+                        <th>Service Type</th>
+                        <th>Pet Name</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>APT1001</td>
+                        <td>John Doe</td>
+                        <td>Veterinary Check-up</td>
+                        <td>Max (Dog)</td>
+                        <td>Mar 5, 2025</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>APT1002</td>
+                        <td>Sarah Smith</td>
+                        <td>Pet Vaccination</td>
+                        <td>Whiskers (Cat)</td>
+                        <td>Mar 8, 2025</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>APT1003</td>
+                        <td>Michael Brown</td>
+                        <td>Surgery - Spay</td>
+                        <td>Luna (Dog)</td>
+                        <td>Mar 10, 2025</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>APT1004</td>
+                        <td>Emily Johnson</td>
+                        <td>Emergency Care</td>
+                        <td>Rocky (Dog)</td>
+                        <td>Mar 12, 2025</td>
+                        <td>Completed</td>
+                    </tr>
+                    <tr>
+                        <td>APT1005</td>
+                        <td>David Wilson</td>
+                        <td>Veterinary Check-up</td>
+                        <td>Oliver (Cat)</td>
+                        <td>Mar 14, 2025</td>
+                        <td>Scheduled</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="section-title">Service Users</h3>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Pet</th>
+                        <th>Appt ID</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#USR001</td>
+                        <td>John Doe</td>
+                        <td>Max (Dog)</td>
+                        <td>APT1001</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>#USR002</td>
+                        <td>Sarah Smith</td>
+                        <td>Whiskers (Cat)</td>
+                        <td>APT1002</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>#USR003</td>
+                        <td>Michael Brown</td>
+                        <td>Luna (Dog)</td>
+                        <td>APT1003</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>#USR004</td>
+                        <td>Emily Johnson</td>
+                        <td>Rocky (Dog)</td>
+                        <td>APT1004</td>
+                        <td>Active</td>
+                    </tr>
+                    <tr>
+                        <td>#USR005</td>
+                        <td>David Wilson</td>
+                        <td>Oliver (Cat)</td>
+                        <td>APT1005</td>
+                        <td>Scheduled</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="detail-section">
+            <h3 class="section-title">Performance Metrics</h3>
+            <table class="details-table">
+                <tr>
+                    <td>Average Rating:</td>
+                    <td>4.9/5.0</td>
+                </tr>
+                <tr>
+                    <td>Appointments Completed:</td>
+                    <td>1,247 (Last 12 months)</td>
+                </tr>
+                <tr>
+                    <td>Cancellation Rate:</td>
+                    <td>2.3%</td>
+                </tr>
+                <tr>
+                    <td>On-time Performance:</td>
+                    <td>94.8%</td>
+                </tr>
+                <tr>
+                    <td>Client Return Rate:</td>
+                    <td>87.2%</td>
+                </tr>
+            </table>
+
+        </div>
+
+        <div class="detail-section">
+            <h3 class="section-title">Financial Summary</h3>
+            <table class="details-table">
+                <tr>
+                    <td>Revenue (YTD):</td>
+                    <td>$276,450.00</td>
+                </tr>
+                <tr>
+                    <td>Platform Fee:</td>
+                    <td>12.5% ($34,556.25)</td>
+                </tr>
+                <tr>
+                    <td>Payment Status:</td>
+                    <td>Current</td>
+                </tr>
+                <tr>
+                    <td>Last Payment:</td>
+                    <td>$12,345.67 (March 10, 2025)</td>
+                </tr>
+                <tr>
+                    <td>Tax Documents:</td>
+                    <td><a href="#">2024 1099-K Available</a></td>
+                </tr>
+            </table>
         </div>
     </div>
-    
+
+    <div id="editForm" class="edit-form">
+        <div class="detail-section">
+            <h3 class="section-title">Edit Provider Information</h3>
+            <form id="providerEditForm" novalidate>
+                <div class="form-group">
+                    <label for="editName">Name:</label>
+                    <input type="text" id="editName" value="Dr. Amit Sharma" required minlength="2" maxlength="100">
+                    <span class="error-message" id="nameError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">Category:</label>
+                    <select id="editCategory" required>
+                        <option value="Veterinarian" selected>Veterinarian</option>
+                        <option value="Pet Groomer">Pet Groomer</option>
+                        <option value="Pet Trainer">Pet Trainer</option>
+                        <option value="Pet Sitter">Pet Sitter</option>
+                    </select>
+                    <span class="error-message" id="categoryError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email:</label>
+                    <input type="email" id="editEmail" value="dr.amit@petcare.in" required>
+                    <span class="error-message" id="emailError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editAddress">Business Address:</label>
+                    <input type="text" id="editAddress" value="123 MG Road, Bengaluru, Karnataka 560001" required
+                        minlength="15">
+                    <span class="error-message" id="addressError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone:</label>
+                    <input type="tel" id="editPhone" value="+919876543210" required pattern="^\+91[6-9][0-9]{9}$"
+                        maxlength="13">
+                    <span class="error-message" id="phoneError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editServices">Services Offered:</label>
+                    <textarea id="editServices" rows="3" required
+                        minlength="10">Veterinary Check-ups, Pet Vaccinations, Surgery, Emergency Care</textarea>
+                    <span class="error-message" id="servicesError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editAvailability">Availability:</label>
+                    <input type="text" id="editAvailability" value="Mon-Sat: 10:00-19:00" required minlength="5">
+                    <span class="error-message" id="availabilityError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editLicense">License Number:</label>
+                    <input type="text" id="editLicense" value="KA-VET-12345" required
+                        pattern="[A-Z]{2}-[A-Z]{3}-[0-9]{5}">
+                    <span class="error-message" id="licenseError"></span>
+                </div>
+                <div class="form-group">
+                    <label for="editExpiration">License Expiration:</label>
+                    <input type="date" id="editExpiration" value="2026-12-31" required min="2025-03-17">
+                    <span class="error-message" id="expirationError"></span>
+                </div>
+                <button type="submit" class="save-btn">Save Changes</button>
+                <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
     <script src="/ADMIN/admin-sp-details.js"></script>
+    <script>
+        function validateForm() {
+            let isValid = true;
+            const name = document.getElementById('editName');
+            const category = document.getElementById('editCategory');
+            const email = document.getElementById('editEmail');
+            const address = document.getElementById('editAddress');
+            const phone = document.getElementById('editPhone');
+            const services = document.getElementById('editServices');
+            const availability = document.getElementById('editAvailability');
+            const license = document.getElementById('editLicense');
+            const expiration = document.getElementById('editExpiration');
+
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
+
+            // Name validation
+            if (name.value.trim().length < 2) {
+                document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
+                isValid = false;
+            }
+
+            // Category validation
+            if (!category.value) {
+                document.getElementById('categoryError').textContent = 'Please select a category';
+                isValid = false;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
+            }
+
+            // Address validation (Indian format)
+            if (address.value.trim().length < 15) {
+                document.getElementById('addressError').textContent = 'Please enter complete address including city and PIN (min 15 chars)';
+                isValid = false;
+            }
+            const pinCodeRegex = /\b\d{6}\b/;
+            if (!pinCodeRegex.test(address.value)) {
+                document.getElementById('addressError').textContent = 'Address must include a valid 6-digit PIN code';
+                isValid = false;
+            }
+
+            // Phone validation (Indian format: +91 followed by 10 digits starting with 6-9)
+            const phoneRegex = /^\+91[6-9][0-9]{9}$/;
+            if (!phoneRegex.test(phone.value)) {
+                document.getElementById('phoneError').textContent = 'Enter valid Indian mobile number (+91XXXXXXXXXX)';
+                isValid = false;
+            }
+
+            // Services validation
+            if (services.value.trim().length < 10) {
+                document.getElementById('servicesError').textContent = 'Please provide detailed services (min 10 characters)';
+                isValid = false;
+            }
+
+            // Availability validation
+            if (availability.value.trim().length < 5) {
+                document.getElementById('availabilityError').textContent = 'Please specify availability (min 5 characters)';
+                isValid = false;
+            }
+
+            // License validation (Indian format: ST-VET-XXXXX)
+            const licenseRegex = /^[A-Z]{2}-[A-Z]{3}-[0-9]{5}$/;
+            if (!licenseRegex.test(license.value)) {
+                document.getElementById('licenseError').textContent = 'License format: XX-XXX-XXXXX (e.g., KA-VET-12345)';
+                isValid = false;
+            }
+
+            // Expiration date validation
+            const today = new Date('2025-03-17');
+            const expDate = new Date(expiration.value);
+            if (expDate <= today) {
+                document.getElementById('expirationError').textContent = 'Expiration date must be in the future';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Form submission handler
+        document.getElementById('providerEditForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (validateForm()) {
+                saveProviderChanges();
+            }
+        });
+
+        // Existing functions
+        function showEditForm() {
+            document.getElementById('providerView').style.display = 'none';
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        function saveProviderChanges() {
+            console.log('Saving provider changes...');
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('providerView').style.display = 'block';
+        }
+
+        function cancelEdit() {
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('providerView').style.display = 'block';
+        }
+
+        function goBack() {
+            console.log('Going back to providers list...');
+        }
+
+        function suspendProvider() {
+            console.log('Suspending provider...');
+        }
+    </script>
 </body>
+
 </html>

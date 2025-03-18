@@ -157,34 +157,113 @@
             </div>
         </div>
 
-        <!-- Edit Form -->
         <div id="editForm" class="edit-form">
             <div class="detail-section">
                 <h3 class="section-title">Edit User Information</h3>
-                <form id="userEditForm">
+                <form id="userEditForm" novalidate>
                     <div class="form-group">
                         <label for="editName">Name:</label>
-                        <input type="text" id="editName" value="v prakash">
+                        <input type="text" id="editName" value="v prakash" required minlength="2" maxlength="50">
+                        <span class="error-message" id="nameError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editEmail">Email:</label>
-                        <input type="email" id="editEmail" value="john.k@example.com">
+                        <input type="email" id="editEmail" value="john.k@example.com" required>
+                        <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editAddress">Address:</label>
-                        <input type="text" id="editAddress" value="123 Main St, New York, NY">
+                        <input type="text" id="editAddress" value="123 Main St, New York, NY" required minlength="5">
+                        <span class="error-message" id="addressError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editPhone">Phone:</label>
-                        <input type="text" id="editPhone" value="9494391928">
+                        <input type="tel" id="editPhone" value="9494391928" required pattern="[0-9]{10}" maxlength="10">
+                        <span class="error-message" id="phoneError"></span>
                     </div>
-                    <button type="button" class="save-btn" onclick="saveUserChanges()">Save Changes</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
                     <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
                 </form>
             </div>
         </div>
-    </div>
 
     <script src="/ADMIN/admin-user-details.js"> </script>
+    <script>
+        function validateForm() {
+            let isValid = true;
+            const name = document.getElementById('editName');
+            const email = document.getElementById('editEmail');
+            const address = document.getElementById('editAddress');
+            const phone = document.getElementById('editPhone');
+        
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
+        
+            // Name validation
+            if (name.value.trim().length < 2) {
+                document.getElementById('nameError').textContent = 'Name must be at least 2 characters long';
+                isValid = false;
+            }
+        
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
+            }
+        
+            // Address validation
+            if (address.value.trim().length < 5) {
+                document.getElementById('addressError').textContent = 'Address must be at least 5 characters long';
+                isValid = false;
+            }
+        
+            // Phone validation
+            const phoneRegex = /^[0-9]{10}$/;
+            if (!phoneRegex.test(phone.value)) {
+                document.getElementById('phoneError').textContent = 'Please enter a valid 10-digit phone number';
+                isValid = false;
+            }
+        
+            return isValid;
+        }
+        
+        // Form submission handler
+        document.getElementById('userEditForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateForm()) {
+                saveUserChanges();
+            }
+        });
+        
+        // Existing functions (add your implementations)
+        function showEditForm() {
+            document.getElementById('userView').style.display = 'none';
+            document.getElementById('editForm').style.display = 'block';
+        }
+        
+        function saveUserChanges() {
+            // Add your save logic here
+            console.log('Saving changes...');
+            // After saving, hide the form and show the view
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('userView').style.display = 'block';
+        }
+        
+        function cancelEdit() {
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('userView').style.display = 'block';
+        }
+        
+        function goBack() {
+            // Add your back navigation logic
+            console.log('Going back to users list...');
+        }
+        
+        function deleteUser() {
+            // Add your delete logic
+            console.log('Deleting user...');
+        }
+        </script>
 </body>
 </html>

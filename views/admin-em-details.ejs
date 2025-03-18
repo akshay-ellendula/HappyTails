@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Tails - Event Manager Details</title>
     <link href="/ADMIN/admin-em-details.css" rel="stylesheet">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input:invalid:focus,
+        select:invalid:focus {
+            border-color: red;
+        }
+        input:valid:focus,
+        select:valid:focus {
+            border-color: green;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -19,8 +38,8 @@
         <div id="managerView">
             <div class="manager-profile">
                 <div class="manager-avatar" id="managerAvatar">M</div>
-                <h2 class="manager-name" id="managerName">Michael Parker</h2>
-                <p class="manager-email" id="managerEmail">michael.parker@happytails.com</p>
+                <h2 class="manager-name" id="managerName">Manish Patel</h2>
+                <p class="manager-email" id="managerEmail">manish.patel@happytails.in</p>
                 <div style="clear: both;"></div>
             </div>
 
@@ -33,7 +52,7 @@
                     </tr>
                     <tr>
                         <td>Joined Date:</td>
-                        <td id="joinedDate">Dec 12, 2024</td>
+                        <td id="joinedDate">12-Dec-2024</td>
                     </tr>
                     <tr>
                         <td>Department:</td>
@@ -41,7 +60,7 @@
                     </tr>
                     <tr>
                         <td>Contact:</td>
-                        <td id="managerPhone">(555) 345-6789</td>
+                        <td id="managerPhone">+917890123456</td>
                     </tr>
                 </table>
             </div>
@@ -119,41 +138,41 @@
                     <tbody>
                         <tr>
                             <td>EVT102</td>
-                            <td>Pet Adoption Day</td>
-                            <td>Mar 22, 2025</td>
-                            <td>Central Park</td>
+                            <td>Pet Adoption Mela</td>
+                            <td>22-Mar-2025</td>
+                            <td>Cubbon Park, Bengaluru</td>
                             <td>150/200</td>
                             <td><span class="status-active">Registering</span></td>
                         </tr>
                         <tr>
                             <td>EVT104</td>
                             <td>Dog Training Workshop</td>
-                            <td>Mar 25, 2025</td>
-                            <td>Happy Tails HQ</td>
+                            <td>25-Mar-2025</td>
+                            <td>Happy Tails HQ, Mumbai</td>
                             <td>45/50</td>
                             <td><span class="status-active">Almost Full</span></td>
                         </tr>
                         <tr>
                             <td>EVT106</td>
                             <td>Pet Health Seminar</td>
-                            <td>Mar 29, 2025</td>
-                            <td>Community Center</td>
+                            <td>29-Mar-2025</td>
+                            <td>Community Hall, Delhi</td>
                             <td>80/120</td>
                             <td><span class="status-active">Registering</span></td>
                         </tr>
                         <tr>
                             <td>EVT108</td>
                             <td>Cat Show Competition</td>
-                            <td>Apr 5, 2025</td>
-                            <td>Exhibition Hall</td>
+                            <td>05-Apr-2025</td>
+                            <td>Pragati Maidan, Delhi</td>
                             <td>50/100</td>
                             <td><span class="status-active">Early Bird</span></td>
                         </tr>
                         <tr>
                             <td>EVT110</td>
                             <td>Pet Photography Session</td>
-                            <td>Apr 12, 2025</td>
-                            <td>Riverside Park</td>
+                            <td>12-Apr-2025</td>
+                            <td>Marine Drive, Mumbai</td>
                             <td>15/20</td>
                             <td><span class="status-active">Almost Full</span></td>
                         </tr>
@@ -177,35 +196,35 @@
                         <tr>
                             <td>EVT095</td>
                             <td>Puppy Socialization Day</td>
-                            <td>Mar 15, 2025</td>
+                            <td>15-Mar-2025</td>
                             <td>42/50</td>
                             <td>96%</td>
                         </tr>
                         <tr>
                             <td>EVT093</td>
                             <td>Pet Nutrition Workshop</td>
-                            <td>Mar 8, 2025</td>
+                            <td>08-Mar-2025</td>
                             <td>36/40</td>
                             <td>98%</td>
                         </tr>
                         <tr>
                             <td>EVT091</td>
                             <td>Adoption Drive</td>
-                            <td>Mar 1, 2025</td>
+                            <td>01-Mar-2025</td>
                             <td>185/200</td>
                             <td>99%</td>
                         </tr>
                         <tr>
                             <td>EVT089</td>
                             <td>Veterinary Q&A Session</td>
-                            <td>Feb 22, 2025</td>
+                            <td>22-Feb-2025</td>
                             <td>78/80</td>
                             <td>97%</td>
                         </tr>
                         <tr>
                             <td>EVT087</td>
                             <td>Pet First Aid Course</td>
-                            <td>Feb 15, 2025</td>
+                            <td>15-Feb-2025</td>
                             <td>30/30</td>
                             <td>100%</td>
                         </tr>
@@ -218,32 +237,37 @@
         <div id="editForm" class="edit-form">
             <div class="detail-section">
                 <h3 class="section-title">Edit Manager Information</h3>
-                <form id="managerEditForm">
+                <form id="managerEditForm" novalidate>
                     <div class="form-group">
                         <label for="editName">Name:</label>
-                        <input type="text" id="editName" value="Michael Parker">
+                        <input type="text" id="editName" value="Manish Patel" required minlength="2" maxlength="100">
+                        <span class="error-message" id="nameError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editEmail">Email:</label>
-                        <input type="email" id="editEmail" value="michael.parker@happytails.com">
+                        <input type="email" id="editEmail" value="manish.patel@happytails.in" required>
+                        <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editDepartment">Department:</label>
-                        <input type="text" id="editDepartment" value="Event Planning">
+                        <input type="text" id="editDepartment" value="Event Planning" required minlength="3" maxlength="50">
+                        <span class="error-message" id="departmentError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editPhone">Phone:</label>
-                        <input type="text" id="editPhone" value="(555) 345-6789">
+                        <input type="tel" id="editPhone" value="+917890123456" required pattern="^\+91[6-9][0-9]{9}$" maxlength="13">
+                        <span class="error-message" id="phoneError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editStatus">Status:</label>
-                        <select id="editStatus">
+                        <select id="editStatus" required>
                             <option value="Active" selected>Active</option>
                             <option value="Inactive">Inactive</option>
                             <option value="On Leave">On Leave</option>
                         </select>
+                        <span class="error-message" id="statusError"></span>
                     </div>
-                    <button type="button" class="save-btn" onclick="saveManagerChanges()">Save Changes</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
                     <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
                 </form>
             </div>
@@ -251,5 +275,90 @@
     </div>
 
     <script src="/ADMIN/admin-em-details.js"></script>
+    <script>
+        function validateForm() {
+            let isValid = true;
+            const name = document.getElementById('editName');
+            const email = document.getElementById('editEmail');
+            const department = document.getElementById('editDepartment');
+            const phone = document.getElementById('editPhone');
+            const status = document.getElementById('editStatus');
+
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
+
+            // Name validation
+            if (name.value.trim().length < 2) {
+                document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
+                isValid = false;
+            }
+
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+                isValid = false;
+            }
+
+            // Department validation
+            if (department.value.trim().length < 3) {
+                document.getElementById('departmentError').textContent = 'Department must be at least 3 characters';
+                isValid = false;
+            }
+
+            // Phone validation (Indian format: +91 followed by 10 digits starting with 6-9)
+            const phoneRegex = /^\+91[6-9][0-9]{9}$/;
+            if (!phoneRegex.test(phone.value)) {
+                document.getElementById('phoneError').textContent = 'Enter valid Indian mobile number (+91XXXXXXXXXX)';
+                isValid = false;
+            }
+
+            // Status validation
+            if (!status.value) {
+                document.getElementById('statusError').textContent = 'Please select a status';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Form submission handler
+        document.getElementById('managerEditForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateForm()) {
+                saveManagerChanges();
+            }
+        });
+
+        // Existing functions
+        function showEditForm() {
+            document.getElementById('managerView').style.display = 'none';
+            document.getElementById('editForm').style.display = 'block';
+        }
+
+        function saveManagerChanges() {
+            console.log('Saving manager changes...');
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('managerView').style.display = 'block';
+            // Update view with new values
+            document.getElementById('managerName').textContent = document.getElementById('editName').value;
+            document.getElementById('managerEmail').textContent = document.getElementById('editEmail').value;
+            document.getElementById('department').textContent = document.getElementById('editDepartment').value;
+            document.getElementById('managerPhone').textContent = document.getElementById('editPhone').value;
+        }
+
+        function cancelEdit() {
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('managerView').style.display = 'block';
+        }
+
+        function goBack() {
+            console.log('Going back to managers list...');
+        }
+
+        function deleteManager() {
+            console.log('Deleting manager...');
+        }
+    </script>
 </body>
 </html>
