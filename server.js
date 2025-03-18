@@ -4,6 +4,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
+const { error } = require('console');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -76,7 +77,7 @@ const pages = [
     'shop-orders','shop-product_form','shop-product-edit','shop-products','shop-profile',
     'admin-appointments','admin-dashboard','admin-em-details','admin-events',
     'admin-product-details','admin-products','admin-service-provider','admin-shop-manager',
-    'admin-sm-details','admin-sp-details','admin-user-details','admin-user'
+    'admin-sm-details','admin-sp-details','admin-user-details','admin-user', 'admin_login'
 
 
 ];
@@ -255,11 +256,24 @@ app.get('/user-info', (req, res) => {
     }
 });
 
+
+const admin = { email: "admin@gmail.com", password: "admin123#"}
+
+app.post('/admin-login', (req,res) => {
+    const { admin_email, admin_password } = req.body;
+    if(admin_email === admin.email && admin_password === admin.password) {
+        res.json({ success: true })
+    }
+    else {
+        res.json({ success: false, error: "Invalid email or passsword" })
+    }
+});
+
 // Start the server
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
     console.log('http://localhost:3000/home');
     console.log('http://localhost:3000/service_provider_login');
     console.log('http://localhost:3000/shop-dashboard');
-    console.log('http://localhost:3000/admin-dashboard');
+    console.log('http://localhost:3000/admin_login');
 });

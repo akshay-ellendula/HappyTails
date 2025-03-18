@@ -136,9 +136,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (data.success) {
                 showSuccess(this, data.message || 'Registration successful! Redirecting...');
-                setTimeout(() => {
-                    window.location.href = '/home';
-                }, 2000);
             } else {
                 showError(null, data.message || 'An error occurred during signup');
             }
