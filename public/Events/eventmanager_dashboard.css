@@ -480,6 +480,8 @@ table tr:last-child td {
       
       .dashboard-container {
         margin-top: 50px;
+        display: flex;
+        flex-direction: column;
       }
       
     .sidebar {

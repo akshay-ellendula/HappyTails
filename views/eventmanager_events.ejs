@@ -42,14 +42,14 @@
                             <h3>Concert Night</h3>
                             <p><strong>Date:</strong> February 15, 2025</p>
                             <p><strong>Registered:</strong> 500 Attendees</p>
-                            <p><strong>Revenue:</strong> $3,500</p>
+                            <p><strong>Revenue:</strong> ₹3,500</p>
                         </div>
                         <div class="appointment-card">
                             <div class="time-badge">11:00 AM</div>
                             <h3>Charity Gala</h3>
                             <p><strong>Date:</strong> January 20, 2025</p>
                             <p><strong>Registered:</strong> 800 Attendees</p>
-                            <p><strong>Revenue:</strong> $5,200</p>
+                            <p><strong>Revenue:</strong> ₹5,200</p>
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                             <p><strong>Date:</strong> March 17, 2025, 5:00
                                 PM</p>
                             <p><strong>Registered:</strong> 900 Attendees</p>
-                            <p><strong>Revenue:</strong> $2,250</p>
+                            <p><strong>Revenue:</strong> ₹2,250</p>
                         </div>
                         <div class="appointment-card">
                             <div class="time-badge">10:00 AM</div>
@@ -71,7 +71,7 @@
                             <p><strong>Date:</strong> March 17, 2025, 10:00
                                 AM</p>
                             <p><strong>Registered:</strong> 100 Attendees</p>
-                            <p><strong>Revenue:</strong> $500</p>
+                            <p><strong>Revenue:</strong> ₹500</p>
                         </div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                                 AM</p>
                             <p><strong>Venue:</strong> City Gallery</p>
                             <p><strong>Capacity:</strong> 200</p>
-                            <p><strong>Ticket Price:</strong> $15</p>
+                            <p><strong>Ticket Price:</strong> ₹15</p>
                             <p><strong>Description:</strong> A showcase of
                                 contemporary art by local artists.</p>
                             <div class="card-actions">
@@ -101,7 +101,7 @@
                                 AM</p>
                             <p><strong>Venue:</strong> Grand Theater</p>
                             <p><strong>Capacity:</strong> 150</p>
-                            <p><strong>Ticket Price:</strong> $20</p>
+                            <p><strong>Ticket Price:</strong> ₹20</p>
                             <p><strong>Description:</strong> A mesmerizing
                                 ballet performance by the National Ballet
                                 Company.</p>
@@ -142,7 +142,7 @@
                         <input type="number" id="eventCapacity" required>
                     </div>
                     <div class="form-group">
-                        <label for="eventTicketPrice">Ticket Price ($)</label>
+                        <label for="eventTicketPrice">Ticket Price (₹)</label>
                         <input type="number" id="eventTicketPrice" step="0.01"
                             required>
                     </div>
@@ -251,7 +251,7 @@ window.openEditEvent = (eventId) => {
     document.getElementById('eventCapacity').value = capacity;
     
     // Extract ticket price
-    const ticketPrice = eventCard.querySelector('p:nth-child(5)').textContent.split('Ticket Price: $')[1];
+    const ticketPrice = eventCard.querySelector('p:nth-child(5)').textContent.split('Ticket Price: ₹')[1];
     document.getElementById('eventTicketPrice').value = ticketPrice;
     
     // Extract description

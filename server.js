@@ -81,7 +81,7 @@ const pages = [
     'eventmanager_analytics','eventmanager_events','eventmanager_profile','eventmanager_attendees',
 ];
 
-pages.forEach(page => {
+--pages.forEach(page => {
     app.get(`/${page}`, (req, res) => {
         res.render(page, { user: req.session.user || null });
     });
