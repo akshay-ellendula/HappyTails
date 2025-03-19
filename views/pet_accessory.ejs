@@ -125,11 +125,13 @@
                 </div>
                 
                 
-                <input type="range" id="price" class="hidden" name="price" min="0" max="5000" value="100" style="width: 100%;">
+                <div class="price_filter_div hidden">
+                    <input type="range" id="price"  name="price" min="0" max="15000" value="100" style="width: 100%;">
                 
-                <div class="price_labels hidden">
-                    <span id="min-price">₹250.00</span>
-                    <span id="max-price">₹5000.00</span>    
+                    <div class="price_labels">
+                        <span id="min-price">₹250.00</span>
+                        <span id="max-price">₹15000.00</span>    
+                    </div>
                 </div>
                 
             </div>
@@ -302,7 +304,7 @@
                     event.preventDefault();
                     event.stopPropagation();
                     const filterSection = this.closest('.filters');
-                    const options = filterSection.querySelectorAll('p, .hidden');
+                    const options = filterSection.querySelectorAll('p, .price_filter_div, .hidden');
                     options.forEach(option => option.classList.toggle('hidden'));
                     this.textContent = this.textContent === '+' ? '-' : '+';
                 });

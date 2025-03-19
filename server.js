@@ -111,45 +111,45 @@ function createTables(callback) {
 // Function to insert sample data
 function insertSampleData(callback) {
     const queries = [
-        // Insert vendors
+        // Insert vendors 
         `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
-         ('John Doe', '9876543210', 'john.doe@example.com', '$2b$10$hashedpassword1', 'Pet Haven', 'New York')`,
+         ('Gautam Thota', '9876543210', 'gautam.thota@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Pet Haven', 'Vijayawada')`,
         `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
-         ('Jane Smith', '8765432109', 'jane.smith@example.com', '$2b$10$hashedpassword2', 'Furry Friends', 'Los Angeles')`,
+         ('Veda Prakash', '8765432109', 'veda.prakash@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Furry Friends', 'Hyderabad')`,
         `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
-         ('Mike Johnson', '7654321098', 'mike.johnson@example.com', '$2b$10$hashedpassword3', 'Paws & Claws', 'Chicago')`,
+         ('Akshay', '7654321098', 'akshay@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Paws & Claws', 'Bangalore')`,
 
         // Insert products
         `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
          (1, 'Cozy Pet Bed', 'Accessories', 'Pet Beds', 'Soft and cozy bed for pets', 2999.99, 2499.99, 'PB001', 20, 'In Stock', 'Brown', 'Medium', 'Cotton', 2.5)`,
         `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sku, stock_quantity, stock_status, size, weight) VALUES 
-         (1, 'Chicken-Flavored Dog Food', 'Pet Food', 'Dry', 'Nutritious dog food for all breeds', 1499.99, NULL, 'DF001', 50, 'In Stock', 'Large', 5.0)`,
+         (1, 'Chicken-Flavored Dog Food', 'Pet Food', 'Dry', 'Nutritious dog food for all breeds', 1499.99, 'DF001', 50, 'In Stock', 'Large', 5.0)`, // Fixed
         `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
          (2, 'Cat Scratching Post', 'Accessories', 'Furniture', 'Durable scratching post for cats', 1999.99, 1799.99, 'SP001', 15, 'In Stock', 'Grey', 'Large', 'Sisal/Wood', 3.0)`,
         `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sku, stock_quantity, stock_status, size, weight) VALUES 
-         (2, 'Fish-Flavored Treats', 'Pet Food', 'Treats', 'Delicious treats for cats', 499.99, NULL, 'FT001', 100, 'In Stock', 'Small', 0.25)`,
+         (2, 'Fish-Flavored Treats', 'Pet Food', 'Treats', 'Delicious treats for cats', 499.99, 'FT001', 100, 'In Stock', 'Small', 0.25)`, // Fixed
         `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
          (3, 'Grooming Brush', 'Grooming', 'Grooming Supplies', 'Gentle brush for pet grooming', 799.99, 699.99, 'GB001', 30, 'In Stock', 'Blue', 'Medium', 'Plastic', 0.2)`,
         `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
          (3, 'Pet Carrier', 'Accessories', 'Carrier', 'Portable carrier for small pets', 3999.99, 3499.99, 'PC001', 10, 'In Stock', 'Grey', 'Medium', 'Plastic/Fabric', 2.0)`,
 
-        // Insert product images
+        // Insert product images 
         `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-         (1, '/uploads/products/product_1647512400001.jpg', 1)`,
+         (1, 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg', 1)`,
         `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-         (1, '/uploads/products/product_1647512400002.jpg', 0)`,
+         (1, '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg', 0)`,
         `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-         (2, '/uploads/products/product_1647512400003.jpg', 1)`,
+         (2, '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg', 1)`,
         `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-         (3, '/uploads/products/product_1647512400004.jpg', 1)`,
+         (3, 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTNMDBsUPAhQpb1c3mb-qIWpIyt9YNARqL7_GpFISTsRVGvswjVZVIc5iZkRORLE-bW5ycbK7pdf5eAgxwxG_gtADerjtyJCPFEV-2OF92MdZgb71yVcCAmaQ', 1)`,
         `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-         (4, '/uploads/products/product_1647512400005.jpg', 1)`,
+         (4, 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg', 1)`,
         `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-         (5, '/uploads/products/product_1647512400006.jpg', 1)`,
+         (5, '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg', 1)`,
         `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-         (6, '/uploads/products/product_1647512400007.jpg', 1)`,
+         (6, '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg', 1)`,
         `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-         (6, '/uploads/products/product_1647512400008.jpg', 0)`
+         (6, '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg', 0)`
     ];
 
     let completedQueries = 0;
@@ -164,7 +164,7 @@ function insertSampleData(callback) {
             }
             completedQueries++;
             if (completedQueries === totalQueries) {
-                callback(); // All insertions complete
+                callback();
             }
         });
     });
@@ -700,11 +700,11 @@ app.delete('/product-image/:id', isVendorAuthenticated, (req, res) => {
 // Initialize database and start server
 function initializeDatabase() {
     createTables(() => {
-        insertSampleData(() => {
-            app.listen(3000, () => {
-                console.log('Server is running on port 3000');
-                console.log('http://localhost:3000/pet_accessory');
-            });
+                insertSampleData(() => {
+                    app.listen(3000, () => {
+                        console.log('Server is running on port 3000');
+                        console.log('http://localhost:3000/pet_accessory');
+                    });
         });
     });
 }
