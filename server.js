@@ -41,7 +41,8 @@ function createTables(callback) {
                 user_password TEXT NOT NULL,
                 user_phone TEXT DEFAULT NULL,
                 user_address TEXT DEFAULT NULL,
-                profile_pic TEXT DEFAULT NULL
+                profile_pic TEXT DEFAULT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `, (err) => {
             if (err) console.error('Error creating users table:', err);
@@ -111,6 +112,16 @@ function createTables(callback) {
 // Function to insert sample data
 function insertSampleData(callback) {
     const queries = [
+
+        // Insert users
+        `INSERT INTO users (user_name, user_email, user_password) VALUES 
+         ('Gautam Thota', 'gautam.thota@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
+        `INSERT INTO users (user_name, user_email, user_password) VALUES 
+         ('Veda Prakash', 'veda.prakash@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
+        `INSERT INTO users (user_name, user_email, user_password) VALUES 
+         ('Akshay', 'akshay@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
+
+
         // Insert vendors 
         `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
          ('Gautam Thota', '9876543210', 'gautam.thota@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Pet Haven', 'Vijayawada')`,
@@ -386,11 +397,20 @@ app.get('/user-info', (req, res) => {
     }
 });
 
+const isAdminAuthenticated = (req, res, next) => {
+    if (req.session.admin) { // Set this in /admin-login
+        next();
+    } else {
+        res.status(403).json({ success: false, message: 'Admin access required' });
+    }
+};
+
 // Admin login
 const admin = { email: "admin@gmail.com", password: "admin123#" };
 app.post('/admin-login', (req, res) => {
     const { admin_email, admin_password } = req.body;
     if (admin_email === admin.email && admin_password === admin.password) {
+        req.session.admin = { email: admin_email };
         res.json({ success: true });
     } else {
         res.json({ success: false, error: "Invalid email or password" });
@@ -696,6 +716,106 @@ app.delete('/product-image/:id', isVendorAuthenticated, (req, res) => {
         }
     );
 });
+
+
+
+
+
+
+
+// Get all users for admin
+app.get('/admin/users', isAdminAuthenticated, (req, res) => {
+    db.all(
+        `SELECT id, user_name AS name, user_email AS email, created_at AS joined_date 
+         FROM users ORDER BY created_at DESC`,
+        [],
+        (err, users) => {
+            if (err) {
+                console.error('Error fetching users:', err);
+                return res.status(500).json({ success: false, message: 'Server error' });
+            }
+            res.json({ success: true, users });
+        }
+    );
+});
+
+
+// Get all products for admin
+app.get('/admin/products', isAdminAuthenticated, (req, res) => {
+    db.all(
+        `SELECT p.id, p.product_name, p.product_category, p.regular_price, p.stock_quantity, p.created_at,
+                (SELECT image_path FROM product_images WHERE product_id = p.id AND is_primary = 1 LIMIT 1) as primary_image
+         FROM products p ORDER BY p.created_at DESC`,
+        [],
+        (err, products) => {
+            if (err) {
+                console.error('Error fetching products:', err);
+                return res.status(500).json({ success: false, message: 'Server error' });
+            }
+            res.json({ success: true, products });
+        }
+    );
+});
+
+
+// User stats
+app.get('/admin/user-stats', isAdminAuthenticated, (req, res) => {
+    const today = new Date().toISOString().split('T')[0];
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+    db.get('SELECT COUNT(*) as total FROM users', (err, total) => {
+        if (err) return res.status(500).json({ success: false });
+        db.get('SELECT COUNT(*) as monthly FROM users WHERE created_at >= ?', [monthAgo], (err, monthly) => {
+            if (err) return res.status(500).json({ success: false });
+            db.get('SELECT COUNT(*) as weekly FROM users WHERE created_at >= ?', [weekAgo], (err, weekly) => {
+                if (err) return res.status(500).json({ success: false });
+                db.get('SELECT COUNT(*) as daily FROM users WHERE created_at >= ?', [today], (err, daily) => {
+                    if (err) return res.status(500).json({ success: false });
+                    res.json({
+                        success: true,
+                        stats: {
+                            total: total.total,
+                            monthly: monthly.monthly,
+                            weekly: weekly.weekly,
+                            daily: daily.daily
+                        }
+                    });
+                });
+            });
+        });
+    });
+});
+
+// Product stats
+app.get('/admin/product-stats', isAdminAuthenticated, (req, res) => {
+    db.get('SELECT COUNT(*) as total FROM products', (err, total) => {
+        if (err) return res.status(500).json({ success: false });
+        db.get('SELECT COUNT(*) as inStock FROM products WHERE stock_quantity > 0', (err, inStock) => {
+            if (err) return res.status(500).json({ success: false });
+            db.get('SELECT COUNT(*) as lowStock FROM products WHERE stock_quantity BETWEEN 1 AND 10', (err, lowStock) => {
+                if (err) return res.status(500).json({ success: false });
+            db.get('SELECT COUNT(*) as outOfStock FROM products WHERE stock_quantity = 0', (err, outOfStock) => {
+                    if (err) return res.status(500).json({ success: false });
+                    res.json({
+                        success: true,
+                        stats: {
+                            total: total.total,
+                            inStock: inStock.inStock,
+                            lowStock: lowStock.lowStock,
+                            outOfStock: outOfStock.outOfStock
+                        }
+                    });
+                });
+            });
+        });
+    });
+});
+
+
+
+
+
 
 // Initialize database and start server
 function initializeDatabase() {
