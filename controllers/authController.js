@@ -48,7 +48,14 @@ const login = async (req, res) => {
             const isMatch = await bcrypt.compare(user_password, user.user_password);
             if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password' });
 
-            req.session.user = { id: user.id, user_name: user.user_name, user_email: user.user_email };
+            req.session.user = {
+                id: user.id,
+                user_name: user.user_name,
+                user_email: user.user_email,
+                user_phone: user.user_phone || null,
+                user_address: user.user_address || null,
+                profile_pic: user.profile_pic || null
+            };
             res.status(200).json({ success: true, redirect: '/home', message: 'Login successful' });
         });
     } catch (error) {
