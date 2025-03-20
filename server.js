@@ -5,12 +5,14 @@ const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const { error } = require('console');
+const isAuthenticated =require('./middlewares/auth')
 
 const app = express();
 app.set('view engine', 'ejs');
-app.use(express.static('public'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public')); // makeing all public files static and useable
+app.use(express.json()); //  this is converts raw data into object
+app.use(express.urlencoded({ extended: true }));  // this convets data that came form url 
+
 
 // Session setup
 app.use(
@@ -28,6 +30,7 @@ const db = new sqlite3.Database(':memory:', (err) => {
     else console.log('Connected to SQLite database');
 });
 
+
 // Create users table
 db.run(`
     CREATE TABLE IF NOT EXISTS users (
@@ -43,6 +46,7 @@ db.run(`
     if (err) console.error('Error creating table:', err);
 });
 
+
 // Multer setup for file uploads
 const storage = multer.diskStorage({
     destination: 'uploads/',
@@ -50,6 +54,7 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname));
     }
 });
+
 const upload = multer({ 
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
@@ -57,13 +62,13 @@ const upload = multer({
 app.use('/uploads', express.static('uploads'));
 
 // Middleware to check if user is authenticated
-const isAuthenticated = (req, res, next) => {
-    if (req.session.user) {
-        next();
-    } else {
-        res.status(401).json({ success: false, message: 'Please log in first' });
-    }
-};
+// const isAuthenticated = (req, res, next) => {
+//     if (req.session.user) {
+//         next();
+//     } else {
+//         res.status(401).json({ success: false, message: 'Please log in first' });
+//     }
+// };
 
 // Routes for static pages
 const pages = [
@@ -81,7 +86,7 @@ const pages = [
     'eventmanager_analytics','eventmanager_events','eventmanager_profile','eventmanager_attendees',
 ];
 
---pages.forEach(page => {
+pages.forEach(page => {
     app.get(`/${page}`, (req, res) => {
         res.render(page, { user: req.session.user || null });
     });
