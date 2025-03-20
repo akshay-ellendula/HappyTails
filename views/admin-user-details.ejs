@@ -18,9 +18,9 @@
 
         <div id="userView">
             <div class="user-profile">
-                <div class="user-avatar" id="userAvatar">J</div>
-                <h2 class="user-name" id="userName">V Prakash</h2>
-                <p class="user-email" id="userEmail">john.k@example.com</p>
+                <div class="user-avatar" id="userAvatar"></div>
+                <h2 class="user-name" id="userName"></h2>
+                <p class="user-email" id="userEmail"></p>
                 <div style="clear: both;"></div>
             </div>
 
@@ -29,19 +29,19 @@
                 <table class="details-table">
                     <tr>
                         <td>User ID:</td>
-                        <td id="userId">#USR001</td>
+                        <td id="userId"></td>
                     </tr>
                     <tr>
                         <td>Joined Date:</td>
-                        <td id="joinedDate">Feb 12, 2025</td>
+                        <td id="joinedDate"></td>
                     </tr>
                     <tr>
                         <td>Address:</td>
-                        <td id="userAddress">123 Main St, New York, NY</td>
+                        <td id="userAddress"></td>
                     </tr>
                     <tr>
                         <td>Phone:</td>
-                        <td id="userPhone">9494391928</td>
+                        <td id="userPhone"></td>
                     </tr>
                 </table>
             </div>
@@ -75,44 +75,6 @@
                             <td>Pet Carrier</td>
                             <td>Jan 15, 2025</td>
                             <td>$34.50</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="detail-section">
-                <h3 class="section-title">Service Provider Appointments</h3>
-                <table class="history-table">
-                    <thead>
-                        <tr>
-                            <th>Service ID</th>
-                            <th>Service Type</th>
-                            <th>Provider Name</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>SRV234</td>
-                            <td>Veterinary Check-up</td>
-                            <td>Dr. Amy Johnson</td>
-                            <td>Mar 5, 2025</td>
-                            <td>Completed</td>
-                        </tr>
-                        <tr>
-                            <td>SRV345</td>
-                            <td>Dog Grooming</td>
-                            <td>Pete's Grooming</td>
-                            <td>Feb 20, 2025</td>
-                            <td>Completed</td>
-                        </tr>
-                        <tr>
-                            <td>SRV456</td>
-                            <td>Pet Training</td>
-                            <td>Brian's Dog Training</td>
-                            <td>Mar 25, 2025</td>
-                            <td>Scheduled</td>
                         </tr>
                     </tbody>
                 </table>
@@ -157,28 +119,28 @@
             </div>
         </div>
 
-        <div id="editForm" class="edit-form">
+        <div id="editForm" class="edit-form" style="display: none;">
             <div class="detail-section">
                 <h3 class="section-title">Edit User Information</h3>
                 <form id="userEditForm" novalidate>
                     <div class="form-group">
                         <label for="editName">Name:</label>
-                        <input type="text" id="editName" value="v prakash" required minlength="2" maxlength="50">
+                        <input type="text" id="editName" required minlength="2" maxlength="50">
                         <span class="error-message" id="nameError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editEmail">Email:</label>
-                        <input type="email" id="editEmail" value="john.k@example.com" required>
+                        <input type="email" id="editEmail" disabled>
                         <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editAddress">Address:</label>
-                        <input type="text" id="editAddress" value="123 Main St, New York, NY" required minlength="5">
+                        <input type="text" id="editAddress" required minlength="5">
                         <span class="error-message" id="addressError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editPhone">Phone:</label>
-                        <input type="tel" id="editPhone" value="9494391928" required pattern="[0-9]{10}" maxlength="10">
+                        <input type="tel" id="editPhone" required pattern="[0-9]{10}" maxlength="10">
                         <span class="error-message" id="phoneError"></span>
                     </div>
                     <button type="submit" class="save-btn">Save Changes</button>
@@ -186,84 +148,8 @@
                 </form>
             </div>
         </div>
+    </div>
 
-    <script src="/ADMIN/admin-user-details.js"> </script>
-    <script>
-        function validateForm() {
-            let isValid = true;
-            const name = document.getElementById('editName');
-            const email = document.getElementById('editEmail');
-            const address = document.getElementById('editAddress');
-            const phone = document.getElementById('editPhone');
-        
-            // Reset error messages
-            document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
-        
-            // Name validation
-            if (name.value.trim().length < 2) {
-                document.getElementById('nameError').textContent = 'Name must be at least 2 characters long';
-                isValid = false;
-            }
-        
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email.value)) {
-                document.getElementById('emailError').textContent = 'Please enter a valid email address';
-                isValid = false;
-            }
-        
-            // Address validation
-            if (address.value.trim().length < 5) {
-                document.getElementById('addressError').textContent = 'Address must be at least 5 characters long';
-                isValid = false;
-            }
-        
-            // Phone validation
-            const phoneRegex = /^[0-9]{10}$/;
-            if (!phoneRegex.test(phone.value)) {
-                document.getElementById('phoneError').textContent = 'Please enter a valid 10-digit phone number';
-                isValid = false;
-            }
-        
-            return isValid;
-        }
-        
-        // Form submission handler
-        document.getElementById('userEditForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (validateForm()) {
-                saveUserChanges();
-            }
-        });
-        
-        // Existing functions (add your implementations)
-        function showEditForm() {
-            document.getElementById('userView').style.display = 'none';
-            document.getElementById('editForm').style.display = 'block';
-        }
-        
-        function saveUserChanges() {
-            // Add your save logic here
-            console.log('Saving changes...');
-            // After saving, hide the form and show the view
-            document.getElementById('editForm').style.display = 'none';
-            document.getElementById('userView').style.display = 'block';
-        }
-        
-        function cancelEdit() {
-            document.getElementById('editForm').style.display = 'none';
-            document.getElementById('userView').style.display = 'block';
-        }
-        
-        function goBack() {
-            // Add your back navigation logic
-            console.log('Going back to users list...');
-        }
-        
-        function deleteUser() {
-            // Add your delete logic
-            console.log('Deleting user...');
-        }
-        </script>
+    <script src="/ADMIN/admin-user-details.js"></script>
 </body>
 </html>
