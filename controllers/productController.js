@@ -17,6 +17,7 @@ const uploadProductImages = multer({
 }).array('product-images', 10);
 
 const getPetAccessories = (req, res) => {
+    // Fetch products
     db.all(`
         SELECT p.id, p.product_name, p.product_type, p.regular_price, p.sale_price, 
                p.color, p.size, p.weight, pi.image_path
@@ -25,10 +26,64 @@ const getPetAccessories = (req, res) => {
         ORDER BY p.created_at DESC
     `, [], (err, products) => {
         if (err) return res.status(500).send('Server error');
-        res.render('pet_accessory', { user: req.session.user || null, products: products || [] });
+
+        // Fetch filter options
+        const filterQueries = {
+            productTypes: "SELECT DISTINCT product_type FROM products WHERE product_type IS NOT NULL",
+            colors: "SELECT DISTINCT color FROM products WHERE color IS NOT NULL",
+            sizes: "SELECT DISTINCT size FROM products WHERE size IS NOT NULL",
+            weights: "SELECT DISTINCT weight FROM products WHERE weight IS NOT NULL",
+            maxPrice: "SELECT MAX(regular_price) as max_price FROM products"
+        };
+
+        const filters = {};
+        let completedQueries = 0;
+        const totalQueries = Object.keys(filterQueries).length;
+
+        const processFilterResults = () => {
+            if (++completedQueries === totalQueries) {
+                res.render('pet_accessory', { 
+                    user: req.session.user || null, 
+                    products: products || [], 
+                    filters,
+                    productsData: JSON.stringify(products || [])
+                });
+            }
+        };
+
+        db.all(filterQueries.productTypes, [], (err, rows) => {
+            if (err) console.error('Error fetching product types:', err);
+            filters.productTypes = rows ? rows.map(row => row.product_type) : [];
+            processFilterResults();
+        });
+
+        db.all(filterQueries.colors, [], (err, rows) => {
+            if (err) console.error('Error fetching colors:', err);
+            filters.colors = rows ? rows.map(row => row.color) : [];
+            processFilterResults();
+        });
+
+        db.all(filterQueries.sizes, [], (err, rows) => {
+            if (err) console.error('Error fetching sizes:', err);
+            filters.sizes = rows ? rows.map(row => row.size) : [];
+            processFilterResults();
+        });
+
+        db.all(filterQueries.weights, [], (err, rows) => {
+            if (err) console.error('Error fetching weights:', err);
+            filters.weights = rows ? rows.map(row => row.weight) : [];
+            processFilterResults();
+        });
+
+        db.get(filterQueries.maxPrice, [], (err, row) => {
+            if (err) console.error('Error fetching max price:', err);
+            filters.maxPrice = row && row.max_price ? row.max_price : 15000; // Default if no products
+            processFilterResults();
+        });
     });
 };
 
+// Rest of the controller remains unchanged
 const submitProduct = (req, res) => {
     uploadProductImages(req, res, (err) => {
         if (err instanceof multer.MulterError) return res.status(400).json({ success: false, message: `Upload error: ${err.message}` });
