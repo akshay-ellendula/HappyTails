@@ -45,19 +45,26 @@ function createTables(callback) {
                 product_category TEXT NOT NULL,
                 product_type TEXT NOT NULL,
                 product_description TEXT NOT NULL,
-                regular_price REAL NOT NULL,
-                sale_price REAL,
                 sku TEXT,
-                stock_quantity INTEGER NOT NULL,
                 stock_status TEXT NOT NULL,
-                color TEXT,
-                size TEXT,
-                material TEXT,
-                weight REAL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (vendor_id) REFERENCES vendors(id)
             )
         `, (err) => { if (err) console.error('Error creating products table:', err); else console.log('Products table created'); });
+
+        db.run(`
+            CREATE TABLE IF NOT EXISTS product_variants (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                product_id INTEGER NOT NULL,
+                size TEXT,
+                color TEXT,
+                regular_price REAL NOT NULL,
+                sale_price REAL,
+                stock_quantity INTEGER NOT NULL,
+                sku TEXT,
+                FOREIGN KEY (product_id) REFERENCES products(id)
+            )
+        `, (err) => { if (err) console.error('Error creating product_variants table:', err); else console.log('Product_variants table created'); });
 
         db.run(`
             CREATE TABLE IF NOT EXISTS product_images (
@@ -73,38 +80,118 @@ function createTables(callback) {
 
 function insertSampleData(callback) {
     const queries = [
+        // Users
         `INSERT INTO users (user_name, user_email, user_password) VALUES 
          ('Gautam Thota', 'gautam.thota@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
         `INSERT INTO users (user_name, user_email, user_password) VALUES 
          ('Veda Prakash', 'veda.prakash@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
         `INSERT INTO users (user_name, user_email, user_password) VALUES 
          ('Akshay', 'akshay@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
+
+        // Vendors
         `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
          ('Gautam Thota', '9876543210', 'gautam.thota@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Pet Haven', 'Vijayawada')`,
         `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
          ('Veda Prakash', '8765432109', 'veda.prakash@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Furry Friends', 'Hyderabad')`,
         `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
          ('Akshay', '7654321098', 'akshay@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Paws & Claws', 'Bangalore')`,
-        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
-         (1, 'Cozy Pet Bed', 'Accessories', 'Pet Beds', 'Soft and cozy bed for pets', 2999.99, 2499.99, 'PB001', 20, 'In Stock', 'Brown', 'Medium', 'Cotton', 2.5)`,
-        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sku, stock_quantity, stock_status, size, weight) VALUES 
-         (1, 'Chicken-Flavored Dog Food', 'Pet Food', 'Dry', 'Nutritious dog food for all breeds', 1499.99, 'DF001', 50, 'In Stock', 'Large', 5.0)`,
-        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
-         (2, 'Cat Scratching Post', 'Accessories', 'Furniture', 'Durable scratching post for cats', 1999.99, 1799.99, 'SP001', 15, 'In Stock', 'Grey', 'Large', 'Sisal/Wood', 3.0)`,
-        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sku, stock_quantity, stock_status, size, weight) VALUES 
-         (2, 'Fish-Flavored Treats', 'Pet Food', 'Treats', 'Delicious treats for cats', 499.99, 'FT001', 100, 'In Stock', 'Small', 0.25)`,
-        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
-         (3, 'Grooming Brush', 'Grooming', 'Grooming Supplies', 'Gentle brush for pet grooming', 799.99, 699.99, 'GB001', 30, 'In Stock', 'Blue', 'Medium', 'Plastic', 0.2)`,
-        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
-         (3, 'Pet Carrier', 'Accessories', 'Carrier', 'Portable carrier for small pets', 3999.99, 3499.99, 'PC001', 10, 'In Stock', 'Grey', 'Medium', 'Plastic/Fabric', 2.0)`,
-        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (1, 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg', 1)`,
-        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (1, '/images/cat_in_cat_cave.jpg', 0)`,
-        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (2, '/images/cat_in_cat_cave.jpg', 1)`,
-        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (3, 'https://encrypted-tbn0.gstatic.com/shopping?q=tbn...', 1)`,
-        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (4, 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg', 1)`,
-        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (5, '/images/cat_in_cat_cave.jpg', 1)`,
-        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (6, '/images/cat_in_cat_cave.jpg', 1)`,
-        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (6, '/images/cat_in_cat_cave.jpg', 0)`
+
+        // Products
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
+         (1, 'Cozy Pet Bed', 'beds', 'Pet Beds', 'A soft and cozy bed perfect for pets to relax in.', 'PB001', 'In Stock')`,
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
+         (1, 'Chicken-Flavored Dog Food', 'food', 'Dry', 'Nutritious dry food for dogs with a chicken flavor.', 'DF001', 'In Stock')`,
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
+         (2, 'Cat Scratching Post', 'toys', 'Furniture', 'Durable scratching post to keep cats entertained.', 'SP001', 'In Stock')`,
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
+         (2, 'Fish-Flavored Treats', 'food', 'Treats', 'Delicious fish-flavored treats for cats.', 'FT001', 'In Stock')`,
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
+         (3, 'Grooming Brush', 'grooming', 'Grooming Supplies', 'Gentle brush for keeping pet fur smooth.', 'GB001', 'In Stock')`,
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
+         (3, 'Pet Carrier', 'beds', 'Carrier', 'Portable carrier for small pets.', 'PC001', 'In Stock')`,
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
+         (1, 'Interactive Dog Ball', 'toys', 'Toys', 'A durable ball that lights up for interactive play.', 'DB001', 'In Stock')`,
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
+         (2, 'Luxury Cat Bed', 'beds', 'Pet Beds', 'A plush bed with extra cushioning for cats.', 'CB001', 'In Stock')`,
+
+        // Product Variants
+        // Cozy Pet Bed (Product ID: 1)
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (1, 'Small', 'Brown', 1999.99, 1799.99, 10, 'PB001-SM-BRN')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (1, 'Medium', 'Brown', 2999.99, 2499.99, 20, 'PB001-MD-BRN')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (1, 'Large', 'Brown', 3999.99, 3499.99, 15, 'PB001-LG-BRN')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (1, 'Medium', 'Grey', 2999.99, 2599.99, 8, 'PB001-MD-GRY')`,
+
+        // Chicken-Flavored Dog Food (Product ID: 2)
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (2, '1kg', NULL, 499.99, NULL, 30, 'DF001-1KG')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (2, '5kg', NULL, 1499.99, NULL, 50, 'DF001-5KG')`,
+
+        // Cat Scratching Post (Product ID: 3)
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (3, 'Small', 'Grey', 999.99, 899.99, 25, 'SP001-SM-GRY')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (3, 'Large', 'Grey', 1999.99, 1799.99, 15, 'SP001-LG-GRY')`,
+
+        // Fish-Flavored Treats (Product ID: 4)
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (4, '100g', NULL, 199.99, NULL, 100, 'FT001-100G')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (4, '250g', NULL, 499.99, NULL, 75, 'FT001-250G')`,
+
+        // Grooming Brush (Product ID: 5)
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (5, NULL, 'Blue', 799.99, 699.99, 30, 'GB001-BLU')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (5, NULL, 'Red', 799.99, 699.99, 20, 'GB001-RED')`,
+
+        // Pet Carrier (Product ID: 6)
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (6, 'Small', 'Grey', 2999.99, 2799.99, 12, 'PC001-SM-GRY')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (6, 'Medium', 'Grey', 3999.99, 3499.99, 10, 'PC001-MD-GRY')`,
+
+        // Interactive Dog Ball (Product ID: 7)
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (7, 'Small', 'Green', 599.99, 549.99, 40, 'DB001-SM-GRN')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (7, 'Medium', 'Green', 799.99, 699.99, 30, 'DB001-MD-GRN')`,
+
+        // Luxury Cat Bed (Product ID: 8)
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (8, 'Small', 'Purple', 2499.99, 2299.99, 15, 'CB001-SM-PUR')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (8, 'Large', 'Purple', 3499.99, 3199.99, 10, 'CB001-LG-PUR')`,
+        `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
+         (8, 'Large', 'White', 3499.99, 3199.99, 8, 'CB001-LG-WHT')`,
+
+        // Product Images
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (1, 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg', 1)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (1, '/images/cozy_pet_bed_grey.jpg', 0)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (2, '/images/chicken_dog_food.jpg', 1)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (3, '/images/scratching_post_grey.jpg', 1)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (4, 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg', 1)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (5, '/images/grooming_brush_blue.jpg', 1)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (5, '/images/grooming_brush_red.jpg', 0)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (6, '/images/pet_carrier_grey.jpg', 1)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (7, '/images/dog_ball_green.jpg', 1)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (8, '/images/luxury_cat_bed_purple.jpg', 1)`,
+        `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
+         (8, '/images/luxury_cat_bed_white.jpg', 0)`
     ];
 
     let completedQueries = 0;
