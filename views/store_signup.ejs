@@ -60,8 +60,8 @@
             <input type="text" placeholder="Enter Store Location" name="storelocation" id="storelocation" required>
             <div id="locationError" class="error">Please enter a valid location</div>
 
-            <button type="submit" class="registerbtn">Register</button>
-            <div id="successMessage" class="success-message">Registration successful! Redirecting...</div>
+            <button type="submit" class="registerbtn" style="margin: 10px;">Register</button>
+            <div id="successMessage" class="success-message" style="margin: 10px;">Registration successful! Redirecting...</div>
         </form>
     </div>
     <!-- Footer remains unchanged -->
@@ -134,13 +134,13 @@
                 isValid = false;
             }
 
-            const phoneRegex = /^\d{10}$/;
+            const phoneRegex = /^[6-9]\d{9}$/;
             if (!phoneRegex.test(contactnumber)) {
                 document.getElementById('contactError').style.display = 'block';
                 isValid = false;
             }
 
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^\s@]+@gmail\.com$/;
             if (!emailRegex.test(email)) {
                 document.getElementById('emailError').style.display = 'block';
                 isValid = false;
@@ -198,7 +198,7 @@
                     // Redirect after a delay
                     setTimeout(() => {
                         window.location.href = data.redirect;
-                    }, 2000);
+                    }, 1000);
                 } else {
                     // Display server-side error
                     if (data.message === 'Email already registered') {

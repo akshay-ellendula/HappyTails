@@ -65,7 +65,6 @@ function createTables(callback) {
             if (err) console.error('Error creating vendors table:', err);
             else console.log('Vendors table created successfully');
         });
-
         // Create products table
         db.run(`
             CREATE TABLE IF NOT EXISTS products (
@@ -91,7 +90,6 @@ function createTables(callback) {
             if (err) console.error('Error creating products table:', err);
             else console.log('Products table created successfully');
         });
-
         // Create product_images table
         db.run(`
             CREATE TABLE IF NOT EXISTS product_images (
@@ -424,27 +422,18 @@ app.post('/store-signup', async (req, res) => {
     if (!name || !contactnumber || !email || !password || !storename || !storelocation) {
         return res.status(400).json({ success: false, message: 'All fields are required' });
     }
-    if (name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
-    if (!/^\d{10}$/.test(contactnumber)) return res.status(400).json({ success: false, message: 'Invalid phone number format' });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Invalid email format' });
-    if (password.length < 8 || !/\d/.test(password)) return res.status(400).json({ success: false, message: 'Password must be 8+ characters with a number' });
-    if (password !== confirmpassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
-    if (storename.length < 2) return res.status(400).json({ success: false, message: 'Store name must be at least 2 characters' });
-    if (storelocation.length < 3) return res.status(400).json({ success: false, message: 'Invalid store location' });
-
     try {
         db.get("SELECT * FROM vendors WHERE email = ?", [email], async (err, row) => {
             if (err) return res.status(500).json({ success: false, message: 'Database error' });
             if (row) return res.status(400).json({ success: false, message: 'Email already registered' });
-
             const hashedPassword = await bcrypt.hash(password, 10);
             db.run(
-                `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES (?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location ) VALUES (?, ?, ?, ?, ?, ?)`,
                 [name, contactnumber, email, hashedPassword, storename, storelocation],
                 function (err) {
                     if (err) return res.status(500).json({ success: false, message: 'Database error' });
                     console.log('Vendor registered:', { name, email, storename });
-                    res.status(201).json({ success: true, message: 'Vendor signup successful' });
+                    res.status(201).json({ success: true, redirect:'/service_provider_login',message: 'Vendor signup successful' });
                 }
             );
         });
@@ -813,10 +802,6 @@ app.get('/admin/product-stats', isAdminAuthenticated, (req, res) => {
 });
 
 
-
-
-
-
 // Initialize database and start server
 function initializeDatabase() {
     createTables(() => {
@@ -824,6 +809,8 @@ function initializeDatabase() {
                     app.listen(3000, () => {
                         console.log('Server is running on port 3000');
                         console.log('http://localhost:3000/pet_accessory');
+                        console.log('http://localhost:3000/home');
+                        console.log('http://localhost:3000/service_provider_login');
                     });
         });
     });

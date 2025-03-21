@@ -255,10 +255,6 @@
 
                 <button type="submit">Login</button>
             </form>
-            <a href="#" class="forgot-password">Forgot password?</a>
-            <div style="margin: 10px; padding: 10px;">
-                <p class="signup-prompt">Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
-            </div>
         </div>
     </div>
     <footer>
@@ -282,11 +278,10 @@
             if (!email.value.trim()) {
                 showError(email, 'Email is required');
                 isValid = false;
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+            } else if (!/^[^\s@]+@gmail\.com$/.test(email.value.trim())) {
                 showError(email, 'Please enter a valid email address');
                 isValid = false;
             }
-
             if (!password.value) {
                 showError(password, 'Password is required');
                 isValid = false;
@@ -294,7 +289,6 @@
                 showError(password, 'Password must be at least 6 characters');
                 isValid = false;
             }
-
             if (!role.value) {
                 showError(role, 'Please select your role');
                 isValid = false;
