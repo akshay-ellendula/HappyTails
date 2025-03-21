@@ -91,7 +91,7 @@ function insertSampleData(callback) {
          (1, 'Chicken-Flavored Dog Food', 'Pet Food', 'Dry', 'Nutritious dog food for all breeds', 1499.99, 'DF001', 50, 'In Stock', 'Large', 5.0)`,
         `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
          (2, 'Cat Scratching Post', 'Accessories', 'Furniture', 'Durable scratching post for cats', 1999.99, 1799.99, 'SP001', 15, 'In Stock', 'Grey', 'Large', 'Sisal/Wood', 3.0)`,
-        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sku, stock_quantity გstock_status, size, weight) VALUES 
+        `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sku, stock_quantity, stock_status, size, weight) VALUES 
          (2, 'Fish-Flavored Treats', 'Pet Food', 'Treats', 'Delicious treats for cats', 499.99, 'FT001', 100, 'In Stock', 'Small', 0.25)`,
         `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, regular_price, sale_price, sku, stock_quantity, stock_status, color, size, material, weight) VALUES 
          (3, 'Grooming Brush', 'Grooming', 'Grooming Supplies', 'Gentle brush for pet grooming', 799.99, 699.99, 'GB001', 30, 'In Stock', 'Blue', 'Medium', 'Plastic', 0.2)`,

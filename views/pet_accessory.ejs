@@ -175,7 +175,9 @@
         <div class="product_container">
             <% products.forEach(product => { %>
                 <div class="product_card autoshow" data-product-id="<%= product.id %>">
-                    <img src="<%= product.image_path || '/images/default-product.jpg' %>" alt="<%= product.product_name %>">
+                    <div class="product_card_img">
+                        <img src="<%= product.image_path || '/images/default-product.jpg' %>" alt="<%= product.product_name %>">
+                    </div>
                     <div class="product_card_details">
                         <h3><%= product.product_name %></h3>
                         <p>

@@ -279,7 +279,12 @@ hr {
     transform: scale(1.07);
 }
 
-.product_card img {
+.product_card_img {
+    width: 350px;
+    height: 350px;
+}
+
+.product_card_img img {
     width: 100%;
     aspect-ratio: 1/1;
     object-fit: cover;
