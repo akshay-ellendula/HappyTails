@@ -147,29 +147,43 @@
             const cartMessage = document.getElementById('cartMessage');
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
+            // Function to populate color options
+            function populateColors(selectedSize = null) {
+                if (!colorSelect) return; // Exit if no color dropdown
+
+                colorSelect.innerHTML = '<option value="default">Select Color</option>';
+                const availableColors = [...new Set(
+                    product.variants
+                        .filter(v => (selectedSize ? v.size === selectedSize : true) && v.color !== null)
+                        .map(v => v.color)
+                )];
+                availableColors.forEach(color => {
+                    const option = document.createElement('option');
+                    option.value = color;
+                    option.textContent = color;
+                    colorSelect.appendChild(option);
+                });
+            }
+
+            // Populate colors immediately if there's no size dropdown
+            if (!sizeSelect && colorSelect) {
+                populateColors();
+            }
+
             // Populate color options based on selected size (if size exists)
             if (sizeSelect) {
                 sizeSelect.addEventListener('change', function() {
                     const selectedSize = this.value;
-                    if (colorSelect) {
+                    if (selectedSize !== 'default') {
+                        populateColors(selectedSize);
+                    } else {
                         colorSelect.innerHTML = '<option value="default">Select Color</option>';
-                        if (selectedSize !== 'default') {
-                            const availableColors = product.variants
-                                .filter(v => v.size === selectedSize && v.color !== null)
-                                .map(v => v.color);
-                            availableColors.forEach(color => {
-                                const option = document.createElement('option');
-                                option.value = color;
-                                option.textContent = color;
-                                colorSelect.appendChild(option);
-                            });
-                        }
                     }
                     updatePrice();
                 });
             }
 
-            // Update price based on selections (if color exists)
+            // Update price based on selections
             if (colorSelect) {
                 colorSelect.addEventListener('change', updatePrice);
             }
@@ -183,6 +197,8 @@
                     variant = product.variants.find(v => v.size === selectedSize && v.color === selectedColor);
                 } else if (selectedSize && selectedSize !== 'default') {
                     variant = product.variants.find(v => v.size === selectedSize);
+                } else if (selectedColor && selectedColor !== 'default') {
+                    variant = product.variants.find(v => v.color === selectedColor);
                 } else {
                     variant = product.variants[0]; // Default to first variant
                 }
@@ -248,8 +264,8 @@
                 }
 
                 localStorage.setItem('cart', JSON.stringify(cart));
-                cartMessage.style.display = 'block';
-                cartMessage.style.color = 'green';
+                cartMessage.style.display = "block";
+                cartMessage.style.color = "green";
                 cartMessage.textContent = `Added ${quantity} ${product.product_name} to cart!`;
                 setTimeout(() => cartMessage.style.display = 'none', 3000);
             });

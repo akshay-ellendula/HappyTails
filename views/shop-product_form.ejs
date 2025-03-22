@@ -147,7 +147,7 @@
                             <input type="number" name="variant_stock_quantity[]" class="form-control" value="${stockQuantity}" placeholder="Enter quantity" required>
                         </div>
                     </div>
-                    <button type="button" class="remove-variant button danger-button">Remove</button>
+                    <button type="button" style="margin-bottom: 30px" class="remove-variant button danger-button">Remove</button>
                 `;
                 variantsContainer.appendChild(variantDiv);
                 variantDiv.querySelector('.remove-variant').addEventListener('click', () => variantDiv.remove());

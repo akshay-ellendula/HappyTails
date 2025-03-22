@@ -11,6 +11,7 @@ const productRoutes = require('./routes/productRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const staticRoutes = require('./routes/staticRoutes');
 
+
 const app = express();
 
 // Middleware setup
