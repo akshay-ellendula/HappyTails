@@ -27,7 +27,7 @@ const storeSignup = async (req, res) => {
                 [name, contactnumber, email, hashedPassword, storename, storelocation],
                 function (err) {
                     if (err) return res.status(500).json({ success: false, message: 'Database error' });
-                    res.status(201).json({ success: true, message: 'Vendor signup successful' });
+                    res.status(201).json({ success: true, redirect: '/shop-dashboard', message: 'Vendor signup successful' });
                 }
             );
         });
