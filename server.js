@@ -48,6 +48,8 @@ function initializeDatabase() {
             app.listen(3000, () => {
                 console.log('Server is running on port 3000');
                 console.log('http://localhost:3000/pet_accessory');
+                console.log('http://localhost:3000/home');
+                console.log('http://localhost:3000/service_provider_login');
             });
         });
     });
