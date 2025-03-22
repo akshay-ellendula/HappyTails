@@ -132,4 +132,41 @@ const getProductStats = (req, res) => {
     });
 };
 
-module.exports = { adminLogin, getUsers, getUser, updateUser, deleteUser, getProducts, getUserStats, getProductStats };
+
+const dashBoardStats = (req, res) => {
+    db.get('SELECT COUNT(*) as total FROM users', (err, totalUsers) => {
+        if (err) {
+            console.error('Error fetching total users:', err);
+            return res.status(500).json({ success: false, message: 'Server error' });
+        }
+
+        db.get('SELECT COUNT(*) as total FROM vendors', (err, totalVendors) => {
+            if (err) {
+                console.error('Error fetching total vendors:', err);
+                return res.status(500).json({ success: false, message: 'Server error' });
+            }
+
+            res.json({
+                success: true,
+                stats: {
+                    totalUsers: totalUsers.total,
+                    totalVendors: totalVendors.total
+                }
+            });
+        });
+    });
+};
+
+const adminGetUsers = (req, res) => {
+    db.all(
+        `SELECT id, user_name AS name, user_email AS email, created_at AS joined_date 
+         FROM users ORDER BY created_at DESC LIMIT 5`,
+        [],
+        (err, users) => {
+            if (err) return res.status(500).json({ success: false, message: 'Server error' });
+            res.json({ success: true, users });
+        }
+    );
+}
+
+module.exports = { adminLogin, getUsers, getUser, updateUser, deleteUser, getProducts, getUserStats, getProductStats, dashBoardStats, adminGetUsers };
