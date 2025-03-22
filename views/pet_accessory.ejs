@@ -186,48 +186,36 @@
         </div>
     </footer>
 
+    
+    
     <script id="products-data" type="text/plain">
         <%- productsData %>
     </script>
     <script>
         const productsData = JSON.parse(document.getElementById('products-data').textContent);
-
+    
         document.addEventListener("DOMContentLoaded", function () {
-            // Menu Toggle for Side Navbar
+            // Existing menu and cart toggle code remains unchanged
             const menuIcon = document.getElementById('menuIcon');
             const sideNavbar = document.getElementById('sideNavbar');
             const closeBtn = document.getElementById('closeBtn');
-
-            menuIcon.addEventListener('click', () => sideNavbar.classList.toggle('open'));
-            closeBtn.addEventListener('click', () => sideNavbar.classList.remove('open'));
-
-            // Cart Toggle (Desktop and Mobile)
             const cart = document.getElementById('cart');
             const cartBtn = document.getElementById('cart_btn');
             const mobileCartBtn = document.getElementById('mobile_cart_btn');
             const cartCloseBtn = document.getElementById('CartcloseBtn');
-
-            cartBtn.addEventListener('click', () => {
-                cart.classList.toggle('open');
-                renderCart();
-            });
-
-            mobileCartBtn.addEventListener('click', () => {
-                sideNavbar.classList.remove('open');
-                cart.classList.toggle('open');
-                renderCart();
-            });
-
+    
+            menuIcon.addEventListener('click', () => sideNavbar.classList.toggle('open'));
+            closeBtn.addEventListener('click', () => sideNavbar.classList.remove('open'));
+            cartBtn.addEventListener('click', () => { cart.classList.toggle('open'); renderCart(); });
+            mobileCartBtn.addEventListener('click', () => { sideNavbar.classList.remove('open'); cart.classList.toggle('open'); renderCart(); });
             cartCloseBtn.addEventListener('click', () => cart.classList.remove('open'));
-
-            // Render Cart Items
+    
             function renderCart() {
                 const cartContainer = document.getElementById('cart_product_container');
                 const subtotalElement = document.getElementById('subtotal_amount');
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
+    
                 cartContainer.innerHTML = cart.length === 0 ? '<p>Your cart is empty.</p>' : '';
-
                 cart.forEach((item, index) => {
                     const cartProduct = document.createElement('div');
                     cartProduct.classList.add('cart_product');
@@ -251,7 +239,7 @@
                     `;
                     cartContainer.appendChild(cartProduct);
                 });
-
+    
                 document.querySelectorAll('.quantity').forEach(input => {
                     input.addEventListener('input', function() {
                         const index = parseInt(this.getAttribute('data-index'));
@@ -260,7 +248,7 @@
                         renderCart();
                     });
                 });
-
+    
                 document.querySelectorAll('.remove-item').forEach(button => {
                     button.addEventListener('click', function() {
                         const index = parseInt(this.getAttribute('data-index'));
@@ -269,14 +257,41 @@
                         renderCart();
                     });
                 });
-
+    
                 const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 subtotalElement.textContent = subtotal.toFixed(2);
             }
-
+    
             renderCart();
-
-            // Filter Expand/Collapse
+    
+            // Updated Checkout Logic
+            document.querySelector('.checkout_button button').addEventListener('click', function () {
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                if (cart.length === 0) {
+                    alert('Your cart is empty!');
+                    return;
+                }
+    
+                fetch('/checkout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cart }) // Ensure cart includes product_id, variant_id, etc.
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Order placed successfully!');
+                        localStorage.removeItem('cart');
+                        cart.classList.remove('open');
+                        window.location.href = '/my_orders';
+                    } else {
+                        alert('Error placing order: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+    
+            // Existing filter and product card logic remains unchanged
             document.querySelectorAll('.expand-button').forEach(button => {
                 button.addEventListener('click', function(event) {
                     event.preventDefault();
@@ -286,38 +301,33 @@
                     this.textContent = this.textContent === '+' ? '-' : '+';
                 });
             });
-
-            // Product Card Click Redirect
+    
             document.querySelectorAll('.product_card').forEach(card => {
                 card.addEventListener('click', function () {
                     const productId = this.getAttribute('data-product-id');
                     window.location.href = `/product/${productId}`;
                 });
             });
-
-            // Mobile Filter Toggle
+    
             const filterBtn = document.querySelector(".filter_btn");
             const filters = document.querySelector(".filter_container");
             const closeFiltersBtn = document.querySelector(".close-filters") || document.createElement("button");
             closeFiltersBtn.innerText = "✖ Close";
             closeFiltersBtn.classList.add("close-filters");
             filters.prepend(closeFiltersBtn);
-
+    
             filterBtn.addEventListener("click", () => filters.classList.add("show"));
             closeFiltersBtn.addEventListener("click", () => filters.classList.remove("show"));
-
-            // Price Range Slider Update
+    
             const priceRange = document.getElementById('price');
             const minPriceLabel = document.getElementById('min-price');
             const maxPriceLabel = document.getElementById('max-price');
             priceRange.addEventListener('input', function () {
                 maxPriceLabel.textContent = `₹${parseFloat(this.value).toFixed(2)}`;
             });
-
-            // Filter Submission (Updated for Variants)
+    
             const filterForm = document.querySelector('.filter_container');
             const productCards = document.querySelectorAll('.product_card');
-
             filterForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const formData = new FormData(filterForm);
@@ -327,17 +337,14 @@
                     colors: formData.getAll('color'),
                     sizes: formData.getAll('size')
                 };
-
+    
                 productCards.forEach(card => {
                     const productId = card.getAttribute('data-product-id');
                     const product = productsData.find(p => p.id == productId);
                     const price = product.min_sale_price || product.min_regular_price;
-
+    
                     const matchesType = filters.productTypes.length === 0 || filters.productTypes.includes(product.product_type);
                     const matchesPrice = price <= filters.maxPrice;
-
-                    // For simplicity, assume variant data is fetched separately if needed
-                    // Here, we’re just checking the product’s base attributes
                     card.style.display = (matchesType && matchesPrice) ? 'block' : 'none';
                 });
             });

@@ -309,4 +309,131 @@ const deleteProductImage = (req, res) => {
     );
 };
 
-module.exports = { getPetAccessories, submitProduct, getVendorProducts, getProduct, updateProduct, deleteProduct, deleteProductImage };
+
+
+const checkout = (req, res) => {
+    if (!req.session.user) return res.status(401).json({ success: false, message: 'User not logged in' });
+
+    const { cart } = req.body;
+    if (!cart || cart.length === 0) return res.status(400).json({ success: false, message: 'Cart is empty' });
+
+    console.log('Cart data received:', JSON.stringify(cart, null, 2));
+
+    const userId = req.session.user.id;
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    db.run(
+        `INSERT INTO orders (user_id, status, subtotal, total_amount) VALUES (?, ?, ?, ?)`,
+        [userId, 'Pending', subtotal, subtotal],
+        function(err) {
+            if (err) return res.status(500).json({ success: false, message: 'Failed to create order' });
+
+            const orderId = this.lastID;
+            const orderItems = cart.map(item => [
+                orderId,
+                item.productId || null,
+                item.variant_id || null, // Assuming cart includes variant_id
+                item.product_name,
+                item.quantity,
+                item.price,
+                item.size || null,
+                item.color || null
+            ]);
+
+            db.run(
+                `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) 
+                 VALUES ${orderItems.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(', ')}`,
+                orderItems.flat(),
+                (err) => {
+                    if (err) return res.status(500).json({ success: false, message: 'Failed to save order items' });
+                    res.json({ success: true, orderId });
+                }
+            );
+        }
+    );
+};
+
+// Add getUserOrders function
+const getUserOrders = (req, res) => {
+    if (!req.session.user) return res.status(401).json({ success: false, message: 'User not logged in' });
+
+    const userId = req.session.user.id;
+    db.all(`
+        SELECT o.id as order_id, o.order_date, o.status, o.subtotal, o.total_amount, o.delivery_date,
+               oi.product_id, oi.variant_id, oi.product_name, oi.quantity, oi.price, oi.size, oi.color,
+               pi.image_path
+        FROM orders o
+        LEFT JOIN order_items oi ON o.id = oi.order_id
+        LEFT JOIN product_images pi ON oi.product_id = pi.product_id AND pi.is_primary = 1
+        WHERE o.user_id = ?
+        ORDER BY o.order_date DESC
+    `, [userId], (err, rows) => {
+        if (err) return res.status(500).json({ success: false, message: 'Failed to fetch orders' });
+
+        const orders = [];
+        rows.forEach(row => {
+            let order = orders.find(o => o.order_id === row.order_id);
+            if (!order) {
+                order = {
+                    order_id: row.order_id,
+                    order_date: row.order_date,
+                    status: row.status,
+                    subtotal: row.subtotal,
+                    total_amount: row.total_amount,
+                    delivery_date: row.delivery_date,
+                    items: []
+                };
+                orders.push(order);
+            }
+            order.items.push({
+                product_id: row.product_id,
+                variant_id: row.variant_id,
+                product_name: row.product_name,
+                quantity: row.quantity,
+                price: row.price,
+                size: row.size,
+                color: row.color,
+                image_path: row.image_path || '/images/default-product.jpg'
+            });
+        });
+        res.json({ success: true, orders });
+    });
+};
+
+// Add reorder function
+const reorder = (req, res) => {
+    if (!req.session.user) return res.status(401).json({ success: false, message: 'User not logged in' });
+
+    const orderId = req.params.orderId;
+    const userId = req.session.user.id;
+
+    db.all(
+        `SELECT oi.product_id, oi.variant_id, oi.product_name, oi.quantity, oi.price, oi.size, oi.color, pi.image_path
+         FROM order_items oi
+         LEFT JOIN product_images pi ON oi.product_id = pi.product_id AND pi.is_primary = 1
+         WHERE oi.order_id = ?`,
+        [orderId],
+        (err, items) => {
+            if (err) return res.status(500).json({ success: false, message: 'Failed to fetch order items' });
+            if (items.length === 0) return res.status(404).json({ success: false, message: 'Order not found' });
+
+            // Here, you could add items to a server-side cart or return them for client-side handling
+            res.json({ success: true, cart: items });
+        }
+    );
+};
+
+
+
+module.exports = { 
+    getPetAccessories, 
+    submitProduct, 
+    getVendorProducts, 
+    getProduct, 
+    updateProduct, 
+    deleteProduct, 
+    deleteProductImage,
+    checkout,           
+    getUserOrders,      
+    reorder  
+};
