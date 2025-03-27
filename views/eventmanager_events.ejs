@@ -1,345 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Event Manager - Events</title>
-        <link rel="stylesheet" href="/Events/eventmanager_events.css">
-    </head>
-    <body>
-        <div class="navbar">
-            <header>
-                <a href="/home" class="badge">Happy Tails</a>
-                <div class="menu">
-                    <a href="/eventmanager_profile" class="nav-link" data-page="Profile">Profile</a>
-                    <a href="#" class="nav-link" data-page="Logout">Logout</a>
-                </div>
-            </header>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager - Events</title>
+    <link rel="stylesheet" href="/Events/eventmanager_events.css">
+</head>
+
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="/eventmanager_profile" class="nav-link" data-page="Profile">Profile</a>
+                <a href="/logout" class="nav-link" data-page="Logout">Logout</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="/eventmanager_dashboard" class="nav-link" data-page="Home">Home</a></li>
+                <li><a href="/eventmanager_events" class="nav-link active" data-page="Events">Events</a></li>
+                <li><a href="/eventmanager_attendees" class="nav-link" data-page="Attendees">Attendees</a></li>
+                <li><a href="/eventmanager_profile" class="nav-link" data-page="Profile">Profile</a></li>
+                <li><a href="/eventmanager_analytics" class="nav-link" data-page="Analytics">Analytics</a></li>
+            </ul>
         </div>
 
-        <div class="dashboard-container">
-            <div class="sidebar">
-                <h2>Dashboard</h2>
-                <ul>
-                    <li><a href="/eventmanager_dashboard" class="nav-link" data-page="Home">Home</a></li>
-                    <li><a href="/eventmanager_events" class="nav-link active"  data-page="Events">Events</a></li>
-                    <li><a href="/eventmanager_attendees" class="nav-link" data-page="Attendees">Attendees</a></li>
-                    <li><a href="/eventmanager_profile" class="nav-link" data-page="Profile">Profile</a></li>
-                    <li><a href="/eventmanager_analytics" class="nav-link" data-page="Analytics">Analytics</a></li>
-                </ul>
+        <div class="main-content">
+            <div class="welcome-section">
+                <h1>Events</h1>
             </div>
 
-            <div class="main-content">
-                <div class="welcome-section">
-                    <h1>Events</h1>
-                </div>
-
-                <div class="section">
-                    <h2>Previous Events</h2>
-                    <div class="appointments">
-                        <div class="appointment-card">
-                            <div class="time-badge">09:30 AM</div>
-                            <h3>Concert Night</h3>
-                            <p><strong>Date:</strong> February 15, 2025</p>
-                            <p><strong>Registered:</strong> 500 Attendees</p>
-                            <p><strong>Revenue:</strong> $3,500</p>
-                        </div>
-                        <div class="appointment-card">
-                            <div class="time-badge">11:00 AM</div>
-                            <h3>Charity Gala</h3>
-                            <p><strong>Date:</strong> January 20, 2025</p>
-                            <p><strong>Registered:</strong> 800 Attendees</p>
-                            <p><strong>Revenue:</strong> $5,200</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2>Ongoing Events</h2>
-                    <div class="appointments">
-                        <div class="appointment-card">
-                            <div class="time-badge">05:00 PM</div>
-                            <h3>Musical Show</h3>
-                            <p><strong>Date:</strong> March 17, 2025, 5:00
-                                PM</p>
-                            <p><strong>Registered:</strong> 900 Attendees</p>
-                            <p><strong>Revenue:</strong> $2,250</p>
-                        </div>
-                        <div class="appointment-card">
-                            <div class="time-badge">10:00 AM</div>
-                            <h3>Talent Show</h3>
-                            <p><strong>Date:</strong> March 17, 2025, 10:00
-                                AM</p>
-                            <p><strong>Registered:</strong> 100 Attendees</p>
-                            <p><strong>Revenue:</strong> $500</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h2>Upcoming Events</h2>
-                    <div class="appointments">
-                        <div class="appointment-card" id="event-1">
-                            <div class="time-badge">09:30 AM</div>
-                            <h3>Art Exhibition</h3>
-                            <p><strong>Date:</strong> March 20, 2025, 9:30
-                                AM</p>
-                            <p><strong>Venue:</strong> City Gallery</p>
-                            <p><strong>Capacity:</strong> 200</p>
-                            <p><strong>Ticket Price:</strong> $15</p>
-                            <p><strong>Description:</strong> A showcase of
-                                contemporary art by local artists.</p>
-                            <div class="card-actions">
-                                <button class="btn-primary"
-                                    onclick="openEditEvent('event-1')">Edit</button>
+            <!-- Previous Events -->
+            <div class="section">
+                <h2>Previous Events</h2>
+                <div class="appointments">
+                    <% if (typeof previousEvents !=='undefined' && previousEvents.length> 0) { %>
+                        <% previousEvents.forEach(event=> { %>
+                            <div class="appointment-card" id="event-<%= event.id %>">
+                                <div class="time-badge">
+                                    <%= event.time %>
+                                </div>
+                                <h3>
+                                    <%= event.event_name %>
+                                </h3>
+                                <p><strong>Date:</strong>
+                                    <%= event.formattedDate %>
+                                </p>
+                                <p><strong>Registered:</strong>
+                                    <%= event.attendeeCount %> Attendees
+                                </p>
+                                <p><strong>Revenue:</strong> $<%= (event.revenue || 0).toFixed(2) %>
+                                </p>
                             </div>
-                        </div>
-                        <div class="appointment-card" id="event-2">
-                            <div class="time-badge">11:00 AM</div>
-                            <h3>Ballet Dance</h3>
-                            <p><strong>Date:</strong> March 24, 2025, 11:00
-                                AM</p>
-                            <p><strong>Venue:</strong> Grand Theater</p>
-                            <p><strong>Capacity:</strong> 150</p>
-                            <p><strong>Ticket Price:</strong> $20</p>
-                            <p><strong>Description:</strong> A mesmerizing
-                                ballet performance by the National Ballet
-                                Company.</p>
-                            <div class="card-actions">
-                                <button class="btn-primary"
-                                    onclick="openEditEvent('event-2')">Edit</button>
-                            </div>
-                        </div>
-                    </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <p>No previous events found.</p>
+                                    <% } %>
                 </div>
             </div>
-        </div>
 
-        <div class="modal" id="editEventModal">
-            <div class="modal-content">
-                <span class="close-btn" onclick="closeEditEvent()">×</span>
-                <h2>Edit Event</h2>
-                <form id="editEventForm" onsubmit="saveEvent(event)">
-                    <input type="hidden" id="eventId">
-                    <div class="form-group">
-                        <label for="eventName">Event Name</label>
-                        <input type="text" id="eventName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventDate">Date</label>
-                        <input type="date" id="eventDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventTime">Time</label>
-                        <input type="time" id="eventTime" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventVenue">Venue</label>
-                        <input type="text" id="eventVenue" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventCapacity">Capacity</label>
-                        <input type="number" id="eventCapacity" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventTicketPrice">Ticket Price ($)</label>
-                        <input type="number" id="eventTicketPrice" step="0.01"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="eventDescription">Description</label>
-                        <textarea id="eventDescription" required></textarea>
-                    </div>
-                    <button type="submit" class="btn-primary">Save
-                        Changes</button>
-                </form>
+            <!-- Ongoing Events -->
+            <div class="section">
+                <h2>Ongoing Events</h2>
+                <div class="appointments">
+                    <% if (ongoingEvents.length> 0) { %>
+                        <% ongoingEvents.forEach(event=> { %>
+                            <div class="appointment-card" id="event-<%= event.id %>">
+                                <div class="time-badge">
+                                    <%= event.time %>
+                                </div>
+                                <h3>
+                                    <%= event.event_name %>
+                                </h3>
+                                <p><strong>Date:</strong>
+                                    <%= event.formattedDate %>
+                                </p>
+                                <p><strong>Registered:</strong>
+                                    <%= event.attendeeCount %> Attendees
+                                </p>
+                                <p><strong>Revenue:</strong> $<%= event.revenue%>
+                                </p>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <p>No ongoing events found.</p>
+                                    <% } %>
+                </div>
             </div>
-        </div>
 
-        <script>
-        document.addEventListener('DOMContentLoaded', () => {
-    // Handle navigation
-    const currentPage = window.location.pathname.split('/').pop() || 'eventsmanager_events.html';
-    document.querySelectorAll('.nav-link').forEach(link => {
-        const page = link.getAttribute('data-page');
-        link.classList.remove('active');
-        if ((page === 'Home' && currentPage === 'events_registration.html') ||
-            (page === 'Events' && currentPage === 'eventsmanager_events.html') ||
-            (page === 'Attendees' && currentPage === 'attendees_events.html') ||
-            (page === 'Profile' && currentPage === 'event_manager_profile.html') ||
-            (page === 'Analytics' && currentPage === 'analytics_eventmanager.html')) {
-            link.classList.add('active');
-        }
-    });
+            <!-- Upcoming Events -->
+            <div class="section">
+                <h2>Upcoming Events</h2>
+                <div class="appointments">
+                    <% if (typeof upcomingEvents !=='undefined' && upcomingEvents.length> 0) { %>
+                        <% upcomingEvents.forEach(event=> { %>
+                            <div class="appointment-card" id="event-<%= event.id %>">
+                                <div class="time-badge">
+                                    <%= event.time %>
+                                </div>
+                                <h3>
+                                    <%= event.event_name %>
+                                </h3>
+                                <p><strong>Date:</strong>
+                                    <%= event.formattedDate %>
+                                </p>
+                                <p><strong>Venue:</strong>
+                                    <%= event.venue %>
+                                </p>
+                                <p><strong>Capacity:</strong>
+                                    <%= event.total_tickets %>
+                                </p>
+                                <p><strong>Ticket Price:</strong> $<%= event.ticket_price.toFixed(2) %>
+                                </p>
+                                <p><strong>Description:</strong>
+                                    <%= event.about_event %>
+                                </p>
+                                <div class="card-actions">
+                                    <button class="btn-primary" onclick="openEditEvent('<%= event.id %>')">Edit</button>
+                                </div>
+                            </div>
+                            <% }) %>
+                                <% } else { %>
+                                    <p>No upcoming events found.</p>
+                                    <% } %>
+                </div>
+            </div>
 
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            const page = link.getAttribute('data-page');
-            if (['Home', 'Events', 'Attendees', 'Profile', 'Analytics'].includes(page)) {
-                if (page === 'Home') window.location.href = 'events_registration.html';
-                if (page === 'Events') window.location.href = 'eventsmanager_events.html';
-                if (page === 'Attendees') window.location.href = 'attendees_events.html';
-                if (page === 'Profile') window.location.href = 'event_manager_profile.html';
-                if (page === 'Analytics') window.location.href = 'analytics_eventmanager.html';
-                return;
-            }
-            e.preventDefault();
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            alert(`Navigating to ${page} page...`);
-        });
-    });
-});
+            <!-- Edit Event Modal -->
+            <div class="modal" id="editEventModal">
+                <div class="modal-content">
+                    <span class="close-btn" onclick="closeEditEvent()">×</span>
+                    <h2>Edit Event</h2>
+                    <form id="editEventForm" action="/eventmanager_events/update" method="POST">
+                        <input type="hidden" id="eventId" name="eventId">
+                        <div class="form-group">
+                            <label for="eventName">Event Name</label>
+                            <input type="text" id="eventName" name="eventName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDate">Date</label>
+                            <input type="date" id="eventDate" name="eventDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTime">Time</label>
+                            <input type="time" id="eventTime" name="eventTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventVenue">Venue</label>
+                            <input type="text" id="eventVenue" name="eventVenue" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventCapacity">Capacity</label>
+                            <input type="number" id="eventCapacity" name="eventCapacity" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTicketPrice">Ticket Price ($)</label>
+                            <input type="number" id="eventTicketPrice" name="eventTicketPrice" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDescription">Description</label>
+                            <textarea id="eventDescription" name="eventDescription" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                    </form>
+                </div>
+            </div>
 
-// Parse event details from card
-function parseEventDateTimeFromText(dateText) {
-    // Extract date and time from text like "Date: March 20, 2025, 9:30 AM"
-    const parts = dateText.split('Date: ')[1].split(', ');
-    
-    // Extract date (March 20, 2025)
-    const datePart = parts[0];
-    const dateObj = new Date(datePart);
-    
-    // Format date as YYYY-MM-DD for input
-    const year = dateObj.getFullYear();
-    const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-    const day = String(dateObj.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-    
-    // Extract time (9:30 AM)
-    const timePart = parts[1];
-    
-    // Convert time to 24-hour format for input
-    let hours = parseInt(timePart.split(':')[0]);
-    const minutes = timePart.split(':')[1].split(' ')[0];
-    const ampm = timePart.split(' ')[1];
-    
-    if (ampm === 'PM' && hours < 12) hours += 12;
-    if (ampm === 'AM' && hours === 12) hours = 0;
-    
-    const formattedTime = `${String(hours).padStart(2, '0')}:${minutes}`;
-    
-    return { date: formattedDate, time: formattedTime };
-}
+            <script>
+                // Open edit event modal and populate form
+                window.openEditEvent = (eventId) => {
+                    const eventCard = document.getElementById(`event-${eventId}`);
+                    document.getElementById('eventId').value = eventId;
+                    document.getElementById('eventName').value = eventCard.querySelector('h3').textContent;
+                    const dateTime = eventCard.querySelector('p:nth-child(2)').textContent.split('Date: ')[1].split(', ');
+                    const [month, day, year] = dateTime[0].split(' ');
+                    const formattedDate = `${year}-${monthToNumber(month)}-${day.padStart(2, '0')}`;
+                    document.getElementById('eventDate').value = formattedDate;
+                    document.getElementById('eventTime').value = eventCard.querySelector('.time-badge').textContent.replace(' ', '').toLowerCase();
+                    document.getElementById('eventVenue').value = eventCard.querySelector('p:nth-child(3)').textContent.split('Venue: ')[1];
+                    document.getElementById('eventCapacity').value = eventCard.querySelector('p:nth-child(4)').textContent.split('Capacity: ')[1];
+                    document.getElementById('eventTicketPrice').value = eventCard.querySelector('p:nth-child(5)').textContent.split('Ticket Price: $')[1];
+                    document.getElementById('eventDescription').value = eventCard.querySelector('p:nth-child(6)').textContent.split('Description: ')[1];
+                    document.getElementById('editEventModal').style.display = 'block';
+                };
 
-// Format currency for display
-function formatCurrency(amount) {
-    return parseFloat(amount).toFixed(2);
-}
+                // Close edit event modal
+                window.closeEditEvent = () => {
+                    document.getElementById('editEventModal').style.display = 'none';
+                };
 
-// Open edit event modal and populate form
-window.openEditEvent = (eventId) => {
-    const eventCard = document.getElementById(eventId);
-    document.getElementById('eventId').value = eventId;
-    
-    // Extract event name
-    const eventName = eventCard.querySelector('h3').textContent;
-    document.getElementById('eventName').value = eventName;
-    
-    // Extract date and time
-    const dateTimeText = eventCard.querySelector('p:nth-child(2)').textContent;
-    const { date, time } = parseEventDateTimeFromText(dateTimeText);
-    document.getElementById('eventDate').value = date;
-    document.getElementById('eventTime').value = time;
-    
-    // Extract venue
-    const venue = eventCard.querySelector('p:nth-child(3)').textContent.split('Venue: ')[1];
-    document.getElementById('eventVenue').value = venue;
-    
-    // Extract capacity
-    const capacity = eventCard.querySelector('p:nth-child(4)').textContent.split('Capacity: ')[1];
-    document.getElementById('eventCapacity').value = capacity;
-    
-    // Extract ticket price
-    const ticketPrice = eventCard.querySelector('p:nth-child(5)').textContent.split('Ticket Price: $')[1];
-    document.getElementById('eventTicketPrice').value = ticketPrice;
-    
-    // Extract description
-    const description = eventCard.querySelector('p:nth-child(6)').textContent.split('Description: ')[1];
-    document.getElementById('eventDescription').value = description;
-    
-    // Show modal
-    document.getElementById('editEventModal').style.display = 'block';
-};
+                // Helper function to convert month name to number
+                function monthToNumber(month) {
+                    const months = {
+                        'January': '01', 'February': '02', 'March': '03', 'April': '04', 'May': '05', 'June': '06',
+                        'July': '07', 'August': '08', 'September': '09', 'October': '10', 'November': '11', 'December': '12'
+                    };
+                    return months[month];
+                }
+            </script>
+</body>
 
-// Close edit event modal
-window.closeEditEvent = () => {
-    document.getElementById('editEventModal').style.display = 'none';
-};
-
-// Format date and time for display
-function formatDateTime(dateString, timeString) {
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                    'July', 'August', 'September', 'October', 'November', 'December'];
-    
-    const date = new Date(dateString);
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
-    
-    // Convert time to 12-hour format
-    let [hours, minutes] = timeString.split(':');
-    hours = parseInt(hours);
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // Convert 0 to 12
-    
-    return `${month} ${day}, ${year}, ${hours}:${minutes} ${ampm}`;
-}
-
-// Save edited event
-window.saveEvent = (event) => {
-    event.preventDefault();
-    
-    // Input validation
-    const eventName = document.getElementById('eventName').value;
-    const eventDate = document.getElementById('eventDate').value;
-    const eventTime = document.getElementById('eventTime').value;
-    const eventVenue = document.getElementById('eventVenue').value;
-    const eventCapacity = document.getElementById('eventCapacity').value;
-    const eventTicketPrice = document.getElementById('eventTicketPrice').value;
-    const eventDescription = document.getElementById('eventDescription').value;
-    
-    if (!eventName || !eventDate || !eventTime || !eventVenue || !eventCapacity || !eventTicketPrice || !eventDescription) {
-        alert('All fields are required');
-        return;
-    }
-    
-    // Validate capacity is a positive number
-    if (parseInt(eventCapacity) <= 0) {
-        alert('Capacity must be a positive number');
-        return;
-    }
-    
-    // Validate ticket price is a positive number
-    if (parseFloat(eventTicketPrice) < 0) {
-        alert('Ticket price cannot be negative');
-        return;
-    }
-    
-    // Format date and time for display
-    const formattedDateTime = formatDateTime(eventDate, eventTime);
-    
-    // Get event card and update its content
-    const eventId = document.getElementById('eventId').value;
-    const eventCard = document.getElementById(eventId);
-    
-    // Update event card with new values
-    eventCard.querySelector('h3').textContent = eventName;
-    eventCard.querySelector('p:nth-child(2)').textContent = `Date: ${formattedDateTime}`;
-    eventCard.querySelector('p:nth-child(3)').textContent = `Venue: ${eventVenue}`;
-    eventCard.querySelector('p:nth-child(4)').textContent = `Capacity: ${eventCapacity}`;
-    eventCard.querySelector('p:nth-child(5)').textContent = `Ticket Price: $${formatCurrency(eventTicketPrice)}`;
-    eventCard.querySelector('p:nth-child(6)').textContent = `Description: ${eventDescription}`;
-    
-    // Update time badge
-    const timeBadge = eventCard.querySelector('.time-badge');
-    const timeDisplay = formatDateTime(eventDate, eventTime).split(', ')[1];
-    timeBadge.textContent = timeDisplay;
-    
-    alert('Event updated successfully!');
-    closeEditEvent();
-};
-    </script>
-    </body>
 </html>
