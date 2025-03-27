@@ -10,27 +10,27 @@
     <div class="header">
         <div class="logo">Happy Tails</div>
         <div class="user-info" id="profile-trigger">
-            <span>Welcome, Vendor</span>
-            <div class="user-avatar">V</div>
+            <span>Welcome, <%= vendor.store_name %></span>
+            <div class="user-avatar"><%= vendor.store_name.charAt(0).toUpperCase() %></div>
         </div>
     </div>
     
     <!-- Profile Dropdown -->
     <div class="profile-dropdown" id="profile-dropdown">
         <div class="profile-header">
-            <div class="profile-name">Vendor Name</div>
-            <div class="profile-email">vendor@example.com</div>
+            <div class="profile-name"><%= vendor.store_name %></div>
+            <div class="profile-email"><%= vendor.email %></div>
         </div>
         <ul class="profile-menu">
             <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="/logout">Logout</a></li>
         </ul>
     </div>
     
     <div class="container">
         <div class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="/shop-dashboard" class="active" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-dashboard/<%= vendor.store_name.toLowerCase().replace(/\s+/g, '-') %>" class="active" data-page="dashboard">Dashboard</a></li>
                 <li><a href="/shop-products" data-page="products">Products</a></li>
                 <li><a href="/shop-orders" data-page="orders">Orders</a></li>
                 <li><a href="/shop-customers" data-page="customers">Customers</a></li>
@@ -45,19 +45,19 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-title">TOTAL REVENUE</div>
-                        <div class="stat-value">$4,385.00</div>
+                        <div class="stat-value">$<%= totalRevenue %></div>
                         <div class="stat-comparison">+12.5% from last month</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-title">PRODUCTS SOLD</div>
-                        <div class="stat-value">78</div>
+                        <div class="stat-value"><%= productsSold %></div>
                         <div class="stat-comparison">+5.2% from last month</div>
                     </div>
                     
                     <div class="stat-card">
                         <div class="stat-title">NEW ORDERS</div>
-                        <div class="stat-value">14</div>
+                        <div class="stat-value"><%= newOrders %></div>
                         <div class="stat-comparison">Awaiting processing</div>
                     </div>
                 </div>
@@ -80,38 +80,22 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>#ORD-7829</td>
-                                <td>Emma Johnson</td>
-                                <td>Cozy Cat Cave</td>
-                                <td>Mar 12, 2025</td>
-                                <td>$59.99</td>
-                                <td><span class="status completed">Completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>#ORD-7830</td>
-                                <td>Michael Brown</td>
-                                <td>Dog Bed (Medium)</td>
-                                <td>Mar 12, 2025</td>
-                                <td>$89.99</td>
-                                <td><span class="status pending">Pending</span></td>
-                            </tr>
-                            <tr>
-                                <td>#ORD-7831</td>
-                                <td>Sophia Wilson</td>
-                                <td>Pet Nail Clippers</td>
-                                <td>Mar 11, 2025</td>
-                                <td>$24.99</td>
-                                <td><span class="status completed">Completed</span></td>
-                            </tr>
-                            <tr>
-                                <td>#ORD-7832</td>
-                                <td>David Garcia</td>
-                                <td>Cozy Cat Cave</td>
-                                <td>Mar 11, 2025</td>
-                                <td>$59.99</td>
-                                <td><span class="status pending">Pending</span></td>
-                            </tr>
+                            <% if (recentOrders && recentOrders.length > 0) { %>
+                                <% recentOrders.forEach(order => { %>
+                                    <tr>
+                                        <td>#ORD-<%= order.id %></td>
+                                        <td><%= order.user_name %></td>
+                                        <td><%= order.product_name %></td>
+                                        <td><%= new Date(order.order_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                                        <td>$<%= order.total_amount.toFixed(2) %></td>
+                                        <td><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6">No recent orders found.</td>
+                                </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>
@@ -140,8 +124,6 @@
                     profileDropdown.classList.remove('active');
                 }
             });
-            
-          
         });
     </script>
 </body>

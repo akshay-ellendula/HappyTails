@@ -221,13 +221,29 @@ function insertSampleData(callback) {
 
             // Sample Orders
             `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
-             (1, '2025-03-01 10:00:00', 'Delivered', 1799.99, 1799.99, '2025-03-05 14:00:00')`,
+            (1, '2025-03-01 10:00:00', 'Delivered', 1799.99, 1799.99, '2025-03-05 14:00:00')`,
             `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-             (1, 1, 1, 'Cozy Pet Bed', 1, 1799.99, 'Small', 'Brown')`,
+            (1, 1, 1, 'Cozy Pet Bed', 1, 1799.99, 'Small', 'Brown')`,
             `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES 
-             (1, '2025-03-10 12:00:00', 'Pending', 549.99, 549.99)`,
+            (1, '2025-03-10 12:00:00', 'Pending', 549.99, 549.99)`,
             `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-             (2, 7, 13, 'Interactive Dog Ball', 1, 549.99, 'Small', 'Green')`
+            (2, 7, 13, 'Interactive Dog Ball', 1, 549.99, 'Small', 'Green')`,
+            // Orders for Veda Prakash (vendor_id 2)
+            // Order 3: Veda Prakash's product (Cat Scratching Post, product_id 3, variant_id 7)
+            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
+            (2, '2025-03-15 09:00:00', 'Delivered', 899.99, 899.99, '2025-03-20 14:00:00')`,
+            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
+            (3, 3, 7, 'Cat Scratching Post', 1, 899.99, 'Small', 'Grey')`,
+            // Order 4: Veda Prakash's product (Fish-Flavored Treats, product_id 4, variant_id 9)
+            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES 
+            (2, '2025-03-18 11:00:00', 'Pending', 199.99, 199.99)`,
+            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
+            (4, 4, 9, 'Fish-Flavored Treats', 1, 199.99, '100g', NULL)`,
+            // Order 5: Veda Prakash's product (Luxury Cat Bed, product_id 8, variant_id 17)
+            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
+            (3, '2025-03-20 15:00:00', 'Delivered', 2299.99, 2299.99, '2025-03-25 10:00:00')`,
+            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
+            (5, 8, 17, 'Luxury Cat Bed', 1, 2299.99, 'Small', 'Purple')`
         ];
 
         let completedQueries = 0;

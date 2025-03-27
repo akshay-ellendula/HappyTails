@@ -165,23 +165,24 @@ const getProduct = (req, res) => {
             if (!product) return res.status(404).send('Product not found');
 
             db.all(
-                `SELECT size, color, regular_price, sale_price, stock_quantity 
+                `SELECT id as variant_id, size, color, regular_price, sale_price, stock_quantity 
                  FROM product_variants WHERE product_id = ?`,
                 [productId],
                 (err, variants) => {
                     if (err) return res.status(500).send('Server error');
-
+            
                     db.get(
                         `SELECT image_path FROM product_images WHERE product_id = ? AND is_primary = 1`,
                         [productId],
                         (err, image) => {
                             if (err) return res.status(500).send('Server error');
-
+            
                             const productData = {
                                 id: product.id.toString(),
                                 product_name: product.product_name,
                                 product_type: product.product_type,
                                 variants: variants.map(v => ({
+                                    variant_id: v.variant_id,
                                     size: v.size,
                                     color: v.color,
                                     regular_price: v.regular_price,
@@ -190,7 +191,7 @@ const getProduct = (req, res) => {
                                 })),
                                 image_path: image ? image.image_path : '/images/default-product.jpg'
                             };
-
+            
                             res.render('pet_product_details', { 
                                 product: productData,
                                 productJSON: JSON.stringify(productData), 
@@ -322,35 +323,87 @@ const checkout = (req, res) => {
     const userId = req.session.user.id;
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-    db.run(
-        `INSERT INTO orders (user_id, status, subtotal, total_amount) VALUES (?, ?, ?, ?)`,
-        [userId, 'Pending', subtotal, subtotal],
-        function(err) {
-            if (err) return res.status(500).json({ success: false, message: 'Failed to create order' });
-
-            const orderId = this.lastID;
-            const orderItems = cart.map(item => [
-                orderId,
-                item.productId || null,
-                item.variant_id || null, // Assuming cart includes variant_id
-                item.product_name,
-                item.quantity,
-                item.price,
-                item.size || null,
-                item.color || null
-            ]);
-
-            db.run(
-                `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) 
-                 VALUES ${orderItems.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(', ')}`,
-                orderItems.flat(),
-                (err) => {
-                    if (err) return res.status(500).json({ success: false, message: 'Failed to save order items' });
-                    res.json({ success: true, orderId });
+    // Validate stock quantity for each item
+    const stockChecks = cart.map(item => {
+        return new Promise((resolve, reject) => {
+            db.get(
+                `SELECT stock_quantity FROM product_variants WHERE product_id = ? AND id = ?`,
+                [item.product_id, item.variant_id],
+                (err, row) => {
+                    if (err) return reject(err);
+                    if (!row || row.stock_quantity < item.quantity) {
+                        return reject(new Error(`Not enough stock for ${item.product_name} (Size: ${item.size || 'N/A'}, Color: ${item.color || 'N/A'})`));
+                    }
+                    resolve();
                 }
             );
-        }
-    );
+        });
+    });
+
+    Promise.all(stockChecks)
+        .then(() => {
+            // Insert the order
+            db.run(
+                `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES (?, ?, ?, ?, ?)`,
+                [userId, new Date().toISOString(), 'Pending', subtotal, subtotal],
+                function(err) {
+                    if (err) {
+                        console.error('Error creating order:', err.message);
+                        return res.status(500).json({ success: false, message: 'Failed to create order: ' + err.message });
+                    }
+
+                    const orderId = this.lastID;
+                    const orderItems = cart.map(item => [
+                        orderId,
+                        item.product_id || null,
+                        item.variant_id || null,
+                        item.product_name,
+                        item.quantity,
+                        item.price,
+                        item.size || null,
+                        item.color || null
+                    ]);
+
+                    db.run(
+                        `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) 
+                         VALUES ${orderItems.map(() => '(?, ?, ?, ?, ?, ?, ?, ?)').join(', ')}`,
+                        orderItems.flat(),
+                        (err) => {
+                            if (err) {
+                                console.error('Error saving order items:', err.message);
+                                return res.status(500).json({ success: false, message: 'Failed to save order items: ' + err.message });
+                            }
+                            // Update stock quantities
+                            const stockUpdates = cart.map(item => {
+                                return new Promise((resolve, reject) => {
+                                    db.run(
+                                        `UPDATE product_variants SET stock_quantity = stock_quantity - ? WHERE product_id = ? AND id = ?`,
+                                        [item.quantity, item.product_id, item.variant_id],
+                                        (err) => {
+                                            if (err) return reject(err);
+                                            resolve();
+                                        }
+                                    );
+                                });
+                            });
+
+                            Promise.all(stockUpdates)
+                                .then(() => {
+                                    res.json({ success: true, message: 'Order placed successfully', orderId });
+                                })
+                                .catch(err => {
+                                    console.error('Error updating stock:', err.message);
+                                    res.status(500).json({ success: false, message: 'Failed to update stock: ' + err.message });
+                                });
+                        }
+                    );
+                }
+            );
+        })
+        .catch(err => {
+            console.error('Stock validation error:', err.message);
+            res.status(400).json({ success: false, message: err.message });
+        });
 };
 
 // Add getUserOrders function
