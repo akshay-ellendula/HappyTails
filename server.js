@@ -11,7 +11,6 @@ const productRoutes = require('./routes/productRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const staticRoutes = require('./routes/staticRoutes');
 
-
 const app = express();
 
 // Middleware setup
@@ -27,11 +26,11 @@ app.use(session({
 }));
 
 // Create product upload directory
-const productUploadDir = path.join(__dirname, 'uploads', 'products');
+const productUploadDir = path.join(__dirname, 'public', 'uploads', 'products');
 if (!fs.existsSync(productUploadDir)) {
     fs.mkdirSync(productUploadDir, { recursive: true });
 }
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 // Mount routes
 app.use('/', authRoutes);
