@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,14 @@
     <link rel="stylesheet" href="/services/service_dashboard.css">
     <link rel="stylesheet" href="/Events/eventmanager_attendees.css">
 </head>
+
 <body>
     <div class="navbar">
         <header>
             <a href="/home" class="badge">Happy Tails</a>
             <div class="menu">
-                <a href="/eventmanager_profile">Profile</a>
-                <a href="#">Logout</a>
+                <a href="/eventmanager_profile" class="nav-link" data-page="Profile">Profile</a>
+                <a href="/logout" class="nav-link" data-page="Logout">Logout</a>
             </div>
         </header>
     </div>
@@ -22,11 +24,11 @@
         <div class="sidebar">
             <h2>Dashboard</h2>
             <ul>
-                <li><a href="/eventmanager_dashboard">Home</a></li>
-                <li><a href="/eventmanager_events">Events</a></li>
-                <li><a href="/eventmanager_attendees" class="active">Attendees</a></li>
-                <li><a href="/eventmanager_profile">Profile</a></li>
-                <li><a href="/eventmanager_analytics">Analytics</a></li>
+                <li><a href="/eventmanager_dashboard" class="nav-link" data-page="Home">Home</a></li>
+                <li><a href="/eventmanager_events" class="nav-link" data-page="Events">Events</a></li>
+                <li><a href="/eventmanager_attendees" class="nav-link active" data-page="Attendees">Attendees</a></li>
+                <li><a href="/eventmanager_profile" class="nav-link" data-page="Profile">Profile</a></li>
+                <li><a href="/eventmanager_analytics" class="nav-link" data-page="Analytics">Analytics</a></li>
             </ul>
         </div>
 
@@ -35,105 +37,84 @@
                 <h1>Attendees</h1>
             </div>
 
+            <!-- Past & Ongoing Attendees -->
+            <!-- Past & Ongoing Attendees -->
             <div class="section">
                 <h2 style="margin-bottom: 10px;">All Registered Attendees (Past & Ongoing)</h2>
                 <div class="appointments">
-                    <div class="appointment-card">
-                        <div class="time-badge">09:30 AM</div>
-                        <h3>John Doe</h3>
-                        <p><strong>Email:</strong> [email protected]</p>
-                        <p><strong>Event:</strong> Concert Night (Feb 15, 2025)</p>
-                        <p><strong>Registration Date:</strong> Feb 10, 2025</p>
-                        <div class="card-actions">
-                            <div class="attendee-count">Total: 500</div>
-                        </div>
-                    </div>
-                    <div class="appointment-card">
-                        <div class="time-badge">11:00 AM</div>
-                        <h3>Jane Smith</h3>
-                        <p><strong>Email:</strong> [email protected]</p>
-                        <p><strong>Event:</strong> Charity Gala (Jan 20, 2025)</p>
-                        <p><strong>Registration Date:</strong> Jan 15, 2025</p>
-                        <div class="card-actions">
-                            <div class="attendee-count">Total: 800</div>
-                        </div>
-                    </div>
-                    <div class="appointment-card">
-                        <div class="time-badge urgent">01:30 PM</div>
-                        <h3>Mike Johnson</h3>
-                        <p><strong>Email:</strong> [email protected]</p>
-                        <p><strong>Event:</strong> Musical Show (Mar 17, 2025)</p>
-                        <p><strong>Registration Date:</strong> Mar 15, 2025</p>
-                        <div class="card-actions">
-                            <div class="attendee-count">Total: 900</div>
-                        </div>
-                    </div>
+                    <% if (typeof pastOngoingAttendees !=='undefined' && pastOngoingAttendees.length> 0) { %>
+                        <% pastOngoingAttendees.forEach(attendee=> { %>
+                            <% if (attendee.name) { %>
+                                <div class="appointment-card">
+                                    <div class="time-badge">
+                                        <%= attendee.eventTime %>
+                                    </div>
+                                    <h3>
+                                        <%= attendee.name %>
+                                    </h3>
+                                    <p><strong>Email:</strong>
+                                        <%= attendee.email %>
+                                    </p>
+                                    <p><strong>Event:</strong>
+                                        <%= attendee.event_name %> (<%= attendee.formattedDate %>)
+                                    </p>
+                                    <p><strong>Registration Date:</strong>
+                                        <%= attendee.formattedRegDate || 'N/A' %>
+                                    </p>
+                                    <div class="card-actions">
+                                        <div class="attendee-count">Total: <%= attendee.totalAttendees || 0 %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <p>No past or ongoing attendees found.</p>
+                                            <% } %>
                 </div>
             </div>
 
+            <!-- Upcoming Attendees -->
             <div class="section">
                 <h2 style="margin-bottom: 10px;">Upcoming Events Attendees</h2>
                 <div class="appointments">
-                    <div class="appointment-card">
-                        <div class="time-badge">09:30 AM</div>
-                        <h3>Alice Brown</h3>
-                        <p><strong>Email:</strong> [email protected]</p>
-                        <p><strong>Event:</strong> Art Exhibition (Mar 20, 2025)</p>
-                        <p><strong>Registration Date:</strong> Mar 16, 2025</p>
-                        <div class="card-actions">
-                            <div class="attendee-count">Registered: 50</div>
-                        </div>
-                    </div>
-                    <div class="appointment-card">
-                        <div class="time-badge">11:00 AM</div>
-                        <h3>Bob Wilson</h3>
-                        <p><strong>Email:</strong> [email protected]</p>
-                        <p><strong>Event:</strong> Ballet Dance (Mar 24, 2025)</p>
-                        <p><strong>Registration Date:</strong> Mar 17, 2025</p>
-                        <div class="card-actions">
-                            <div class="attendee-count">Registered: 20</div>
-                        </div>
-                    </div>
+                    <% if (typeof upcomingAttendees !=='undefined' && upcomingAttendees.length> 0) { %>
+                        <% upcomingAttendees.forEach(attendee=> { %>
+                            <% if (attendee.name) { %>
+                                <div class="appointment-card">
+                                    <div class="time-badge">
+                                        <%= attendee.eventTime %>
+                                    </div>
+                                    <h3>
+                                        <%= attendee.name %>
+                                    </h3>
+                                    <p><strong>Email:</strong>
+                                        <%= attendee.email %>
+                                    </p>
+                                    <p><strong>Event:</strong>
+                                        <%= attendee.event_name %> (<%= attendee.formattedDate %>)
+                                    </p>
+                                    <p><strong>Registration Date:</strong>
+                                        <%= attendee.formattedRegDate || 'N/A' %>
+                                    </p>
+                                    <div class="card-actions">
+                                        <div class="attendee-count">Registered: <%= attendee.seats || 0 %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+                                    <% }) %>
+                                        <% } else { %>
+                                            <p>No upcoming event attendees found.</p>
+                                            <% } %>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <script>
-        let isDarkMode = false;
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-            document.querySelectorAll('.nav-link').forEach(link => {
-                const page = link.getAttribute('data-page');
-                link.classList.remove('active');
-                if ((page === 'Home' && currentPage === 'index.html') ||
-                    (page === 'Events' && currentPage === 'events.html') ||
-                    (page === 'Attendees' && currentPage === 'attendees.html') ||
-                    (page === 'Profile' && currentPage === 'profile.html') ||
-                    (page === 'Analytics' && currentPage === 'analytics.html')) {
-                    link.classList.add('active');
-                }
-            });
-
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    const page = link.getAttribute('data-page');
-                    if (page === 'Home' || page === 'Events' || page === 'Attendees' || page === 'Profile' || page === 'Analytics') {
-                        if (page === 'Home') window.location.href = 'events_registration.html';
-                        if (page === 'Events') window.location.href = 'eventsmanager_events.html';
-                        if (page === 'Attendees') window.location.href = 'attendees_events.html';
-                        if (page === 'Profile') window.location.href = 'event_manager_profile.html';
-                        if (page === 'Analytics') window.location.href = 'analytics_eventmanager.html';
-                        return;
-                    }
-                    e.preventDefault();
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                    link.classList.add('active');
-                    alert(`Navigating to ${page} page...`);
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Simplified active link highlighting (already handled by 'active' class in EJS)
+                    console.log('Page loaded:', window.location.pathname);
                 });
-            });
-        });
-    </script>
+            </script>
 </body>
+
 </html>

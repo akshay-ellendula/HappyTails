@@ -29,7 +29,10 @@ router.get('/shop-orders', getVendorOrders);
 // Route for vendor customers
 router.get('/shop-customers', getVendorCustomers);
 
+// Vendor signup route
 router.post('/store-signup', storeSignup);
+
+// Service provider login route (for both vendors and event managers)
 router.post('/service-provider-login', serviceProviderLogin);
 router.get('/logout', logout);
 

@@ -37,7 +37,19 @@ function createTables(callback) {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `, (err) => { if (err) console.error('Error creating vendors table:', err); else console.log('Vendors table created'); });
-
+        // Add new table for event managers
+        db.run(`
+    CREATE TABLE IF NOT EXISTS event_managers (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        contact_number TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL,
+        company_name TEXT NOT NULL, 
+        location TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+`, (err) => { if (err) console.error('Error creating event_managers table:', err); else console.log('Event_managers table created'); });
         db.run(`
             CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -106,12 +118,91 @@ function createTables(callback) {
                 FOREIGN KEY (variant_id) REFERENCES product_variants(id)
             )
         `, (err) => { if (err) console.error('Error creating order_items table:', err); else console.log('Order_items table created'); callback(); });
+
+                    // New table: events
+                    db.run(`
+                        CREATE TABLE IF NOT EXISTS events (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            event_manager_id INTEGER NOT NULL,
+                            event_name TEXT NOT NULL,
+                            about_event TEXT NOT NULL,
+                            language TEXT NOT NULL,
+                            duration TEXT NOT NULL,
+                            ticket_price REAL NOT NULL,
+                            age_limit INTEGER NOT NULL,
+                            instructions TEXT NOT NULL,
+                            venue TEXT NOT NULL,
+                            terms TEXT NOT NULL,
+                            category TEXT NOT NULL,
+                            date_time TIMESTAMP NOT NULL,
+                            status TEXT NOT NULL DEFAULT 'Upcoming',
+                            total_tickets INTEGER NOT NULL DEFAULT 1000,
+                            tickets_sold INTEGER NOT NULL DEFAULT 0,
+                            city TEXT NOT NULL,
+                            contact_number TEXT NOT NULL,
+                            image TEXT,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (event_manager_id) REFERENCES event_managers(id)
+                        )
+                    `, (err) => { if (err) console.error('Error creating events table:', err); else console.log('Events table created'); });
+        // New table: event_attendees
+        db.run(`
+            CREATE TABLE IF NOT EXISTS event_attendees (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                event_id INTEGER NOT NULL,
+                user_id INTEGER,
+                name TEXT NOT NULL,
+                phone_number TEXT NOT NULL,
+                email TEXT NOT NULL,
+                address TEXT NOT NULL,
+                seats INTEGER NOT NULL DEFAULT 1,
+                with_pet BOOLEAN NOT NULL DEFAULT 0,
+                pet_name TEXT,
+                pet_breed TEXT,
+                pet_dob DATE,
+                registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (event_id) REFERENCES events(id),
+                FOREIGN KEY (user_id) REFERENCES users(id)
+            )
+        `, (err) => { if (err) console.error('Error creating event_attendees table:', err); else console.log('Event_attendees table created'); });
+        db.run(`
+            CREATE TABLE IF NOT EXISTS event_managers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                contact_number TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
+                company_name TEXT NOT NULL,
+                location TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `, (err) => { if (err) console.error('Error creating event_managers table:', err); else console.log('Event_managers table created'); });
+
+        db.run(`
+            CREATE TABLE IF NOT EXISTS event_managers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                contact_number TEXT NOT NULL,
+                email TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
+                company_name TEXT NOT NULL,
+                location TEXT NOT NULL,
+                event_type TEXT, -- New field
+                license TEXT, -- New field
+                bio TEXT, -- New field
+                member_since TEXT, -- New field
+                image TEXT -- New field
+            )
+        `, (err) => {
+            if (err) console.error('Error creating event_managers table:', err);
+            else console.log('event_managers table created successfully');
+        });
+
     });
 }
-
 function insertSampleData(callback) {
-    // Clear tables before inserting to avoid duplicates
     db.serialize(() => {
+        // Clear tables before inserting to avoid duplicates
         db.run('DELETE FROM order_items', (err) => { if (err) console.error('Error clearing order_items:', err); });
         db.run('DELETE FROM orders', (err) => { if (err) console.error('Error clearing orders:', err); });
         db.run('DELETE FROM product_images', (err) => { if (err) console.error('Error clearing product_images:', err); });
@@ -119,6 +210,9 @@ function insertSampleData(callback) {
         db.run('DELETE FROM products', (err) => { if (err) console.error('Error clearing products:', err); });
         db.run('DELETE FROM vendors', (err) => { if (err) console.error('Error clearing vendors:', err); });
         db.run('DELETE FROM users', (err) => { if (err) console.error('Error clearing users:', err); });
+        db.run('DELETE FROM event_managers', (err) => { if (err) console.error('Error clearing event_managers:', err); });
+        db.run('DELETE FROM event_attendees', (err) => { if (err) console.error('Error clearing event_attendees:', err); });
+        db.run('DELETE FROM events', (err) => { if (err) console.error('Error clearing events:', err); });
 
         const queries = [
             // Users
@@ -244,6 +338,53 @@ function insertSampleData(callback) {
             (3, '2025-03-20 15:00:00', 'Delivered', 2299.99, 2299.99, '2025-03-25 10:00:00')`,
             `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
             (5, 8, 17, 'Luxury Cat Bed', 1, 2299.99, 'Small', 'Purple')`
+
+            // Sample Event Manager
+            `INSERT INTO event_managers (name, contact_number, email, password, company_name, location) VALUES 
+            ('Jeevankumar', '5551234567', 'jeevan.kumar@happytails.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Happy Events', 'Hyderabad')`,
+
+            // Sample Events (Updated with Past, Ongoing, and Upcoming)
+            // Past Event
+            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
+            (1, 'Pet Adoption Drive', 'A drive to find homes for shelter pets.', 'English', '3h', 0.00, 0, 'Bring ID proof.', 'Shelter Grounds, Bangalore', 'Free entry.', 'Pets', '2025-03-15 10:00:00', 'Past', 500, 450, 'Bangalore', '1234567890', '/images/pet_adoption.jpg')`,
+            // Ongoing Events (on March 27, 2025)
+            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
+            (1, 'Fancy Dress Show', 'A fun fancy dress show for pets.', 'English', '2h', 5.00, 0, 'Bring your pet in a costume.', 'Central Park, Delhi', 'No refunds.', 'Pets', '2025-03-27 17:00:00', 'Ongoing', 1000, 900, 'Delhi', '1234567890', '/images/pet_fancy_dress.webp')`,
+            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
+            (1, 'Dog Run', 'A running competition for dogs.', 'English', '1h', 5.00, 0, 'Ensure your dog is healthy.', 'Sports Ground, Delhi', 'No refunds.', 'Pets', '2025-03-27 10:00:00', 'Ongoing', 1000, 100, 'Delhi', '1234567890', '/images/dog_running.webp')`,
+            // Upcoming Events (after March 27, 2025)
+            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
+            (1, 'Dog Agility Competitions', 'A competition for dog agility.', 'English', '2h', 5.00, 0, 'Bring your dog.', 'Park, Hyderabad', 'No refunds.', 'Pets', '2025-04-01 09:30:00', 'Upcoming', 1000, 850, 'Hyderabad', '1234567890', '/images/dog_agility.jpeg')`,
+            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
+            (1, 'Pet Festival', 'A festival for pet lovers.', 'English', '3h', 10.00, 0, 'Bring your pet.', 'Mumbai Park', 'No refunds.', 'Pets', '2025-04-05 11:00:00', 'Upcoming', 1500, 740, 'Mumbai', '1234567890', '/images/pet_festival.jpeg')`,
+            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
+            (1, 'Cat Show', 'A showcase of feline beauty.', 'English', '2h', 8.00, 0, 'Bring your cat.', 'Convention Center, Chennai', 'No refunds.', 'Pets', '2025-04-10 14:00:00', 'Upcoming', 800, 300, 'Chennai', '1234567890', '/images/cat_show.jpg')`,
+
+            // Sample Event Attendees
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(1, 1, 'Christopher Blake', '946776866876', 'christopher.blake@example.com', '123 Main St, Bangalore', 5, 1, 'Max', 'Golden Retriever', '2020-05-15', '2025-02-20 10:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(1, NULL, 'Sarah Lee', '9876543210', 'sarah.lee@example.com', '456 Elm St, Bangalore', 2, 0, NULL, NULL, NULL, '2025-02-25 14:30:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(2, NULL, 'Peter Roy', '943787457878', 'peter.roy@example.com', '456 Park Ave, Delhi', 1, 0, NULL, NULL, NULL, '2025-02-15 09:30:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(2, 2, 'Emily Davis', '9123456789', 'emily.davis@example.com', '789 Oak Rd, Delhi', 3, 1, 'Bella', 'Beagle', '2021-03-10', '2025-03-01 12:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(3, 3, 'Michael Chen', '9234567890', 'michael.chen@example.com', '321 Pine St, Delhi', 1, 1, 'Rocky', 'Husky', '2019-11-05', '2025-03-10 08:45:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(4, 2, 'Jake Paul', '941779828690', 'jake.paul@example.com', '789 Oak St, Hyderabad', 3, 1, 'Luna', 'Labrador', '2019-08-10', '2025-03-01 08:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(4, NULL, 'Lisa Kumar', '9345678901', 'lisa.kumar@example.com', '654 Cedar Ave, Hyderabad', 2, 1, 'Buddy', 'Poodle', '2020-12-15', '2025-03-20 15:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(5, 3, 'Akshay', '7654321098', 'akshay@example.com', '321 Pine St, Mumbai', 2, 1, 'Milo', 'Persian', '2021-01-20', '2025-03-25 12:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(5, NULL, 'Priya Sharma', '9456789012', 'priya.sharma@example.com', '987 Maple Ln, Mumbai', 4, 1, 'Toby', 'Dachshund', '2022-06-01', '2025-03-26 09:15:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(6, 1, 'Gautam Thota', '9876543210', 'gautam.thota@example.com', '123 Main St, Chennai', 1, 1, 'Whiskers', 'Siamese', '2020-09-25', '2025-03-27 10:30:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(6, NULL, 'Anita Rao', '9567890123', 'anita.rao@example.com', '456 Birch Rd, Chennai', 2, 1, 'Snowball', 'Maine Coon', '2021-04-12', '2025-03-28 14:00:00')`   
+
+
         ];
 
         let completedQueries = 0;
@@ -259,5 +400,7 @@ function insertSampleData(callback) {
         });
     });
 }
-
 module.exports = { db, createTables, insertSampleData };
+
+
+
