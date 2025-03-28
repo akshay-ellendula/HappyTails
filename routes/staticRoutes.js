@@ -1,4 +1,3 @@
-// routes/staticRoutes.js
 const express = require('express');
 const router = express.Router();
 
@@ -9,12 +8,11 @@ const pages = [
     'profile', 'service_analytics', 'service_animal_details', 'service_dashbord',
     'service_details', 'service_history', 'service_profile', 'service_provider_login',
     'service_signup', 'services', 'store_signup', 'track_package', 'shop-analytics',
-    'shop-customer-details', 'shop-customers', 'shop-dashboard', 'shop-order-details',
+    'shop-customer-details', 'shop-customers', /* Removed: 'shop-dashboard' */ 'shop-order-details',
     'shop-orders', 'shop-product_form', 'shop-product-edit', 'shop-products', 'shop-profile',
     'admin-appointments', 'admin-dashboard', 'admin-em-details', 'admin-events',
     'admin-product-details', 'admin-products', 'admin-service-provider', 'admin-shop-manager',
     'admin-sm-details', 'admin-sp-details', 'admin-user-details', 'admin-user', 'admin_login',
-    // Remove 'eventmanager_dashboard' from here
     'eventmanager_analytics', 'eventmanager_profile'
 ];
 

@@ -239,12 +239,15 @@ const serviceProviderLogin = async (req, res) => {
     }
 
     try {
-        let table, sessionKey;
+        let table, sessionKey, redirect;
         if (role === 'store-manager') {
             table = 'vendors';
             sessionKey = 'vendor';
+        } else if (role === 'event-manager') {
+            table = 'event_managers';
+            sessionKey = 'eventManager';
         } else {
-            return res.status(400).json({ success: false, message: 'Invalid role. Only "store-manager" supported for now' });
+            return res.status(400).json({ success: false, message: 'Invalid role. Use "store-manager" or "event-manager"' });
         }
 
         db.get(`SELECT * FROM ${table} WHERE email = ?`, [email], async (err, user) => {
@@ -254,14 +257,20 @@ const serviceProviderLogin = async (req, res) => {
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password' });
 
-            // Store vendor data in session
-            req.session[sessionKey] = { id: user.id, email: user.email, role, store_name: user.store_name };
+            req.session[sessionKey] = { 
+                id: user.id, 
+                email: user.email, 
+                role, 
+                store_name: user.store_name || null // Only for vendors
+            };
 
-            // Create a URL-friendly store name (e.g., "Furry Friends" -> "furry-friends")
-            const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
+            if (role === 'store-manager') {
+                const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
+                redirect = `/shop-dashboard/${storeNameSlug}`;
+            } else if (role === 'event-manager') {
+                redirect = '/eventmanager_dashboard';
+            }
 
-            // Redirect to dynamic URL
-            const redirect = `/shop-dashboard/${storeNameSlug}`;
             res.status(200).json({ success: true, message: 'Login successful', redirect });
         });
     } catch (error) {
