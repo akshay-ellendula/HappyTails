@@ -265,19 +265,20 @@
         &copy; 2025 Happy Tails. All rights reserved.
     </footer>
 
-    <script>
+   <!-- views/service_provider_login.ejs (JavaScript section only) -->
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('login-form');
-
+    
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             clearAlerts();
-
+    
             const email = document.getElementById('email');
             const password = document.getElementById('password');
             const role = document.getElementById('role');
             let isValid = true;
-
+    
             // Client-side validation
             if (!email.value.trim()) {
                 showError(email, 'Email is required');
@@ -286,7 +287,7 @@
                 showError(email, 'Please enter a valid email address');
                 isValid = false;
             }
-
+    
             if (!password.value) {
                 showError(password, 'Password is required');
                 isValid = false;
@@ -294,21 +295,21 @@
                 showError(password, 'Password must be at least 6 characters');
                 isValid = false;
             }
-
+    
             if (!role.value) {
                 showError(role, 'Please select your role');
                 isValid = false;
             }
-
+    
             if (!isValid) return;
-
+    
             // Prepare form data
             const formData = {
                 email: email.value.trim(),
                 password: password.value,
                 role: role.value
             };
-
+    
             // Send AJAX request
             fetch('/service-provider-login', {
                 method: 'POST',
@@ -336,7 +337,7 @@
                 showError(null, 'An error occurred while logging in. Please try again.');
             });
         });
-
+    
         // Error display function
         function showError(input, message) {
             if (input) {
@@ -355,7 +356,7 @@
                 setTimeout(() => alert.classList.add('show'), 10);
             }
         }
-
+    
         // Success display function
         function showSuccess(message) {
             const alert = document.createElement('div');
@@ -364,13 +365,13 @@
             form.prepend(alert);
             setTimeout(() => alert.classList.add('show'), 10);
         }
-
+    
         // Clear alerts function
         function clearAlerts() {
             document.querySelectorAll('.alert').forEach(alert => alert.remove());
             document.querySelectorAll('.input-error').forEach(input => input.classList.remove('input-error'));
         }
-
+    
         // Clear errors on input
         document.querySelectorAll('input, select').forEach(input => {
             input.addEventListener('input', function() {
@@ -381,7 +382,7 @@
                 }
             });
         });
-
+    
         // Forgot password (placeholder)
         document.querySelector('.forgot-password').addEventListener('click', function(e) {
             e.preventDefault();

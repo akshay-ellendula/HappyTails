@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Tails - Event Manager Management</title>
+    <title>Happy Tails - Shop Manager Management</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-    <link href="/ADMIN/admin-events.css" rel="stylesheet">
+    <link href="/ADMIN/admin-shop-manager.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -26,18 +26,33 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/admin-shop-manager" class="nav-link">
+                    <a href="/admin-service-provider" class="nav-link">
+                        <span>Service Providers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-shop-manager" class="nav-link active">
                         <span>Shop Managers</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/admin-events" class="nav-link active">
+                    <a href="/admin-events" class="nav-link">
                         <span>Event Managers</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="/admin-products" class="nav-link">
                         <span>Products</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-appointments" class="nav-link">
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Pet Listings</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -57,7 +72,7 @@
         <main class="main-content">
             <!-- Header -->
             <div class="header">
-                <h2>Event Manager Management</h2>
+                <h2>Shop Manager Management</h2>
                 <div class="user-info">
                     <div class="avatar">A</div>
                     <span>Admin User</span>
@@ -67,53 +82,53 @@
             <!-- Stats Cards -->
             <div class="stats-container">
                 <div class="stat-card">
-                    <h3>Total Event Managers</h3>
-                    <div class="number">84</div>
-                    <div class="change">+7% from last month</div>
+                    <h3>Total Shop Managers</h3>
+                    <div class="number">127</div>
+                    <div class="change">+5% from last month</div>
                 </div>
                 <div class="stat-card">
                     <h3>Total Revenue Generated</h3>
-                    <div class="number">$98,750</div>
-                    <div class="change">+12% from previous month</div>
+                    <div class="number">$143,250</div>
+                    <div class="change">+9% from previous month</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Events</h3>
-                    <div class="number">942</div>
-                    <div class="change">+8% from last month</div>
+                    <h3>Total Orders</h3>
+                    <div class="number">1,482</div>
+                    <div class="change">+11% from last month</div>
                 </div>
                 <div class="stat-card">
-                    <h3>Today's Events</h3>
-                    <div class="number">23</div>
-                    <div class="change">+5 from yesterday</div>
+                    <h3>Today's Orders</h3>
+                    <div class="number">57</div>
+                    <div class="change">+8 from yesterday</div>
                 </div>
             </div>
 
             <!-- Search Bar -->
             <div class="search-container">
                 <div class="search-bar">
-                    <input type="text" id="eventManagerSearchInput" placeholder="Search event managers by name or event...">
+                    <input type="text" id="managerSearchInput" placeholder="Search managers by name or shop...">
                 </div>
                 <button class="filter-btn" id="filterBtn">Filter Options</button>
             </div>
 
-            <!-- Event Manager Table -->
+            <!-- Manager Table -->
             <div class="manager-table-container">
                 <div class="table-header">
-                    <h3>Event Manager List</h3>
+                    <h3>Shop Manager List</h3>
                 </div>
                 <table class="manager-table">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Organization</th>
+                            <th>Shop Name</th>
                             <th>Email</th>
                             <th>Joined Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="eventManagerTableBody">
-                        <!-- Event Manager data will be inserted here by JavaScript -->
+                    <tbody id="managerTableBody">
+                        <!-- Manager data will be inserted here by JavaScript -->
                     </tbody>
                 </table>
                 
@@ -127,6 +142,6 @@
             </div>
         </main>
     </div>
-    <script src="/ADMIN/admin-events.js"></script>
+    <script src="/ADMIN/admin-shop-manager.js"></script>
 </body>
-</html>
+</html>   
