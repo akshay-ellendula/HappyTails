@@ -1,45 +1,82 @@
+// controllers/serviceProviderController.js
 const bcrypt = require('bcryptjs');
 const { db } = require('../models/database');
 
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;
 
-    if (!email || !password || !role) {
-        return res.status(400).json({ success: false, message: 'Email, password, and role are required' });
+    // Validate role
+    const validRoles = ['store-manager', 'event-manager'];
+    if (!validRoles.includes(role)) {
+        return res.json({
+            success: false,
+            message: "Invalid role. Please select a valid role."
+        });
     }
 
     try {
-        let table, redirect, sessionKey;
+        let user;
+        let redirect;
+
+        // Determine which table to query based on the role
         if (role === 'store-manager') {
-            table = 'vendors';
-            redirect = '/shop-dashboard';
-            sessionKey = 'vendor';
+            // Query the store_managers table
+            const query = `SELECT * FROM store_managers WHERE email = ?`;
+            user = await new Promise((resolve, reject) => {
+                db.get(query, [email], (err, row) => {
+                    if (err) reject(err);
+                    resolve(row);
+                });
+            });
+            redirect = '/store-dashboard'; // Adjust this to your actual store manager dashboard route
         } else if (role === 'event-manager') {
-            table = 'event_managers';
-            redirect = '/eventmanager_dashboard';
-            sessionKey = 'eventManager';
-        } else {
-            return res.status(400).json({ success: false, message: 'Invalid role. Only "store-manager" or "event-manager" supported' });
+            // Query the event_managers table
+            const query = `SELECT * FROM event_managers WHERE email = ?`;
+            user = await new Promise((resolve, reject) => {
+                db.get(query, [email], (err, row) => {
+                    if (err) reject(err);
+                    resolve(row);
+                });
+            });
+            redirect = '/eventmanager_dashboard'; // Matches the route in eventManagerRoutes.js
         }
 
-        db.get(`SELECT * FROM ${table} WHERE email = ?`, [email], async (err, user) => {
-            if (err) return res.status(500).json({ success: false, message: 'Database error' });
-            if (!user) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        // Check if user exists
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "Invalid email or role"
+            });
+        }
 
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        // Verify password
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.json({
+                success: false,
+                message: "Invalid email or password"
+            });
+        }
 
-            if (role === 'store-manager') {
-                req.session[sessionKey] = { id: user.id, email: user.email, role, store_name: user.store_name };
-            } else {
-                req.session[sessionKey] = { id: user.id, email: user.email, role, company_name: user.company_name };
-                req.session.eventManagerId = user.id; // Ensure compatibility with isAuthenticated
-            }
-            console.log('Session after login:', req.session); // Debug log
-            res.status(200).json({ success: true, message: 'Login successful', redirect });
+        // Store user info in session based on role
+        if (role === 'store-manager') {
+            req.session.storeManagerId = user.id;
+        } else if (role === 'event-manager') {
+            req.session.eventManagerId = user.id;
+        }
+
+        // Successful login
+        return res.json({
+            success: true,
+            message: "Login successful!",
+            redirect: redirect
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('Error during login:', error);
+        return res.json({
+            success: false,
+            message: "An error occurred during login"
+        });
     }
 };
 

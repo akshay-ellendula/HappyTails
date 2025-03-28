@@ -14,6 +14,10 @@ const staticRoutes = require('./routes/staticRoutes');
 
 const app = express();
 
+
+
+
+
 // Middleware setup
 app.set('view engine', 'ejs');
 app.use(express.static('public'));

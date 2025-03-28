@@ -266,11 +266,11 @@
     </footer>
 
    <!-- views/service_provider_login.ejs (JavaScript section only) -->
-<script>
+   <script>
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('login-form');
     
-        form.addEventListener('submit', function(e) {
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             clearAlerts();
     
@@ -310,14 +310,15 @@
                 role: role.value
             };
     
-            // Send AJAX request
-            fetch('/service-provider-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
+            try {
+                // Send AJAX request
+                const response = await fetch('/service-provider-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+    
                 if (data.success) {
                     showSuccess(data.message || 'Login successful! Redirecting...');
                     setTimeout(() => {
@@ -331,11 +332,10 @@
                         showError(null, data.message || 'An error occurred. Please try again.');
                     }
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error:', error);
                 showError(null, 'An error occurred while logging in. Please try again.');
-            });
+            }
         });
     
         // Error display function
@@ -394,32 +394,6 @@
             setTimeout(() => alert.classList.add('show'), 10);
         });
     });
-
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const role = document.getElementById('role').value;
-
-    try {
-        const response = await fetch('/service_provider_login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password, role })
-        });
-        const result = await response.json();
-
-        if (result.success) {
-            // Redirect based on the server's response
-            window.location.href = result.redirect;
-        } else {
-            alert(result.message); // Show error message
-        }
-    } catch (error) {
-        console.error('Login error:', error);
-        alert('An error occurred during login');
-    }
-});
     </script>
 </body>
 </html>

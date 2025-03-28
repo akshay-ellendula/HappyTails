@@ -1,3 +1,4 @@
+<!-- views/shop-products.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,11 +66,11 @@
                         <% products.forEach(product => { %>
                             <div class="product-card">
                                 <button class="edit-button" onclick="editProduct('<%= product.id %>')">✎</button>
-                                <img src="/images/store<%= product.id % 3 + 1 %>.jpg" alt="<%= product.product_name %>">
+                                <img src="<%= product.image_path %>" alt="<%= product.product_name %>">
                                 <h3><%= product.product_name %></h3>
                                 <p><%= product.product_category %> Accessories</p>
                                 <p class="price">$<%= product.sale_price ? product.sale_price.toFixed(2) : 'N/A' %></p>
-                                <p>Stock: <%= product.stock_quantity || 0 %> &nbsp; | &nbsp; Sold: <%= product.sold %></p>
+                                <p>Stock: <%= product.stock_quantity || 0 %>   |   Sold: <%= product.sold %></p>
                             </div>
                         <% }); %>
                     <% } else { %>
@@ -100,12 +101,12 @@
         });
 
         function goToNextPage() {
-            window.location.href = "shop-product_form"; 
+            window.location.href = "/shop-product-form"; // Updated to a proper route
         }
         
         function editProduct(productId) {
-    window.location.href = "/shop-product-edit/" + productId; // Use path parameter instead of query parameter
-}
+            window.location.href = "/shop-product-edit/" + productId;
+        }
     </script>
 </body>
 </html>

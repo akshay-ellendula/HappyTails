@@ -14,7 +14,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-
 // Fetch vendor orders
 const getVendorOrders = async (req, res) => {
     if (!req.session.vendor) {
@@ -75,7 +74,6 @@ const getVendorOrders = async (req, res) => {
     }
 };
 
-
 const getVendorProducts = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
@@ -85,11 +83,12 @@ const getVendorProducts = async (req, res) => {
     const vendorId = vendor.id;
 
     try {
-        // Fetch products for the vendor
+        // Fetch products for the vendor along with their primary image
         const productsQuery = `
-            SELECT p.id, p.product_name, p.product_category, p.product_type, pv.sale_price, pv.stock_quantity
+            SELECT p.id, p.product_name, p.product_category, p.product_type, pv.sale_price, pv.stock_quantity, pi.image_path
             FROM products p
             LEFT JOIN product_variants pv ON p.id = pv.product_id
+            LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = 1
             WHERE p.vendor_id = ?
         `;
         const products = await new Promise((resolve, reject) => {
@@ -114,7 +113,8 @@ const getVendorProducts = async (req, res) => {
             });
             return {
                 ...product,
-                sold: soldResult.sold || 0
+                sold: soldResult.sold || 0,
+                image_path: product.image_path || '/images/default.jpg' // Fallback image if no image is found
             };
         }));
 
@@ -269,7 +269,6 @@ const serviceProviderLogin = async (req, res) => {
     }
 };
 
-// controllers/vendorController.js
 const getVendorDashboard = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
@@ -416,9 +415,8 @@ const getProductForEdit = async (req, res) => {
     try {
         // Fetch product details
         const productQuery = `
-            SELECT p.*, pv.regular_price, pv.sale_price, pv.stock_quantity, pv.size, pv.color
+            SELECT p.*
             FROM products p
-            LEFT JOIN product_variants pv ON p.id = pv.product_id
             WHERE p.id = ? AND p.vendor_id = ?
         `;
         const product = await new Promise((resolve, reject) => {
@@ -432,6 +430,19 @@ const getProductForEdit = async (req, res) => {
             // Redirect to products page with an error message
             return res.redirect('/shop-products?error=Product not found or you do not have permission to edit it.');
         }
+
+        // Fetch all variants for the product
+        const variantsQuery = `
+            SELECT pv.*
+            FROM product_variants pv
+            WHERE pv.product_id = ?
+        `;
+        const variants = await new Promise((resolve, reject) => {
+            db.all(variantsQuery, [productId], (err, rows) => {
+                if (err) return reject(err);
+                resolve(rows);
+            });
+        });
 
         // Fetch product images
         const imagesQuery = `
@@ -453,11 +464,8 @@ const getProductForEdit = async (req, res) => {
                 product_category: product.product_category,
                 product_type: product.product_type,
                 product_description: product.product_description,
-                regular_price: product.regular_price,
-                sale_price: product.sale_price,
-                stock_quantity: product.stock_quantity,
-                size: product.size,
-                color: product.color,
+                stock_status: product.stock_status,
+                variants: variants || [], // Pass all variants
                 images: images || []
             }
         });
@@ -482,13 +490,27 @@ const updateProduct = [
             productCategory,
             productType,
             productDescription,
-            regularPrice,
-            salePrice,
-            stockQuantity,
-            size,
-            color,
-            shortDescription
+            stock_status, // Add stock_status
+            'variant_size[]': variantSizes,
+            'variant_color[]': variantColors,
+            'variant_regular_price[]': variantRegularPrices,
+            'variant_sale_price[]': variantSalePrices,
+            'variant_stock_quantity[]': variantStockQuantities
         } = req.body;
+
+        // Validate required fields
+        if (!productName || !productCategory || !productType || !productDescription || !stock_status) {
+            return res.status(400).json({ success: false, message: 'All basic information fields are required' });
+        }
+
+        if (!variantSizes || !variantRegularPrices || !variantStockQuantities) {
+            return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
+        }
+
+        // Validate stock_status
+        if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
+            return res.status(400).json({ success: false, message: 'Invalid stock status' });
+        }
 
         try {
             // Verify the product belongs to the vendor
@@ -506,8 +528,8 @@ const updateProduct = [
             // Update product details
             await new Promise((resolve, reject) => {
                 db.run(
-                    `UPDATE products SET product_name = ?, product_category = ?, product_type = ?, product_description = ? WHERE id = ?`,
-                    [productName, productCategory, productType, productDescription, productId],
+                    `UPDATE products SET product_name = ?, product_category = ?, product_type = ?, product_description = ?, stock_status = ? WHERE id = ?`,
+                    [productName, productCategory, productType, productDescription, stock_status, productId],
                     (err) => {
                         if (err) return reject(err);
                         resolve();
@@ -515,30 +537,39 @@ const updateProduct = [
                 );
             });
 
-            // Update or insert product variant
-            const variantCheck = await new Promise((resolve, reject) => {
-                db.get(`SELECT * FROM product_variants WHERE product_id = ?`, [productId], (err, row) => {
+            // Delete existing variants
+            await new Promise((resolve, reject) => {
+                db.run(`DELETE FROM product_variants WHERE product_id = ?`, [productId], (err) => {
                     if (err) return reject(err);
-                    resolve(row);
+                    resolve();
                 });
             });
 
-            if (variantCheck) {
+            // Insert updated variants
+            for (let i = 0; i < variantSizes.length; i++) {
+                const size = variantSizes[i] || null;
+                const color = variantColors[i] || null;
+                const regularPrice = parseFloat(variantRegularPrices[i]);
+                const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
+                const stockQuantity = parseInt(variantStockQuantities[i]);
+
+                if (!regularPrice || !stockQuantity) {
+                    return res.status(400).json({ success: false, message: 'Regular price and stock quantity are required for each variant' });
+                }
+
+                // Validate sale price is less than regular price
+                if (salePrice && salePrice >= regularPrice) {
+                    return res.status(400).json({ success: false, message: 'Sale price must be less than regular price for all variants' });
+                }
+
+                const variantInsertQuery = `
+                    INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
                 await new Promise((resolve, reject) => {
                     db.run(
-                        `UPDATE product_variants SET regular_price = ?, sale_price = ?, stock_quantity = ?, size = ?, color = ? WHERE product_id = ?`,
-                        [regularPrice, salePrice, stockQuantity, size || null, color || null, productId],
-                        (err) => {
-                            if (err) return reject(err);
-                            resolve();
-                        }
-                    );
-                });
-            } else {
-                await new Promise((resolve, reject) => {
-                    db.run(
-                        `INSERT INTO product_variants (product_id, regular_price, sale_price, stock_quantity, size, color) VALUES (?, ?, ?, ?, ?, ?)`,
-                        [productId, regularPrice, salePrice, stockQuantity, size || null, color || null],
+                        variantInsertQuery,
+                        [productId, size, color, regularPrice, salePrice, stockQuantity],
                         (err) => {
                             if (err) return reject(err);
                             resolve();
@@ -592,21 +623,21 @@ const getVendorCustomers = async (req, res) => {
     try {
         // Query to fetch customers who have placed orders with the vendor
         const customersQuery = `
-    SELECT 
-        u.id AS customer_id,
-        u.user_name,
-        u.user_email AS email,  -- Changed from u.email to u.user_email
-        COUNT(DISTINCT o.id) AS total_orders,
-        SUM(o.total_amount) AS total_spent,
-        MAX(o.order_date) AS last_order_date
-    FROM users u
-    JOIN orders o ON u.id = o.user_id
-    JOIN order_items oi ON o.id = oi.order_id
-    JOIN products p ON oi.product_id = p.id
-    WHERE p.vendor_id = ?
-    GROUP BY u.id, u.user_name, u.user_email
-    ORDER BY last_order_date DESC
-`;
+            SELECT 
+                u.id AS customer_id,
+                u.user_name,
+                u.user_email AS email,
+                COUNT(DISTINCT o.id) AS total_orders,
+                SUM(o.total_amount) AS total_spent,
+                MAX(o.order_date) AS last_order_date
+            FROM users u
+            JOIN orders o ON u.id = o.user_id
+            JOIN order_items oi ON o.id = oi.order_id
+            JOIN products p ON oi.product_id = p.id
+            WHERE p.vendor_id = ?
+            GROUP BY u.id, u.user_name, u.user_email
+            ORDER BY last_order_date DESC
+        `;
 
         const customers = await new Promise((resolve, reject) => {
             db.all(customersQuery, [vendorId], (err, rows) => {
@@ -642,4 +673,124 @@ const getVendorCustomers = async (req, res) => {
     }
 };
 
-module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers };
+// Submit new product
+const submitProduct = [
+    upload.array('product_images', 4), // Allow up to 4 images
+    async (req, res) => {
+        if (!req.session.vendor) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
+
+        const vendorId = req.session.vendor.id;
+        const {
+            product_name,
+            product_category,
+            product_type,
+            product_description,
+            stock_status,
+            variant_size,
+            variant_color,
+            variant_regular_price,
+            variant_sale_price,
+            variant_stock_quantity
+        } = req.body;
+
+        // Validate required fields
+        if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
+            return res.status(400).json({ success: false, message: 'All basic information fields are required' });
+        }
+
+        if (!variant_size || !variant_regular_price || !variant_stock_quantity) {
+            return res.status(400).json({ success: false, message: 'Size, regular price, and stock quantity are required' });
+        }
+
+        // Validate stock_status
+        if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
+            return res.status(400).json({ success: false, message: 'Invalid stock status' });
+        }
+
+        const size = variant_size.trim();
+        const color = variant_color ? variant_color.trim() : null;
+        const regularPrice = parseFloat(variant_regular_price);
+        const salePrice = variant_sale_price ? parseFloat(variant_sale_price) : null;
+        const stockQuantity = parseInt(variant_stock_quantity);
+
+        // Validate regular price and stock quantity
+        if (isNaN(regularPrice) || regularPrice <= 0) {
+            return res.status(400).json({ success: false, message: 'Regular price must be a positive number' });
+        }
+        if (isNaN(stockQuantity) || stockQuantity < 0) {
+            return res.status(400).json({ success: false, message: 'Stock quantity must be a non-negative number' });
+        }
+
+        // Validate sale price is less than regular price
+        if (salePrice && salePrice >= regularPrice) {
+            return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
+        }
+
+        try {
+            // Insert the product into the products table
+            const productInsertQuery = `
+                INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, stock_status)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `;
+            const productResult = await new Promise((resolve, reject) => {
+                db.run(
+                    productInsertQuery,
+                    [vendorId, product_name, product_category, product_type, product_description, stock_status],
+                    function (err) {
+                        if (err) return reject(err);
+                        resolve(this.lastID); // Get the inserted product ID
+                    }
+                );
+            });
+
+            const productId = productResult;
+
+            // Insert the single variant into the product_variants table
+            const variantInsertQuery = `
+                INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
+                VALUES (?, ?, ?, ?, ?, ?)
+            `;
+            await new Promise((resolve, reject) => {
+                db.run(
+                    variantInsertQuery,
+                    [productId, size, color, regularPrice, salePrice, stockQuantity],
+                    (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    }
+                );
+            });
+
+            // Insert images into the product_images table
+            if (req.files && req.files.length > 0) {
+                const imagePromises = req.files.map((file, index) => {
+                    return new Promise((resolve, reject) => {
+                        const imageInsertQuery = `
+                            INSERT INTO product_images (product_id, image_path, is_primary)
+                            VALUES (?, ?, ?)
+                        `;
+                        db.run(
+                            imageInsertQuery,
+                            [productId, `/uploads/products/${file.filename}`, index === 0 ? 1 : 0],
+                            (err) => {
+                                if (err) return reject(err);
+                                resolve();
+                            }
+                        );
+                    });
+                });
+                await Promise.all(imagePromises);
+            }
+
+            res.status(200).json({ success: true, message: 'Product added successfully', redirect: '/shop-products' });
+        } catch (error) {
+            console.error('Error adding product:', error);
+            res.status(500).json({ success: false, message: 'Server error' });
+        }
+    }
+];
+
+// Export all controllers, including submitProduct
+module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct };

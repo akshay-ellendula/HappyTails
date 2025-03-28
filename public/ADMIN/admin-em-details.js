@@ -1,145 +1,221 @@
+// public/ADMIN/admin-em-details.js
+const urlParams = new URLSearchParams(window.location.search);
+const managerId = urlParams.get('id');
 
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const managerId = urlParams.get('id');
-        
-        // Function to go back to managers page
-        function goBack() {
-            window.location.href = "admin-events";
-        }
-        
-        // Function to show edit form
-        function showEditForm() {
-            document.getElementById('managerView').style.display = 'none';
-            document.getElementById('editForm').style.display = 'block';
-            
-            // Load current values into form
-            document.getElementById('editName').value = document.getElementById('managerName').textContent;
-            document.getElementById('editEmail').value = document.getElementById('managerEmail').textContent;
-            document.getElementById('editDepartment').value = document.getElementById('department').textContent;
-            document.getElementById('editPhone').value = document.getElementById('managerPhone').textContent;
-            
-            // Set status dropdown value
-            const statusElement = document.getElementById('status').querySelector('span');
-            if (statusElement) {
-                document.getElementById('editStatus').value = statusElement.textContent;
+document.addEventListener('DOMContentLoaded', () => {
+    fetchManagerDetails();
+    fetchEventMetrics();
+    fetchUpcomingEvents();
+    fetchPastEvents();
+    document.getElementById('managerEditForm').addEventListener('submit', handleFormSubmit);
+});
+
+function goBack() {
+    window.location.href = '/admin-events';
+}
+
+function fetchManagerDetails() {
+    fetch(`/admin/event-manager/${managerId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const manager = data.manager;
+                document.getElementById('managerAvatar').textContent = manager.name.charAt(0);
+                document.getElementById('managerName').textContent = manager.name;
+                document.getElementById('managerEmail').textContent = manager.email;
+                document.getElementById('managerId').textContent = `#${manager.id}`;
+                document.getElementById('joinedDate').textContent = new Date(manager.joined_date).toLocaleDateString();
+                document.getElementById('organization').textContent = manager.organization;
+                document.getElementById('managerPhone').textContent = manager.phone || 'N/A';
+            } else {
+                alert('Failed to load manager details: ' + data.message);
             }
-        }
-        
-        // Function to cancel edit
-        function cancelEdit() {
-            document.getElementById('managerView').style.display = 'block';
-            document.getElementById('editForm').style.display = 'none';
-        }
-        
-        // Function to save manager changes
-        function saveManagerChanges() {
-            // Get form values
-            const name = document.getElementById('editName').value;
-            const email = document.getElementById('editEmail').value;
-            const department = document.getElementById('editDepartment').value;
-            const phone = document.getElementById('editPhone').value;
-            const status = document.getElementById('editStatus').value;
-            
-            // Validate inputs
-            if (!name || !email || !department || !phone) {
-                alert('Please fill in all required fields.');
-                return;
-            }
-            
-            // Update display
-            document.getElementById('managerName').textContent = name;
-            document.getElementById('managerEmail').textContent = email;
-            document.getElementById('department').textContent = department;
-            document.getElementById('managerPhone').textContent = phone;
-            
-            // Update avatar initial
-            document.getElementById('managerAvatar').textContent = name.charAt(0);
-            
-            // Update status with appropriate class
-            const statusClass = status === 'Active' ? 'status-active' : 'status-inactive';
-            document.getElementById('status').innerHTML = `<span class="${statusClass}">${status}</span>`;
-            
-            // Return to view mode
-            cancelEdit();
-            
-            // Show confirmation
-            alert('Event manager information updated successfully!');
-        }
-        
-        function validateForm() {
-            let isValid = true;
-            const name = document.getElementById('editName');
-            const email = document.getElementById('editEmail');
-            const department = document.getElementById('editDepartment');
-            const phone = document.getElementById('editPhone');
-            const status = document.getElementById('editStatus');
-
-            // Reset error messages
-            document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
-
-            // Name validation
-            if (name.value.trim().length < 2) {
-                document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
-                isValid = false;
-            }
-
-            // Email validation
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email.value)) {
-                document.getElementById('emailError').textContent = 'Please enter a valid email address';
-                isValid = false;
-            }
-
-            // Department validation
-            if (department.value.trim().length < 3) {
-                document.getElementById('departmentError').textContent = 'Department must be at least 3 characters';
-                isValid = false;
-            }
-
-            // Phone validation (Indian format: +91 followed by 10 digits starting with 6-9)
-            const phoneRegex = /^\+91[6-9][0-9]{9}$/;
-            if (!phoneRegex.test(phone.value)) {
-                document.getElementById('phoneError').textContent = 'Enter valid Indian mobile number (+91XXXXXXXXXX)';
-                isValid = false;
-            }
-
-            // Status validation
-            if (!status.value) {
-                document.getElementById('statusError').textContent = 'Please select a status';
-                isValid = false;
-            }
-
-            return isValid;
-        }
-
-        // Form submission handler
-        document.getElementById('managerEditForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (validateForm()) {
-                saveManagerChanges();
-            }
+        })
+        .catch(error => {
+            console.error('Error fetching manager details:', error);
+            alert('Error loading manager details');
         });
+}
 
-        // Existing functions
-        function showEditForm() {
-            document.getElementById('managerView').style.display = 'none';
-            document.getElementById('editForm').style.display = 'block';
-        }
+function fetchEventMetrics() {
+    fetch(`/admin/event-manager/${managerId}/metrics`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const metrics = data.metrics;
+                document.getElementById('upcomingEvents').textContent = metrics.upcoming;
+                document.getElementById('weeklyEvents').textContent = metrics.weekly;
+                document.getElementById('monthlyEvents').textContent = metrics.monthly;
+                document.getElementById('satisfactionRate').textContent = 'N/A'; // Add satisfaction logic if available
 
-        function saveManagerChanges() {
-            console.log('Saving manager changes...');
-            document.getElementById('editForm').style.display = 'none';
-            document.getElementById('managerView').style.display = 'block';
-            // Update view with new values
-            document.getElementById('managerName').textContent = document.getElementById('editName').value;
-            document.getElementById('managerEmail').textContent = document.getElementById('editEmail').value;
-            document.getElementById('department').textContent = document.getElementById('editDepartment').value;
-            document.getElementById('managerPhone').textContent = document.getElementById('editPhone').value;
-        }
+                const tbody = document.getElementById('monthlyBreakdown');
+                tbody.innerHTML = '';
+                metrics.monthly_breakdown.forEach((row, index) => {
+                    const growth = index === 0 || !metrics.monthly_breakdown[index - 1].avg_attendance
+                        ? 0
+                        : ((row.avg_attendance - metrics.monthly_breakdown[index - 1].avg_attendance) / metrics.monthly_breakdown[index - 1].avg_attendance * 100).toFixed(1);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.month}</td>
+                        <td>${row.total_events}</td>
+                        <td>${row.attendees}</td>
+                        <td>${row.avg_attendance.toFixed(1)}</td>
+                        <td>${growth > 0 ? '+' : ''}${growth}%</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching metrics:', error));
+}
 
-        function cancelEdit() {
-            document.getElementById('editForm').style.display = 'none';
-            document.getElementById('managerView').style.display = 'block';
-        }
+function fetchUpcomingEvents() {
+    fetch(`/admin/event-manager/${managerId}/upcoming-events`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const tbody = document.getElementById('upcomingEventsTable');
+                tbody.innerHTML = '';
+                data.events.forEach(event => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${event.event_id}</td>
+                        <td>${event.event_name}</td>
+                        <td>${new Date(event.date).toLocaleDateString()}</td>
+                        <td>${event.location}</td>
+                        <td>${event.tickets_sold}/${event.total_tickets}</td>
+                        <td><span class="status-active">${event.status}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching upcoming events:', error));
+}
 
+function fetchPastEvents() {
+    fetch(`/admin/event-manager/${managerId}/past-events`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const tbody = document.getElementById('pastEventsTable');
+                tbody.innerHTML = '';
+                data.events.forEach(event => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${event.event_id}</td>
+                        <td>${event.event_name}</td>
+                        <td>${new Date(event.date).toLocaleDateString()}</td>
+                        <td>${event.attendees}</td>
+                        <td>N/A</td> <!-- Satisfaction rate not implemented yet -->
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        })
+        .catch(error => console.error('Error fetching past events:', error));
+}
+
+function showEditForm() {
+    const managerName = document.getElementById('managerName').textContent;
+    const managerEmail = document.getElementById('managerEmail').textContent;
+    const organization = document.getElementById('organization').textContent;
+    const managerPhone = document.getElementById('managerPhone').textContent;
+
+    document.getElementById('editName').value = managerName;
+    document.getElementById('editEmail').value = managerEmail;
+    document.getElementById('editOrganization').value = organization;
+    document.getElementById('editPhone').value = managerPhone;
+
+    document.getElementById('managerView').style.display = 'none';
+    document.getElementById('editForm').style.display = 'block';
+}
+
+function cancelEdit() {
+    document.getElementById('editForm').style.display = 'none';
+    document.getElementById('managerView').style.display = 'block';
+}
+
+function validateForm() {
+    let isValid = true;
+    document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
+
+    const name = document.getElementById('editName');
+    if (name.value.trim().length < 2) {
+        document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
+        isValid = false;
+    }
+
+    const email = document.getElementById('editEmail');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        document.getElementById('emailError').textContent = 'Please enter a valid email address';
+        isValid = false;
+    }
+
+    const organization = document.getElementById('editOrganization');
+    if (organization.value.trim().length < 3) {
+        document.getElementById('organizationError').textContent = 'Organization must be at least 3 characters';
+        isValid = false;
+    }
+
+    const phone = document.getElementById('editPhone');
+    if (!/^\+91[6-9][0-9]{9}$/.test(phone.value)) {
+        document.getElementById('phoneError').textContent = 'Enter valid Indian mobile number (+91XXXXXXXXXX)';
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function handleFormSubmit(e) {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    const updatedManager = {
+        name: document.getElementById('editName').value,
+        email: document.getElementById('editEmail').value,
+        phone: document.getElementById('editPhone').value,
+        organization: document.getElementById('editOrganization').value
+    };
+
+    fetch(`/admin/event-manager/${managerId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedManager)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Event manager updated successfully!');
+                fetchManagerDetails(); // Refresh details
+                cancelEdit();
+            } else {
+                alert('Failed to update manager: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error updating manager:', error);
+            alert('Error updating manager');
+        });
+}
+
+function deleteManager() {
+    if (!confirm('Are you sure you want to delete this event manager? This will also delete all associated events.')) return;
+
+    fetch(`/admin/event-manager/${managerId}`, {
+        method: 'DELETE'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Event manager deleted successfully!');
+                goBack();
+            } else {
+                alert('Failed to delete manager: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting manager:', error);
+            alert('Error deleting manager');
+        });
+}

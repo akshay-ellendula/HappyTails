@@ -1,3 +1,5 @@
+/* public/ADMIN/admin-products.css */
+
 :root {
     --primary-color: #f7f599;
     --secondary-color: #f3ef56;
@@ -182,10 +184,15 @@ body {
     padding: 10px 15px;
     cursor: pointer;
     font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.filter-btn:hover {
+    background-color: #7fb37f;
 }
 
 /* Product Table */
-.user-table-container {
+.product-table-container {
     background-color: var(--white);
     border-radius: 8px;
     padding: 20px;
@@ -199,23 +206,29 @@ body {
     margin-bottom: 15px;
 }
 
-.user-table {
+.table-header h3 {
+    font-size: 18px;
+    color: var(--text-color);
+}
+
+.product-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.user-table th, .user-table td {
+.product-table th, .product-table td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid var(--grey);
 }
 
-.user-table th {
+.product-table th {
     background-color: var(--grey-light);
     font-weight: 600;
+    color: var(--text-color);
 }
 
-.user-table tbody tr:hover {
+.product-table tbody tr:hover {
     background-color: var(--grey-light);
 }
 
@@ -228,12 +241,22 @@ body {
     margin-right: 5px;
     text-decoration: none;
     padding: 5px 10px;
+    transition: color 0.3s;
 }
 
 .action-btn:hover {
     text-decoration: underline;
 }
 
+.action-btn.delete-btn {
+    color: var(--red);
+}
+
+.action-btn.delete-btn:hover {
+    color: #e55a5a; /* Slightly darker red on hover */
+}
+
+/* Pagination */
 .pagination {
     display: flex;
     justify-content: flex-end;
@@ -246,6 +269,9 @@ body {
     padding: 5px 10px;
     margin: 0 3px;
     cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: all 0.3s;
 }
 
 .page-btn.active {
@@ -254,7 +280,11 @@ body {
     border-color: var(--accent-color);
 }
 
-/* Stock indicator */
+.page-btn:hover {
+    background-color: var(--grey-light);
+}
+
+/* Stock Indicator */
 .stock-indicator {
     display: inline-block;
     padding: 4px 8px;
@@ -262,7 +292,7 @@ body {
     font-size: 12px;
     font-weight: 600;
     text-align: center;
-    min-width: 80px;
+    min-width: 60px;
 }
 
 .in-stock {
@@ -284,8 +314,12 @@ body {
 #addProductBtn {
     background-color: var(--accent-color);
     color: var(--white);
+    border: none;
     border-radius: 4px;
     padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
 }
 
 #addProductBtn:hover {
@@ -320,5 +354,11 @@ body {
     
     .stats-container {
         grid-template-columns: 1fr;
+    }
+
+    .product-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
     }
 }

@@ -24,21 +24,31 @@
                         <label for="product-category">Category*</label>
                         <select id="product-category" name="product_category" class="form-control" required>
                             <option value="">Select category</option>
-                            <option value="beds">Pet Beds</option>
-                            <option value="toys">Pet Toys</option>
-                            <option value="grooming">Grooming Tools</option>
-                            <option value="food">Food & Treats</option>
+                            <% categories.forEach(category => { %>
+                                <option value="<%= category %>">
+                                    <%= category.charAt(0).toUpperCase() + category.slice(1).replace(/_/g, ' ') %>
+                                </option>
+                            <% }); %>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="product-type">Pet Type*</label>
                         <select id="product-type" name="product_type" class="form-control" required>
                             <option value="">Select pet type</option>
-                            <option value="dog">Dogs</option>
-                            <option value="cat">Cats</option>
-                            <option value="all">All Pets</option>
+                            <% petTypes.forEach(type => { %>
+                                <option value="<%= type %>">
+                                    <%= type === 'all' ? 'All Pets' : (type.charAt(0).toUpperCase() + type.slice(1)) %>
+                                </option>
+                            <% }); %>
                         </select>
                     </div>
+                </div>
+                <div class="form-group">
+                    <label for="stock-status">Stock Status*</label>
+                    <select id="stock-status" name="stock_status" class="form-control" required>
+                        <option value="In Stock">In Stock</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="product-description">Description*</label>
@@ -47,9 +57,31 @@
             </div>
             
             <div class="form-section">
-                <h2 class="section-title">Variants</h2>
-                <div id="variants-container"></div>
-                <button type="button" id="add-variant" class="button secondary-button">Add Variant</button>
+                <h2 class="section-title">Product Details</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Size*</label>
+                        <input type="text" name="variant_size" class="form-control" placeholder="e.g., Small" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="text" name="variant_color" class="form-control" placeholder="e.g., Brown">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Regular Price*</label>
+                        <input type="number" name="variant_regular_price" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sale Price</label>
+                        <input type="number" name="variant_sale_price" class="form-control" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity*</label>
+                        <input type="number" name="variant_stock_quantity" class="form-control" placeholder="Enter quantity" min="0" required>
+                    </div>
+                </div>
             </div>
             
             <div class="form-section">
@@ -58,7 +90,7 @@
                     <div class="upload-area" id="upload-area">
                         <input type="file" id="product-images" hidden name="product_images" multiple accept="image/*">
                         <div class="upload-icon">+</div>
-                        <div class="upload-text">Click to upload product images</div>
+                        <div class="upload-text">Click to upload product images (max 4)</div>
                     </div>
                     <div id="image-preview" class="image-preview-container"></div>
                 </div>
@@ -80,9 +112,15 @@
             const imagePreview = document.getElementById('image-preview');
             let uploadedFiles = [];
 
+            // Handle image uploads
             uploadArea.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', function() {
-                uploadedFiles = [...uploadedFiles, ...Array.from(this.files)];
+                const newFiles = Array.from(this.files);
+                if (uploadedFiles.length + newFiles.length > 4) {
+                    alert('You can upload a maximum of 4 images.');
+                    return;
+                }
+                uploadedFiles = [...uploadedFiles, ...newFiles];
                 displayImagePreviews();
             });
 
@@ -116,57 +154,27 @@
                 });
             }
 
-            const variantsContainer = document.getElementById('variants-container');
-            const addVariantBtn = document.getElementById('add-variant');
-
-            function addVariant(size = '', color = '', regularPrice = '', salePrice = '', stockQuantity = '') {
-                const variantDiv = document.createElement('div');
-                variantDiv.className = 'variant-entry';
-                variantDiv.innerHTML = `
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Size</label>
-                            <input type="text" name="variant_size[]" class="form-control" value="${size}" placeholder="e.g., Small">
-                        </div>
-                        <div class="form-group">
-                            <label>Color</label>
-                            <input type="text" name="variant_color[]" class="form-control" value="${color}" placeholder="e.g., Brown">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Regular Price*</label>
-                            <input type="number" name="variant_regular_price[]" class="form-control" value="${regularPrice}" placeholder="0.00" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Sale Price</label>
-                            <input type="number" name="variant_sale_price[]" class="form-control" value="${salePrice}" placeholder="0.00" step="0.01">
-                        </div>
-                        <div class="form-group">
-                            <label>Stock Quantity*</label>
-                            <input type="number" name="variant_stock_quantity[]" class="form-control" value="${stockQuantity}" placeholder="Enter quantity" required>
-                        </div>
-                    </div>
-                    <button type="button" style="margin-bottom: 30px" class="remove-variant button danger-button">Remove</button>
-                `;
-                variantsContainer.appendChild(variantDiv);
-                variantDiv.querySelector('.remove-variant').addEventListener('click', () => variantDiv.remove());
-            }
-
-            addVariantBtn.addEventListener('click', () => addVariant());
-            addVariant(); // Start with one variant
-
+            // Handle form submission
             const form = document.getElementById('product-form');
             const submitStatus = document.getElementById('submit-status');
 
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                const formData = new FormData(form);
-                if (formData.getAll('variant_size[]').length === 0) {
-                    submitStatus.innerHTML = 'Please add at least one variant.';
+
+                // Validate sale price is less than regular price
+                const regularPrice = form.querySelector('input[name="variant_regular_price"]').value;
+                const salePrice = form.querySelector('input[name="variant_sale_price"]').value;
+                if (salePrice && parseFloat(salePrice) >= parseFloat(regularPrice)) {
+                    submitStatus.innerHTML = 'Sale price must be less than regular price.';
                     submitStatus.className = 'submit-status error';
                     return;
                 }
+
+                // Create FormData and append files
+                const formData = new FormData(form);
+                uploadedFiles.forEach((file, index) => {
+                    formData.append('product_images', file);
+                });
 
                 submitStatus.innerHTML = 'Uploading product...';
                 submitStatus.className = 'submit-status loading';
@@ -180,7 +188,7 @@
                     if (data.success) {
                         submitStatus.innerHTML = 'Product published successfully!';
                         submitStatus.className = 'submit-status success';
-                        setTimeout(() => window.location.href = '/shop-products', 2000);
+                        setTimeout(() => window.location.href = data.redirect, 2000);
                     } else {
                         submitStatus.innerHTML = 'Error: ' + data.message;
                         submitStatus.className = 'submit-status error';

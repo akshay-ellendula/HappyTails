@@ -1,3 +1,4 @@
+<!-- admin-em-details.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,23 +7,10 @@
     <title>Happy Tails - Event Manager Details</title>
     <link href="/ADMIN/admin-em-details.css" rel="stylesheet">
     <style>
-        .error-message {
-            color: red;
-            font-size: 0.8em;
-            margin-top: 5px;
-            display: block;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        input:invalid:focus,
-        select:invalid:focus {
-            border-color: red;
-        }
-        input:valid:focus,
-        select:valid:focus {
-            border-color: green;
-        }
+        .error-message { color: red; font-size: 0.8em; margin-top: 5px; display: block; }
+        .form-group { margin-bottom: 15px; }
+        input:invalid:focus, select:invalid:focus { border-color: red; }
+        input:valid:focus, select:valid:focus { border-color: green; }
     </style>
 </head>
 <body>
@@ -37,31 +25,19 @@
 
         <div id="managerView">
             <div class="manager-profile">
-                <div class="manager-avatar" id="managerAvatar">M</div>
-                <h2 class="manager-name" id="managerName">Manish Patel</h2>
-                <p class="manager-email" id="managerEmail">manish.patel@happytails.in</p>
+                <div class="manager-avatar" id="managerAvatar"></div>
+                <h2 class="manager-name" id="managerName"></h2>
+                <p class="manager-email" id="managerEmail"></p>
                 <div style="clear: both;"></div>
             </div>
 
             <div class="detail-section">
                 <h3 class="section-title">Basic Information</h3>
                 <table class="details-table">
-                    <tr>
-                        <td>Manager ID:</td>
-                        <td id="managerId">#EMG003</td>
-                    </tr>
-                    <tr>
-                        <td>Joined Date:</td>
-                        <td id="joinedDate">12-Dec-2024</td>
-                    </tr>
-                    <tr>
-                        <td>Department:</td>
-                        <td id="department">Event Planning</td>
-                    </tr>
-                    <tr>
-                        <td>Contact:</td>
-                        <td id="managerPhone">+917890123456</td>
-                    </tr>
+                    <tr><td>Manager ID:</td><td id="managerId"></td></tr>
+                    <tr><td>Joined Date:</td><td id="joinedDate"></td></tr>
+                    <tr><td>Organization:</td><td id="organization"></td></tr>
+                    <tr><td>Contact:</td><td id="managerPhone"></td></tr>
                 </table>
             </div>
 
@@ -69,19 +45,19 @@
                 <h3 class="section-title">Event Performance Metrics</h3>
                 <div class="revenue-cards">
                     <div class="revenue-card">
-                        <div class="revenue-value">12</div>
+                        <div class="revenue-value" id="upcomingEvents"></div>
                         <div class="revenue-label">Upcoming Events</div>
                     </div>
                     <div class="revenue-card">
-                        <div class="revenue-value">5</div>
+                        <div class="revenue-value" id="weeklyEvents"></div>
                         <div class="revenue-label">This Week's Events</div>
                     </div>
                     <div class="revenue-card">
-                        <div class="revenue-value">18</div>
+                        <div class="revenue-value" id="monthlyEvents"></div>
                         <div class="revenue-label">Monthly Events</div>
                     </div>
                     <div class="revenue-card">
-                        <div class="revenue-value">98%</div>
+                        <div class="revenue-value" id="satisfactionRate"></div>
                         <div class="revenue-label">Avg. Satisfaction Rate</div>
                     </div>
                 </div>
@@ -96,29 +72,7 @@
                             <th>Growth</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>March 2025</td>
-                            <td>18</td>
-                            <td>523</td>
-                            <td>29.1</td>
-                            <td>+6.2%</td>
-                        </tr>
-                        <tr>
-                            <td>February 2025</td>
-                            <td>15</td>
-                            <td>438</td>
-                            <td>29.2</td>
-                            <td>+3.8%</td>
-                        </tr>
-                        <tr>
-                            <td>January 2025</td>
-                            <td>14</td>
-                            <td>405</td>
-                            <td>28.9</td>
-                            <td>+2.5%</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="monthlyBreakdown"></tbody>
                 </table>
             </div>
 
@@ -135,48 +89,7 @@
                             <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>EVT102</td>
-                            <td>Pet Adoption Mela</td>
-                            <td>22-Mar-2025</td>
-                            <td>Cubbon Park, Bengaluru</td>
-                            <td>150/200</td>
-                            <td><span class="status-active">Registering</span></td>
-                        </tr>
-                        <tr>
-                            <td>EVT104</td>
-                            <td>Dog Training Workshop</td>
-                            <td>25-Mar-2025</td>
-                            <td>Happy Tails HQ, Mumbai</td>
-                            <td>45/50</td>
-                            <td><span class="status-active">Almost Full</span></td>
-                        </tr>
-                        <tr>
-                            <td>EVT106</td>
-                            <td>Pet Health Seminar</td>
-                            <td>29-Mar-2025</td>
-                            <td>Community Hall, Delhi</td>
-                            <td>80/120</td>
-                            <td><span class="status-active">Registering</span></td>
-                        </tr>
-                        <tr>
-                            <td>EVT108</td>
-                            <td>Cat Show Competition</td>
-                            <td>05-Apr-2025</td>
-                            <td>Pragati Maidan, Delhi</td>
-                            <td>50/100</td>
-                            <td><span class="status-active">Early Bird</span></td>
-                        </tr>
-                        <tr>
-                            <td>EVT110</td>
-                            <td>Pet Photography Session</td>
-                            <td>12-Apr-2025</td>
-                            <td>Marine Drive, Mumbai</td>
-                            <td>15/20</td>
-                            <td><span class="status-active">Almost Full</span></td>
-                        </tr>
-                    </tbody>
+                    <tbody id="upcomingEventsTable"></tbody>
                 </table>
             </div>
 
@@ -192,80 +105,34 @@
                             <th>Satisfaction</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>EVT095</td>
-                            <td>Puppy Socialization Day</td>
-                            <td>15-Mar-2025</td>
-                            <td>42/50</td>
-                            <td>96%</td>
-                        </tr>
-                        <tr>
-                            <td>EVT093</td>
-                            <td>Pet Nutrition Workshop</td>
-                            <td>08-Mar-2025</td>
-                            <td>36/40</td>
-                            <td>98%</td>
-                        </tr>
-                        <tr>
-                            <td>EVT091</td>
-                            <td>Adoption Drive</td>
-                            <td>01-Mar-2025</td>
-                            <td>185/200</td>
-                            <td>99%</td>
-                        </tr>
-                        <tr>
-                            <td>EVT089</td>
-                            <td>Veterinary Q&A Session</td>
-                            <td>22-Feb-2025</td>
-                            <td>78/80</td>
-                            <td>97%</td>
-                        </tr>
-                        <tr>
-                            <td>EVT087</td>
-                            <td>Pet First Aid Course</td>
-                            <td>15-Feb-2025</td>
-                            <td>30/30</td>
-                            <td>100%</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="pastEventsTable"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Edit Form -->
-        <div id="editForm" class="edit-form">
+        <div id="editForm" class="edit-form" style="display: none;">
             <div class="detail-section">
                 <h3 class="section-title">Edit Manager Information</h3>
                 <form id="managerEditForm" novalidate>
                     <div class="form-group">
                         <label for="editName">Name:</label>
-                        <input type="text" id="editName" value="Manish Patel" required minlength="2" maxlength="100">
+                        <input type="text" id="editName" required minlength="2" maxlength="100">
                         <span class="error-message" id="nameError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editEmail">Email:</label>
-                        <input type="email" id="editEmail" value="manish.patel@happytails.in" required>
+                        <input type="email" id="editEmail" required>
                         <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
-                        <label for="editDepartment">Department:</label>
-                        <input type="text" id="editDepartment" value="Event Planning" required minlength="3" maxlength="50">
-                        <span class="error-message" id="departmentError"></span>
+                        <label for="editOrganization">Organization:</label>
+                        <input type="text" id="editOrganization" required minlength="3" maxlength="50">
+                        <span class="error-message" id="organizationError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editPhone">Phone:</label>
-                        <input type="tel" id="editPhone" value="+917890123456" required pattern="^\+91[6-9][0-9]{9}$" maxlength="13">
+                        <input type="tel" id="editPhone" required pattern="^\+91[6-9][0-9]{9}$" maxlength="13">
                         <span class="error-message" id="phoneError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="editStatus">Status:</label>
-                        <select id="editStatus" required>
-                            <option value="Active" selected>Active</option>
-                            <option value="Inactive">Inactive</option>
-                            <option value="On Leave">On Leave</option>
-                        </select>
-                        <span class="error-message" id="statusError"></span>
                     </div>
                     <button type="submit" class="save-btn">Save Changes</button>
                     <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
@@ -275,6 +142,5 @@
     </div>
 
     <script src="/ADMIN/admin-em-details.js"></script>
-    
 </body>
 </html>
