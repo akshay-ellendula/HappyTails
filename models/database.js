@@ -315,29 +315,13 @@ function insertSampleData(callback) {
 
             // Sample Orders
             `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
-            (1, '2025-03-01 10:00:00', 'Delivered', 1799.99, 1799.99, '2025-03-05 14:00:00')`,
+             (1, '2025-03-01 10:00:00', 'Delivered', 1799.99, 1799.99, '2025-03-05 14:00:00')`,
             `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (1, 1, 1, 'Cozy Pet Bed', 1, 1799.99, 'Small', 'Brown')`,
+             (1, 1, 1, 'Cozy Pet Bed', 1, 1799.99, 'Small', 'Brown')`,
             `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES 
-            (1, '2025-03-10 12:00:00', 'Pending', 549.99, 549.99)`,
+             (1, '2025-03-10 12:00:00', 'Pending', 549.99, 549.99)`,
             `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (2, 7, 13, 'Interactive Dog Ball', 1, 549.99, 'Small', 'Green')`,
-            // Orders for Veda Prakash (vendor_id 2)
-            // Order 3: Veda Prakash's product (Cat Scratching Post, product_id 3, variant_id 7)
-            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
-            (2, '2025-03-15 09:00:00', 'Delivered', 899.99, 899.99, '2025-03-20 14:00:00')`,
-            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (3, 3, 7, 'Cat Scratching Post', 1, 899.99, 'Small', 'Grey')`,
-            // Order 4: Veda Prakash's product (Fish-Flavored Treats, product_id 4, variant_id 9)
-            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES 
-            (2, '2025-03-18 11:00:00', 'Pending', 199.99, 199.99)`,
-            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (4, 4, 9, 'Fish-Flavored Treats', 1, 199.99, '100g', NULL)`,
-            // Order 5: Veda Prakash's product (Luxury Cat Bed, product_id 8, variant_id 17)
-            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
-            (3, '2025-03-20 15:00:00', 'Delivered', 2299.99, 2299.99, '2025-03-25 10:00:00')`,
-            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (5, 8, 17, 'Luxury Cat Bed', 1, 2299.99, 'Small', 'Purple')`,
+             (2, 7, 13, 'Interactive Dog Ball', 1, 549.99, 'Small', 'Green')`,
 
             // Sample Event Manager
             `INSERT INTO event_managers (name, contact_number, email, password, company_name, location) VALUES 
@@ -362,28 +346,28 @@ function insertSampleData(callback) {
             
 
             // Sample Event Attendees
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (1, 1, 'Christopher Blake', '946776866876', 'christopher.blake@example.com', '123 Main St, Bangalore', 5, 1, 'Max', 'Golden Retriever', '2020-05-15', '2025-02-20 10:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (1, NULL, 'Sarah Lee', '9876543210', 'sarah.lee@example.com', '456 Elm St, Bangalore', 2, 0, NULL, NULL, NULL, '2025-02-25 14:30:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (2, NULL, 'Peter Roy', '943787457878', 'peter.roy@example.com', '456 Park Ave, Delhi', 1, 0, NULL, NULL, NULL, '2025-02-15 09:30:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (2, 2, 'Emily Davis', '9123456789', 'emily.davis@example.com', '789 Oak Rd, Delhi', 3, 1, 'Bella', 'Beagle', '2021-03-10', '2025-03-01 12:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (3, 3, 'Michael Chen', '9234567890', 'michael.chen@example.com', '321 Pine St, Delhi', 1, 1, 'Rocky', 'Husky', '2019-11-05', '2025-03-10 08:45:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (4, 2, 'Jake Paul', '941779828690', 'jake.paul@example.com', '789 Oak St, Hyderabad', 3, 1, 'Luna', 'Labrador', '2019-08-10', '2025-03-01 08:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (4, NULL, 'Lisa Kumar', '9345678901', 'lisa.kumar@example.com', '654 Cedar Ave, Hyderabad', 2, 1, 'Buddy', 'Poodle', '2020-12-15', '2025-03-20 15:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (5, 3, 'Akshay', '7654321098', 'akshay@example.com', '321 Pine St, Mumbai', 2, 1, 'Milo', 'Persian', '2021-01-20', '2025-03-25 12:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (5, NULL, 'Priya Sharma', '9456789012', 'priya.sharma@example.com', '987 Maple Ln, Mumbai', 4, 1, 'Toby', 'Dachshund', '2022-06-01', '2025-03-26 09:15:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (6, 1, 'Gautam Thota', '9876543210', 'gautam.thota@example.com', '123 Main St, Chennai', 1, 1, 'Whiskers', 'Siamese', '2020-09-25', '2025-03-27 10:30:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (6, NULL, 'Anita Rao', '9567890123', 'anita.rao@example.com', '456 Birch Rd, Chennai', 2, 1, 'Snowball', 'Maine Coon', '2021-04-12', '2025-03-28 14:00:00')`   
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(1, 1, 'Christopher Blake', '946776866876', 'christopher.blake@example.com', '123 Main St, Bangalore', 5, 1, 'Max', 'Golden Retriever', '2020-05-15', '2025-02-20 10:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(1, NULL, 'Sarah Lee', '9876543210', 'sarah.lee@example.com', '456 Elm St, Bangalore', 2, 0, NULL, NULL, NULL, '2025-02-25 14:30:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(2, NULL, 'Peter Roy', '943787457878', 'peter.roy@example.com', '456 Park Ave, Delhi', 1, 0, NULL, NULL, NULL, '2025-02-15 09:30:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(2, 2, 'Emily Davis', '9123456789', 'emily.davis@example.com', '789 Oak Rd, Delhi', 3, 1, 'Bella', 'Beagle', '2021-03-10', '2025-03-01 12:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(3, 3, 'Michael Chen', '9234567890', 'michael.chen@example.com', '321 Pine St, Delhi', 1, 1, 'Rocky', 'Husky', '2019-11-05', '2025-03-10 08:45:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(4, 2, 'Jake Paul', '941779828690', 'jake.paul@example.com', '789 Oak St, Hyderabad', 3, 1, 'Luna', 'Labrador', '2019-08-10', '2025-03-01 08:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(4, NULL, 'Lisa Kumar', '9345678901', 'lisa.kumar@example.com', '654 Cedar Ave, Hyderabad', 2, 1, 'Buddy', 'Poodle', '2020-12-15', '2025-03-20 15:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(5, 3, 'Akshay', '7654321098', 'akshay@example.com', '321 Pine St, Mumbai', 2, 1, 'Milo', 'Persian', '2021-01-20', '2025-03-25 12:00:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(5, NULL, 'Priya Sharma', '9456789012', 'priya.sharma@example.com', '987 Maple Ln, Mumbai', 4, 1, 'Toby', 'Dachshund', '2022-06-01', '2025-03-26 09:15:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(6, 1, 'Gautam Thota', '9876543210', 'gautam.thota@example.com', '123 Main St, Chennai', 1, 1, 'Whiskers', 'Siamese', '2020-09-25', '2025-03-27 10:30:00')`,
+`INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
+(6, NULL, 'Anita Rao', '9567890123', 'anita.rao@example.com', '456 Birch Rd, Chennai', 2, 1, 'Snowball', 'Maine Coon', '2021-04-12', '2025-03-28 14:00:00')`   
 
 
         ];
