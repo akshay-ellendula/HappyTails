@@ -1,3 +1,4 @@
+// controllers/vendorController.js
 const bcrypt = require('bcryptjs');
 const { db } = require('../models/database');
 const multer = require('multer');

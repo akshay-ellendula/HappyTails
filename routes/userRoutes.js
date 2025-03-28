@@ -4,6 +4,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const { updateProfile, getUserInfo } = require('../controllers/userController');
+const { isVendorAuthenticated } = require('../middleware/authMiddleware');
 
 const storage = multer.diskStorage({
     destination: 'uploads/',

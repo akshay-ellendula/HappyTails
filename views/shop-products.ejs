@@ -6,32 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendor Dashboard - Happy Tails</title>
     <link href="/SHOP/shop-products.css" rel="stylesheet">
+
 </head>
 <body>
     <div class="header">
         <div class="logo">Happy Tails</div>
         <div class="user-info" id="profile-trigger">
-            <span>Welcome, <%= vendor.store_name %></span>
-            <div class="user-avatar"><%= vendor.store_name.charAt(0).toUpperCase() %></div>
+            <span>Welcome, Vendor</span>
+            <div class="user-avatar">V</div>
         </div>
     </div>
     
     <!-- Profile Dropdown -->
     <div class="profile-dropdown" id="profile-dropdown">
         <div class="profile-header">
-            <div class="profile-name"><%= vendor.store_name %></div>
-            <div class="profile-email"><%= vendor.email %></div>
+            <div class="profile-name">Vendor Name</div>
+            <div class="profile-email">vendor@example.com</div>
         </div>
         <ul class="profile-menu">
             <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
-            <li><a href="/logout">Logout</a></li>
+            <li><a href="#">Logout</a></li>
         </ul>
     </div>
     
     <div class="container">
         <div class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="/shop-dashboard/<%= vendor.store_name.toLowerCase().replace(/\s+/g, '-') %>" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-dashboard" data-page="dashboard">Dashboard</a></li>
                 <li><a href="/shop-products" class="active" data-page="products">Products</a></li>
                 <li><a href="/shop-orders" data-page="orders">Orders</a></li>
                 <li><a href="/shop-customers" data-page="customers">Customers</a></li>
@@ -98,6 +99,8 @@
                     profileDropdown.classList.remove('active');
                 }
             });
+            
+            
         });
 
         function goToNextPage() {

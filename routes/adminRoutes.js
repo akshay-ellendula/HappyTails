@@ -34,7 +34,6 @@ const {
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
 
-// Existing routes
 router.post('/admin-login', adminLogin);
 router.get('/admin/users', isAdminAuthenticated, getUsers);
 router.get('/admin/user/:id', isAdminAuthenticated, getUser);
