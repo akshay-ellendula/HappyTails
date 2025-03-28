@@ -220,3 +220,42 @@ textarea.form-control {
 .checkbox-item input {
     margin-right: 0.5rem;
 }
+
+
+
+
+.image-preview-item {
+    position: relative;
+    display: inline-block;
+    margin: 5px;
+}
+
+.preview-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.image-delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-delete-btn:hover {
+    background-color: #ff0000;
+}

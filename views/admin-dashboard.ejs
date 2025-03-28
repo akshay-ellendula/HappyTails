@@ -27,11 +27,6 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/admin-service-provider" class="nav-link">
-                        <span>Service Providers</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a href="/admin-shop-manager" class="nav-link">
                         <span>Shop Managers</span>
                     </a>
@@ -44,16 +39,6 @@
                 <li class="nav-item">
                     <a href="/admin-products" class="nav-link">
                         <span>Products</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/admin-appointments" class="nav-link">
-                        <span>Appointments</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <span>Pet Listings</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -88,19 +73,8 @@
                             <div class="stats-header">
                                 <h3>Total Users</h3>
                             </div>
-                            <div class="stats-number">1,452</div>
+                            <div class="stats-number" id="totalUsers">Loading...</div>
                             <div class="stats-label">+12% from last month</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="stats-card">
-                    <div class="stats-content">
-                        <div class="stats-info">
-                            <div class="stats-header">
-                                <h3>Service Providers</h3>
-                            </div>
-                            <div class="stats-number">248</div>
-                            <div class="stats-label">+5% from last month</div>
                         </div>
                     </div>
                 </div>
@@ -110,7 +84,7 @@
                             <div class="stats-header">
                                 <h3>Shop Vendors</h3>
                             </div>
-                            <div class="stats-number">87</div>
+                            <div class="stats-number" id="totalVendors">Loading...</div>
                             <div class="stats-label">+9% from last month</div>
                         </div>
                     </div>
@@ -121,7 +95,7 @@
                             <div class="stats-header">
                                 <h3>Event Managers</h3>
                             </div>
-                            <div class="stats-number">43</div>
+                            <div class="stats-number" id="totalEventManagers">43</div>
                             <div class="stats-label">+7% from last month</div>
                         </div>
                     </div>
@@ -196,10 +170,10 @@
                 </div>
             </div>
 
-            <!-- Recent Users Table -->
+            <!-- Recent Entities Table -->
             <div class="section">
                 <div class="section-header">
-                    <h3 class="section-title">Recent Users</h3>
+                    <h3 class="section-title">Recent Entities</h3>
                     <button class="btn" onclick="window.location.href='admin-user'">View All</button>
                 </div>
                 <div class="table-responsive">
@@ -212,36 +186,10 @@
                                 <th>Joined Date</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="recentUsersTableBody">
+                            <!-- Initially empty; will be populated dynamically -->
                             <tr>
-                                <td>John Smith</td>
-                                <td>john@example.com</td>
-                                <td>User</td>
-                                <td>Mar 10, 2025</td>
-                            </tr>
-                            <tr>
-                                <td>Emily Johnson</td>
-                                <td>emily@example.com</td>
-                                <td>User</td>
-                                <td>Mar 09, 2025</td>
-                            </tr>
-                            <tr>
-                                <td>Michael Chen</td>
-                                <td>michael@example.com</td>
-                                <td>User</td>
-                                <td>Mar 08, 2025</td>
-                            </tr>
-                            <tr>
-                                <td>Sarah Williams</td>
-                                <td>sarah@example.com</td>
-                                <td>User</td>
-                                <td>Mar 07, 2025</td>
-                            </tr>
-                            <tr>
-                                <td>Robert Davis</td>
-                                <td>robert@example.com</td>
-                                <td>User</td>
-                                <td>Feb 28, 2025</td>
+                                <td colspan="4">Loading...</td>
                             </tr>
                         </tbody>
                     </table>

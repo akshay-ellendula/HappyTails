@@ -7,149 +7,192 @@
     <link href="/SHOP/shop-product_form.css" rel="stylesheet">
 </head>
 <body>
-         
     <button class="back-button" onclick="goBack()">← Back</button>
-
-         
-        <div class="main-content">
-            <h1 class="page-title">Add New Product</h1>
-            
-            <div class="form-card">
-                <div class="form-section">
-                    <h2 class="section-title">Basic Information</h2>
-                    
+    
+    <div class="main-content">
+        <h1 class="page-title">Add New Product</h1>
+        
+        <form id="product-form" class="form-card" enctype="multipart/form-data">
+            <h2 class="section-title">Basic Information</h2>
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="product-name">Product Name*</label>
+                    <input type="text" id="product-name" name="product_name" class="form-control" placeholder="Enter product name" required>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="product-name">Product Name*</label>
-                        <input type="text" id="product-name" class="form-control" placeholder="Enter product name">
+                        <label for="product-category">Category*</label>
+                        <select id="product-category" name="product_category" class="form-control" required>
+                            <option value="">Select category</option>
+                            <option value="beds">Pet Beds</option>
+                            <option value="toys">Pet Toys</option>
+                            <option value="grooming">Grooming Tools</option>
+                            <option value="food">Food & Treats</option>
+                        </select>
                     </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="product-category">Category*</label>
-                            <select id="product-category" class="form-control">
-                                <option value="">Select category</option>
-                                <option value="beds">Pet Beds</option>
-                                <option value="toys">Pet Toys</option>
-                                <option value="grooming">Grooming Tools</option>
-                                <option value="food">Food & Treats</option>
-                                <option value="clothing">Pet Clothing</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="product-type">Pet Type*</label>
-                            <select id="product-type" class="form-control">
-                                <option value="">Select pet type</option>
-                                <option value="dog">Dogs</option>
-                                <option value="cat">Cats</option>
-                                <option value="small">Small Pets</option>
-                                <option value="bird">Birds</option>
-                                <option value="fish">Fish</option>
-                                <option value="all">All Pets</option>
-                            </select>
-                        </div>
-                    </div>
-                    
                     <div class="form-group">
-                        <label for="product-description">Description*</label>
-                        <textarea id="product-description" class="form-control" placeholder="Enter product description"></textarea>
+                        <label for="product-type">Pet Type*</label>
+                        <select id="product-type" name="product_type" class="form-control" required>
+                            <option value="">Select pet type</option>
+                            <option value="dog">Dogs</option>
+                            <option value="cat">Cats</option>
+                            <option value="all">All Pets</option>
+                        </select>
                     </div>
                 </div>
-                
-                <div class="form-section">
-                    <h2 class="section-title">Pricing & Inventory</h2>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="regular-price">Regular Price*</label>
-                            <input type="number" id="regular-price" class="form-control" placeholder="0.00">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="sale-price">Sale Price</label>
-                            <input type="number" id="sale-price" class="form-control" placeholder="0.00">
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="sku">SKU (Stock Keeping Unit)</label>
-                            <input type="text" id="sku" class="form-control" placeholder="Enter SKU">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="stock-quantity">Stock Quantity*</label>
-                            <input type="number" id="stock-quantity" class="form-control" placeholder="Enter quantity">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Stock Status</label>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input type="radio" id="in-stock" name="stock-status" checked>
-                                <label for="in-stock">In stock</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="radio" id="out-of-stock" name="stock-status">
-                                <label for="out-of-stock">Out of stock</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="radio" id="on-backorder" name="stock-status">
-                                <label for="on-backorder">On backorder</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h2 class="section-title">Images</h2>
-                    
-                    <div class="form-group">
-                        <div class="upload-area">
-                            <div class="upload-icon">+</div>
-                            <div class="upload-text">Click or drag and drop to upload product images</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="form-section">
-                    <h2 class="section-title">Attributes</h2>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="color">Color</label>
-                            <input type="text" id="color" class="form-control" placeholder="Enter colors (comma separated)">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="size">Size</label>
-                            <input type="text" id="size" class="form-control" placeholder="Enter sizes (comma separated)">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="material">Material</label>
-                        <input type="text" id="material" class="form-control" placeholder="Enter material">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="weight">Weight (kg)</label>
-                        <input type="number" id="weight" class="form-control" placeholder="Enter weight">
-                    </div>
-                </div>
-                
-                <div class="buttons">
-                    <button class="button secondary-button">Save Draft</button>
-                    <button class="button primary-button">Publish Product</button>
+                <div class="form-group">
+                    <label for="product-description">Description*</label>
+                    <textarea id="product-description" name="product_description" class="form-control" placeholder="Enter product description" required></textarea>
                 </div>
             </div>
-        </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">Variants</h2>
+                <div id="variants-container"></div>
+                <button type="button" id="add-variant" class="button secondary-button">Add Variant</button>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">Images</h2>
+                <div class="form-group">
+                    <div class="upload-area" id="upload-area">
+                        <input type="file" id="product-images" hidden name="product_images" multiple accept="image/*">
+                        <div class="upload-icon">+</div>
+                        <div class="upload-text">Click to upload product images</div>
+                    </div>
+                    <div id="image-preview" class="image-preview-container"></div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button type="submit" class="button primary-button">Publish Product</button>
+                <div id="submit-status" class="submit-status"></div>
+            </div>
+        </form>
     </div>
+
     <script>
-        function goBack() {
-            window.history.back();
-        }
+        function goBack() { window.history.back(); }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const uploadArea = document.getElementById('upload-area');
+            const fileInput = document.getElementById('product-images');
+            const imagePreview = document.getElementById('image-preview');
+            let uploadedFiles = [];
+
+            uploadArea.addEventListener('click', () => fileInput.click());
+            fileInput.addEventListener('change', function() {
+                uploadedFiles = [...uploadedFiles, ...Array.from(this.files)];
+                displayImagePreviews();
+            });
+
+            function removeImage(index) {
+                uploadedFiles.splice(index, 1);
+                displayImagePreviews();
+            }
+
+            function displayImagePreviews() {
+                imagePreview.innerHTML = '';
+                uploadedFiles.forEach((file, index) => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const container = document.createElement('div');
+                            container.className = 'image-preview-item';
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.className = 'preview-image';
+                            const deleteBtn = document.createElement('button');
+                            deleteBtn.className = 'image-delete-btn';
+                            deleteBtn.innerHTML = '×';
+                            deleteBtn.type = 'button';
+                            deleteBtn.addEventListener('click', () => removeImage(index));
+                            container.appendChild(img);
+                            container.appendChild(deleteBtn);
+                            imagePreview.appendChild(container);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+
+            const variantsContainer = document.getElementById('variants-container');
+            const addVariantBtn = document.getElementById('add-variant');
+
+            function addVariant(size = '', color = '', regularPrice = '', salePrice = '', stockQuantity = '') {
+                const variantDiv = document.createElement('div');
+                variantDiv.className = 'variant-entry';
+                variantDiv.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Size</label>
+                            <input type="text" name="variant_size[]" class="form-control" value="${size}" placeholder="e.g., Small">
+                        </div>
+                        <div class="form-group">
+                            <label>Color</label>
+                            <input type="text" name="variant_color[]" class="form-control" value="${color}" placeholder="e.g., Brown">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Regular Price*</label>
+                            <input type="number" name="variant_regular_price[]" class="form-control" value="${regularPrice}" placeholder="0.00" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Sale Price</label>
+                            <input type="number" name="variant_sale_price[]" class="form-control" value="${salePrice}" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>Stock Quantity*</label>
+                            <input type="number" name="variant_stock_quantity[]" class="form-control" value="${stockQuantity}" placeholder="Enter quantity" required>
+                        </div>
+                    </div>
+                    <button type="button" style="margin-bottom: 30px" class="remove-variant button danger-button">Remove</button>
+                `;
+                variantsContainer.appendChild(variantDiv);
+                variantDiv.querySelector('.remove-variant').addEventListener('click', () => variantDiv.remove());
+            }
+
+            addVariantBtn.addEventListener('click', () => addVariant());
+            addVariant(); // Start with one variant
+
+            const form = document.getElementById('product-form');
+            const submitStatus = document.getElementById('submit-status');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+                if (formData.getAll('variant_size[]').length === 0) {
+                    submitStatus.innerHTML = 'Please add at least one variant.';
+                    submitStatus.className = 'submit-status error';
+                    return;
+                }
+
+                submitStatus.innerHTML = 'Uploading product...';
+                submitStatus.className = 'submit-status loading';
+
+                fetch('/submit-product', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        submitStatus.innerHTML = 'Product published successfully!';
+                        submitStatus.className = 'submit-status success';
+                        setTimeout(() => window.location.href = '/shop-products', 2000);
+                    } else {
+                        submitStatus.innerHTML = 'Error: ' + data.message;
+                        submitStatus.className = 'submit-status error';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    submitStatus.innerHTML = 'An error occurred. Please try again.';
+                    submitStatus.className = 'submit-status error';
+                });
+            });
+        });
     </script>
 </body>
 </html>

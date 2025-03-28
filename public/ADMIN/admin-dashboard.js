@@ -1,4 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Fetch dashboard stats and recent entities
+    fetchDashboardStats();
+    fetchRecentUsers();
+
     // Initialize Revenue Chart
     const revenueChartCtx = document.getElementById('revenueChart').getContext('2d');
     const revenueChart = new Chart(revenueChartCtx, {
@@ -74,57 +78,121 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     });
-
-    // Initialize User Distribution Chart
-    const userDistributionCtx = document.getElementById('userDistributionChart').getContext('2d');
-    const userDistributionChart = new Chart(userDistributionCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Users', 'Service Providers', 'Shop Vendors', 'Event Managers'],
-            datasets: [{
-                data: [1452, 248, 87, 43],
-                backgroundColor: [
-                    '#f3ef56',
-                    '#8fbc8f',
-                    '#6495ed',
-                    '#ff9999'
-                ],
-                borderColor: [
-                    '#f3ef56',
-                    '#8fbc8f',
-                    '#6495ed',
-                    '#ff9999'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.label || '';
-                            if (label) {
-                                label += ': ';
-                            }
-                            if (context.raw !== null) {
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = Math.round((context.raw / total) * 100);
-                                label += context.raw + ' (' + percentage + '%)';
-                            }
-                            return label;
-                        }
-                    }
-                }
-            },
-            cutout: '70%'
-        }
-    });
-
-
 });
+
+function fetchDashboardStats() {
+    fetch('/admin/dashboard-stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const stats = data.stats;
+                // Update stats cards
+                document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
+                document.getElementById('totalVendors').textContent = stats.totalVendors || 0;
+                // Event Managers is hardcoded
+                document.getElementById('totalEventManagers').textContent = 43;
+
+                // Initialize User Distribution Chart with dynamic data
+                const userDistributionCtx = document.getElementById('userDistributionChart').getContext('2d');
+                const userDistributionChart = new Chart(userDistributionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Users', 'Service Providers', 'Shop Vendors', 'Event Managers'],
+                        datasets: [{
+                            data: [stats.totalUsers || 0, 0, stats.totalVendors || 0, 0],
+                            backgroundColor: [
+                                '#f3ef56',
+                                '#8fbc8f',
+                                '#6495ed',
+                                '#ff9999'
+                            ],
+                            borderColor: [
+                                '#f3ef56',
+                                '#8fbc8f',
+                                '#6495ed',
+                                '#ff9999'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.raw !== null) {
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = Math.round((context.raw / total) * 100);
+                                            label += context.raw + ' (' + percentage + '%)';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '70%'
+                    }
+                });
+            } else {
+                console.error('Failed to fetch dashboard stats:', data.message);
+                // Fallback values in case of error
+                document.getElementById('totalUsers').textContent = 'Error';
+                document.getElementById('totalVendors').textContent = 'Error';
+                document.getElementById('totalEventManagers').textContent = 43;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching dashboard stats:', error);
+            // Fallback values in case of error
+            document.getElementById('totalUsers').textContent = 'Error';
+            document.getElementById('totalVendors').textContent = 'Error';
+            document.getElementById('totalEventManagers').textContent = 43;
+        });
+}
+
+
+function fetchRecentUsers() {
+    fetch('/admin/get-users')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('recentUsersTableBody');
+            tbody.innerHTML = ''; // Clear the "Loading..." placeholder
+
+            if (data.success && data.users.length > 0) {
+                data.users.forEach(user => {
+                    // Format the joined_date to a readable format (e.g., "Mar 10, 2025")
+                    const joinedDate = new Date(user.joined_date).toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: '2-digit',
+                        year: 'numeric'
+                    });
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>User</td>
+                        <td>${joinedDate}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } else {
+                // If no users are found or the request fails, show a message
+                tbody.innerHTML = '<tr><td colspan="4">No recent users found</td></tr>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching recent users:', error);
+            const tbody = document.getElementById('recentUsersTableBody');
+            tbody.innerHTML = '<tr><td colspan="4">Error loading users</td></tr>';
+        });
+}

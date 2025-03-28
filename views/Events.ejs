@@ -11,8 +11,6 @@
       <header>
           <a href="/home" class="badge">Happy Tails</a>
           <div class="menu">
-              <a href="/services">Services</a>
-              <a href="/pet_adoption">Shop</a>
               <a href="/blog">Blog</a>
               <a href="/pet_accessory">Pet Essentials</a>
               <% if (user) { %>
@@ -25,10 +23,8 @@
             <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
           </div>
           <div class="side-navbar" id="sideNavbar">
-            <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
-            <a href="/pet_adoption">Shop</a>
-            <a href="/pet_accessory">Pet Essentials</a>        
-            <a href="/services">Services</a>
+            <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a> 
+            <a href="/pet_accessory">Pet Essentials</a>
             <a href="/blog">Blog</a>
             <% if (user) { %>
               <a href="/profile">Profile</a>
@@ -54,53 +50,27 @@
 
 
     <div class="events_container">
-        <div class="event_card">
-            <div class="image_container">
-                <img src="/images/event_poster1.jpg" alt="event_image">
-            </div>
-            <div class="details_container">
-                <h3>Pet-Friendly Café</h3>
-                <p class="description">Join us for a lively and friendly pet-friendly café at our home in the heart of town.</p>
-                <p><span>Date:</span> 12th June 2021</p>
-                <p><span>Time:</span> 10:00 AM</p>
-                <p><span>Location:</span> Pullman,Aerocity</p>
-                <p><span>Contact:</span> <a href="tel:contact">123456789</a></p>
-                <button type="button" class="book_btn" onclick="window.location.href='/event_booking' ">Book Now</button>
-            </div>
-        </div>
-
-        <div class="event_card">
-            <div class="image_container">
-                <img src="/images/event_poster2.jpg" alt="event_image">
-            </div>
-            <div class="details_container">
-                <h3>Pet-Friendly Café</h3>
-                <p class="description">Join us for a lively and friendly pet-friendly café at our home in the heart of town.</p>
-                <p><span>Date:</span> 12th June 2021</p>
-                <p><span>Time:</span> 10:00 AM</p>
-                <p><span>Location:</span> Pullman,Aerocity</p>
-                <p><span>Contact:</span> <a href="tel:contact">123456789</a></p>
-                <button type="button" class="book_btn" onclick="window.location.href='/event_booking'">Book Now</button>
-            </div>
-        </div>
-
-
-        <div class="event_card">
-            <div class="image_container">
-                <img src="/images/event_poster1.jpg" alt="event_image">
-            </div>
-            <div class="details_container">
-                <h3>Pet-Friendly Café</h3>
-                <p class="description">Join us for a lively and friendly pet-friendly café at our home in the heart of town.</p>
-                <p><span>Date:</span> 12th June 2021</p>
-                <p><span>Time:</span> 10:00 AM</p>
-                <p><span>Location:</span> Pullman,Aerocity</p>
-                <p><span>Contact:</span> <a href="tel:contact">123456789</a></p>
-                <button type="button" class="book_btn" onclick="window.location.href='/event_booking'">Book Now</button>
-            </div>
-        </div>
+        <% if (events && events.length > 0) { %>
+            <% events.forEach(event => { %>
+                <div class="event_card">
+                    <div class="image_container">
+                        <img src="<%= event.image %>" alt="event_image">
+                    </div>
+                    <div class="details_container">
+                        <h3><%= event.name %></h3>
+                        <p class="description"><%= event.description %></p>
+                        <p><span>Date:</span> <%= event.date %></p>
+                        <p><span>Time:</span> <%= event.time %></p>
+                        <p><span>Location:</span> <%= event.location %></p>
+                        <p><span>Contact:</span> <a href="tel:<%= event.contact %>"><%= event.contact %></a></p>
+                        <button type="button" class="book_btn" onclick="window.location.href='/event_booking_form?eventId=<%= event.id %>'">Book Now</button>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No upcoming events found for this city.</p>
+        <% } %>
     </div>
-
   
 
 
@@ -112,26 +82,13 @@
               <h3>Happy Tails</h3>
               <ul>
                   <li><a href="/blog">Blog</a></li>
-                  <li><a href="/pet_adoption">Pet Stores</a></li>
                   <li><a href="/pet_accessory">Online Pet Accessories</a></li>
-              </ul>
-          </div>
-  
-          <div class="footer-column">
-              <h3>Services</h3>
-              <ul>
-                  <li><a href="/services">Pet Grooming</a></li>
-                  <li><a href="/services">Dog Training</a></li>
-                  <li><a href="/services">Vet Consultation</a></li>
               </ul>
           </div>
   
           <div class="footer-column">
               <h3>Partner</h3>
               <ul>
-                  <li><a href="/service_signup">Become a Groomer</a></li>
-                  <li><a href="/service_signup">Become a Dog Trainer</a></li>
-                  <li><a href="/service_signup">Become Vet partner</a></li>
                   <li><a href="/store_signup">Pet Store Franchise</a></li>
                   <li><a href="/event_manager_signup">Become an Event manager</a></li>
               </ul>

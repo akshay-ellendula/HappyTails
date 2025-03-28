@@ -1,3 +1,4 @@
+<!-- views/admin/admin-sm-details.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,41 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Tails - Shop Manager Details</title>
     <link href="/ADMIN/admin-sm-details.css" rel="stylesheet">
-    <style>
-        .error-message {
-            color: red;
-            font-size: 0.8em;
-            margin-top: 5px;
-            display: block;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        input:invalid:focus,
-        select:invalid:focus {
-            border-color: red;
-        }
-        input:valid:focus,
-        select:valid:focus {
-            border-color: green;
-        }
-    </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <button class="back-button" onclick="goBack()">← Back to Managers</button>
+            <button class="back-button" onclick="goBack()">← Back to Shop Managers</button>
             <div class="action-buttons">
-                <button class="edit-btn" onclick="showEditForm()">Edit Manager</button>
-                <button class="delete-btn" onclick="deleteManager()">Delete Manager</button>
+                <button class="edit-btn" onclick="showEditForm()">Edit Shop Manager</button>
+                <button class="delete-btn" onclick="deleteShopManager()">Delete Shop Manager</button>
             </div>
         </div>
 
         <div id="managerView">
             <div class="manager-profile">
-                <div class="manager-avatar" id="managerAvatar">S</div>
-                <h2 class="manager-name" id="managerName">Sarita Verma</h2>
-                <p class="manager-email" id="managerEmail">sarita.verma@happytails.in</p>
+                <div class="manager-avatar" id="managerAvatar"></div>
+                <h2 class="manager-name" id="managerName">Loading...</h2>
+                <p class="manager-email" id="managerEmail">Loading...</p>
                 <div style="clear: both;"></div>
             </div>
 
@@ -47,24 +29,20 @@
                 <h3 class="section-title">Basic Information</h3>
                 <table class="details-table">
                     <tr>
-                        <td>Manager ID:</td>
-                        <td id="managerId">#MGR002</td>
+                        <td>Shop Manager ID:</td>
+                        <td id="managerId">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td>Store Name:</td>
+                        <td id="storeName">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td>Store Location:</td>
+                        <td id="storeLocation">Loading...</td>
                     </tr>
                     <tr>
                         <td>Joined Date:</td>
-                        <td id="joinedDate">05-Nov-2024</td>
-                    </tr>
-                    <tr>
-                        <td>Department:</td>
-                        <td id="department">Pet Supplies</td>
-                    </tr>
-                    <tr>
-                        <td>Contact:</td>
-                        <td id="managerPhone">+919876543210</td>
-                    </tr>
-                    <tr>
-                        <td>Status:</td>
-                        <td id="status"><span class="status-active">Active</span></td>
+                        <td id="joinedDate">Loading...</td>
                     </tr>
                 </table>
             </div>
@@ -73,19 +51,19 @@
                 <h3 class="section-title">Revenue Metrics</h3>
                 <div class="revenue-cards">
                     <div class="revenue-card">
-                        <div class="revenue-value">₹1,03,615</div>
+                        <div class="revenue-value" id="todayRevenue">$0.00</div>
                         <div class="revenue-label">Today's Revenue</div>
                     </div>
                     <div class="revenue-card">
-                        <div class="revenue-value">₹7,28,725</div>
+                        <div class="revenue-value" id="weeklyRevenue">$0.00</div>
                         <div class="revenue-label">Weekly Revenue</div>
                     </div>
                     <div class="revenue-card">
-                        <div class="revenue-value">₹27,02,104</div>
+                        <div class="revenue-value" id="monthlyRevenue">$0.00</div>
                         <div class="revenue-label">Monthly Revenue</div>
                     </div>
                     <div class="revenue-card">
-                        <div class="revenue-value">₹72,95,021</div>
+                        <div class="revenue-value" id="quarterlyRevenue">$0.00</div>
                         <div class="revenue-label">Quarterly Revenue</div>
                     </div>
                 </div>
@@ -97,30 +75,11 @@
                             <th>Total Sales</th>
                             <th>Orders</th>
                             <th>Avg Order Value</th>
-                            <th>Growth</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="revenueTableBody">
                         <tr>
-                            <td>March 2025</td>
-                            <td>₹27,02,104</td>
-                            <td>423</td>
-                            <td>₹6,388</td>
-                            <td>+5.4%</td>
-                        </tr>
-                        <tr>
-                            <td>February 2025</td>
-                            <td>₹25,64,352</td>
-                            <td>405</td>
-                            <td>₹6,332</td>
-                            <td>+3.2%</td>
-                        </tr>
-                        <tr>
-                            <td>January 2025</td>
-                            <td>₹24,84,314</td>
-                            <td>389</td>
-                            <td>₹6,389</td>
-                            <td>+2.8%</td>
+                            <td colspan="4">Loading...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -136,49 +95,11 @@
                             <th>Category</th>
                             <th>Price</th>
                             <th>Stock</th>
-                            <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="productsTableBody">
                         <tr>
-                            <td>PRD123</td>
-                            <td>Premium Dog Food</td>
-                            <td>Dog Supplies</td>
-                            <td>₹3,832</td>
-                            <td>78</td>
-                            <td><span class="status-active">In Stock</span></td>
-                        </tr>
-                        <tr>
-                            <td>PRD456</td>
-                            <td>Cat Toy Set</td>
-                            <td>Cat Supplies</td>
-                            <td>₹1,665</td>
-                            <td>45</td>
-                            <td><span class="status-active">In Stock</span></td>
-                        </tr>
-                        <tr>
-                            <td>PRD789</td>
-                            <td>Pet Carrier</td>
-                            <td>Travel Accessories</td>
-                            <td>₹2,875</td>
-                            <td>12</td>
-                            <td><span class="status-active">In Stock</span></td>
-                        </tr>
-                        <tr>
-                            <td>PRD234</td>
-                            <td>Bird Cage Deluxe</td>
-                            <td>Bird Supplies</td>
-                            <td>₹7,499</td>
-                            <td>5</td>
-                            <td><span class="status-active">Low Stock</span></td>
-                        </tr>
-                        <tr>
-                            <td>PRD567</td>
-                            <td>Aquarium Starter Kit</td>
-                            <td>Fish Supplies</td>
-                            <td>₹10,416</td>
-                            <td>0</td>
-                            <td><span class="status-inactive">Out of Stock</span></td>
+                            <td colspan="5">Loading...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -196,41 +117,9 @@
                             <th>Last Purchase</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="customersTableBody">
                         <tr>
-                            <td>#USR001</td>
-                            <td>Rahul Sharma</td>
-                            <td>15</td>
-                            <td>₹44,570</td>
-                            <td>10-Mar-2025</td>
-                        </tr>
-                        <tr>
-                            <td>#USR042</td>
-                            <td>Priya Patel</td>
-                            <td>12</td>
-                            <td>₹40,594</td>
-                            <td>08-Mar-2025</td>
-                        </tr>
-                        <tr>
-                            <td>#USR018</td>
-                            <td>Amit Singh</td>
-                            <td>10</td>
-                            <td>₹34,375</td>
-                            <td>05-Mar-2025</td>
-                        </tr>
-                        <tr>
-                            <td>#USR036</td>
-                            <td>Neha Gupta</td>
-                            <td>8</td>
-                            <td>₹31,575</td>
-                            <td>28-Feb-2025</td>
-                        </tr>
-                        <tr>
-                            <td>#USR027</td>
-                            <td>Vikram Rao</td>
-                            <td>7</td>
-                            <td>₹28,768</td>
-                            <td>25-Feb-2025</td>
+                            <td colspan="5">Loading...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -238,38 +127,29 @@
         </div>
 
         <!-- Edit Form -->
-        <div id="editForm" class="edit-form">
+        <div id="editForm" class="edit-form" style="display: none;">
             <div class="detail-section">
-                <h3 class="section-title">Edit Manager Information</h3>
+                <h3 class="section-title">Edit Shop Manager Information</h3>
                 <form id="managerEditForm" novalidate>
                     <div class="form-group">
                         <label for="editName">Name:</label>
-                        <input type="text" id="editName" value="Sarita Verma" required minlength="2" maxlength="100">
+                        <input type="text" id="editName" required minlength="2" maxlength="50">
                         <span class="error-message" id="nameError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editEmail">Email:</label>
-                        <input type="email" id="editEmail" value="sarita.verma@happytails.in" required>
+                        <input type="email" id="editEmail" disabled>
                         <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
-                        <label for="editDepartment">Department:</label>
-                        <input type="text" id="editDepartment" value="Pet Supplies" required minlength="3" maxlength="50">
-                        <span class="error-message" id="departmentError"></span>
+                        <label for="editStoreName">Store Name:</label>
+                        <input type="text" id="editStoreName" required minlength="2" maxlength="100">
+                        <span class="error-message" id="storeNameError"></span>
                     </div>
                     <div class="form-group">
-                        <label for="editPhone">Phone:</label>
-                        <input type="tel" id="editPhone" value="+919876543210" required pattern="^\+91[6-9][0-9]{9}$" maxlength="13">
-                        <span class="error-message" id="phoneError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label for="editStatus">Status:</label>
-                        <select id="editStatus" required>
-                            <option value="Active" selected>Active</option>
-                            <option value="Inactive">Inactive</option>
-                            <option value="On Leave">On Leave</option>
-                        </select>
-                        <span class="error-message" id="statusError"></span>
+                        <label for="editStoreLocation">Store Location:</label>
+                        <input type="text" id="editStoreLocation" minlength="5">
+                        <span class="error-message" id="storeLocationError"></span>
                     </div>
                     <button type="submit" class="save-btn">Save Changes</button>
                     <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
