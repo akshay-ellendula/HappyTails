@@ -330,19 +330,20 @@ function insertSampleData(callback) {
             // Sample Events (Updated with Past, Ongoing, and Upcoming)
             // Past Event
             `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Pet Adoption Drive', 'A drive to find homes for shelter pets.', 'English', '3h', 0.00, 0, 'Bring ID proof.', 'Shelter Grounds, Bangalore', 'Free entry.', 'Pets', '2025-03-15 10:00:00', 'Past', 500, 450, 'Bangalore', '1234567890', '/images/pet_adoption.jpg')`,
+            (1, 'Pet Adoption Drive', 'A drive to find homes for shelter pets.', 'English', '3h', 0.00, 0, 'Bring ID proof.', 'Shelter Grounds, Bangalore', 'Free entry.', 'Pets', '2025-03-15 10:00:00', 'Past', 500, 450, 'Bangalore', '1234567890', 'https://thumbs.dreamstime.com/z/adorable-kittens-play-yarn-sunlit-living-room-perfect-pet-adoption-promotion-lively-frolic-colorful-pastel-rug-341932672.jpg?ct=jpeg')`,
             // Ongoing Events (on March 27, 2025)
             `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Fancy Dress Show', 'A fun fancy dress show for pets.', 'English', '2h', 5.00, 0, 'Bring your pet in a costume.', 'Central Park, Delhi', 'No refunds.', 'Pets', '2025-03-27 17:00:00', 'Ongoing', 1000, 900, 'Delhi', '1234567890', '/images/pet_fancy_dress.webp')`,
+            (1, 'Fancy Dress Show', 'A fun fancy dress show for pets.', 'English', '2h', 5.00, 0, 'Bring your pet in a costume.', 'Central Park, Delhi', 'No refunds.', 'Pets', '2025-03-27 17:00:00', 'Ongoing', 1000, 900, 'Delhi', '1234567890', 'https://thumbs.dreamstime.com/b/small-dog-wearing-blue-gold-dress-generative-ai-small-dog-wearing-blue-gold-dress-ai-generated-328996362.jpg')`,
             `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Dog Run', 'A running competition for dogs.', 'English', '1h', 5.00, 0, 'Ensure your dog is healthy.', 'Sports Ground, Delhi', 'No refunds.', 'Pets', '2025-03-27 10:00:00', 'Ongoing', 1000, 100, 'Delhi', '1234567890', '/images/dog_running.webp')`,
+            (1, 'Dog Run', 'A running competition for dogs.', 'English', '1h', 5.00, 0, 'Ensure your dog is healthy.', 'Sports Ground, Delhi', 'No refunds.', 'Pets', '2025-03-27 10:00:00', 'Ongoing', 1000, 100, 'Delhi', '1234567890', 'https://thumbs.dreamstime.com/z/dog-running-grass-smile-his-face-ai-328994856.jpg?ct=jpeg')`,
             // Upcoming Events (after March 27, 2025)
             `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Dog Agility Competitions', 'A competition for dog agility.', 'English', '2h', 5.00, 0, 'Bring your dog.', 'Park, Hyderabad', 'No refunds.', 'Pets', '2025-04-01 09:30:00', 'Upcoming', 1000, 850, 'Hyderabad', '1234567890', '/images/dog_agility.jpeg')`,
+            (1, 'Dog Agility Competitions', 'A competition for dog agility.', 'English', '2h', 5.00, 0, 'Bring your dog.', 'Park, Hyderabad', 'No refunds.', 'Pets', '2025-04-01 09:30:00', 'Upcoming', 1000, 850, 'Hyderabad', '1234567890', 'https://thumbs.dreamstime.com/z/dog-jumping-agility-poles-golden-retriever-jumps-over-set-mid-air-white-red-stripes-out-focus-344721458.jpg?ct=jpeg')`,
             `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Pet Festival', 'A festival for pet lovers.', 'English', '3h', 10.00, 0, 'Bring your pet.', 'Mumbai Park', 'No refunds.', 'Pets', '2025-04-05 11:00:00', 'Upcoming', 1500, 740, 'Mumbai', '1234567890', '/images/pet_festival.jpeg')`,
+            (1, 'Pet Festival', 'A festival for pet lovers.', 'English', '3h', 10.00, 0, 'Bring your pet.', 'Mumbai Park', 'No refunds.', 'Pets', '2025-04-05 11:00:00', 'Upcoming', 1500, 740, 'Mumbai', '1234567890', 'https://thumbs.dreamstime.com/z/joyful-dog-running-amidst-vibrant-colors-indian-holi-festival-concept-cultural-celebration-pet-happiness-ai-generated-joyful-354114015.jpg?ct=jpeg')`,
             `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Cat Show', 'A showcase of feline beauty.', 'English', '2h', 8.00, 0, 'Bring your cat.', 'Convention Center, Chennai', 'No refunds.', 'Pets', '2025-04-10 14:00:00', 'Upcoming', 800, 300, 'Chennai', '1234567890', '/images/cat_show.jpg')`,
+            (1, 'Cat Show', 'A showcase of feline beauty.', 'English', '2h', 8.00, 0, 'Bring your cat.', 'Convention Center, Chennai', 'No refunds.', 'Pets', '2025-04-10 14:00:00', 'Upcoming', 800, 300, 'Chennai', '1234567890', 'https://thumbs.dreamstime.com/z/stylish-cat-draped-pearls-stands-gracefully-theater-surrounded-rich-red-curtains-embodying-sophistication-charm-354845853.jpg?ct=jpeg')`,
+            
 
             // Sample Event Attendees
 `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
@@ -373,7 +374,9 @@ function insertSampleData(callback) {
 
         let completedQueries = 0;
         const totalQueries = queries.length;
-
+        db.all("SELECT * FROM event_attendees", [], (err, rows) => {
+            console.log('Event attendees:', rows);
+        });
         queries.forEach((query, index) => {
             db.run(query, (err) => {
                 if (err) console.error(`Error inserting data at step ${index + 1}:`, err.message);

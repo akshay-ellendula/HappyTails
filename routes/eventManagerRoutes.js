@@ -383,22 +383,7 @@ router.get('/eventmanager_attendees', isAuthenticated, (req, res) => {
         })
     ])
     .then(([pastOngoingAttendees, upcomingAttendees]) => {
-        console.log('Rendering attendees:', { 
-            pastOngoingAttendees: pastOngoingAttendees.map(a => ({
-                name: a.name,
-                event_name: a.event_name,
-                totalAttendees: a.totalAttendees,
-                formattedDate: a.formattedDate,
-                formattedRegDate: a.formattedRegDate
-            })), 
-            upcomingAttendees: upcomingAttendees.map(a => ({
-                name: a.name,
-                event_name: a.event_name,
-                seats: a.seats,
-                formattedDate: a.formattedDate,
-                formattedRegDate: a.formattedRegDate
-            }))
-        });
+        
         res.render('eventmanager_attendees', {
             pastOngoingAttendees,
             upcomingAttendees
@@ -650,5 +635,140 @@ router.post('/eventmanager_profile/password', isAuthenticated, (req, res) => {
     });
 });
 
+// routes/eventManagerRoutes.js
+router.get('/Events', (req, res) => {
+    const city = req.query.city || 'none'; // Get city from query parameter
+    let query = `
+        SELECT id, event_name, about_event, date_time, venue, contact_number, image 
+        FROM events 
+        WHERE status = 'Upcoming'
+    `;
+    let params = [];
 
+    if (city !== 'none') {
+        query += ` AND city = ?`;
+        params.push(city);
+    }
+
+    db.all(query, params, (err, rows) => {
+        if (err) {
+            console.error('Error fetching events:', err);
+            return res.status(500).send('Internal Server Error');
+        }
+
+        const events = rows.map(row => ({
+            id: row.id,
+            name: row.event_name,
+            description: row.about_event,
+            date: new Date(row.date_time).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
+            time: new Date(row.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+            location: row.venue,
+            contact: row.contact_number,
+            image: row.image || '/images/default_event.jpg'
+        }));
+
+        res.render('Events', { events, user: req.session.user });
+    });
+});
+// routes/eventManagerRoutes.js
+router.get('/event_booking_form', (req, res) => {
+    const eventId = req.query.eventId;
+    if (!eventId) {
+        return res.status(400).send('Event ID is required');
+    }
+
+    db.get("SELECT event_name FROM events WHERE id = ?", [eventId], (err, row) => {
+        if (err) {
+            console.error('Error fetching event:', err);
+            return res.status(500).send('Server error');
+        }
+        if (!row) {
+            return res.status(404).send('Event not found');
+        }
+        res.render('event_booking_form', { 
+            eventId, 
+            eventName: row.event_name, 
+            user: req.session.user 
+        });
+    });
+});// routes/eventManagerRoutes.js
+router.post('/event_booking', (req, res) => {
+    if (!req.session.user) {
+        return res.status(401).json({ success: false, message: 'Please log in to book an event' });
+    }
+
+    const user = req.session.user;
+    const { 
+        eventId, 
+        name, 
+        email, 
+        phone_number, 
+        address, 
+        seats, 
+        with_pet, 
+        pet_name, 
+        pet_breed, 
+        pet_dob 
+    } = req.body;
+
+    console.log('Booking request:', { 
+        eventId, 
+        user_id: user.id, 
+        name, 
+        email, 
+        phone_number, 
+        address, 
+        seats, 
+        with_pet, 
+        pet_name, 
+        pet_breed, 
+        pet_dob 
+    });
+
+    if (!eventId || !name || !email || !phone_number || !address) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Missing required fields', 
+            missing: { eventId, name, email, phone_number, address }
+        });
+    }
+
+    db.run(
+        `INSERT INTO event_attendees (
+            event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            eventId,
+            user.id,
+            name,
+            phone_number,
+            email,
+            address,
+            seats || 1,
+            with_pet === 'yes' ? 1 : 0,
+            pet_name || null,
+            pet_breed || null,
+            pet_dob || null
+        ],
+        function (err) {
+            if (err) {
+                console.error('Error registering attendee:', err);
+                return res.status(500).json({ success: false, message: 'Registration failed', error: err.message });
+            }
+            console.log('Attendee inserted with ID:', this.lastID);
+
+            db.run(
+                `UPDATE events SET tickets_sold = tickets_sold + ? WHERE id = ?`,
+                [seats || 1, eventId],
+                (err) => {
+                    if (err) {
+                        console.error('Error updating tickets_sold:', err);
+                        return res.status(500).json({ success: false, message: 'Failed to update tickets', error: err.message });
+                    }
+                    res.json({ success: true, message: 'Ticket booked successfully' });
+                }
+            );
+        }
+    );
+});
 module.exports = router;

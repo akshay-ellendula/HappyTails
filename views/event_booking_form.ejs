@@ -1,112 +1,116 @@
+<!-- views/event_booking_form.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>login</title>
+    <title>Event Booking - <%= eventName || 'Unknown Event' %></title>
     <link rel="stylesheet" href="/Event-booking/Event-booking-form.css">
 </head>
 <body>
     <div class="navbar">
         <header>
             <a href="/home" class="badge">Happy Tails</a>
-            <a href="Account"></a>
+            <a href="/Account"></a>
         </header>
     </div>
-    <form id="eventBookingForm">
+    
+    <% if (user) { %>
+        <form id="eventBookingForm" method="POST" action="/event_booking">
+            <div class="container">
+                <h1>Entry Per Human - <%= eventName || 'Event Booking' %></h1>
+                <input type="hidden" name="eventId" value="<%= eventId %>">
+
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" placeholder="Enter Full Name" required>
+
+                <label for="email">Email ID *</label>
+                <input type="email" id="email" name="email" placeholder="Enter Email ID" required>
+
+                <label for="phone_number">Contact Number *</label>
+                <input type="text" id="phone_number" name="phone_number" placeholder="Enter Contact Number" pattern="\d{10}" required>
+
+                <label for="address">Address *</label>
+                <input type="text" id="address" name="address" placeholder="Enter Address" required>
+
+                <label for="seats">Number of Seats *</label>
+                <input type="number" id="seats" name="seats" min="1" value="1" required>
+
+                <label>Are you coming with a pet? *</label>
+                <div class="radio-group">
+                    <input type="radio" id="yes" name="with_pet" value="yes" onchange="togglePetDetails(true)">
+                    <label for="yes">Yes</label>
+                    <input type="radio" id="no" name="with_pet" value="no" onchange="togglePetDetails(false)" checked>
+                    <label for="no">No</label>
+                </div>
+
+                <div id="pet-details" class="pet-details" style="display: none;">
+                    <label for="pet_name">Pet's Name</label>
+                    <input type="text" id="pet_name" name="pet_name" placeholder="Enter Pet's Name">
+
+                    <label for="pet_breed">Pet's Breed</label>
+                    <input type="text" id="pet_breed" name="pet_breed" placeholder="Enter Pet's Breed">
+
+                    <label for="pet_dob">Pet's Date of Birth</label>
+                    <input type="date" id="pet_dob" name="pet_dob">
+                </div>
+
+                <button type="submit">Register</button>
+            </div>
+        </form>
+    <  % } else { %>
         <div class="container">
-          <h1>Entry Per Human</h1>
-      
-          <label for="fullname">Full Name *</label>
-          <input type="text" id="fullname" name="fullname" placeholder="Enter Full Name" required>
-      
-          <label for="contactnumber">Contact Number *</label>
-          <input type="text" id="contactnumber" name="contactnumber" placeholder="Enter Contact Number" pattern="\d{10}"  required>
-      
-          <label for="email">Email ID *</label>
-          <input type="email" id="email" name="email" placeholder="Enter Email ID" required>
-      
-          <label for="address">Address *</label>
-          <input type="text" id="address" name="address" placeholder="Enter Address" required>
-      
-          <label>Are you coming with a pet? *</label>
-          <div class="radio-group">
-            <input type="radio" id="yes" name="withpet" value="yes" onchange="togglePetDetails(true)">
-            <label for="yes">Yes</label>
-      
-            <input type="radio" id="no" name="withpet" value="no" onchange="togglePetDetails(false)">
-            <label for="no">No</label>
-          </div>
-      
-          <div id="pet-details" class="pet-details">
-            <label for="petname">Pet's Name</label>
-            <input type="text" id="petname" name="petname" placeholder="Enter Pet's Name">
-      
-            <label for="petbreed">Pet's Breed</label>
-            <input type="text" id="petbreed" name="petbreed" placeholder="Enter Pet's Breed">
-      
-            <label for="petdob">Pet's Date of Birth</label>
-            <input type="date" id="petdob" name="petdob">
-          </div>
-      
-          <button type="submit">Register</button>
+            <h1>Please Log In</h1>
+            <p>You need to be logged in to book an event.</p>
+            <a href="/my_login">Go to Login</a>
         </div>
-      </form>
-      
-  <footer class="footer">
-    <div class="footer-container">
+    <% } %>
 
-        <div class="footer-column">
-            <h3>Happy Tails</h3>
-            <ul>
-                <li><a href="/blog">Blog</a></li>
-                <li><a href="/pet_adoption">Pet Stores</a></li>
-                <li><a href="/pet_accessory">Online Pet Accessories</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Services</h3>
-            <ul>
-                <li><a href="/services">Pet Grooming</a></li>
-                <li><a href="/services">Dog Training</a></li>
-                <li><a href="/services">Vet Consultation</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Partner</h3>
-            <ul>
-                <li><a href="/service_signup">Become a Groomer</a></li>
-                <li><a href="/service_signup">Become a Dog Trainer</a></li>
-                <li><a href="/service_signup">Become Vet partner</a></li>
-                <li><a href="/store_signup">Pet Store Franchise</a></li>
-                <li><a href="/event_manager_signup">Become an Event manager</a></li>
-            </ul>
-        </div>
-
-        <div class="footer-column">
-            <h3>Policy</h3>
-            <ul>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Refund Policy</a></li>
-                <li><a href="#">Cancellation Policy</a></li>
-                <li><a href="#">Terms & Conditions</a></li>
-            </ul>
-            <div class="footer-social" >
-                <a href="#"><img
-                        src="/icons/facebook-3-logo-svgrepo-com.svg"
-                        alt="Facebook"></a>
-                <a href="#"><img
-                        src="/icons/instagram-2016-logo-svgrepo-com.svg"
-                        alt="Instagram"></a>
-                <a href="#"><img
-                        src="/icons/youtube-icon-logo-svgrepo-com.svg"
-                        alt="YouTube"></a>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/pet_adoption">Pet Stores</a></li>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="/services">Pet Grooming</a></li>
+                    <li><a href="/services">Dog Training</a></li>
+                    <li><a href="/services">Vet Consultation</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/service_signup">Become a Groomer</a></li>
+                    <li><a href="/service_signup">Become a Dog Trainer</a></li>
+                    <li><a href="/service_signup">Become Vet partner</a></li>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event manager</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
+                </div>
             </div>
         </div>
-    </div>
-</footer>
+    </footer>
+
     <script src="/Event-booking/Event-booking-form.js"></script>
 </body>
 </html>

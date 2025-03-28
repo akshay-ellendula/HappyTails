@@ -9,37 +9,56 @@
     padding: 20px;
 }
 
+/* Events/eventmanager_attendees.css */
 .appointments {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
 }
 
 .appointment-card {
-    background: #ffffff;
-    padding: 15px;
+    background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 300px; /* Fixed width */
+    min-height: 250px; /* Minimum height to ensure uniformity */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Distributes content evenly */
+    box-sizing: border-box;
 }
 
 .time-badge {
-    background: #effe8b;
-    color: #1a4d70;
-    padding: 4px 8px;
-    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    width: fit-content;
+    margin-bottom: 10px;
 }
 
-.time-badge.urgent {
-    background: #ff4444;
-    color: #ffffff;
+.appointment-card h3 {
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+.appointment-card p {
+    margin: 5px 0;
+    font-size: 14px;
+    flex-grow: 1; /* Allows paragraphs to expand and fill space */
+}
+
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
 }
 
 .attendee-count {
-    background: #effe8b;
-    color: #1a4d70;
-    padding: 5px;
-    border-radius: 4px;
-    text-align: center;
+    font-size: 14px;
+    color: #666;
 }
 
 

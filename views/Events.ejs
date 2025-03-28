@@ -50,53 +50,27 @@
 
 
     <div class="events_container">
-        <div class="event_card">
-            <div class="image_container">
-                <img src="/images/event_poster1.jpg" alt="event_image">
-            </div>
-            <div class="details_container">
-                <h3>Pet-Friendly Café</h3>
-                <p class="description">Join us for a lively and friendly pet-friendly café at our home in the heart of town.</p>
-                <p><span>Date:</span> 12th June 2021</p>
-                <p><span>Time:</span> 10:00 AM</p>
-                <p><span>Location:</span> Pullman,Aerocity</p>
-                <p><span>Contact:</span> <a href="tel:contact">123456789</a></p>
-                <button type="button" class="book_btn" onclick="window.location.href='/event_booking' ">Book Now</button>
-            </div>
-        </div>
-
-        <div class="event_card">
-            <div class="image_container">
-                <img src="/images/event_poster2.jpg" alt="event_image">
-            </div>
-            <div class="details_container">
-                <h3>Pet-Friendly Café</h3>
-                <p class="description">Join us for a lively and friendly pet-friendly café at our home in the heart of town.</p>
-                <p><span>Date:</span> 12th June 2021</p>
-                <p><span>Time:</span> 10:00 AM</p>
-                <p><span>Location:</span> Pullman,Aerocity</p>
-                <p><span>Contact:</span> <a href="tel:contact">123456789</a></p>
-                <button type="button" class="book_btn" onclick="window.location.href='/event_booking'">Book Now</button>
-            </div>
-        </div>
-
-
-        <div class="event_card">
-            <div class="image_container">
-                <img src="/images/event_poster1.jpg" alt="event_image">
-            </div>
-            <div class="details_container">
-                <h3>Pet-Friendly Café</h3>
-                <p class="description">Join us for a lively and friendly pet-friendly café at our home in the heart of town.</p>
-                <p><span>Date:</span> 12th June 2021</p>
-                <p><span>Time:</span> 10:00 AM</p>
-                <p><span>Location:</span> Pullman,Aerocity</p>
-                <p><span>Contact:</span> <a href="tel:contact">123456789</a></p>
-                <button type="button" class="book_btn" onclick="window.location.href='/event_booking'">Book Now</button>
-            </div>
-        </div>
+        <% if (events && events.length > 0) { %>
+            <% events.forEach(event => { %>
+                <div class="event_card">
+                    <div class="image_container">
+                        <img src="<%= event.image %>" alt="event_image">
+                    </div>
+                    <div class="details_container">
+                        <h3><%= event.name %></h3>
+                        <p class="description"><%= event.description %></p>
+                        <p><span>Date:</span> <%= event.date %></p>
+                        <p><span>Time:</span> <%= event.time %></p>
+                        <p><span>Location:</span> <%= event.location %></p>
+                        <p><span>Contact:</span> <a href="tel:<%= event.contact %>"><%= event.contact %></a></p>
+                        <button type="button" class="book_btn" onclick="window.location.href='/event_booking_form?eventId=<%= event.id %>'">Book Now</button>
+                    </div>
+                </div>
+            <% }) %>
+        <% } else { %>
+            <p>No upcoming events found for this city.</p>
+        <% } %>
     </div>
-
   
 
 
