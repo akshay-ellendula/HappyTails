@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - Happy Tails</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="/SHOP/shop-customers.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Happy Tails</div>
+        <div class="user-info" id="profile-trigger">
+            <span>Welcome, <%= vendor.store_name %></span>
+            <div class="user-avatar"><%= vendor.store_name.charAt(0).toUpperCase() %></div>
+        </div>
+    </div>
+    
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-header">
+            <div class="profile-name"><%= vendor.store_name %></div>
+            <div class="profile-email"><%= vendor.email %></div>
+        </div>
+        <ul class="profile-menu">
+            <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/shop-dashboard/<%= vendor.store_name.toLowerCase().replace(/\s+/g, '-') %>" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-products" data-page="products">Products</a></li>
+                <li><a href="/shop-orders" data-page="orders">Orders</a></li>
+                <li><a href="/shop-customers" class="active" data-page="customers">Customers</a></li>
+                <li><a href="/shop-analytics" data-page="analytics">Analytics</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content" id="main-content">
+            <div class="page-container active" id="dashboard-page">
+                <div class="title-bar">
+                    <h1 class="dashboard-title">Customers</h1>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="search-container">
+                    <input type="text" class="search-bar" id="customerSearch" placeholder="Search customers by name, email or customer ID...">
+                </div>
+                
+                <!-- Customers Table -->
+                <table class="customers-table">
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Total Orders</th>
+                            <th>Total Spent</th>
+                            <th>Last Order</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customersTableBody">
+                        <% if (customers && customers.length > 0) { %>
+                            <% customers.forEach(customer => { %>
+                                <tr>
+                                    <td><%= customer.customer_id %></td>
+                                    <td><%= customer.name %></td>
+                                    <td><%= customer.email %></td>
+                                    <td><%= customer.total_orders %></td>
+                                    <td>$<%= customer.total_spent %></td>
+                                    <td><%= customer.last_order %></td>
+                                    <td>
+                                        <button class="view-btn" onclick="viewCustomer('<%= customer.user_id %>')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7">No customers found.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile dropdown toggle
+            const profileTrigger = document.getElementById('profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            
+            profileTrigger.addEventListener('click', function() {
+                profileDropdown.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+
+            // Search functionality
+            const searchInput = document.getElementById('customerSearch');
+            const tableBody = document.getElementById('customersTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+
+            searchInput.addEventListener('input', function() {
+                const searchTerm = searchInput.value.toLowerCase();
+
+                for (let i = 0; i < rows.length; i++) {
+                    const customerId = rows[i].cells[0].textContent.toLowerCase();
+                    const name = rows[i].cells[1].textContent.toLowerCase();
+                    const email = rows[i].cells[2].textContent.toLowerCase();
+
+                    if (
+                        customerId.includes(searchTerm) ||
+                        name.includes(searchTerm) ||
+                        email.includes(searchTerm)
+                    ) {
+                        rows[i].style.display = '';
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            });
+        });
+
+        // View customer details (placeholder for now)
+        function viewCustomer(userId) {
+            window.location.href = `/shop-customer-details?customer=${userId}`;
+        }
+    </script>
+</body>
+</html>

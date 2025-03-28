@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Admin Dashboard</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <link href="/ADMIN/admin-dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Happy Tails</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/admin-dashboard" class="nav-link active">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-user" class="nav-link">
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-shop-manager" class="nav-link">
+                        <span>Shop Managers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-events" class="nav-link">
+                        <span>Event Managers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-products" class="nav-link">
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Analytics</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2>Admin Dashboard</h2>
+                <div class="user-info">
+                    <div class="avatar">A</div>
+                    <span>Admin User</span>
+                </div>
+            </div>
+
+            <!-- First Row: User Stats -->
+            <div class="dashboard-grid">
+                <div class="stats-card">
+                    <div class="stats-content">
+                        <div class="stats-info">
+                            <div class="stats-header">
+                                <h3>Total Users</h3>
+                            </div>
+                            <div class="stats-number" id="totalUsers">Loading...</div>
+                            <div class="stats-label">+12% from last month</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-content">
+                        <div class="stats-info">
+                            <div class="stats-header">
+                                <h3>Shop Vendors</h3>
+                            </div>
+                            <div class="stats-number" id="totalVendors">Loading...</div>
+                            <div class="stats-label">+9% from last month</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-content">
+                        <div class="stats-info">
+                            <div class="stats-header">
+                                <h3>Event Managers</h3>
+                            </div>
+                            <div class="stats-number" id="totalEventManagers">43</div>
+                            <div class="stats-label">+7% from last month</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Row: Revenue Stats -->
+            <div class="dashboard-grid">
+                <div class="stats-card">
+                    <div class="stats-content">
+                        <div class="stats-info">
+                            <div class="stats-header">
+                                <h3>Total Revenue</h3>
+                            </div>
+                            <div class="stats-number">$32,845</div>
+                            <div class="stats-label">All-time platform revenue</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-content">
+                        <div class="stats-info">
+                            <div class="stats-header">
+                                <h3>Monthly Revenue</h3>
+                            </div>
+                            <div class="stats-number">$8,976</div>
+                            <div class="stats-label">+8% from last month</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-content">
+                        <div class="stats-info">
+                            <div class="stats-header">
+                                <h3>Weekly Revenue</h3>
+                            </div>
+                            <div class="stats-number">$2,354</div>
+                            <div class="stats-label">+12% from last week</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-content">
+                        <div class="stats-info">
+                            <div class="stats-header">
+                                <h3>Today's Revenue</h3>
+                            </div>
+                            <div class="stats-number">$462</div>
+                            <div class="stats-label">+5% from yesterday</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Revenue Overview</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="section-header">
+                        <h3 class="section-title">User Distribution</h3>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="userDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Entities Table -->
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">Recent Entities</h3>
+                    <button class="btn" onclick="window.location.href='admin-user'">View All</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Joined Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentUsersTableBody">
+                            <!-- Initially empty; will be populated dynamically -->
+                            <tr>
+                                <td colspan="4">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/ADMIN/admin-dashboard.js"></script>
+</body>
+</html>

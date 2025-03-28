@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - Happy Tails</title>
+    <link href="/SHOP/shop-dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Happy Tails</div>
+        <div class="user-info" id="profile-trigger">
+            <span>Welcome, <%= vendor.store_name %></span>
+            <div class="user-avatar"><%= vendor.store_name.charAt(0).toUpperCase() %></div>
+        </div>
+    </div>
+    
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-header">
+            <div class="profile-name"><%= vendor.store_name %></div>
+            <div class="profile-email"><%= vendor.email %></div>
+        </div>
+        <ul class="profile-menu">
+            <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/shop-dashboard/<%= vendor.store_name.toLowerCase().replace(/\s+/g, '-') %>" class="active" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-products" data-page="products">Products</a></li>
+                <li><a href="/shop-orders" data-page="orders">Orders</a></li>
+                <li><a href="/shop-customers" data-page="customers">Customers</a></li>
+                <li><a href="/shop-analytics" data-page="analytics">Analytics</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content" id="main-content">
+            <div class="page-container active" id="dashboard-page">
+                <h1 class="dashboard-title">Vendor Dashboard</h1>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-title">TOTAL REVENUE</div>
+                        <div class="stat-value">$<%= totalRevenue %></div>
+                        <div class="stat-comparison">+12.5% from last month</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title">PRODUCTS SOLD</div>
+                        <div class="stat-value"><%= productsSold %></div>
+                        <div class="stat-comparison">+5.2% from last month</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-title">NEW ORDERS</div>
+                        <div class="stat-value"><%= newOrders %></div>
+                        <div class="stat-comparison">Awaiting processing</div>
+                    </div>
+                </div>
+                
+                <div class="recent-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Orders</h2>
+                        <a href="/shop-orders" class="view-all" data-page="orders">View All</a>
+                    </div>
+                    
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Product</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (recentOrders && recentOrders.length > 0) { %>
+                                <% recentOrders.forEach(order => { %>
+                                    <tr>
+                                        <td>#ORD-<%= order.id %></td>
+                                        <td><%= order.user_name %></td>
+                                        <td><%= order.product_name %></td>
+                                        <td><%= new Date(order.order_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                                        <td>$<%= order.total_amount.toFixed(2) %></td>
+                                        <td><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6">No recent orders found.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="action-buttons">
+                    <a href="/shop-products" class="button" id="add-product-btn">Add New Product</a>
+                    <a href="/shop-analytics" class="button" data-page="analytics">View Sales Report</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile dropdown toggle
+            const profileTrigger = document.getElementById('profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            
+            profileTrigger.addEventListener('click', function() {
+                profileDropdown.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

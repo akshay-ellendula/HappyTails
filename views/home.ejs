@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HappyTails</title>
+        <link rel="stylesheet" type="text/css" href="/Home/home.css" />
+    </head>
+    <body>
+        <div class="navbar">
+            <header>
+
+                <div class="badge">
+                    <a href="/home" class="badge">Happy Tails</a>
+                </div>
+                <div class="search-bar">
+                    <img src="/icons/search-alt-svgrepo-com.svg" height="25px" />
+                    <input type="text" placeholder="Search.." size="25"
+                        style="font-size: 20px;" />
+                </div>
+                
+                <div class="menu">
+                    <a href="/pet_accessory">Pet Essentials</a>
+                    <a href="/Events">Events</a>
+                    <a href="/blog">Blog</a>
+                    <% if (user) { %>
+                        <a href="/profile">Profile</a>
+                    <% } else { %>
+                        <a href="/my_login">Login/SignUp</a>
+                    <% } %>
+                </div>
+
+                <div class="menu-icon" id="menuIcon">
+                    <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+                </div>
+
+                <div class="side-navbar" id="sideNavbar">
+                    <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                    <a href="/pet_accessory">Essentials</a>
+                    <a href="/Events">Events</a>
+                    <a href="/blog">Blog</a>
+                    <% if (user) { %>
+                        <a href="/profile">Profile</a>
+                    <% } else { %>
+                        <a href="/my_login">Login/SignUp</a>
+                    <% } %>
+                </div>
+                
+            </header>
+        </div>
+
+        <section class="image-card">
+            <div class="content startAnimation">
+                <div class="centered-text">
+                    <h1>Find Your Perfect Pet<br />Match</h1>
+                    <p>Bring pets and people together</p>
+                    <button onclick="window.location.href='/pet_adoption'">Get Started</button>
+                </div>
+            </div>
+            <div class="main_images">
+                <img src="/images/a pet dog rolling in the grass.jpg"
+                class="random-image image1" alt="Image 1" />
+            <img src="/images/Cat1.jpg" class="random-image image2"
+                alt="Image 2" />
+            <img src="/images/pet dog playing with owner.jpg"
+                class="random-image image3" alt="Image 3" />
+            <img src="/images/orange-cat.jpg" class="random-image image4"
+                alt="Image 4" />
+            </div>
+        </section>
+
+        <section class="shop autoshow">
+            <h1>Shop</h1>
+            <div class="card-container">
+                <div class="card">
+                    <div class="shop-image">
+                        <img
+                            src="/images/dog sleeping on a dog, to advertise the dog bed with a plane grey background.jpg"
+                            alt="Dog bed" />
+                        <div class="quick-view">Quick View</div>
+                    </div>
+                    <h2>Orthopedic Dog Bed</h2>
+                    <p>₹2,990</p>
+                </div>
+
+                <div class="card">
+                    <div class="shop-image">
+                        <img
+                            src="/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg"
+                            alt="cat cave">
+                        <div class="quick-view">Quick View</div>
+                    </div>
+                    <h2>Cozy Cat Cave</h2>
+                    <p>₹1,490</p>
+                </div>
+
+                <div class="card">
+                    <div class="shop-image">
+                        <img
+                            src="/images/pet nail clippers in a grey background, make more cuter.jpg"
+                            alt="pet nail clippers">
+                        <div class="quick-view">Quick View</div>
+                    </div>
+                    <h2>Pet Nail Clippers</h2>
+                    <p>₹490</p>
+                </div>
+            </div>
+            <button onclick="window.location.href='/pet_accessory'">Get Started</button>
+        </section>
+
+        <section class="about-us autoshow">
+
+            <div class="about-us-image">
+                <img
+                    src="/images/A cheerful dog and cat sitting together, symbolizing harmony and companionship._Could include a loving owner interacting with them..jpg"
+                    alt="About Us" />
+            </div>
+
+            <div class="content">
+                <h2>About Us</h2>
+                <p>Welcome to Happy Tails, the ultimate destination for pet
+                    lovers!
+
+                    Our mission is to create a comprehensive platform that
+                    brings together pet enthusiasts, service providers, and
+                    businesses to support the well-being of pets and their
+                    owners.
+
+                    At Happy Tails, we believe pets are family. Whether you're
+                    looking to adopt a new furry friend, find trusted vet care,
+                    book training sessions, or explore grooming services, we've
+                    got you covered. We also host exciting pet events and
+                    competitions, giving you and your pets the chance to shine
+                    and bond.
+
+                    Our online marketplace makes it easy to shop for
+                    high-quality pet accessories, toys, and essentials. Plus, we
+                    provide a seamless way to connect buyers and sellers for
+                    pets in need of loving homes.</p>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="footer-container">
+
+                <div class="footer-column">
+                    <h3>Happy Tails</h3>
+                    <ul>
+                        <li><a href="/blog">Blog</a></li>
+                        <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Partner</h3>
+                    <ul>
+                        <li><a href="/store_signup">Pet Store Franchise</a></li>
+                        <li><a href="/event_manager_signup">Become an Event manager</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Policy</h3>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Refund Policy</a></li>
+                        <li><a href="#">Cancellation Policy</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="#"><img
+                                src="/icons/facebook-3-logo-svgrepo-com.svg"
+                                alt="Facebook"></a>
+                        <a href="#"><img
+                                src="/icons/instagram-2016-logo-svgrepo-com.svg"
+                                alt="Instagram"></a>
+                        <a href="#"><img
+                                src="/icons/youtube-icon-logo-svgrepo-com.svg"
+                                alt="YouTube"></a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+
+        <script>
+
+            document.getElementById('menuIcon').addEventListener('click', function() {
+                document.getElementById('sideNavbar').classList.toggle('open');
+            });
+
+            document.getElementById('closeBtn').addEventListener('click', function() {
+                document.getElementById('sideNavbar').classList.remove('open');
+            });
+        </script>
+
+    </body>
+</html>

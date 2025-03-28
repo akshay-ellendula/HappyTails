@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager - Profile</title>
+    <link rel="stylesheet" href="/Events/eventmanager_profile.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="/eventmanager_profile" class="nav-link active" data-page="Profile">Profile</a>
+                <a href="/logout" class="nav-link" data-page="Logout">Logout</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="/eventmanager_dashboard" class="nav-link" data-page="Home">Home</a></li>
+                <li><a href="/eventmanager_events" class="nav-link" data-page="Events">Events</a></li>
+                <li><a href="/eventmanager_attendees" class="nav-link" data-page="Attendees">Attendees</a></li>
+                <li><a href="/eventmanager_profile" class="nav-link active" data-page="Profile">Profile</a></li>
+                <li><a href="/eventmanager_analytics" class="nav-link" data-page="Analytics">Analytics</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="welcome-section">
+                <h1>Profile</h1>
+            </div>
+
+            <div class="section">
+                <div class="appointment-card">
+                    <div class="profile-header">
+                        <img
+                            src="<%= profile.image || 'images/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg' %>"
+                            alt="User Profile"
+                            class="profile-pic-large"
+                        />
+                        <div class="profile-info">
+                            <h2><%= profile.name %></h2>
+                            <p class="member-since">Member since: <%= profile.memberSince %></p>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" value="<%= profile.firstName %>" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" value="<%= profile.lastName %>" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" value="<%= profile.email %>" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="text" id="phone" value="<%= profile.phone %>" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <input type="text" id="role" value="Event Manager" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="eventType">Event Specialization</label>
+                            <input type="text" id="eventType" value="<%= profile.eventType %>" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="license">License Number</label>
+                            <input type="text" id="license" value="<%= profile.license %>" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="eventsManaged">Events Managed</label>
+                            <input type="text" id="eventsManaged" value="<%= profile.eventsManaged %>" readonly />
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="bio">Bio</label>
+                            <textarea id="bio" readonly><%= profile.bio %></textarea>
+                        </div>
+                    </div>
+
+                    <div class="change-password">
+                        <h2>Change Password</h2>
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" placeholder="Enter current password" />
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" placeholder="Enter new password" />
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" placeholder="Confirm new password" />
+                        </div>
+                        <div class="password-requirements">
+                            <p>Password must contain:</p>
+                            <ul>
+                                <li>At least 8 characters</li>
+                                <li>At least one uppercase letter</li>
+                                <li>At least one number</li>
+                                <li>At least one special character</li>
+                            </ul>
+                        </div>
+                        <button class="btn-secondary" onclick="updatePassword()">Update Password</button>
+                    </div>
+
+                    <button class="btn-primary" onclick="openEditProfile()">Edit Profile</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditProfile()">×</span>
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm" action="/eventmanager_profile" method="POST" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editFirstName">First Name</label>
+                        <input type="text" id="editFirstName" name="firstName" value="<%= profile.firstName %>" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="editLastName">Last Name</label>
+                        <input type="text" id="editLastName" name="lastName" value="<%= profile.lastName %>" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editEmail">Email</label>
+                        <input type="email" id="editEmail" name="email" value="<%= profile.email %>" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone Number</label>
+                        <input type="text" id="editPhone" name="phone" value="<%= profile.phoneRaw %>" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editEventType">Event Specialization</label>
+                        <input type="text" id="editEventType" name="eventType" value="<%= profile.eventType %>" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="editLicense">License Number</label>
+                        <input type="text" id="editLicense" name="license" value="<%= profile.license %>" required />
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editProfilePic">Profile Picture</label>
+                        <div class="file-input-container">
+                            <input type="file" id="editProfilePic" name="profilePic" accept="image/*" class="file-input" />
+                            <label for="editProfilePic" class="file-input-label">Choose File</label>
+                            <span class="file-name">No file chosen</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editBio">Professional Bio</label>
+                    <textarea id="editBio" name="bio" required><%= profile.bio %></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <button type="button" class="btn-secondary" onclick="closeEditProfile()">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const fileInput = document.getElementById("editProfilePic");
+            if (fileInput) {
+                fileInput.addEventListener("change", function () {
+                    const fileName = this.files[0] ? this.files[0].name : "No file chosen";
+                    this.nextElementSibling.nextElementSibling.textContent = fileName;
+                });
+            }
+        });
+
+        window.openEditProfile = () => {
+            document.getElementById("editProfileModal").style.display = "block";
+        };
+
+        window.closeEditProfile = () => {
+            document.getElementById("editProfileModal").style.display = "none";
+        };
+
+        window.updatePassword = () => {
+            const currentPassword = document.getElementById("currentPassword").value;
+            const newPassword = document.getElementById("newPassword").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (!currentPassword) {
+                alert("Please enter your current password");
+                return;
+            }
+
+            if (!validatePassword(newPassword)) {
+                alert("Your new password does not meet the requirements");
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert("New password and confirm password do not match");
+                return;
+            }
+
+            fetch('/eventmanager_profile/password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentPassword,
+                    newPassword
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Password updated successfully!");
+                    document.getElementById("currentPassword").value = "";
+                    document.getElementById("newPassword").value = "";
+                    document.getElementById("confirmPassword").value = "";
+                } else {
+                    alert(data.message || "Failed to update password");
+                }
+            })
+            .catch(err => {
+                console.error('Error updating password:', err);
+                alert("An error occurred while updating the password");
+            });
+        };
+
+        function validatePassword(password) {
+            if (password.length < 8) return false;
+            if (!/[A-Z]/.test(password)) return false;
+            if (!/\d/.test(password)) return false;
+            if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) return false;
+            return true;
+        }
+    </script>
+</body>
+</html>

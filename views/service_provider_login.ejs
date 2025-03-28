@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HappyTails - Service Provider Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Existing styles unchanged */
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #effe8b;
+            font-family: "Outfit", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            margin: 5px 5%;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        header a.badge {
+            text-decoration: none;
+            color: #1a1a1a;
+            font-size: 2rem;
+            font-weight: 500;
+            transition: 0.3s all ease;
+        }
+
+        header a.badge:hover {
+            transform: scale(1.1);
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+                        0 10px 10px rgba(0,0,0,0.22);
+            width: 90%;
+            max-width: 400px;
+            min-height: 480px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-container {
+            padding: 0 30px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            font-weight: bold;
+            margin: 20px 0;
+            color: #1a1a1a;
+            font-size: 1.8rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        label {
+            color: #1a1a1a;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+            width: 100%;
+            margin: 10px 0 5px;
+        }
+
+        input, select {
+            background-color: #eee;
+            border: none;
+            padding: 12px 15px;
+            margin: 8px 0;
+            width: 100%;
+            border-radius: 5px;
+            font-family: "Outfit", sans-serif;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #1a1a1a;
+        }
+
+        button {
+            cursor: pointer;
+            border-radius: 20px;
+            border: 1px solid #1a1a1a;
+            background-color: #1a1a1a;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 12px 45px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 80%;
+        }
+
+        button:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .forgot-password {
+            margin-top: 15px;
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .signup-prompt {
+            margin-top: 25px;
+            font-size: 0.9rem;
+        }
+
+        .signup-link {
+            color: #1a1a1a;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .signup-link:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: #1a1a1a;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(-10px);
+            position: relative;
+            width: 100%;
+        }
+        
+        .alert.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .alert-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+        
+        .alert-warning {
+            background-color: #fff8e1;
+            color: #ff8f00;
+            border-left: 4px solid #ff8f00;
+        }
+        
+        .input-error {
+            border: 1px solid #c62828 !important;
+            background-color: #ffebee !important;
+        }
+        
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @media (max-width: 768px) {
+            .navbar { margin: 0; }
+            header { padding: 1rem; }
+            header a.badge { font-size: 1.7rem; }
+            .container { width: 95%; margin: 10px auto; min-height: 450px; }
+            .form-container { padding: 0 20px; }
+            h1 { font-size: 1.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            header a.badge { font-size: 1.5rem; }
+            button { width: 100%; padding: 12px 20px; }
+            h1 { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+        </header>
+    </div>
+    <div class="container">
+        <div class="form-container">
+            <h1>Service Provider Login</h1>
+            <form id="login-form">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="event-manager">Event Manager</option>
+                    <option value="store-manager">Store Manager</option>
+                </select>
+
+                <button type="submit">Login</button>
+            </form>
+            <a href="#" class="forgot-password">Forgot password?</a>
+            <div style="margin: 10px; padding: 10px;">
+                <p class="signup-prompt">Don't have an account? <a href="#" class="signup-link">Sign up</a></p>
+            </div>
+        </div>
+    </div>
+    <footer>
+        &copy; 2025 Happy Tails. All rights reserved.
+    </footer>
+
+   <!-- views/service_provider_login.ejs (JavaScript section only) -->
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('login-form');
+    
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            clearAlerts();
+    
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const role = document.getElementById('role');
+            let isValid = true;
+    
+            // Client-side validation
+            if (!email.value.trim()) {
+                showError(email, 'Email is required');
+                isValid = false;
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
+                showError(email, 'Please enter a valid email address');
+                isValid = false;
+            }
+    
+            if (!password.value) {
+                showError(password, 'Password is required');
+                isValid = false;
+            } else if (password.value.length < 6) {
+                showError(password, 'Password must be at least 6 characters');
+                isValid = false;
+            }
+    
+            if (!role.value) {
+                showError(role, 'Please select your role');
+                isValid = false;
+            }
+    
+            if (!isValid) return;
+    
+            // Prepare form data
+            const formData = {
+                email: email.value.trim(),
+                password: password.value,
+                role: role.value
+            };
+    
+            try {
+                // Send AJAX request
+                const response = await fetch('/service-provider-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+    
+                if (data.success) {
+                    showSuccess(data.message || 'Login successful! Redirecting...');
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 2000);
+                } else {
+                    if (data.message === 'Invalid email or password') {
+                        showError(email, data.message);
+                        showError(password, '');
+                    } else {
+                        showError(null, data.message || 'An error occurred. Please try again.');
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError(null, 'An error occurred while logging in. Please try again.');
+            }
+        });
+    
+        // Error display function
+        function showError(input, message) {
+            if (input) {
+                input.classList.add('input-error', 'shake');
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-error';
+                alert.textContent = message;
+                input.parentNode.insertBefore(alert, input.nextSibling);
+                setTimeout(() => alert.classList.add('show'), 10);
+                setTimeout(() => input.classList.remove('shake'), 500);
+            } else {
+                const alert = document.createElement('div');
+                alert.className = 'alert alert-error';
+                alert.textContent = message;
+                form.prepend(alert);
+                setTimeout(() => alert.classList.add('show'), 10);
+            }
+        }
+    
+        // Success display function
+        function showSuccess(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-success';
+            alert.textContent = message;
+            form.prepend(alert);
+            setTimeout(() => alert.classList.add('show'), 10);
+        }
+    
+        // Clear alerts function
+        function clearAlerts() {
+            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+            document.querySelectorAll('.input-error').forEach(input => input.classList.remove('input-error'));
+        }
+    
+        // Clear errors on input
+        document.querySelectorAll('input, select').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('input-error');
+                const nextSibling = this.nextSibling;
+                if (nextSibling && nextSibling.classList && nextSibling.classList.contains('alert')) {
+                    nextSibling.remove();
+                }
+            });
+        });
+    
+        // Forgot password (placeholder)
+        document.querySelector('.forgot-password').addEventListener('click', function(e) {
+            e.preventDefault();
+            clearAlerts();
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-warning';
+            alert.textContent = 'Password reset link has been sent to your email.';
+            form.prepend(alert);
+            setTimeout(() => alert.classList.add('show'), 10);
+        });
+    });
+    </script>
+</body>
+</html>

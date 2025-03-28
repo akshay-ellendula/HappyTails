@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/login/store_signup.css">
+    <title>Store Signup</title>
+    <style>
+        .error {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: none;
+        }
+        .success-message {
+            color: green;
+            font-size: 1em;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <a href="Account"></a>
+        </header>
+    </div>
+    <div class="container">
+        <form id="signupForm">
+            <h1>Sign Up To Become Happy Tails Store Partner</h1>
+            <p>Please fill this form to create an account</p>
+            
+            <label for="name">Name</label>
+            <input type="text" placeholder="Enter Name" name="name" id="name" required>
+            <div id="nameError" class="error">Name must be at least 2 characters long</div>
+
+            <label for="contactnumber">Contact Number</label>
+            <input type="text" placeholder="Enter Contact Number" name="contactnumber" id="contactnumber" required>
+            <div id="contactError" class="error">Please enter a valid 10-digit phone number</div>
+
+            <label for="email">Email</label>
+            <input type="text" placeholder="Enter Email" name="email" id="email" required>
+            <div id="emailError" class="error">Please enter a valid email address</div>
+
+            <label for="password">Password</label>
+            <input type="password" placeholder="Enter Password" name="password" id="password" required>
+            <div id="passwordError" class="error">Password must be at least 8 characters long and contain a number</div>
+
+            <label for="confirmpassword">Confirm Password</label>
+            <input type="password" placeholder="Confirm Password" name="confirmpassword" id="confirmpassword" required>
+            <div id="confirmPasswordError" class="error">Passwords do not match</div>
+
+            <label for="storename">Store Name</label>
+            <input type="text" placeholder="Enter Store Name" name="storename" id="storename" required>
+            <div id="storeNameError" class="error">Store name must be at least 2 characters long</div>
+
+            <label for="storelocation">Store Location</label>
+            <input type="text" placeholder="Enter Store Location" name="storelocation" id="storelocation" required>
+            <div id="locationError" class="error">Please enter a valid location</div>
+
+            <button type="submit" class="registerbtn">Register</button>
+            <div id="successMessage" class="success-message">Registration successful! Redirecting...</div>
+        </form>
+    </div>
+    <!-- Footer remains unchanged -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/pet_adoption">Pet Stores</a></li>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event Manager</a></li>
+                    <li><a href="/service_provider_login">login as provider</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Reset all error and success messages
+            document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
+            document.getElementById('successMessage').style.display = 'none';
+
+            // Get form values
+            const name = document.getElementById('name').value;
+            const contactnumber = document.getElementById('contactnumber').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmpassword = document.getElementById('confirmpassword').value;
+            const storename = document.getElementById('storename').value;
+            const storelocation = document.getElementById('storelocation').value;
+
+            let isValid = true;
+
+            // Client-side validation
+            if (name.length < 2) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            }
+
+            const phoneRegex = /^\d{10}$/;
+            if (!phoneRegex.test(contactnumber)) {
+                document.getElementById('contactError').style.display = 'block';
+                isValid = false;
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+
+            const passwordRegex = /^(?=.*\d).{8,}$/;
+            if (!passwordRegex.test(password)) {
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (password !== confirmpassword) {
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (storename.length < 2) {
+                document.getElementById('storeNameError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (storelocation.length < 3) {
+                document.getElementById('locationError').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return; // Stop if validation fails
+            }
+
+            // Prepare form data
+            const formData = {
+                name,
+                contactnumber,
+                email,
+                password,
+                confirmpassword,
+                storename,
+                storelocation
+            };
+
+            // Send AJAX request to the server
+            fetch('/store-signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    document.getElementById('successMessage').style.display = 'block';
+                    // Redirect after a delay
+                    setTimeout(() => {
+                        window.location.href = data.redirect;
+                    }, 2000);
+                } else {
+                    // Display server-side error
+                    if (data.message === 'Email already registered') {
+                        document.getElementById('emailError').textContent = data.message;
+                        document.getElementById('emailError').style.display = 'block';
+                    } else {
+                        alert('Error: ' + data.message); // Generic error alert
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the form. Please try again.');
+            });
+        });
+    </script>
+</body>
+</html>

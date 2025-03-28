@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog</title>
+    <link rel="stylesheet" href="/blog/blog.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <!-- hi -->
+
+            <div class="menu">
+                <a href="/Events">Events</a>
+                <a href="/pet_accessory">Pet Essentials</a>
+                <% if (user) { %>
+                    <a href="/profile">Profile</a>
+                <% } else { %>
+                    <a href="/my_login">Login/SignUp</a>
+                <% } %>
+            </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+              </div>
+  
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="/pet_adoption">Shop</a>
+                <a href="/pet_accessory">Pet Essentials</a>        
+                <a href="/services">Services</a>
+                <a href="/Events">Events</a>
+                <% if (user) { %>
+                    <a href="/profile">Profile</a>
+                <% } else { %>
+                    <a href="/my_login">Login/SignUp</a>
+                <% } %>
+            </div>
+        </header>
+    </div>
+
+    <div class="container">
+        <div class="wrapper">
+            <h1 class='post_heading' style="margin-bottom: 100px;">All Posts</h1>
+            <div class="post">
+                
+                <img  class="main_image" src="/images/blog_image1.jpg" alt="dog">
+
+            
+                <div class="content">
+                
+                    <div class="header_div">
+                        <div class="acoount">
+                        
+                            <img src="/icons/profile-circle-svgrepo-com (1).svg" alt="profile" height="50">
+                            <div class="details">
+                                <h3>Author Name</h3>
+                                <p>Date</p>
+                            </div>
+                        
+                        </div>
+                        
+                        <img src="/icons/dots-vertical-svgrepo-com.svg" alt="3 dots" height="15">
+                        
+                    </div>
+                    
+                    <h1>Top 5 Grooming Tips for Cats and Dogs</h1>
+                
+                    <div class="content_para">
+                        <p>Grooming plays a crucial role in keeping your furry friends healthy and happy. 
+                            Regular grooming sessions not only keep your pets looking their best but also contribute to their overall well-being. 
+                            If you're a pet owner looking to ensure your cats and dogs are well-groomed, here are the top 5 grooming tips to help you out.
+                        </p>
+                    </div>
+                
+                    <hr>
+                
+                    <div class="post_footer">
+                        <p>1 view</p>
+                        <p>0 comments</p>
+                    </div>
+                
+                </div>
+            </div>
+
+            <div class="post">
+                <img class="main_image" src="/images/blog_image1.jpg" alt="dog">
+            
+                <div class="content">
+                
+                    <div class="header_div">
+                        <div class="acoount">
+                        
+                            <img src="/icons/profile-circle-svgrepo-com (1).svg" alt="profile" height="50">
+                            <div class="details">
+                                <h3>Author Name</h3>
+                                <p>Date</p>
+                            </div>
+                        
+                        </div>
+                        
+                        <img src="/icons/dots-vertical-svgrepo-com.svg" alt="3 dots" height="15">
+                        
+                    </div>
+                    
+                    <h1>Top 5 Grooming Tips for Cats and Dogs</h1>
+                
+                    <div class="content_para">
+                        <p>Grooming plays a crucial role in keeping your furry friends healthy and happy. 
+                            Regular grooming sessions not only keep your pets looking their best but also contribute to their overall well-being. 
+                            If you're a pet owner looking to ensure your cats and dogs are well-groomed, here are the top 5 grooming tips to help you out.
+                        </p>
+                    </div>
+                
+                    <hr>
+                
+                    <div class="post_footer">
+                        <p>1 view</p>
+                        <p>0 comments</p>
+                    </div>
+                
+                </div>
+            </div>
+
+            <div class="post">
+                <img class="main_image" src="/images/blog_image1.jpg" alt="dog">
+            
+                <div class="content">
+                
+                    <div class="header_div">
+                        <div class="acoount">
+                        
+                            <img src="/icons/profile-circle-svgrepo-com (1).svg" alt="profile" height="50">
+                            <div class="details">
+                                <h3>Author Name</h3>
+                                <p>Date</p>
+                            </div>
+                        
+                        </div>
+                        
+                        <img src="/icons/dots-vertical-svgrepo-com.svg" alt="3 dots" height="15">
+                        
+                    </div>
+                    
+                    <h1>Top 5 Grooming Tips for Cats and Dogs</h1>
+                
+                    <div class="content_para">
+                        <p>Grooming plays a crucial role in keeping your furry friends healthy and happy. 
+                            Regular grooming sessions not only keep your pets looking their best but also contribute to their overall well-being. 
+                            If you're a pet owner looking to ensure your cats and dogs are well-groomed, here are the top 5 grooming tips to help you out.
+                        </p>
+                    </div>
+                
+                    <hr>
+                
+                    <div class="post_footer">
+                        <p>1 view</p>
+                        <p>0 comments</p>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event manager</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img
+                            src="/icons/facebook-3-logo-svgrepo-com.svg"
+                            alt="Facebook"></a>
+                    <a href="#"><img
+                            src="/icons/instagram-2016-logo-svgrepo-com.svg"
+                            alt="Instagram"></a>
+                    <a href="#"><img
+                            src="/icons/youtube-icon-logo-svgrepo-com.svg"
+                            alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.toggle('open');
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+        });
+    </script>
+</body>
+</html>

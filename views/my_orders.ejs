@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="/User Profile/myorders_profile.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+    
+            <div class="menu">
+                <a href="/pet_accessory">Pet Essentials</a>
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <a href="/profile">Profile</a>
+            </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="/pet_accessory">Pet Essentials</a>      
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <a href="/profile">Profile</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="sidebar_btn">
+        <button id="sidebar_btn">More</button>
+    </div>
+
+    <div class="mobile_sidebar">
+        <a href="javascript:void(0)" class="close-btn" id="mobile_sidebar_close-btn">&times;</a>
+        <div class="myProfile sidebar_divs">
+            <a href="/profile">My Profile</a>
+        </div>
+
+        <div class="myOrders sidebar_divs">
+            <a href="/my_orders">My Orders</a>
+        </div>
+
+        <div class="myBolgs sidebar_divs">
+            <a href="/my_blogs">My Blogs</a>
+        </div>
+
+        <div class="logout sidebar_divs">`
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="myProfile sidebar_divs">
+            <a href="/profile">My Profile</a>
+        </div>
+
+        
+
+        <div class="myOrders sidebar_divs">
+            <a href="/my_orders">My Orders</a>
+        </div>
+
+        <div class="myBolgs sidebar_divs">
+            <a href="/my_blogs">My Blogs</a>
+        </div>
+
+        <div class="logout sidebar_divs">
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="current_orders">
+            <h2>Current Orders</h2>
+            
+        </div>
+
+
+        <div class="previous_orders">
+            <h2 style="margin-bottom: 30px;">Previous Orders</h2>
+            <div class="order_container">
+                <div class="order_card">
+                    <div class="order_left_container">
+                        <h2 style="margin-bottom: 30px;">Delivered on 26th Febuary</h2>
+                        <div class="order_image">
+                            <img src="/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg" alt="Cat Cave">
+                        </div>
+                    </div>
+                    <div class="order_details">
+                        <h2>Name of the Prdouct</h2>
+                        <h3>Order ID: 123456</h3>
+                        <p><span>Order Date:</span> 12/12/2020</p>
+                        <p><span>Delivery Date:</span> 15/12/2020</p>
+                        <p><span>Order Status:</span> Delivered</p>
+                        <div class="button_container">
+                            <button>Buy Again</button>
+                            <button onclick="window.location.href='/track_package'">Track Order</button>
+                            <button>Return Product</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Existing menu and sidebar toggle logic remains unchanged
+            document.getElementById('menuIcon').addEventListener('click', function() {
+                document.getElementById('sideNavbar').classList.toggle('open');
+            });
+            document.getElementById('closeBtn').addEventListener('click', function() {
+                document.getElementById('sideNavbar').classList.remove('open');
+            });
+            document.getElementById('sidebar_btn').addEventListener('click', function() {
+                document.querySelector('.mobile_sidebar').classList.toggle('open');
+            });
+            document.querySelector('#mobile_sidebar_close-btn').addEventListener('click', function() {
+                document.querySelector('.mobile_sidebar').classList.remove('open');
+            });
+    
+            // Fetch and display orders
+            fetch('/api/my_orders', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Error fetching orders: ' + data.message);
+                    return;
+                }
+                const orders = data.orders;
+                console.log('Fetched orders:', JSON.stringify(orders, null, 2));
+                const currentOrdersContainer = document.querySelector('.current_orders');
+                const previousOrdersContainer = document.querySelector('.previous_orders .order_container');
+                currentOrdersContainer.innerHTML = '<h2>Current Orders</h2>';
+                previousOrdersContainer.innerHTML = '';
+    
+                if (orders.length === 0) {
+                    currentOrdersContainer.innerHTML += '<p>No current orders.</p>';
+                    previousOrdersContainer.innerHTML = '<p>No previous orders.</p>';
+                    return;
+                }
+    
+                orders.forEach(order => {
+                    const orderCard = `
+                        <div class="order_card">
+                            <div class="order_left_container">
+                                <h2>${order.status === 'Delivered' ? 'Delivered on ' + new Date(order.delivery_date).toLocaleDateString() : 'Order Placed'}</h2>
+                                <div class="order_image">
+                                    <img src="${order.items[0].image_path}" alt="${order.items[0].product_name}">
+                                </div>
+                            </div>
+                            <div class="order_details">
+                                <h2>${order.items[0].product_name} ${order.items.length > 1 ? 'and more' : ''}</h2>
+                                <h3>Order ID: ${order.order_id}</h3>
+                                <p><span>Order Date:</span> ${new Date(order.order_date).toLocaleDateString()}</p>
+                                <p><span>Delivery Date:</span> ${order.delivery_date ? new Date(order.delivery_date).toLocaleDateString() : 'Pending'}</p>
+                                <p><span>Order Status:</span> ${order.status}</p>
+                                <div class="button_container">
+                                    <button onclick="buyAgain(${order.order_id})">Buy Again</button>
+                                    <button onclick="window.location.href='/track_package/${order.order_id}'">Track Order</button>
+                                    ${order.status === 'Delivered' ? '<button>Return Product</button>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    if (order.status !== 'Delivered') {
+                        currentOrdersContainer.insertAdjacentHTML('beforeend', orderCard);
+                    } else {
+                        previousOrdersContainer.insertAdjacentHTML('beforeend', orderCard);
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching orders:', error));
+        });
+    
+        function buyAgain(orderId) {
+            fetch(`/api/orders/${orderId}/reorder`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    cart = cart.concat(data.cart);
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    alert('Items added to cart!');
+                    window.location.href = '/pet_accessory';
+                } else {
+                    alert('Error reordering: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>

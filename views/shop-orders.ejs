@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - Happy Tails</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="/SHOP/shop-orders.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Happy Tails</div>
+        <div class="user-info" id="profile-trigger">
+            <span>Welcome, <%= vendor.store_name %></span>
+            <div class="user-avatar"><%= vendor.store_name.charAt(0).toUpperCase() %></div>
+        </div>
+    </div>
+    
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-header">
+            <div class="profile-name"><%= vendor.store_name %></div>
+            <div class="profile-email"><%= vendor.email %></div>
+        </div>
+        <ul class="profile-menu">
+            <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/shop-dashboard/<%= vendor.store_name.toLowerCase().replace(/\s+/g, '-') %>" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-products" data-page="products">Products</a></li>
+                <li><a href="/shop-orders" class="active" data-page="orders">Orders</a></li>
+                <li><a href="/shop-customers" data-page="customers">Customers</a></li>
+                <li><a href="/shop-analytics" data-page="analytics">Analytics</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content" id="main-content">
+            <div class="page-container active" id="dashboard-page">
+                <div class="title-bar">
+                    <h1 class="dashboard-title">Orders</h1>               
+                </div>
+                
+                <div class="order-buttons">
+                    <button class="order-btn <%= status === 'all' ? 'active' : '' %>" onclick="filterOrders('all')">All Orders</button>
+                    <button class="order-btn <%= status === 'Pending' ? 'active' : '' %>" onclick="filterOrders('Pending')">Pending</button>
+                    <button class="order-btn <%= status === 'Shipped' ? 'active' : '' %>" onclick="filterOrders('Shipped')">Shipped</button>
+                    <button class="order-btn <%= status === 'Delivered' ? 'active' : '' %>" onclick="filterOrders('Delivered')">Delivered</button>
+                    <button class="order-btn <%= status === 'Cancelled' ? 'active' : '' %>" onclick="filterOrders('Cancelled')">Cancelled</button>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Products</th>
+                            <th>Total</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (orders && orders.length > 0) { %>
+                            <% orders.forEach(order => { %>
+                                <tr>
+                                    <td><input type="checkbox" value="<%= order.id %>"></td>
+                                    <td><%= order.order_id %></td>
+                                    <td><%= order.customer %></td>
+                                    <td><%= order.products %></td>
+                                    <td>$<%= order.total %></td>
+                                    <td><%= order.date %></td>
+                                    <td><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+                                    <td>
+                                        <i class="fa fa-eye" data-order-id="<%= order.id %>" onclick="viewOrder('<%= order.id %>')"></i> 
+                                        <i class="fa fa-print" onclick="printOrder('<%= order.id %>')"></i> 
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="8">No orders found.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile dropdown toggle
+            const profileTrigger = document.getElementById('profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+
+            profileTrigger.addEventListener('click', function() {
+                profileDropdown.classList.toggle('active');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+        });
+
+        // Filter orders by status
+        function filterOrders(status) {
+            window.location.href = `/shop-orders?status=${status}`;
+        }
+
+        // View order details (placeholder for now)
+        function viewOrder(orderId) {
+            window.open(`/shop-order-details/${orderId}`, '_blank');
+        }
+
+        // Print order details
+        function printOrder(orderId) {
+            // Find the order row
+            const orderRow = document.querySelector(`input[value="${orderId}"]`).closest('tr');
+            const orderIdText = orderRow.cells[1].innerText;
+            const customer = orderRow.cells[2].innerText;
+            const products = orderRow.cells[3].innerText;
+            const total = orderRow.cells[4].innerText;
+            const date = orderRow.cells[5].innerText;
+            const status = orderRow.cells[6].innerText;
+
+            // Create a printable HTML content
+            const printContent = `
+                <html>
+                <head>
+                    <title>Order #${orderId}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        h1 { text-align: center; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Order Details</h1>
+                    <table>
+                        <tr><th>Order ID</th><td>${orderIdText}</td></tr>
+                        <tr><th>Customer</th><td>${customer}</td></tr>
+                        <tr><th>Products</th><td>${products}</td></tr>
+                        <tr><th>Total</th><td>${total}</td></tr>
+                        <tr><th>Date</th><td>${date}</td></tr>
+                        <tr><th>Status</th><td>${status}</td></tr>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            // Open a new window and print
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            printWindow.print();
+        }
+    </script>
+</body>
+</html>

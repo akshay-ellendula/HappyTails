@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager - Event Management Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap">
+    <link rel="stylesheet" href="/Events/eventmanager_dashboard.css">
+</head>
+
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="/eventmanager_profile">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="/eventmanager_dashboard" class="active">Home</a></li>
+                <li><a href="/eventmanager_events">Events</a></li>
+                <li><a href="/eventmanager_attendees">Attendees</a></li>
+                <li><a href="/eventmanager_profile">Profile</a></li>
+                <li><a href="/eventmanager_analytics">Analytics</a></li>
+            </ul>
+        </div>
+
+        <!-- Right Side Content -->
+        <div class="main-content">
+            <div class="welcome-section">
+                <h1>Event Manager Dashboard</h1>
+            </div>
+            <!-- Overview Metrics -->
+            <div class="overview">
+                <div class="card">
+                    <h3>Total Bookings</h3>
+                    <p><%= overview && overview.totalBookings !== undefined ? overview.totalBookings : 'N/A' %></p>
+                </div>
+                <div class="card">
+                    <h3>Total Earnings</h3>
+                    <p><%= overview && overview.totalEarnings !== undefined ? overview.totalEarnings.toFixed(2) : 'N/A' %></p>
+                </div>
+                <div class="card">
+                    <h3>Total Events</h3>
+                    <p><%= overview && overview.totalEvents !== undefined ? overview.totalEvents : 'N/A' %></p>
+                </div>
+                <button class="new-event-btn" onclick="openEventForm()">New Event</button>
+            </div>
+
+            <!-- Ongoing and Upcoming Events -->
+            <div class="events-section">
+                <!-- Ongoing Events -->
+                <div class="ongoing-events">
+                    <h2>Ongoing Events <a href="/eventmanager_events?status=Ongoing" class="view-all" data-section="ongoing">View all</a></h2>
+                    <% if (ongoingEvents.length > 0) { %>
+                        <% ongoingEvents.forEach(event => { %>
+                            <div class="event-card" onclick="showEventDetails('<%= event.event_name %>',' <%= event.tickets_sold %>',' <%= (event.tickets_sold * event.ticket_price).toFixed(2) %>')">
+                                <img src="<%= event.image || '/images/default_event.jpg' %>" alt="<%= event.event_name %>">
+                                <div class="event-details">
+                                    <h3><%= event.event_name %></h3>
+                                    <p><%= event.tickets_sold %> Attendees</p>
+                                    <p>Started <%= new Date(event.date_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) %></p>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No ongoing events.</p>
+                    <% } %>
+                </div>
+
+                <!-- Upcoming Events -->
+                <div class="upcoming-events">
+                    <h2>Upcoming Events <a href="/eventmanager_events?status=Upcoming" class="view-all" data-section="upcoming">View all</a></h2>
+                    <% if (upcomingEvents.length > 0) { %>
+                        <% upcomingEvents.forEach(event => { %>
+                            <div class="event-card" onclick="showEventDetails('<%= event.event_name %>',' <%= event.tickets_sold %>',' <%= (event.tickets_sold * event.ticket_price).toFixed(2) %>')">
+                                <img src="<%= event.image || '/images/default_event.jpg' %>" alt="<%= event.event_name %>">
+                                <div class="event-details">
+                                    <h3><%= event.event_name %></h3>
+                                    <p><%= new Date(event.date_time).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' }) %></p>
+                                    <p><%= Math.round((event.tickets_sold / event.total_tickets) * 100) %>% Booked</p>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No upcoming events.</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Attendee List -->
+            <div class="attendee-list">
+                <h2>All Attendee List <a href="/eventmanager_attendees" class="view-all" data-section="attendees">View all</a></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone No</th>
+                            <th>Event</th>
+                            <th>Date</th>
+                            <th>Seats</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendeeTable">
+                        <% if (attendees.length > 0) { %>
+                            <% attendees.forEach(attendee => { %>
+                                <tr data-attendee-id="<%= attendee.id %>">
+                                    <td><%= attendee.name %></td>
+                                    <td><%= attendee.phone_number %></td>
+                                    <td><%= attendee.event_name %></td>
+                                    <td><%= new Date(attendee.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                                    <td><%= attendee.seats %></td>
+                                    <td>
+                                        <button class="edit-btn" 
+                                            data-id="<%= attendee.id %>"
+                                            data-name="<%= attendee.name %>"
+                                            data-phone="<%= attendee.phone_number %>"
+                                            data-event="<%= attendee.event_name %>"
+                                            data-date="<%= new Date(attendee.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>"
+                                            data-seats="<%= attendee.seats %>">Edit</button>
+                                        <button class="delete-btn" data-id="<%= attendee.id %>">Delete</button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6">No attendees found.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Form Modal -->
+    <div class="modal" id="eventFormModal">
+        <div class="modal-content" style="margin-top: 25vh; margin-left: 25vw; width: 50vw; height: 50vh;">
+            <span class="close-btn" onclick="closeEventForm()">×</span>
+            <h2>Create New Event</h2>
+            <form id="eventForm" onsubmit="submitEvent(event)">
+                <div class="form-group">
+                    <label for="eventPhoto">Event Photo</label>
+                    <input type="file" id="eventPhoto" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventName">Event Name</label>
+                    <input type="text" id="eventName" required>
+                </div>
+                <div class="form-group">
+                    <label for="aboutEvent">About the Event</label>
+                    <textarea id="aboutEvent" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Event Guide</label>
+                    <div class="event-guide">
+                        <input type="text" id="language" placeholder="Language" required>
+                        <input type="text" id="duration" placeholder="Duration (e.g., 2h)" required>
+                        <input type="text" id="tickets" placeholder="Ticket Price" required>
+                        <input type="number" id="ageLimit" placeholder="Age Limit" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="instructions">Instructions</label>
+                    <textarea id="instructions" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="venue">Venue</label>
+                    <input type="text" id="venue" required>
+                </div>
+                <div class="form-group">
+                    <label for="terms">Terms and Conditions</label>
+                    <textarea id="terms" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Pets">Pets</option>
+                        <option value="Music">Music</option>
+                        <option value="Dance">Dance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateTime">Date and Time</label>
+                    <input type="datetime-local" id="dateTime" required>
+                </div>
+                <button type="submit" class="book_btn">Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div class="modal" id="eventDetailsModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEventDetails()">×</span>
+            <h2 id="eventDetailsTitle"></h2>
+            <p><strong>Tickets Sold:</strong> <span id="ticketsSold"></span></p>
+            <p><strong>Revenue Generated:</strong> $<span id="revenueGenerated"></span></p>
+        </div>
+    </div>
+
+    <!-- Edit Attendee Modal -->
+    <div class="modal" id="editAttendeeModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeEditAttendeeModal()">×</span>
+            <h2>Edit Attendee</h2>
+            <form id="editAttendeeForm" onsubmit="saveAttendee(event)">
+                <input type="hidden" id="editAttendeeId">
+                <div class="form-group">
+                    <label for="editName">Name</label>
+                    <input type="text" id="editName" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPhone">Phone No</label>
+                    <input type="text" id="editPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEvent">Event</label>
+                    <input type="text" id="editEvent" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="editDate">Date</label>
+                    <input type="text" id="editDate" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="editSeats">Seats</label>
+                    <input type="number" id="editSeats" required>
+                </div>
+                <button type="submit" class="book_btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Add this at the beginning of your script section
+        document.addEventListener('DOMContentLoaded', function() {
+            // Edit button handler
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const data = this.dataset;
+                    openEditAttendeeModal(
+                        data.id,
+                        data.name,
+                        data.phone,
+                        data.event,
+                        data.date,
+                        data.seats
+                    );
+                });
+            });
+
+            // Delete button handler
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    deleteAttendee(this.dataset.id);
+                });
+            });
+        });
+
+        // Modal Functions
+        function openEventForm() {
+            document.getElementById('eventFormModal').style.display = 'block';
+        }
+
+        function closeEventForm() {
+            document.getElementById('eventFormModal').style.display = 'none';
+        }
+
+        function showEventDetails(eventName, ticketsSold, revenue) {
+            document.getElementById('eventDetailsTitle').textContent = eventName;
+            document.getElementById('ticketsSold').textContent = ticketsSold;
+            document.getElementById('revenueGenerated').textContent = revenue;
+            document.getElementById('eventDetailsModal').style.display = 'block';
+        }
+
+        function closeEventDetails() {
+            document.getElementById('eventDetailsModal').style.display = 'none';
+        }
+
+        function openEditAttendeeModal(attendeeId, name, phone, eventName, date, seats) {
+            document.getElementById('editAttendeeId').value = attendeeId;
+            document.getElementById('editName').value = name;
+            document.getElementById('editPhone').value = phone;
+            document.getElementById('editEvent').value = eventName;
+            document.getElementById('editDate').value = date;
+            document.getElementById('editSeats').value = seats;
+            document.getElementById('editAttendeeModal').style.display = 'block';
+        }
+
+        function closeEditAttendeeModal() {
+            document.getElementById('editAttendeeModal').style.display = 'none';
+        }
+
+        // Form Submission for Creating a New Event
+        async function submitEvent(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            formData.append('eventPhoto', document.getElementById('eventPhoto').files[0]);
+            formData.append('eventName', document.getElementById('eventName').value);
+            formData.append('aboutEvent', document.getElementById('aboutEvent').value);
+            formData.append('language', document.getElementById('language').value);
+            formData.append('duration', document.getElementById('duration').value);
+            formData.append('tickets', document.getElementById('tickets').value);
+            formData.append('ageLimit', document.getElementById('ageLimit').value);
+            formData.append('instructions', document.getElementById('instructions').value);
+            formData.append('venue', document.getElementById('venue').value);
+            formData.append('terms', document.getElementById('terms').value);
+            formData.append('category', document.getElementById('category').value);
+            formData.append('dateTime', document.getElementById('dateTime').value);
+
+            try {
+                const response = await fetch('/eventmanager_dashboard/create-event', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Event created successfully!');
+                    window.location.reload(); // Refresh to show the new event
+                } else {
+                    alert('Error creating event: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error creating event:', error);
+                alert('Error creating event');
+            }
+
+            closeEventForm();
+            document.getElementById('eventForm').reset();
+        }
+
+        // Form Submission for Editing an Attendee
+        async function saveAttendee(event) {
+            event.preventDefault();
+            const attendeeId = document.getElementById('editAttendeeId').value;
+            const updatedData = {
+                name: document.getElementById('editName').value,
+                phone_number: document.getElementById('editPhone').value,
+                seats: document.getElementById('editSeats').value
+            };
+
+            try {
+                const response = await fetch(`/eventmanager_dashboard/update-attendee/${attendeeId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Attendee updated successfully!');
+                    window.location.reload(); // Refresh to show updated data
+                } else {
+                    alert('Error updating attendee: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error updating attendee:', error);
+                alert('Error updating attendee');
+            }
+
+            closeEditAttendeeModal();
+        }
+
+        // Delete an Attendee
+        async function deleteAttendee(attendeeId) {
+            if (confirm('Are you sure you want to delete this attendee?')) {
+                try {
+                    const response = await fetch(`/eventmanager_dashboard/delete-attendee/${attendeeId}`, {
+                        method: 'DELETE'
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert('Attendee deleted successfully!');
+                        window.location.reload(); // Refresh to update the list
+                    } else {
+                        alert('Error deleting attendee: ' + result.message);
+                    }
+                } catch (error) {
+                    console.error('Error deleting attendee:', error);
+                    alert('Error deleting attendee');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

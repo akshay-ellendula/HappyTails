@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Vendor Profile</title>
+    <link href="/SHOP/shop-profile.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>Profile</h1>
+                <button class="btn back-btn" onclick="goBack()">← Back</button>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>TOTAL REVENUE</h3>
+                    <div class="value">$<%= totalRevenue %></div>
+                    <div class="trend">+12.5% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>PRODUCTS SOLD</h3>
+                    <div class="value"><%= productsSold %></div>
+                    <div class="trend">+5.2% from last month</div>
+                </div>
+                <div class="stat-card">
+                    <h3>NEW ORDERS</h3>
+                    <div class="value"><%= newOrders %></div>
+                    <div class="status">Awaiting processing</div>
+                </div>
+                <div class="stat-card">
+                    <h3>CUSTOMER RATINGS</h3>
+                    <div class="value"><%= customerRatings %></div>
+                    <div class="trend">+0.3 from last month</div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h2>Vendor Profile</h2>
+                </div>
+                
+                <!-- View Profile -->
+                <div id="profile-view" class="profile-section">
+                    <div class="profile-field">
+                        <label>Store Name</label>
+                        <p><%= vendor.store_name %></p>
+                    </div>
+                    <div class="profile-field">
+                        <label>Store Owner</label>
+                        <p><%= vendor.owner_name %></p>
+                    </div>
+                    <div class="profile-field">
+                        <label>Email</label>
+                        <p><%= vendor.email %></p>
+                    </div>
+                    <div class="profile-field">
+                        <label>Phone</label>
+                        <p><%= vendor.phone %></p>
+                    </div>
+                    <div class="profile-field">
+                        <label>Address</label>
+                        <p><%= vendor.address %></p>
+                    </div>
+                    <div class="profile-field">
+                        <label>Store Description</label>
+                        <p><%= vendor.description %></p>
+                    </div>
+                    <div class="button-container">
+                        <button id="edit-btn" class="btn btn-dark">Edit Profile</button>
+                    </div>
+                </div>
+                
+                <!-- Edit Profile -->
+                <div id="profile-edit" class="profile-section hidden">
+                    <div class="profile-field">
+                        <label for="store-name">Store Name</label>
+                        <input type="text" id="store-name" value="<%= vendor.store_name %>">
+                    </div>
+                    <div class="profile-field">
+                        <label for="owner-name">Store Owner</label>
+                        <input type="text" id="owner-name" value="<%= vendor.owner_name %>">
+                    </div>
+                    <div class="profile-field">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" value="<%= vendor.email %>">
+                    </div>
+                    <div class="profile-field">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" value="<%= vendor.phone %>" pattern="\d{10}" maxlength="10" required>
+                    </div>
+                    <div class="profile-field">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" value="<%= vendor.address %>">
+                    </div>
+                    <div class="profile-field">
+                        <label for="description">Store Description</label>
+                        <textarea id="description"><%= vendor.description %></textarea>
+                    </div>
+                    <div class="button-container">
+                        <button id="cancel-btn" class="btn btn-dark">Cancel</button>
+                        <button id="save-btn" class="btn btn-dark">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h2>Recent Orders</h2>
+                    <a href="/shop-orders" class="view-all">View All</a>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (recentOrders && recentOrders.length > 0) { %>
+                            <% recentOrders.forEach(order => { %>
+                                <tr>
+                                    <td>#ORD-<%= order.id %></td>
+                                    <td><%= order.user_name %></td>
+                                    <td><%= order.product_name %></td>
+                                    <td><%= new Date(order.order_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
+                                    <td>$<%= order.total_amount.toFixed(2) %></td>
+                                    <td><span class="status-badge <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+                                </tr>
+                            <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6">No recent orders found.</td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="button-container">
+                <button class="btn btn-dark" onclick="window.location.href='shop-products'">Add New Product</button>
+                <button class="btn btn-dark" onclick="window.location.href='shop-analytics'">View Sales Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/SHOP/shop-profile.js"></script>
+</body>
+</html>

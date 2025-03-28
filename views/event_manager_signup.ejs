@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Signup - HappyTails</title>
+    <link rel="stylesheet" href="/Events/events_signup.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Simplified error styling */
+        .error {
+            color: red;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .general-message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .general-error {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .general-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <a href="Account"></a>
+        </header>
+    </div>
+    <div class="container">
+        <form id="signupForm">
+            <h1>Sign Up To Become Happy Tails Event Manager</h1>
+            <p>Please fill this form to create an account</p>   
+            
+            <!-- General message area for success/error -->
+            <div id="generalMessage" class="general-message" style="display: none;"></div>
+
+            <label for="name">Name</label>
+            <input type="text" placeholder="Enter Name" name="name" id="name" value="<%= typeof formData !== 'undefined' ? formData.name : '' %>" required>
+            <div id="nameError" class="error"></div>
+
+            <label for="contactnumber">Contact Number</label>
+            <input type="text" placeholder="Enter Contact Number" name="contactnumber" id="contactnumber" value="<%= typeof formData !== 'undefined' ? formData.contactnumber : '' %>" required>
+            <div id="contactError" class="error"></div>
+
+            <label for="email">Email</label>    
+            <input type="email" placeholder="Enter Email" name="email" id="email" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" required>
+            <div id="emailError" class="error"></div>
+
+            <label for="password">Password</label>
+            <input type="password" placeholder="Enter Password" name="password" id="password" required>
+            <div id="passwordError" class="error"></div>
+
+            <label for="confirmpassword">Confirm Password</label>
+            <input type="password" placeholder="Confirm Password" name="confirmpassword" id="confirmpassword" required>
+            <div id="confirmPasswordError" class="error"></div>
+
+            <label for="companyname">What is your company name?</label>
+            <input type="text" placeholder="Enter Company Name" name="companyname" id="companyname" value="<%= typeof formData !== 'undefined' ? formData.companyname : '' %>" required>
+            <div id="companyNameError" class="error"></div>
+
+            <label for="location">Location</label>
+            <input type="text" placeholder="Enter Location" name="location" id="location" value="<%= typeof formData !== 'undefined' ? formData.location : '' %>" required>
+            <div id="locationError" class="error"></div>
+
+            <div class="terms">
+                <input type="checkbox" name="termsandconditions" id="tac">
+                <label for="termsandconditions">I have read all your <a href="">Terms & Conditions</a>. I wish to Register</label>
+                <div id="termsError" class="error"></div>
+            </div>
+            
+            <button type="submit" class="registerbtn">Register</button>
+        </form>
+    </div>
+    
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event Manager</a></li>
+                    <li><a href="/service_provider_login">login as Manager</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('signupForm');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                clearMessages();
+
+                // Get form values
+                const name = document.getElementById('name').value.trim();
+                const contactnumber = document.getElementById('contactnumber').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmpassword = document.getElementById('confirmpassword').value;
+                const companyname = document.getElementById('companyname').value.trim();
+                const location = document.getElementById('location').value.trim();
+                const termsandconditions = document.getElementById('tac').checked;
+
+                // Validation flags
+                let isValid = true;
+
+                // Name validation
+                if (name.length < 2) {
+                    showError('name', 'Name must be at least 2 characters long');
+                    isValid = false;
+                }
+
+                // Contact number validation
+                const phoneRegex = /^\d{10}$/;
+                if (!phoneRegex.test(contactnumber)) {
+                    showError('contactnumber', 'Please enter a valid 10-digit phone number');
+                    isValid = false;
+                }
+
+                // Email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showError('email', 'Please enter a valid email address');
+                    isValid = false;
+                }
+
+                // Password validation
+                const passwordRegex = /^(?=.*\d).{8,}$/;
+                if (!passwordRegex.test(password)) {
+                    showError('password', 'Password must be at least 8 characters long and contain a number');
+                    isValid = false;
+                }
+
+                // Confirm password validation
+                if (password !== confirmpassword) {
+                    showError('confirmpassword', 'Passwords do not match');
+                    isValid = false;
+                }
+
+                // Company name validation
+                if (companyname.length < 2) {
+                    showError('companyname', 'Company name must be at least 2 characters long');
+                    isValid = false;
+                }
+
+                // Location validation
+                if (location.length < 3) {
+                    showError('location', 'Please enter a valid location (minimum 3 characters)');
+                    isValid = false;
+                }
+
+                // Terms and conditions validation
+                if (!termsandconditions) {
+                    showError('terms', 'You must agree to the terms and conditions');
+                    isValid = false;
+                }
+
+                // If validation fails, stop here
+                if (!isValid) return;
+
+                // Prepare form data for AJAX request
+                const formData = {
+                    name,
+                    contactnumber,
+                    email,
+                    password,
+                    confirmpassword,
+                    companyname,
+                    location,
+                    termsandconditions
+                };
+
+                // Send AJAX request to the backend
+                fetch('/event-manager-signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        showGeneralMessage('general-success', data.message || 'Signup successful! Redirecting...');
+                        setTimeout(() => {
+                            window.location.href = data.redirect || '/event-dashboard';
+                        }, 2000);
+                    } else {
+                        if (data.errors) {
+                            // Display field-specific errors
+                            data.errors.forEach(error => {
+                                const errorDiv = document.getElementById(`${error.field}Error`);
+                                if (errorDiv) {
+                                    errorDiv.textContent = error.message;
+                                    errorDiv.style.display = 'block';
+                                }
+                            });
+                        }
+                        showGeneralMessage('general-error', data.message || 'An error occurred. Please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showGeneralMessage('general-error', 'An error occurred while signing up. Please try again.');
+                });
+            });
+
+            // Show field-specific error
+            function showError(field, message) {
+                const errorDiv = document.getElementById(`${field}Error`);
+                if (errorDiv) {
+                    errorDiv.textContent = message;
+                    errorDiv.style.display = 'block';
+                }
+            }
+
+            // Show general success/error message
+            function showGeneralMessage(className, message) {
+                const generalMessage = document.getElementById('generalMessage');
+                generalMessage.className = `general-message ${className}`;
+                generalMessage.textContent = message;
+                generalMessage.style.display = 'block';
+            }
+
+            // Clear all messages
+            function clearMessages() {
+                document.querySelectorAll('.error').forEach(error => {
+                    error.textContent = '';
+                    error.style.display = 'none';
+                });
+                const generalMessage = document.getElementById('generalMessage');
+                generalMessage.style.display = 'none';
+                generalMessage.textContent = '';
+            }
+
+            // Clear field-specific errors on input
+            document.querySelectorAll('input, select').forEach(input => {
+                input.addEventListener('input', function() {
+                    const errorDiv = document.getElementById(`${this.id}Error`);
+                    if (errorDiv) {
+                        errorDiv.textContent = '';
+                        errorDiv.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

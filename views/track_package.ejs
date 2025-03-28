@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Package</title>
+    <link rel="stylesheet" href="/User Profile/track_package.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="home.html" class="badge">Happy Tails</a>
+    
+            <div class="menu">
+                <a href="/services">Services</a>
+                <a href="/pet_accessory">Pet Essentials</a>        
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <a href="/profile">Profile</a>
+            </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="/pet_accessory">Pet Essentials</a>        
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <a href="/profile">profile</a>
+            </div>
+        </header>
+    </div>
+
+
+    <div class="sidebar_btn">
+        <button id="sidebar_btn">More</button>
+    </div>
+
+    <div class="mobile_sidebar">
+        <a href="javascript:void(0)" class="close-btn" id="mobile_sidebar_close-btn">&times;</a>
+        <div class="myProfile sidebar_divs">
+            <a href="/profile">My Profile</a>
+        </div>
+
+        <div class="myOrders sidebar_divs">
+            <a href="/myorders_profile">My Orders</a>
+        </div>
+
+        <div class="myBolgs sidebar_divs">
+            <a href="/myblogs_profile">My Blogs</a>
+        </div>
+
+        <div class="logout sidebar_divs">`
+            <a href="#">Logout</a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="myProfile sidebar_divs">
+            <a href="/profile">My Profile</a>
+        </div>
+        
+        <div class="myOrders sidebar_divs">
+            <a href="/myorders_profile">My Orders</a>
+        </div>
+
+        <div class="myBolgs sidebar_divs">
+            <a href="/myblogs_profile">My Blogs</a>
+        </div>
+
+        <div class="logout sidebar_divs">
+            <a href="#">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tracking_header">
+            <h2>Delivered 18 February</h2>
+            <p>Package was handed to a receptionist</p>
+        </div>
+        
+        <div class="product_img">
+            <img src="/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg" alt="Delivered Package"  />
+        </div>
+
+        <hr>
+
+        <div class="tracking-info">
+            <h3>Delivery by HappyTails</h3>
+            <p>Tracking ID: 201496567934</p>
+            <a href="#">See all updates</a>
+        </div>
+
+        <div class="order-details">
+            <div class="shipping-address">
+                <h3>Shipping Address</h3>
+                <p>Vijay Thota</p>
+                <p>Star PG Co Live, opp Ankapur Village, beside Slumber Cottage</p>
+                <p>Durgama Cheruvu Road, Madhapur</p>
+                <p>HYDERABAD, TELANGANA 500081</p>
+            </div>
+
+            <div class="order-info">
+                <h3>Order Info</h3>
+                <a href="#">View order details</a>
+                <a href="#">Return or replace items</a>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.toggle('open');
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+        });
+
+        document.getElementById('sidebar_btn').addEventListener('click', function() {
+            document.querySelector('.mobile_sidebar').classList.toggle('open');
+        });
+
+        document.querySelector('#mobile_sidebar_close-btn').addEventListener('click', function() {
+            document.querySelector('.mobile_sidebar').classList.remove('open');
+        });
+    </script>
+</body>
+</html>

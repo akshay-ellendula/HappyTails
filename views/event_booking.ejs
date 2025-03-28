@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>More Details - Hyderabad Pupper Party</title>
+  <link rel="stylesheet" href="/Event-booking/Event-booking.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <a href="/home" class="badge">Happy Tails</a>
+    <div class="menu">
+      <a href="/services">Services</a>
+      <a href="/Events">Events</a>
+      <a href="/pet_adoption">Shop</a>
+      <a href="/blog">Blog</a>
+      <% if (user) { %>
+        <a href="/profile">Profile</a>
+      <% } else { %>
+        <a href="/my_login">Login/SignUp</a>
+      <% } %>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="container">
+    
+    <!-- Event Details -->
+    <div class="event-details">
+      <img src="/images/event_poster2.jpg" alt="dog img"/>
+      
+
+      <h2>About the Event</h2>
+      <p>Join us for a paw-some event where pets and their humans come together for a day of fun, games, and socializing! 
+        Enjoy exciting activities, make new furry friends, and create unforgettable memories.
+         A perfect celebration for all pet lovers!</p>
+       
+
+         <button id="seeMoreBtn" onclick="toggleInclusions()">Show more <span id="arrowIcon">▾</span></button>
+
+         <div id="inclusionsSection">
+           <h3>Inclusions:</h3>
+           <p>✅ Exciting games & gifts for your pets</p>
+           <p>🍖 Free pet food buffet</p>
+           <p>🩺 Basic health check-up</p>
+           <p>🎁 Goodie bag for all attendees</p>
+         </div>
+
+      <h2>Event Guide</h2>
+      <p><strong>Language:</strong> English, Hindi</p>
+      <p><strong>Duration:</strong> 3 Hours</p>
+      <p><strong>Tickets Needed For:</strong> 4 yrs & above</p>
+      
+      <h2>Instructions</h2>
+      <p>Tickets are applicable for everyone above the age of 4 years.</p>  
+      <p>There are no tickets for pets.</p>  
+      <p>Age: Individuals & pets of all ages are allowed.</p>  
+      <p>Tickets once booked cannot be exchanged or refunded.</p>  
+      <p>Tickets can be used by friends & family. They must carry the screenshot of the ticket or the confirmation SMS to gain entry to the event.</p>  
+      <p>Re-entry at the event is allowed only if the ticket holder is wearing the entry band provided by the organizers.</p>  
+      <p>We will not be able to allow entry to pets who are ill or have any chronic ailments. The health & safety of pets is of utmost importance to us, and the environment of an event may not be suitable for a pet with such ailments.</p>
+      
+      
+
+      <h2>Venue</h2>
+      <div class="venue-box">
+        <div class="venue-details">
+          <strong>LastHouse: By The Lake</strong>
+          <p>LastHouse Coffee, adj. Durgam Cheruvu Road, Amar Co-Operative Society, Doctor's Colony, Madhapur, Hyderabad, Telangana 500033, India</p>
+        </div>
+        <button class="directions-btn" onclick="openGoogleMaps()"> 
+          <span>📍</span> GET DIRECTIONS
+        </button>
+      </div>
+      
+      <div class="terms-container">
+        <button class="terms-toggle" onclick="toggleTerms()">Terms & Conditions &#9660;</button>
+        <div class="terms-content">
+            <ul>
+                <li>Please carry a valid ID proof along with you.</li>
+                <li>No refunds on purchased tickets are possible, even in case of any rescheduling.</li>
+                <li>Security procedures, including frisking, remain the right of the management.</li>
+                <li>No dangerous or potentially hazardous objects including but not limited to weapons, knives, guns, fireworks, helmets, laser devices, bottles, and musical instruments will be allowed in the venue and may be ejected with or without the owner from the venue.</li>
+                <li>The sponsors/performers/organizers are not responsible for any injury or damage occurring due to the event. Any claims regarding the same would be settled in courts in Mumbai.</li>
+                <li>People in an inebriated state may not be allowed entry.</li>
+                <li>Organizers hold the right to deny late entry to the event.</li>
+                <li>Venue rules apply.</li>
+            </ul>
+        </div>
+    </div>
+    
+    
+
+
+      
+    </div>
+
+    <!-- Booking Section -->
+    <div class="booking-section">
+      <h2>Ready to Join?</h2>
+      <p><strong>Category:</strong> Pets</p>
+      <p><strong>Date & Time:</strong> March 23 | 12PM</p>
+      <p><strong>Venue:</strong> LastHouse: By The Lake, Hyderabad</p>
+      <button id="bookNowBtn"><a href="/event_booking_form" style="text-decoration: none; color: #ffffff;">Book ticket</a></button>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer-container">
+
+        <div class="footer-column">
+            <h3>Happy Tails</h3>
+            <ul>
+                <li><a href="/blog">Blog</a></li>
+                <li><a href="/pet_adoption">Pet Stores</a></li>
+                <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Services</h3>
+            <ul>
+                <li><a href="/services">Pet Grooming</a></li>
+                <li><a href="/services">Dog Training</a></li>
+                <li><a href="/services">Vet Consultation</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Partner</h3>
+            <ul>
+                <li><a href="/service_signup">Become a Groomer</a></li>
+                <li><a href="/service_signup">Become a Dog Trainer</a></li>
+                <li><a href="/service_signup">Become Vet partner</a></li>
+                <li><a href="/store_signup">Pet Store Franchise</a></li>
+                <li><a href="/event_manager_signup">Become an Event manager</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-column">
+            <h3>Policy</h3>
+            <ul>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Refund Policy</a></li>
+                <li><a href="#">Cancellation Policy</a></li>
+                <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+            <div class="footer-social" >
+                <a href="#"><img
+                        src="/icons/facebook-3-logo-svgrepo-com.svg"
+                        alt="Facebook"></a>
+                <a href="#"><img
+                        src="/icons/instagram-2016-logo-svgrepo-com.svg"
+                        alt="Instagram"></a>
+                <a href="#"><img
+                        src="/icons/youtube-icon-logo-svgrepo-com.svg"
+                        alt="YouTube"></a>
+            </div>
+        </div>
+    </div>
+</footer>
+  <script src="/Event-booking/Event-booking.js"></script>
+</body>
+</html>

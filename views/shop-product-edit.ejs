@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - Happy Tails</title>
+    <link href="/SHOP/shop-product-edit.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <button class="back-button" onclick="goBack()">
+            ← Back
+        </button>
+        <h1 class="page-title">Edit Product</h1>
+    </div>
+    
+    <div class="edit-container">
+        <% if (typeof product !== 'undefined') { %>
+            <form id="editProductForm" enctype="multipart/form-data">
+                <h2 class="section-title">Basic Information</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productName">Product Name</label>
+                        <input type="text" id="productName" name="productName" value="<%= product.product_name || '' %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Category</label>
+                        <select id="productCategory" name="productCategory" required>
+                            <option value="">Select a category</option>
+                            <option value="beds" <%= product.product_category === 'beds' ? 'selected' : '' %>>Beds</option>
+                            <option value="food" <%= product.product_category === 'food' ? 'selected' : '' %>>Food</option>
+                            <option value="toys" <%= product.product_category === 'toys' ? 'selected' : '' %>>Toys</option>
+                            <option value="grooming" <%= product.product_category === 'grooming' ? 'selected' : '' %>>Grooming</option>
+                            <option value="other" <%= product.product_category === 'other' ? 'selected' : '' %>>Other</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productType">Product Type</label>
+                        <input type="text" id="productType" name="productType" value="<%= product.product_type || '' %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stockQuantity">Stock Quantity</label>
+                        <input type="number" id="stockQuantity" name="stockQuantity" min="0" value="<%= product.stock_quantity || 0 %>" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="regularPrice">Regular Price ($)</label>
+                        <input type="number" id="regularPrice" name="regularPrice" step="0.01" min="0" value="<%= product.regular_price || 0 %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="salePrice">Sale Price ($)</label>
+                        <input type="number" id="salePrice" name="salePrice" step="0.01" min="0" value="<%= product.sale_price || '' %>">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="size">Size</label>
+                        <input type="text" id="size" name="size" placeholder="e.g., Small, 1kg" value="<%= product.size || '' %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="color">Color</label>
+                        <input type="text" id="color" name="color" placeholder="e.g., Brown" value="<%= product.color || '' %>">
+                    </div>
+                </div>
+                
+                <h2 class="section-title">Photos</h2>
+                <div class="photo-section">
+                    <div class="photo-row" id="photoRow">
+                        <% if (product.images && product.images.length > 0) { %>
+                            <% product.images.forEach((image, index) => { %>
+                                <div class="photo-box has-image" id="photoBox<%= index %>">
+                                    <img src="<%= image.image_path %>" alt="Product Photo">
+                                    <button type="button" class="remove-btn" onclick="removeImage('photoBox<%= index %>')">×</button>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                        <% for (let i = (product.images ? product.images.length : 0); i < 4; i++) { %>
+                            <div class="photo-box" id="additionalPhotoBox<%= i %>" onclick="triggerFileInput('additionalPhoto<%= i %>')">
+                                <div class="photo-placeholder">+</div>
+                                <div class="photo-text">Add Photo</div>
+                                <input type="file" class="file-input" id="additionalPhoto<%= i %>" name="productImages" accept="image/*" onchange="previewImage(this, 'additionalPhotoBox<%= i %>')">
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+                
+                <h2 class="section-title">Description</h2>
+                <div class="form-group">
+                    <label for="shortDescription">Short Description</label>
+                    <input type="text" id="shortDescription" name="shortDescription" maxlength="100" value="" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productDescription">Full Description</label>
+                    <textarea id="productDescription" name="productDescription" required><%= product.product_description || '' %></textarea>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="cancel-btn" onclick="goBack()">Cancel</button>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </div>
+            </form>
+        <% } else { %>
+            <p>Error: Product data not available. Please try again.</p>
+            <button onclick="goBack()">Go Back</button>
+        <% } %>
+    </div>
+
+    <script>
+        // Function to go back to the products page
+        function goBack() {
+            window.location.href = "/shop-products";
+        }
+
+        // Function to trigger file input click
+        function triggerFileInput(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        // Function to preview uploaded image
+        function previewImage(input, boxId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const box = document.getElementById(boxId);
+                    box.innerHTML = '';
+                    box.classList.add('has-image');
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = "Product Photo";
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.onclick = function() {
+                        removeImage(boxId);
+                    };
+                    
+                    box.appendChild(img);
+                    box.appendChild(removeBtn);
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Function to remove image
+        function removeImage(boxId) {
+            const box = document.getElementById(boxId);
+            box.innerHTML = '';
+            box.classList.remove('has-image');
+            
+            const placeholder = document.createElement('div');
+            placeholder.className = 'photo-placeholder';
+            placeholder.innerHTML = '+';
+            
+            const text = document.createElement('div');
+            text.className = 'photo-text';
+            text.innerHTML = 'Add Photo';
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.className = 'file-input';
+            input.id = boxId + 'Input';
+            input.name = 'productImages';
+            input.accept = 'image/*';
+            input.onchange = function() {
+                previewImage(this, boxId);
+            };
+            
+            box.appendChild(placeholder);
+            box.appendChild(text);
+            box.appendChild(input);
+            
+            box.onclick = function() {
+                triggerFileInput(boxId + 'Input');
+            };
+        }
+
+        // Handle form submission
+        document.getElementById('editProductForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const productId = window.location.pathname.split('/').pop();
+
+            try {
+                const response = await fetch(`/shop-product-edit/${productId}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(result.message);
+                    window.location.href = result.redirect;
+                } else {
+                    alert(result.message);
+                }
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                alert('An error occurred while updating the product.');
+            }
+        });
+    </script>
+</body>
+</html>

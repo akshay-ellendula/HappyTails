@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Dashboard - Happy Tails</title>
+    <link href="/SHOP/shop-analytics.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">Happy Tails</div>
+        <div class="user-info" id="profile-trigger">
+            <span>Welcome, Vendor</span>
+            <div class="user-avatar">V</div>
+        </div>
+    </div>
+    
+    <!-- Profile Dropdown -->
+    <div class="profile-dropdown" id="profile-dropdown">
+        <div class="profile-header">
+            <div class="profile-name">Vendor Name</div>
+            <div class="profile-email">vendor@example.com</div>
+        </div>
+        <ul class="profile-menu">
+            <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </div>
+    
+    <div class="container">
+        <div class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="/shop-dashboard" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-products"  data-page="products">Products</a></li>
+                <li><a href="/shop-orders" data-page="orders">Orders</a></li>
+                <li><a href="/shop-customers" data-page="customers">Customers</a></li>
+                <li><a href="/shop-analytics"  class="active" data-page="analytics">Analytics</a></li>
+            </ul>
+        </div>
+        
+        <div class="main-content" id="main-content">
+           <!-- Analytics Content -->
+<div class="page-container active" id="analytics-page">
+    <div class="title-bar">
+        <h1 class="dashboard-title">Analytics</h1>
+    </div>
+    
+    <div class="time-filter">
+        <button class="active" data-period="all">All Time</button>
+        <button data-period="today">Today</button>
+        <button data-period="week">This Week</button>
+        <button data-period="month">This Month</button>
+        <button data-period="custom">Custom</button>
+    </div>
+    
+    <!-- Revenue Section -->
+    <h2 class="section-header">Revenue</h2>
+    <div class="analytics-grid">
+        <div class="card">
+            <h2>Revenue Overview</h2>
+            <div class="stat">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value">$24,850.00</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Today</div>
+                <div class="stat-value">$1,250.00 <span class="indicator up">+15%</span></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">This Week</div>
+                <div class="stat-value">$5,320.00 <span class="indicator up">+8%</span></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">This Month</div>
+                <div class="stat-value">$18,650.00 <span class="indicator up">+12%</span></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Revenue by Product Category</h2>
+            <div class="stat">
+                <div class="stat-label">Pet Food</div>
+                <div class="stat-value">$10,520.00</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 42%;"></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Toys</div>
+                <div class="stat-value">$6,340.00</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 25%;"></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Accessories</div>
+                <div class="stat-value">$4,950.00</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 20%;"></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Other</div>
+                <div class="stat-value">$3,040.00</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 13%;"></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Average Order Value</h2>
+            <div class="stat">
+                <div class="stat-label">Overall Average</div>
+                <div class="stat-value">$48.75</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Today</div>
+                <div class="stat-value">$52.10 <span class="indicator up">+7%</span></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">This Week</div>
+                <div class="stat-value">$50.25 <span class="indicator up">+3%</span></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">This Month</div>
+                <div class="stat-value">$49.50 <span class="indicator up">+1.5%</span></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Orders Section -->
+    <h2 class="section-header">Orders</h2>
+    <div class="analytics-grid">
+        <div class="card">
+            <h2>Order Overview</h2>
+            <div class="stat">
+                <div class="stat-label">Total Orders</div>
+                <div class="stat-value">512</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Today</div>
+                <div class="stat-value">24 <span class="indicator up">+20%</span></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">This Week</div>
+                <div class="stat-value">106 <span class="indicator up">+5%</span></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">This Month</div>
+                <div class="stat-value">378 <span class="indicator up">+12%</span></div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Order Status</h2>
+            <div class="stat">
+                <div class="stat-label">Completed</div>
+                <div class="stat-value">428</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 84%;"></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Processing</div>
+                <div class="stat-value">48</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 9%;"></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Pending</div>
+                <div class="stat-value">36</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress" style="width: 7%;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Customer Section -->
+    <h2 class="section-header">Customers</h2>
+    <div class="analytics-grid">
+        <div class="card">
+            <h2>Customer Overview</h2>
+            <div class="stat">
+                <div class="stat-label">Total Customers</div>
+                <div class="stat-value">346</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">New Today</div>
+                <div class="stat-value">14 <span class="indicator up">+16%</span></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">New This Week</div>
+                <div class="stat-value">48 <span class="indicator up">+10%</span></div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">New This Month</div>
+                <div class="stat-value">125 <span class="indicator up">+22%</span></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Section -->
+    <h2 class="section-header">Products</h2>
+    <div class="analytics-grid">
+        <div class="card">
+            <h2>Product Overview</h2>
+            <div class="stat">
+                <div class="stat-label">Total Products</div>
+                <div class="stat-value">68</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Active Products</div>
+                <div class="stat-value">62</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Out of Stock</div>
+                <div class="stat-value">6</div>
+            </div>
+        </div>
+    </div>
+</div>
+            
+        </div>
+    </div>
+
+   <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    // Profile dropdown toggle
+    const profileTrigger = document.getElementById('profile-trigger');
+    const profileDropdown = document.getElementById('profile-dropdown');
+    
+    profileTrigger.addEventListener('click', function() {
+        profileDropdown.classList.toggle('active');
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+            profileDropdown.classList.remove('active');
+        }
+    });
+    
+    
+});
+   </script>
+</body>
+</html>

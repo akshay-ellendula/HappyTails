@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details - Happy Tails</title>
+    <link href="/SHOP/shop-customer-details.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="goBack()">← Back to Customers</button>
+        <h1>Customer Details</h1>
+    </div>
+    
+    <div class="customer-container">
+        <div class="customer-info">
+            <h2 id="customerName">Customer Name</h2>
+            
+            <div class="info-row">
+                <div class="info-label">Customer ID:</div>
+                <div class="info-value" id="customerId">C001</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Email:</div>
+                <div class="info-value" id="customerEmail">customer@example.com</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Phone:</div>
+                <div class="info-value" id="customerPhone">(123) 456-7890</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Joined Date:</div>
+                <div class="info-value" id="customerJoined">January 15, 2025</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Address:</div>
+                <div class="info-value" id="customerAddress">123 Main St, Anytown, USA</div>
+            </div>
+        </div>
+        
+        <div class="summary-card">
+            <div class="summary-title">Customer Summary</div>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value" id="totalOrders">5</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value" id="totalRevenue">$234.50</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Avg. Order Value</div>
+                    <div class="stat-value" id="avgOrderValue">$46.90</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Last Purchase</div>
+                    <div class="stat-value" id="lastPurchase">Mar 10, 2025</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Most Purchased</div>
+                    <div class="stat-value" id="mostPurchased">Dog Food</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Return Rate</div>
+                    <div class="stat-value" id="returnRate">0%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="customer-container">
+        <div class="order-history">
+            <h2>Order History</h2>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="orderHistoryBody">
+                  
+                    <tr>
+                        <td>ORD-001</td>
+                        <td>Mar 10, 2025</td>
+                        <td>Premium Dog Food (2), Chew Toy (1)</td>
+                        <td>$56.90</td>
+                        <td>Delivered</td>
+                    </tr>
+                    <tr>
+                        <td>ORD-002</td>
+                        <td>Feb 23, 2025</td>
+                        <td>Cat Treats (3), Cat Litter (1)</td>
+                        <td>$42.50</td>
+                        <td>Delivered</td>
+                    </tr>
+                    <tr>
+                        <td>ORD-003</td>
+                        <td>Feb 10, 2025</td>
+                        <td>Pet Bed (1), Dog Shampoo (1)</td>
+                        <td>$65.20</td>
+                        <td>Delivered</td>
+                    </tr>
+                    <tr>
+                        <td>ORD-004</td>
+                        <td>Jan 28, 2025</td>
+                        <td>Premium Dog Food (1), Dog Treats (2)</td>
+                        <td>$38.40</td>
+                        <td>Delivered</td>
+                    </tr>
+                    <tr>
+                        <td>ORD-005</td>
+                        <td>Jan 15, 2025</td>
+                        <td>Dog Collar (1), Leash (1)</td>
+                        <td>$31.50</td>
+                        <td>Delivered</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        
+        
+       
+        function goBack() {
+            window.location.href = "shop-customers";
+        }
+        
+    
+    </script>
+</body>
+</html>

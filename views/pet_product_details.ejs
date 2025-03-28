@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details</title>
+    <link rel="stylesheet" href="/pet accessory/pet_product_details.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="/pet_accessory">Pet Accessories</a>
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <% if (user) { %>
+                    <a href="/profile">Profile</a>
+                <% } else { %>
+                    <a href="/my_login">Login/SignUp</a>
+                <% } %>
+            </div>
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">×</a>
+                <a href="/pet_accessory">Shop</a>        
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <% if (user) { %>
+                    <a href="/profile">Profile</a>
+                <% } else { %>
+                    <a href="/my_login">Login/SignUp</a>
+                <% } %>
+            </div>
+        </header>
+    </div>
+
+    <div class="container">
+        <div class="wrapper">
+            <div class="mini_nav">
+                <span> < </span>
+                <a href="/pet_accessory">Back</a>
+            </div>
+            <div class="product_container">
+                <div class="image_container">
+                    <img src="<%= product.image_path || '/images/default-product.jpg' %>" alt="<%= product.product_name %>">
+                </div>
+                <div class="product_details" data-product-id="<%= product.id %>">
+                    <h1><%= product.product_name %></h1>
+                    <p id="priceDisplay">
+                        <% if (product.variants[0].sale_price !== null) { %>
+                            ₹<%= product.variants[0].sale_price.toFixed(2) %> <span style="text-decoration: line-through; color: #888;">₹<%= product.variants[0].regular_price.toFixed(2) %></span>
+                        <% } else { %>
+                            ₹<%= product.variants[0].regular_price.toFixed(2) %>
+                        <% } %>
+                    </p>
+
+                    <!-- Conditionally Display Size -->
+                    <% if (product.variants.some(v => v.size !== null)) { %>
+                        <label for="size">Size</label>
+                        <select name="size" id="size">
+                            <option value="default">Select Size</option>
+                            <% [...new Set(product.variants.map(v => v.size).filter(s => s !== null))].forEach(size => { %>
+                                <option value="<%= size %>"><%= size %></option>
+                            <% }); %>
+                        </select>
+                    <% } %>
+
+                    <!-- Conditionally Display Color -->
+                    <% if (product.variants.some(v => v.color !== null)) { %>
+                        <label for="color">Color</label>
+                        <select name="color" id="color">
+                            <option value="default">Select Color</option>
+                        </select>
+                    <% } %>
+
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" value="1" min="1">
+                    <button id="addToCartBtn">Add to Cart</button>
+                    <p id="cartMessage" style="display: none; color: green;"></p>
+                    <div>
+                        <h4 style="font-weight: bold;">Share:</h4>
+                    </div>
+                    <div class="socials">
+                        <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                        <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                        <a href="#"><img src="/icons/twitter-svgrepo-com.svg" alt="Twitter"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event manager</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script id="product-data" type="text/plain">
+        <%- productJSON %>
+    </script>
+
+    <script>
+        const product = JSON.parse(document.getElementById('product-data').textContent);
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('menuIcon').addEventListener('click', () => document.getElementById('sideNavbar').classList.toggle('open'));
+            document.getElementById('closeBtn').addEventListener('click', () => document.getElementById('sideNavbar').classList.remove('open'));
+
+            const addToCartBtn = document.getElementById('addToCartBtn');
+            const sizeSelect = document.getElementById('size');
+            const colorSelect = document.getElementById('color');
+            const quantityInput = document.getElementById('quantity');
+            const priceDisplay = document.getElementById('priceDisplay');
+            const cartMessage = document.getElementById('cartMessage');
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Function to populate color options
+            function populateColors(selectedSize = null) {
+                if (!colorSelect) return; // Exit if no color dropdown
+
+                colorSelect.innerHTML = '<option value="default">Select Color</option>';
+                const availableColors = [...new Set(
+                    product.variants
+                        .filter(v => (selectedSize ? v.size === selectedSize : true) && v.color !== null)
+                        .map(v => v.color)
+                )];
+                availableColors.forEach(color => {
+                    const option = document.createElement('option');
+                    option.value = color;
+                    option.textContent = color;
+                    colorSelect.appendChild(option);
+                });
+            }
+
+            // Populate colors immediately if there's no size dropdown
+            if (!sizeSelect && colorSelect) {
+                populateColors();
+            }
+
+            // Populate color options based on selected size (if size exists)
+            if (sizeSelect) {
+                sizeSelect.addEventListener('change', function() {
+                    const selectedSize = this.value;
+                    if (selectedSize !== 'default') {
+                        populateColors(selectedSize);
+                    } else {
+                        colorSelect.innerHTML = '<option value="default">Select Color</option>';
+                    }
+                    updatePrice();
+                });
+            }
+
+            // Update price based on selections
+            if (colorSelect) {
+                colorSelect.addEventListener('change', updatePrice);
+            }
+
+            function updatePrice() {
+                const selectedSize = sizeSelect ? sizeSelect.value : null;
+                const selectedColor = colorSelect ? colorSelect.value : null;
+
+                let variant;
+                if (selectedSize && selectedColor && selectedSize !== 'default' && selectedColor !== 'default') {
+                    variant = product.variants.find(v => v.size === selectedSize && v.color === selectedColor);
+                } else if (selectedSize && selectedSize !== 'default') {
+                    variant = product.variants.find(v => v.size === selectedSize);
+                } else if (selectedColor && selectedColor !== 'default') {
+                    variant = product.variants.find(v => v.color === selectedColor);
+                } else {
+                    variant = product.variants[0]; // Default to first variant
+                }
+
+                if (variant) {
+                    priceDisplay.innerHTML = variant.sale_price !== null 
+                        ? `₹${variant.sale_price.toFixed(2)} <span style="text-decoration: line-through; color: #888;">₹${variant.regular_price.toFixed(2)}</span>`
+                        : `₹${variant.regular_price.toFixed(2)}`;
+                }
+            }
+
+            addToCartBtn.addEventListener('click', function() {
+                const selectedSize = sizeSelect ? sizeSelect.value : null;
+                const selectedColor = colorSelect ? colorSelect.value : null;
+                const quantity = parseInt(quantityInput.value);
+
+                // Validation
+                if (sizeSelect && selectedSize === 'default') {
+                    cartMessage.style.display = 'block';
+                    cartMessage.style.color = 'red';
+                    cartMessage.textContent = 'Please select a size.';
+                    return;
+                }
+                if (colorSelect && selectedColor === 'default') {
+                    cartMessage.style.display = 'block';
+                    cartMessage.style.color = 'red';
+                    cartMessage.textContent = 'Please select a color.';
+                    return;
+                }
+
+                const variant = product.variants.find(v => 
+                    (!selectedSize || v.size === selectedSize) && 
+                    (!selectedColor || v.color === selectedColor)
+                );
+
+                if (!variant || variant.stock_quantity < quantity) {
+                    cartMessage.style.display = 'block';
+                    cartMessage.style.color = 'red';
+                    cartMessage.textContent = 'Not enough stock or invalid selection.';
+                    return;
+                }
+
+                const cartItem = {
+    product_id: product.id,
+    variant_id: variant.variant_id,
+    product_name: product.product_name,
+    price: variant.sale_price !== null ? variant.sale_price : variant.regular_price,
+    size: variant.size,
+    color: variant.color,
+    quantity: quantity,
+    image_path: product.image_path
+};
+
+const existingItemIndex = cart.findIndex(item => 
+    item.product_id === cartItem.product_id && 
+    item.variant_id === cartItem.variant_id
+);
+
+                if (existingItemIndex > -1) {
+                    cart[existingItemIndex].quantity += quantity;
+                } else {
+                    cart.push(cartItem);
+                }
+
+                localStorage.setItem('cart', JSON.stringify(cart));
+                cartMessage.style.display = "block";
+                cartMessage.style.color = "green";
+                cartMessage.textContent = `Added ${quantity} ${product.product_name} to cart!`;
+                setTimeout(() => cartMessage.style.display = 'none', 3000);
+            });
+
+            // Initial price update
+            updatePrice();
+        });
+    </script>
+</body>
+</html>

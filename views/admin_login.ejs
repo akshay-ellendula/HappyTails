@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/login/admin_login.css">
+    <title>Login & Sign Up</title>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+        </header>
+    </div>
+    <div class="container" id="container">
+        <form id="signInForm" class="active-form" action="#">
+            <h1>Welcome Back!</h1>
+            <div class="social-container">
+                <a href="#" class="social"><img src="./icons/google-logo-search-new-svgrepo-com.svg" alt="Google logo" height="40px"></a>
+                <a href="#" class="social"><img src="./icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook Logo" height="40px"></a>
+            </div>
+            <span>or use your account</span>
+            <input type="email" name="admin_email" placeholder="Email" required />
+            <input type="password" name="admin_password" placeholder="Password" required />
+            <a href="#">Forgot your password?</a>
+            <button type="submit" class="signin_button">Sign In</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("signInForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            const email = formData.get("admin_email");
+            const password = formData.get("admin_password");
+
+            // Basic validation
+            if (!email || !password) {
+                showError("Please fill in all fields");
+                return;
+            }
+        
+            // Convert FormData to JSON for the fetch request
+            const jsonData = {
+                admin_email: email,
+                admin_password: password
+            };
+        
+            fetch("/admin-login", {
+                method: "POST",
+                body: JSON.stringify(jsonData),
+                headers: { 'Content-Type': 'application/json' }
+            }).then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Login Successful");
+                    window.location.href = "/admin-dashboard";
+                } else {
+                    alert("Login failed: " + (data.error || "Invalid credentials"));
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Network error. Please try again.");
+            });
+        });
+
+        
+        function showError(message) {
+            alert(message); 
+        }
+    </script>
+</body>
