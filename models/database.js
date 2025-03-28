@@ -243,7 +243,7 @@ function insertSampleData(callback) {
             `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
             (3, '2025-03-20 15:00:00', 'Delivered', 2299.99, 2299.99, '2025-03-25 10:00:00')`,
             `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (5, 8, 17, 'Luxury Cat Bed', 1, 2299.99, 'Small', 'Purple')`
+            (5, 8, 17, 'Luxury Cat Bed', 1, 2299.99, 'Small', 'Purple')`,
             
             // Sample Event Manager
             `INSERT INTO event_managers (name, contact_number, email, password, company_name, location) VALUES 
