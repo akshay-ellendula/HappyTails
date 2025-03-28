@@ -14,8 +14,8 @@ const pages = [
     'admin-appointments', 'admin-dashboard', 'admin-em-details', 'admin-events',
     'admin-product-details', 'admin-products', 'admin-service-provider', 'admin-shop-manager',
     'admin-sm-details', 'admin-sp-details', 'admin-user-details', 'admin-user', 'admin_login',
-    // Remove 'eventmanager_dashboard' from here
-    'eventmanager_analytics', 'eventmanager_profile'
+    'eventmanager_dashboard', 'eventmanager_analytics', 'eventmanager_events', 'eventmanager_profile',
+    'eventmanager_attendees'
 ];
 
 pages.forEach(page => {

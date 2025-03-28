@@ -9,7 +9,6 @@ const userRoutes = require('./routes/userRoutes');
 const vendorRoutes = require('./routes/vendorRoutes');
 const productRoutes = require('./routes/productRoutes');
 const adminRoutes = require('./routes/adminRoutes');
-const eventManagerRoutes = require('./routes/eventManagerRoutes'); // Add this line
 const staticRoutes = require('./routes/staticRoutes');
 
 const app = express();
@@ -39,9 +38,7 @@ app.use('/', userRoutes);
 app.use('/', vendorRoutes);
 app.use('/', productRoutes);
 app.use('/', adminRoutes);
-app.use('/', eventManagerRoutes); // Add this line
 app.use('/', staticRoutes);
-
 
 // Initialize database and start server
 function initializeDatabase() {
@@ -52,7 +49,6 @@ function initializeDatabase() {
                 console.log('http://localhost:3000/pet_accessory');
                 console.log('http://localhost:3000/home');
                 console.log('http://localhost:3000/service_provider_login');
-                console.log('http://localhost:3000/event_manager_signup'); // Add this for reference
             });
         });
     });

@@ -37,19 +37,7 @@ function createTables(callback) {
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `, (err) => { if (err) console.error('Error creating vendors table:', err); else console.log('Vendors table created'); });
-        // Add new table for event managers
-        db.run(`
-    CREATE TABLE IF NOT EXISTS event_managers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        contact_number TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        company_name TEXT NOT NULL, 
-        location TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-`, (err) => { if (err) console.error('Error creating event_managers table:', err); else console.log('Event_managers table created'); });
+
         db.run(`
             CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -118,91 +106,12 @@ function createTables(callback) {
                 FOREIGN KEY (variant_id) REFERENCES product_variants(id)
             )
         `, (err) => { if (err) console.error('Error creating order_items table:', err); else console.log('Order_items table created'); callback(); });
-
-                    // New table: events
-                    db.run(`
-                        CREATE TABLE IF NOT EXISTS events (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            event_manager_id INTEGER NOT NULL,
-                            event_name TEXT NOT NULL,
-                            about_event TEXT NOT NULL,
-                            language TEXT NOT NULL,
-                            duration TEXT NOT NULL,
-                            ticket_price REAL NOT NULL,
-                            age_limit INTEGER NOT NULL,
-                            instructions TEXT NOT NULL,
-                            venue TEXT NOT NULL,
-                            terms TEXT NOT NULL,
-                            category TEXT NOT NULL,
-                            date_time TIMESTAMP NOT NULL,
-                            status TEXT NOT NULL DEFAULT 'Upcoming',
-                            total_tickets INTEGER NOT NULL DEFAULT 1000,
-                            tickets_sold INTEGER NOT NULL DEFAULT 0,
-                            city TEXT NOT NULL,
-                            contact_number TEXT NOT NULL,
-                            image TEXT,
-                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            FOREIGN KEY (event_manager_id) REFERENCES event_managers(id)
-                        )
-                    `, (err) => { if (err) console.error('Error creating events table:', err); else console.log('Events table created'); });
-        // New table: event_attendees
-        db.run(`
-            CREATE TABLE IF NOT EXISTS event_attendees (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                event_id INTEGER NOT NULL,
-                user_id INTEGER,
-                name TEXT NOT NULL,
-                phone_number TEXT NOT NULL,
-                email TEXT NOT NULL,
-                address TEXT NOT NULL,
-                seats INTEGER NOT NULL DEFAULT 1,
-                with_pet BOOLEAN NOT NULL DEFAULT 0,
-                pet_name TEXT,
-                pet_breed TEXT,
-                pet_dob DATE,
-                registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (event_id) REFERENCES events(id),
-                FOREIGN KEY (user_id) REFERENCES users(id)
-            )
-        `, (err) => { if (err) console.error('Error creating event_attendees table:', err); else console.log('Event_attendees table created'); });
-        db.run(`
-            CREATE TABLE IF NOT EXISTS event_managers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                contact_number TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL,
-                company_name TEXT NOT NULL,
-                location TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `, (err) => { if (err) console.error('Error creating event_managers table:', err); else console.log('Event_managers table created'); });
-
-        db.run(`
-            CREATE TABLE IF NOT EXISTS event_managers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                contact_number TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL,
-                company_name TEXT NOT NULL,
-                location TEXT NOT NULL,
-                event_type TEXT, -- New field
-                license TEXT, -- New field
-                bio TEXT, -- New field
-                member_since TEXT, -- New field
-                image TEXT -- New field
-            )
-        `, (err) => {
-            if (err) console.error('Error creating event_managers table:', err);
-            else console.log('event_managers table created successfully');
-        });
-
     });
 }
+
 function insertSampleData(callback) {
+    // Clear tables before inserting to avoid duplicates
     db.serialize(() => {
-        // Clear tables before inserting to avoid duplicates
         db.run('DELETE FROM order_items', (err) => { if (err) console.error('Error clearing order_items:', err); });
         db.run('DELETE FROM orders', (err) => { if (err) console.error('Error clearing orders:', err); });
         db.run('DELETE FROM product_images', (err) => { if (err) console.error('Error clearing product_images:', err); });
@@ -210,9 +119,6 @@ function insertSampleData(callback) {
         db.run('DELETE FROM products', (err) => { if (err) console.error('Error clearing products:', err); });
         db.run('DELETE FROM vendors', (err) => { if (err) console.error('Error clearing vendors:', err); });
         db.run('DELETE FROM users', (err) => { if (err) console.error('Error clearing users:', err); });
-        db.run('DELETE FROM event_managers', (err) => { if (err) console.error('Error clearing event_managers:', err); });
-        db.run('DELETE FROM event_attendees', (err) => { if (err) console.error('Error clearing event_attendees:', err); });
-        db.run('DELETE FROM events', (err) => { if (err) console.error('Error clearing events:', err); });
 
         const queries = [
             // Users
@@ -321,8 +227,24 @@ function insertSampleData(callback) {
             `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES 
              (1, '2025-03-10 12:00:00', 'Pending', 549.99, 549.99)`,
             `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-             (2, 7, 13, 'Interactive Dog Ball', 1, 549.99, 'Small', 'Green')`,
-
+            (2, 7, 13, 'Interactive Dog Ball', 1, 549.99, 'Small', 'Green')`,
+            // Orders for Veda Prakash (vendor_id 2)
+            // Order 3: Veda Prakash's product (Cat Scratching Post, product_id 3, variant_id 7)
+            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
+            (2, '2025-03-15 09:00:00', 'Delivered', 899.99, 899.99, '2025-03-20 14:00:00')`,
+            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
+            (3, 3, 7, 'Cat Scratching Post', 1, 899.99, 'Small', 'Grey')`,
+            // Order 4: Veda Prakash's product (Fish-Flavored Treats, product_id 4, variant_id 9)
+            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES 
+            (2, '2025-03-18 11:00:00', 'Pending', 199.99, 199.99)`,
+            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
+            (4, 4, 9, 'Fish-Flavored Treats', 1, 199.99, '100g', NULL)`,
+            // Order 5: Veda Prakash's product (Luxury Cat Bed, product_id 8, variant_id 17)
+            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
+            (3, '2025-03-20 15:00:00', 'Delivered', 2299.99, 2299.99, '2025-03-25 10:00:00')`,
+            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
+            (5, 8, 17, 'Luxury Cat Bed', 1, 2299.99, 'Small', 'Purple')`
+            
             // Sample Event Manager
             `INSERT INTO event_managers (name, contact_number, email, password, company_name, location) VALUES 
             ('Jeevankumar', '5551234567', 'jeevan.kumar@happytails.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Happy Events', 'Hyderabad')`,
@@ -387,7 +309,5 @@ function insertSampleData(callback) {
         });
     });
 }
+
 module.exports = { db, createTables, insertSampleData };
-
-
-
