@@ -233,6 +233,7 @@ const getVendorProfile = async (req, res) => {
 
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;
+    console.log('Login attempt:', { email, role }); // Debug: Log input
 
     if (!email || !password || !role) {
         return res.status(400).json({ success: false, message: 'Email, password, and role are required' });
@@ -251,18 +252,28 @@ const serviceProviderLogin = async (req, res) => {
         }
 
         db.get(`SELECT * FROM ${table} WHERE email = ?`, [email], async (err, user) => {
-            if (err) return res.status(500).json({ success: false, message: 'Database error' });
-            if (!user) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+            if (err) {
+                console.error('Database error:', err);
+                return res.status(500).json({ success: false, message: 'Database error' });
+            }
+            if (!user) {
+                console.log('User not found for email:', email);
+                return res.status(401).json({ success: false, message: 'Invalid email or password' });
+            }
 
             const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+            if (!isMatch) {
+                console.log('Password mismatch for:', email);
+                return res.status(401).json({ success: false, message: 'Invalid email or password' });
+            }
 
             req.session[sessionKey] = { 
                 id: user.id, 
                 email: user.email, 
                 role, 
-                store_name: user.store_name || null // Only for vendors
+                store_name: user.store_name || null
             };
+            console.log('Session set:', req.session[sessionKey]); // Debug: Log session
 
             if (role === 'store-manager') {
                 const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
@@ -271,9 +282,11 @@ const serviceProviderLogin = async (req, res) => {
                 redirect = '/eventmanager_dashboard';
             }
 
+            console.log('Redirecting to:', redirect); // Debug: Log redirect
             res.status(200).json({ success: true, message: 'Login successful', redirect });
         });
     } catch (error) {
+        console.error('Server error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
