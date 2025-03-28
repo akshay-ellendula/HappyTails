@@ -19,22 +19,22 @@
             <div class="stats-container">
                 <div class="stat-card">
                     <h3>TOTAL REVENUE</h3>
-                    <div class="value">$<%= totalRevenue %></div>
+                    <div class="value">$4,385.00</div>
                     <div class="trend">+12.5% from last month</div>
                 </div>
                 <div class="stat-card">
                     <h3>PRODUCTS SOLD</h3>
-                    <div class="value"><%= productsSold %></div>
+                    <div class="value">78</div>
                     <div class="trend">+5.2% from last month</div>
                 </div>
                 <div class="stat-card">
                     <h3>NEW ORDERS</h3>
-                    <div class="value"><%= newOrders %></div>
+                    <div class="value">14</div>
                     <div class="status">Awaiting processing</div>
                 </div>
                 <div class="stat-card">
                     <h3>CUSTOMER RATINGS</h3>
-                    <div class="value"><%= customerRatings %></div>
+                    <div class="value">4.8/5</div>
                     <div class="trend">+0.3 from last month</div>
                 </div>
             </div>
@@ -49,27 +49,27 @@
                 <div id="profile-view" class="profile-section">
                     <div class="profile-field">
                         <label>Store Name</label>
-                        <p><%= vendor.store_name %></p>
+                        <p>Happy Tails Pet Shop</p>
                     </div>
                     <div class="profile-field">
                         <label>Store Owner</label>
-                        <p><%= vendor.owner_name %></p>
+                        <p>Alex Johnson</p>
                     </div>
                     <div class="profile-field">
                         <label>Email</label>
-                        <p><%= vendor.email %></p>
+                        <p>alex@happytails.com</p>
                     </div>
                     <div class="profile-field">
                         <label>Phone</label>
-                        <p><%= vendor.phone %></p>
+                        <p>9090909090</p>
                     </div>
                     <div class="profile-field">
                         <label>Address</label>
-                        <p><%= vendor.address %></p>
+                        <p>123 Pet Lane, Furryville, CA 94123</p>
                     </div>
                     <div class="profile-field">
                         <label>Store Description</label>
-                        <p><%= vendor.description %></p>
+                        <p>Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs. All our products are designed with pet comfort and safety in mind, using sustainable materials whenever possible.</p>
                     </div>
                     <div class="button-container">
                         <button id="edit-btn" class="btn btn-dark">Edit Profile</button>
@@ -80,27 +80,27 @@
                 <div id="profile-edit" class="profile-section hidden">
                     <div class="profile-field">
                         <label for="store-name">Store Name</label>
-                        <input type="text" id="store-name" value="<%= vendor.store_name %>">
+                        <input type="text" id="store-name" value="Happy Tails Pet Shop">
                     </div>
                     <div class="profile-field">
                         <label for="owner-name">Store Owner</label>
-                        <input type="text" id="owner-name" value="<%= vendor.owner_name %>">
+                        <input type="text" id="owner-name" value="Alex Johnson">
                     </div>
                     <div class="profile-field">
                         <label for="email">Email</label>
-                        <input type="email" id="email" value="<%= vendor.email %>">
+                        <input type="email" id="email" value="alex@happytails.com">
                     </div>
                     <div class="profile-field">
                         <label for="phone">Phone</label>
-                        <input type="tel" id="phone" value="<%= vendor.phone %>" pattern="\d{10}" maxlength="10" required>
+                        <input type="tel" id="phone" value="9090909090" pattern="\d{10}"  maxlength="10" required>
                     </div>
                     <div class="profile-field">
                         <label for="address">Address</label>
-                        <input type="text" id="address" value="<%= vendor.address %>">
+                        <input type="text" id="address" value="123 Pet Lane, Furryville, CA 94123">
                     </div>
                     <div class="profile-field">
                         <label for="description">Store Description</label>
-                        <textarea id="description"><%= vendor.description %></textarea>
+                        <textarea id="description">Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs. All our products are designed with pet comfort and safety in mind, using sustainable materials whenever possible.</textarea>
                     </div>
                     <div class="button-container">
                         <button id="cancel-btn" class="btn btn-dark">Cancel</button>
@@ -127,22 +127,38 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% if (recentOrders && recentOrders.length > 0) { %>
-                            <% recentOrders.forEach(order => { %>
-                                <tr>
-                                    <td>#ORD-<%= order.id %></td>
-                                    <td><%= order.user_name %></td>
-                                    <td><%= order.product_name %></td>
-                                    <td><%= new Date(order.order_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
-                                    <td>$<%= order.total_amount.toFixed(2) %></td>
-                                    <td><span class="status-badge <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="6">No recent orders found.</td>
-                            </tr>
-                        <% } %>
+                        <tr>
+                            <td>#ORD-7829</td>
+                            <td>Emma Johnson</td>
+                            <td>Cozy Cat Cave</td>
+                            <td>Mar 12, 2025</td>
+                            <td>$59.99</td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-7830</td>
+                            <td>Michael Brown</td>
+                            <td>Dog Bed (Medium)</td>
+                            <td>Mar 12, 2025</td>
+                            <td>$89.99</td>
+                            <td><span class="status-badge pending">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-7831</td>
+                            <td>Sophia Wilson</td>
+                            <td>Pet Nail Clippers</td>
+                            <td>Mar 11, 2025</td>
+                            <td>$24.99</td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td>#ORD-7832</td>
+                            <td>David Garcia</td>
+                            <td>Cozy Cat Cave</td>
+                            <td>Mar 11, 2025</td>
+                            <td>$59.99</td>
+                            <td><span class="status-badge pending">Pending</span></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -154,6 +170,10 @@
         </div>
     </div>
 
-    <script src="/SHOP/shop-profile.js"></script>
-</body>
-</html>
+    <script src="/SHOP/shop-profile.js">
+
+
+    </script>
+  </body>
+  </html>
+            

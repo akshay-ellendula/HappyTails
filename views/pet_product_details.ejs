@@ -242,20 +242,20 @@
                 }
 
                 const cartItem = {
-    product_id: product.id,
-    variant_id: variant.variant_id,
-    product_name: product.product_name,
-    price: variant.sale_price !== null ? variant.sale_price : variant.regular_price,
-    size: variant.size,
-    color: variant.color,
-    quantity: quantity,
-    image_path: product.image_path
-};
+                    productId: product.id,
+                    product_name: product.product_name,
+                    price: variant.sale_price !== null ? variant.sale_price : variant.regular_price,
+                    size: variant.size,
+                    color: variant.color,
+                    quantity: quantity,
+                    image_path: product.image_path
+                };
 
-const existingItemIndex = cart.findIndex(item => 
-    item.product_id === cartItem.product_id && 
-    item.variant_id === cartItem.variant_id
-);
+                const existingItemIndex = cart.findIndex(item => 
+                    item.productId === cartItem.productId && 
+                    (item.size === cartItem.size || (!item.size && !cartItem.size)) && 
+                    (item.color === cartItem.color || (!item.color && !cartItem.color))
+                );
 
                 if (existingItemIndex > -1) {
                     cart[existingItemIndex].quantity += quantity;
