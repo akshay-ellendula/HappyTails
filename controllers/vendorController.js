@@ -291,6 +291,7 @@ const serviceProviderLogin = async (req, res) => {
     }
 };
 
+// vendorController.js (getVendorDashboard)
 const getVendorDashboard = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
@@ -367,7 +368,6 @@ const getVendorDashboard = async (req, res) => {
             });
         });
 
-        // Update the render path to point to the correct file
         res.render('shop-dashboard', {
             vendor: req.session.vendor,
             totalRevenue: totalRevenue.toFixed(2),
@@ -381,6 +381,7 @@ const getVendorDashboard = async (req, res) => {
     }
 };
 
+// vendorController.js
 const storeSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, storename, storelocation } = req.body;
 
@@ -396,17 +397,40 @@ const storeSignup = async (req, res) => {
     if (storelocation.length < 3) return res.status(400).json({ success: false, message: 'Invalid store location' });
 
     try {
+        // Check if email already exists
         db.get("SELECT * FROM vendors WHERE email = ?", [email], async (err, row) => {
             if (err) return res.status(500).json({ success: false, message: 'Database error' });
             if (row) return res.status(400).json({ success: false, message: 'Email already registered' });
 
             const hashedPassword = await bcrypt.hash(password, 10);
+            // Insert the new vendor into the database
             db.run(
                 `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES (?, ?, ?, ?, ?, ?)`,
                 [name, contactnumber, email, hashedPassword, storename, storelocation],
                 function (err) {
                     if (err) return res.status(500).json({ success: false, message: 'Database error' });
-                    res.status(201).json({ success: true, redirect: '/shop-dashboard', message: 'Vendor signup successful' });
+
+                    // Fetch the newly created vendor to set the session
+                    db.get("SELECT * FROM vendors WHERE email = ?", [email], (err, newVendor) => {
+                        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+
+                        // Set the session for the new vendor
+                        req.session.vendor = {
+                            id: newVendor.id,
+                            email: newVendor.email,
+                            store_name: newVendor.store_name
+                        };
+
+                        // Generate the storeName slug for the redirect URL
+                        const storeNameSlug = newVendor.store_name.toLowerCase().replace(/\s+/g, '-');
+                        const redirectUrl = `/shop-dashboard/${storeNameSlug}`;
+
+                        res.status(201).json({
+                            success: true,
+                            redirect: redirectUrl,
+                            message: 'Vendor signup successful'
+                        });
+                    });
                 }
             );
         });
