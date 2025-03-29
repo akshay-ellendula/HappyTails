@@ -710,20 +710,55 @@ const submitProduct = [
             product_type,
             product_description,
             stock_status,
-            'variant_size[]': variantSizes, // Array of sizes
-            'variant_color[]': variantColors, // Array of colors
-            'variant_regular_price[]': variantRegularPrices, // Array of regular prices
-            'variant_sale_price[]': variantSalePrices, // Array of sale prices
-            'variant_stock_quantity[]': variantStockQuantities // Array of stock quantities
+            variants // Now an array of objects
         } = req.body;
 
         // Validate required fields
         if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
+            console.log('Missing basic fields:', { product_name, product_category, product_type, product_description, stock_status });
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
 
-        if (!variantSizes || !variantRegularPrices || !variantStockQuantities || variantSizes.length === 0) {
-            return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
+        // Validate variants
+        if (!variants || Object.keys(variants).length === 0) {
+            return res.status(400).json({ success: false, message: 'At least one variant is required' });
+        }
+
+        // Parse variants into an array since they come as an object with numeric keys
+        const variantArray = Object.keys(variants).map(index => ({
+            size: variants[index].size || null,
+            color: variants[index].color || null,
+            regular_price: parseFloat(variants[index].regular_price),
+            sale_price: variants[index].sale_price ? parseFloat(variants[index].sale_price) : null,
+            stock_quantity: parseInt(variants[index].stock_quantity)
+        }));
+
+        // Validate each variant
+        for (const variant of variantArray) {
+            if (!variant.size || isNaN(variant.regular_price) || isNaN(variant.stock_quantity)) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Size, regular price, and stock quantity are required for all variants' 
+                });
+            }
+            if (variant.regular_price <= 0) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Regular price must be a positive number' 
+                });
+            }
+            if (variant.stock_quantity < 0) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Stock quantity must be a non-negative number' 
+                });
+            }
+            if (variant.sale_price && variant.sale_price >= variant.regular_price) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: 'Sale price must be less than regular price' 
+                });
+            }
         }
 
         // Validate stock_status
@@ -751,24 +786,7 @@ const submitProduct = [
             const productId = productResult;
 
             // Insert all variants
-            for (let i = 0; i < variantSizes.length; i++) {
-                const size = variantSizes[i] ? variantSizes[i].trim() : null;
-                const color = variantColors[i] ? variantColors[i].trim() : null;
-                const regularPrice = parseFLOAT(variantRegularPrices[i]);
-                const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
-                const stockQuantity = parseInt(variantStockQuantities[i]);
-
-                // Validate variant data
-                if (isNaN(regularPrice) || regularPrice <= 0) {
-                    return res.status(400).json({ success: false, message: 'Regular price must be a positive number' });
-                }
-                if (isNaN(stockQuantity) || stockQuantity < 0) {
-                    return res.status(400).json({ success: false, message: 'Stock quantity must be a non-negative number' });
-                }
-                if (salePrice && salePrice >= regularPrice) {
-                    return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
-                }
-
+            for (const variant of variantArray) {
                 const variantInsertQuery = `
                     INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
                     VALUES (?, ?, ?, ?, ?, ?)
@@ -776,7 +794,7 @@ const submitProduct = [
                 await new Promise((resolve, reject) => {
                     db.run(
                         variantInsertQuery,
-                        [productId, size, color, regularPrice, salePrice, stockQuantity],
+                        [productId, variant.size, variant.color, variant.regular_price, variant.sale_price, variant.stock_quantity],
                         (err) => {
                             if (err) return reject(err);
                             resolve();
