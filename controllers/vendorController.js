@@ -697,7 +697,7 @@ const getVendorCustomers = async (req, res) => {
 
 // Submit new product
 const submitProduct = [
-    upload.array('product_images', 4), // Allow up to 4 images
+    upload.array('product_images', 4),
     async (req, res) => {
         if (!req.session.vendor) {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -710,11 +710,11 @@ const submitProduct = [
             product_type,
             product_description,
             stock_status,
-            variant_size,
-            variant_color,
-            variant_regular_price,
-            variant_sale_price,
-            variant_stock_quantity
+            'variant_size[]': variantSizes, // Array of sizes
+            'variant_color[]': variantColors, // Array of colors
+            'variant_regular_price[]': variantRegularPrices, // Array of regular prices
+            'variant_sale_price[]': variantSalePrices, // Array of sale prices
+            'variant_stock_quantity[]': variantStockQuantities // Array of stock quantities
         } = req.body;
 
         // Validate required fields
@@ -722,8 +722,8 @@ const submitProduct = [
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
 
-        if (!variant_size || !variant_regular_price || !variant_stock_quantity) {
-            return res.status(400).json({ success: false, message: 'Size, regular price, and stock quantity are required' });
+        if (!variantSizes || !variantRegularPrices || !variantStockQuantities || variantSizes.length === 0) {
+            return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
         }
 
         // Validate stock_status
@@ -731,27 +731,8 @@ const submitProduct = [
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
-        const size = variant_size.trim();
-        const color = variant_color ? variant_color.trim() : null;
-        const regularPrice = parseFloat(variant_regular_price);
-        const salePrice = variant_sale_price ? parseFloat(variant_sale_price) : null;
-        const stockQuantity = parseInt(variant_stock_quantity);
-
-        // Validate regular price and stock quantity
-        if (isNaN(regularPrice) || regularPrice <= 0) {
-            return res.status(400).json({ success: false, message: 'Regular price must be a positive number' });
-        }
-        if (isNaN(stockQuantity) || stockQuantity < 0) {
-            return res.status(400).json({ success: false, message: 'Stock quantity must be a non-negative number' });
-        }
-
-        // Validate sale price is less than regular price
-        if (salePrice && salePrice >= regularPrice) {
-            return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
-        }
-
         try {
-            // Insert the product into the products table
+            // Insert the product
             const productInsertQuery = `
                 INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, stock_status)
                 VALUES (?, ?, ?, ?, ?, ?)
@@ -762,30 +743,49 @@ const submitProduct = [
                     [vendorId, product_name, product_category, product_type, product_description, stock_status],
                     function (err) {
                         if (err) return reject(err);
-                        resolve(this.lastID); // Get the inserted product ID
+                        resolve(this.lastID);
                     }
                 );
             });
 
             const productId = productResult;
 
-            // Insert the single variant into the product_variants table
-            const variantInsertQuery = `
-                INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
-                VALUES (?, ?, ?, ?, ?, ?)
-            `;
-            await new Promise((resolve, reject) => {
-                db.run(
-                    variantInsertQuery,
-                    [productId, size, color, regularPrice, salePrice, stockQuantity],
-                    (err) => {
-                        if (err) return reject(err);
-                        resolve();
-                    }
-                );
-            });
+            // Insert all variants
+            for (let i = 0; i < variantSizes.length; i++) {
+                const size = variantSizes[i] ? variantSizes[i].trim() : null;
+                const color = variantColors[i] ? variantColors[i].trim() : null;
+                const regularPrice = parseFLOAT(variantRegularPrices[i]);
+                const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
+                const stockQuantity = parseInt(variantStockQuantities[i]);
 
-            // Insert images into the product_images table
+                // Validate variant data
+                if (isNaN(regularPrice) || regularPrice <= 0) {
+                    return res.status(400).json({ success: false, message: 'Regular price must be a positive number' });
+                }
+                if (isNaN(stockQuantity) || stockQuantity < 0) {
+                    return res.status(400).json({ success: false, message: 'Stock quantity must be a non-negative number' });
+                }
+                if (salePrice && salePrice >= regularPrice) {
+                    return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
+                }
+
+                const variantInsertQuery = `
+                    INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                await new Promise((resolve, reject) => {
+                    db.run(
+                        variantInsertQuery,
+                        [productId, size, color, regularPrice, salePrice, stockQuantity],
+                        (err) => {
+                            if (err) return reject(err);
+                            resolve();
+                        }
+                    );
+                });
+            }
+
+            // Insert images
             if (req.files && req.files.length > 0) {
                 const imagePromises = req.files.map((file, index) => {
                     return new Promise((resolve, reject) => {
@@ -812,7 +812,7 @@ const submitProduct = [
             res.status(500).json({ success: false, message: 'Server error' });
         }
     }
-];
+];     
 
 // Export all controllers, including submitProduct
 module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct };
