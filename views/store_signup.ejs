@@ -103,11 +103,11 @@
     <script>
         document.getElementById('signupForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent default form submission
-
+    
             // Reset all error and success messages
             document.querySelectorAll('.error').forEach(error => error.style.display = 'none');
             document.getElementById('successMessage').style.display = 'none';
-
+    
             // Get form values
             const name = document.getElementById('name').value;
             const contactnumber = document.getElementById('contactnumber').value;
@@ -116,52 +116,52 @@
             const confirmpassword = document.getElementById('confirmpassword').value;
             const storename = document.getElementById('storename').value;
             const storelocation = document.getElementById('storelocation').value;
-
+    
             let isValid = true;
-
-            // Client-side validation
+    
+            // Client-side validation (unchanged)
             if (name.length < 2) {
                 document.getElementById('nameError').style.display = 'block';
                 isValid = false;
             }
-
+    
             const phoneRegex = /^\d{10}$/;
             if (!phoneRegex.test(contactnumber)) {
                 document.getElementById('contactError').style.display = 'block';
                 isValid = false;
             }
-
+    
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(email)) {
                 document.getElementById('emailError').style.display = 'block';
                 isValid = false;
             }
-
+    
             const passwordRegex = /^(?=.*\d).{8,}$/;
             if (!passwordRegex.test(password)) {
                 document.getElementById('passwordError').style.display = 'block';
                 isValid = false;
             }
-
+    
             if (password !== confirmpassword) {
                 document.getElementById('confirmPasswordError').style.display = 'block';
                 isValid = false;
             }
-
+    
             if (storename.length < 2) {
                 document.getElementById('storeNameError').style.display = 'block';
                 isValid = false;
             }
-
+    
             if (storelocation.length < 3) {
                 document.getElementById('locationError').style.display = 'block';
                 isValid = false;
             }
-
+    
             if (!isValid) {
                 return; // Stop if validation fails
             }
-
+    
             // Prepare form data
             const formData = {
                 name,
@@ -172,7 +172,7 @@
                 storename,
                 storelocation
             };
-
+    
             // Send AJAX request to the server
             fetch('/store-signup', {
                 method: 'POST',
@@ -186,6 +186,7 @@
                 if (data.success) {
                     // Show success message
                     document.getElementById('successMessage').style.display = 'block';
+                    console.log('Redirecting to:', data.redirect); // Debug: Log the redirect URL
                     // Redirect after a delay
                     setTimeout(() => {
                         window.location.href = data.redirect;
@@ -196,7 +197,7 @@
                         document.getElementById('emailError').textContent = data.message;
                         document.getElementById('emailError').style.display = 'block';
                     } else {
-                        alert('Error: ' + data.message); // Generic error alert
+                        alert('Error: ' + data.message);
                     }
                 }
             })
