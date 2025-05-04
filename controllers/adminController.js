@@ -1,5 +1,4 @@
-// controllers/adminController.js
-const { db } = require('../models/database');
+const { User, Vendor, EventManager, Product, ProductVariant, Order, OrderItem, Event, EventAttendee } = require('../models/connection');
 
 const adminLogin = (req, res) => {
     const { admin_email, admin_password } = req.body;
@@ -12,789 +11,922 @@ const adminLogin = (req, res) => {
     }
 };
 
-const getUsers = (req, res) => {
-    db.all(
-        `SELECT id, user_name AS name, user_email AS email, created_at AS joined_date 
-         FROM users ORDER BY created_at DESC`,
-        [],
-        (err, users) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            res.json({ success: true, users });
-        }
-    );
+const getUsers = async (req, res) => {
+    try {
+        const users = await User.find()
+            .select('user_name user_email created_at')
+            .sort({ created_at: -1 });
+        res.json({ success: true, users: users.map(user => ({
+            id: user._id,
+            name: user.user_name,
+            email: user.user_email,
+            joined_date: user.created_at
+        })) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-const getUser = (req, res) => {
-    const userId = req.params.id;
-    db.get(
-        `SELECT id, user_name AS name, user_email AS email, user_phone AS phone, 
-                user_address AS address, created_at AS joined_date 
-         FROM users WHERE id = ?`,
-        [userId],
-        (err, user) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-            res.json({ success: true, user });
+const getUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findById(userId)
+            .select('user_name user_email user_phone user_address created_at');
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
-    );
+        res.json({ success: true, user: {
+            id: user._id,
+            name: user.user_name,
+            email: user.user_email,
+            phone: user.user_phone,
+            address: user.user_address,
+            joined_date: user.created_at
+        } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-const updateUser = (req, res) => {
-    const userId = req.params.id;
-    const { user_name, user_phone, user_address } = req.body;
+const updateUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const { user_name, user_phone, user_address } = req.body;
 
-    if (!user_name) return res.status(400).json({ success: false, message: 'Name is required' });
-    if (user_name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
-    if (user_phone && !/^[0-9]{10}$/.test(user_phone)) return res.status(400).json({ success: false, message: 'Phone must be a 10-digit number' });
-    if (user_address && user_address.length < 5) return res.status(400).json({ success: false, message: 'Address must be at least 5 characters' });
+        if (!user_name) return res.status(400).json({ success: false, message: 'Name is required' });
+        if (user_name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
+        if (user_phone && !/^[0-9]{10}$/.test(user_phone)) return res.status(400).json({ success: false, message: 'Phone must be a 10-digit number' });
+        if (user_address && user_address.length < 5) return res.status(400).json({ success: false, message: 'Address must be at least 5 characters' });
 
-    db.get('SELECT * FROM users WHERE id = ?', [userId], (err, user) => {
-        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { user_name, user_phone: user_phone || null, user_address: user_address || null },
+            { new: true }
+        );
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
 
-        db.run(
-            `UPDATE users SET user_name = ?, user_phone = ?, user_address = ? WHERE id = ?`,
-            [user_name, user_phone || null, user_address || null, userId],
-            (err) => {
-                if (err) return res.status(500).json({ success: false, message: 'Failed to update user' });
-                res.json({ success: true, message: 'User updated successfully' });
-            }
-        );
-    });
+        res.json({ success: true, message: 'User updated successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to update user' });
+    }
 };
 
-const deleteUser = (req, res) => {
-    const userId = req.params.id;
-
-    db.get('SELECT * FROM users WHERE id = ?', [userId], (err, user) => {
-        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+const deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.id;
+        const user = await User.findByIdAndDelete(userId);
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
-
-        db.run('DELETE FROM users WHERE id = ?', [userId], function (err) {
-            if (err) return res.status(500).json({ success: false, message: 'Failed to delete user' });
-            res.json({ success: true, message: 'User deleted successfully' });
-        });
-    });
+        res.json({ success: true, message: 'User deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to delete user' });
+    }
 };
 
-const getProducts = (req, res) => {
-    db.all(
-        `SELECT p.id, p.product_name, p.product_category AS category, 
-                pv.regular_price AS price, pv.stock_quantity AS stock, 
-                p.created_at AS added_date, v.store_name AS vendor
-         FROM products p
-         JOIN vendors v ON p.vendor_id = v.id
-         JOIN product_variants pv ON p.id = pv.product_id
-         GROUP BY p.id
-         ORDER BY p.created_at DESC`,
-        [],
-        (err, products) => {
-            if (err) {
-                console.error('Error fetching products:', err);
-                return res.status(500).json({ success: false, message: 'Server error' });
-            }
-            res.json({ success: true, products });
-        }
-    );
-};
-
-const getUserStats = (req, res) => {
-    const today = new Date().toISOString().split('T')[0];
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-    db.get('SELECT COUNT(*) as total FROM users', (err, total) => {
-        if (err) return res.status(500).json({ success: false });
-        db.get('SELECT COUNT(*) as monthly FROM users WHERE created_at >= ?', [monthAgo], (err, monthly) => {
-            if (err) return res.status(500).json({ success: false });
-            db.get('SELECT COUNT(*) as weekly FROM users WHERE created_at >= ?', [weekAgo], (err, weekly) => {
-                if (err) return res.status(500).json({ success: false });
-                db.get('SELECT COUNT(*) as daily FROM users WHERE created_at >= ?', [today], (err, daily) => {
-                    if (err) return res.status(500).json({ success: false });
-                    res.json({
-                        success: true,
-                        stats: { total: total.total, monthly: monthly.monthly, weekly: weekly.weekly, daily: daily.daily }
-                    });
-                });
-            });
-        });
-    });
-};
-
-const getProductStats = (req, res) => {
-    const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-    // Total products
-    db.get('SELECT COUNT(*) as total FROM products', (err, total) => {
-        if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-        // Total products last month (for percentage change)
-        db.get('SELECT COUNT(*) as totalLastMonth FROM products WHERE created_at < ?', [monthAgo], (err, totalLastMonth) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-            // In stock (at least one variant with stock > 0)
-            db.get(
-                `SELECT COUNT(DISTINCT p.id) as inStock 
-                 FROM products p 
-                 JOIN product_variants pv ON p.id = pv.product_id 
-                 WHERE pv.stock_quantity > 0`,
-                (err, inStock) => {
-                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                    // In stock last month
-                    db.get(
-                        `SELECT COUNT(DISTINCT p.id) as inStockLastMonth 
-                         FROM products p 
-                         JOIN product_variants pv ON p.id = pv.product_id 
-                         WHERE pv.stock_quantity > 0 AND p.created_at < ?`,
-                        [monthAgo],
-                        (err, inStockLastMonth) => {
-                            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                            // Low stock (total stock across all variants between 1 and 5)
-                            db.get(
-                                `SELECT COUNT(*) as lowStock 
-                                 FROM (
-                                     SELECT p.id 
-                                     FROM products p 
-                                     JOIN product_variants pv ON p.id = pv.product_id 
-                                     GROUP BY p.id 
-                                     HAVING SUM(pv.stock_quantity) BETWEEN 1 AND 5
-                                 )`,
-                                (err, lowStock) => {
-                                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                                    // Low stock last week
-                                    db.get(
-                                        `SELECT COUNT(*) as lowStockLastWeek 
-                                         FROM (
-                                             SELECT p.id 
-                                             FROM products p 
-                                             JOIN product_variants pv ON p.id = pv.product_id 
-                                             WHERE p.created_at < ? 
-                                             GROUP BY p.id 
-                                             HAVING SUM(pv.stock_quantity) BETWEEN 1 AND 5
-                                         )`,
-                                        [weekAgo],
-                                        (err, lowStockLastWeek) => {
-                                            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                                            // Out of stock (total stock across all variants = 0)
-                                            db.get(
-                                                `SELECT COUNT(*) as outOfStock 
-                                                 FROM (
-                                                     SELECT p.id 
-                                                     FROM products p 
-                                                     JOIN product_variants pv ON p.id = pv.product_id 
-                                                     GROUP BY p.id 
-                                                     HAVING SUM(pv.stock_quantity) = 0
-                                                 )`,
-                                                (err, outOfStock) => {
-                                                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                                                    // Out of stock yesterday
-                                                    db.get(
-                                                        `SELECT COUNT(*) as outOfStockYesterday 
-                                                         FROM (
-                                                             SELECT p.id 
-                                                             FROM products p 
-                                                             JOIN product_variants pv ON p.id = pv.product_id 
-                                                             WHERE p.created_at < ? 
-                                                             GROUP BY p.id 
-                                                             HAVING SUM(pv.stock_quantity) = 0
-                                                         )`,
-                                                        [yesterday],
-                                                        (err, outOfStockYesterday) => {
-                                                            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                                                            res.json({
-                                                                success: true,
-                                                                stats: {
-                                                                    total: total.total,
-                                                                    totalLastMonth: totalLastMonth.totalLastMonth,
-                                                                    inStock: inStock.inStock,
-                                                                    inStockLastMonth: inStockLastMonth.inStockLastMonth,
-                                                                    lowStock: lowStock.lowStock,
-                                                                    lowStockLastWeek: lowStockLastWeek.lowStockLastWeek,
-                                                                    outOfStock: outOfStock.outOfStock,
-                                                                    outOfStockYesterday: outOfStockYesterday.outOfStockYesterday
-                                                                }
-                                                            });
-                                                        }
-                                                    );
-                                                }
-                                            );
-                                        }
-                                    );
-                                }
-                            );
-                        }
-                    );
+const getProducts = async (req, res) => {
+    try {
+        const products = await Product.aggregate([
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
                 }
-            );
-        });
-    });
-};
-
-
-const dashBoardStats = (req, res) => {
-    db.get('SELECT COUNT(*) as total FROM users', (err, totalUsers) => {
-        if (err) {
-            console.error('Error fetching total users:', err);
-            return res.status(500).json({ success: false, message: 'Server error' });
-        }
-
-        db.get('SELECT COUNT(*) as total FROM vendors', (err, totalVendors) => {
-            if (err) {
-                console.error('Error fetching total vendors:', err);
-                return res.status(500).json({ success: false, message: 'Server error' });
-            }
-
-            res.json({
-                success: true,
-                stats: {
-                    totalUsers: totalUsers.total,
-                    totalVendors: totalVendors.total
+            },
+            { $unwind: '$vendor' },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
                 }
-            });
-        });
-    });
-};
-
-const adminGetUsers = (req, res) => {
-    db.all(
-        `SELECT id, user_name AS name, user_email AS email, created_at AS joined_date 
-         FROM users ORDER BY created_at DESC LIMIT 5`,
-        [],
-        (err, users) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            res.json({ success: true, users });
-        }
-    );
-}
-
-// New functions for Shop Managers (Vendors)
-const getVendors = (req, res) => {
-    db.all(
-        `SELECT id, name, email, store_name, store_location, created_at AS joined_date 
-         FROM vendors ORDER BY created_at DESC`,
-        [],
-        (err, vendors) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            res.json({ success: true, vendors });
-        }
-    );
-};
-
-const getVendorStats = (req, res) => {
-    const today = new Date().toISOString().split('T')[0];
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-    db.get('SELECT COUNT(*) as total FROM vendors', (err, total) => {
-        if (err) return res.status(500).json({ success: false });
-        db.get('SELECT COUNT(*) as monthly FROM vendors WHERE created_at >= ?', [monthAgo], (err, monthly) => {
-            if (err) return res.status(500).json({ success: false });
-            db.get('SELECT COUNT(*) as weekly FROM vendors WHERE created_at >= ?', [weekAgo], (err, weekly) => {
-                if (err) return res.status(500).json({ success: false });
-                db.get('SELECT COUNT(*) as daily FROM vendors WHERE created_at >= ?', [today], (err, daily) => {
-                    if (err) return res.status(500).json({ success: false });
-                    res.json({
-                        success: true,
-                        stats: { total: total.total, monthly: monthly.monthly, weekly: weekly.weekly, daily: daily.daily }
-                    });
-                });
-            });
-        });
-    });
-};
-
-const adminGetVendors = (req, res) => {
-    db.all(
-        `SELECT id, name, email, created_at AS joined_date 
-         FROM vendors ORDER BY created_at DESC LIMIT 5`,
-        [],
-        (err, vendors) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            res.json({ success: true, vendors });
-        }
-    );
-};
-
-// Fetch a single vendor by ID
-const getVendor = (req, res) => {
-    const vendorId = req.params.id;
-    db.get(
-        `SELECT id, name, email, store_name, store_location, created_at AS joined_date 
-         FROM vendors WHERE id = ?`,
-        [vendorId],
-        (err, vendor) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
-            res.json({ success: true, vendor });
-        }
-    );
-};
-
-// Fetch revenue metrics for a vendor
-const getVendorRevenueMetrics = (req, res) => {
-    const vendorId = req.params.id;
-    const today = new Date().toISOString().split('T')[0];
-    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const threeMonthsAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-
-    // Today's revenue
-    db.get(
-        `SELECT SUM(o.total_amount) AS today_revenue 
-         FROM order_items oi 
-         JOIN products p ON oi.product_id = p.id 
-         JOIN orders o ON oi.order_id = o.id 
-         WHERE p.vendor_id = ? AND DATE(o.order_date) = ?`,
-        [vendorId, today],
-        (err, todayResult) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-            // Weekly revenue
-            db.get(
-                `SELECT SUM(o.total_amount) AS weekly_revenue 
-                 FROM order_items oi 
-                 JOIN products p ON oi.product_id = p.id 
-                 JOIN orders o ON oi.order_id = o.id 
-                 WHERE p.vendor_id = ? AND o.order_date >= ?`,
-                [vendorId, oneWeekAgo],
-                (err, weeklyResult) => {
-                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                    // Monthly revenue
-                    db.get(
-                        `SELECT SUM(o.total_amount) AS monthly_revenue 
-                         FROM order_items oi 
-                         JOIN products p ON oi.product_id = p.id 
-                         JOIN orders o ON oi.order_id = o.id 
-                         WHERE p.vendor_id = ? AND o.order_date >= ?`,
-                        [vendorId, oneMonthAgo],
-                        (err, monthlyResult) => {
-                            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                            // Quarterly revenue
-                            db.get(
-                                `SELECT SUM(o.total_amount) AS quarterly_revenue 
-                                 FROM order_items oi 
-                                 JOIN products p ON oi.product_id = p.id 
-                                 JOIN orders o ON oi.order_id = o.id 
-                                 WHERE p.vendor_id = ? AND o.order_date >= ?`,
-                                [vendorId, threeMonthsAgo],
-                                (err, quarterlyResult) => {
-                                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                                    // Monthly breakdown (last 3 months)
-                                    db.all(
-                                        `SELECT 
-                                            strftime('%Y-%m', o.order_date) AS month, 
-                                            SUM(o.total_amount) AS total_sales, 
-                                            COUNT(DISTINCT o.id) AS orders, 
-                                            AVG(o.total_amount) AS avg_order_value 
-                                         FROM order_items oi 
-                                         JOIN products p ON oi.product_id = p.id 
-                                         JOIN orders o ON oi.order_id = o.id 
-                                         WHERE p.vendor_id = ? AND o.order_date >= ?
-                                         GROUP BY strftime('%Y-%m', o.order_date) 
-                                         ORDER BY month DESC 
-                                         LIMIT 3`,
-                                        [vendorId, threeMonthsAgo],
-                                        (err, monthlyBreakdown) => {
-                                            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                                            res.json({
-                                                success: true,
-                                                metrics: {
-                                                    today_revenue: todayResult.today_revenue || 0,
-                                                    weekly_revenue: weeklyResult.weekly_revenue || 0,
-                                                    monthly_revenue: monthlyResult.monthly_revenue || 0,
-                                                    quarterly_revenue: quarterlyResult.quarterly_revenue || 0,
-                                                    monthly_breakdown: monthlyBreakdown.map(row => ({
-                                                        month: row.month,
-                                                        total_sales: row.total_sales,
-                                                        orders: row.orders,
-                                                        avg_order_value: row.avg_order_value
-                                                    }))
-                                                }
-                                            });
-                                        }
-                                    );
-                                }
-                            );
-                        }
-                    );
+            },
+            { $unwind: '$variants' },
+            {
+                $project: {
+                    id: '$_id',
+                    product_name: 1,
+                    category: '$product_category',
+                    price: '$variants.regular_price',
+                    stock: '$variants.stock_quantity',
+                    added_date: '$created_at',
+                    vendor: '$vendor.store_name'
                 }
-            );
-        }
-    );
+            },
+            { $sort: { created_at: -1 } },
+            { $group: { _id: '$id', product: { $first: '$$ROOT' } } },
+            { $replaceRoot: { newRoot: '$product' } }
+        ]);
+        res.json({ success: true, products });
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-const getVendorProducts = (req, res) => {
-    const vendorId = req.params.id;
-    db.all(
-        `SELECT p.id AS product_id, p.product_name, p.product_category AS category, 
-                pv.regular_price AS price, pv.stock_quantity AS stock
-         FROM products p
-         JOIN product_variants pv ON p.id = pv.product_id
-         WHERE p.vendor_id = ?
-         GROUP BY p.id`,
-        [vendorId],
-        (err, products) => {
-            if (err) {
-                console.error('Error fetching vendor products:', err);
-                return res.status(500).json({ success: false, message: 'Server error' });
+const getUserStats = async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        const total = await User.countDocuments();
+        const monthly = await User.countDocuments({ created_at: { $gte: monthAgo } });
+        const weekly = await User.countDocuments({ created_at: { $gte: weekAgo } });
+        const daily = await User.countDocuments({ created_at: { $gte: today } });
+
+        res.json({
+            success: true,
+            stats: { total, monthly, weekly, daily }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false });
+    }
+};
+
+const getProductStats = async (req, res) => {
+    try {
+        const today = new Date();
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+
+        const total = await Product.countDocuments();
+        const totalLastMonth = await Product.countDocuments({ created_at: { $lt: monthAgo } });
+
+        const inStock = await Product.aggregate([
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            { $match: { 'variants.stock_quantity': { $gt: 0 } } },
+            { $group: { _id: null, count: { $addToSet: '$_id' } } },
+            { $project: { inStock: { $size: '$count' } } }
+        ]);
+
+        const inStockLastMonth = await Product.aggregate([
+            { $match: { created_at: { $lt: monthAgo } } },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            { $match: { 'variants.stock_quantity': { $gt: 0 } } },
+            { $group: { _id: null, count: { $addToSet: '$_id' } } },
+            { $project: { inStockLastMonth: { $size: '$count' } } }
+        ]);
+
+        const lowStock = await Product.aggregate([
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    totalStock: { $sum: '$variants.stock_quantity' }
+                }
+            },
+            { $match: { totalStock: { $gte: 1, $lte: 5 } } },
+            { $count: 'lowStock' }
+        ]);
+
+        const lowStockLastWeek = await Product.aggregate([
+            { $match: { created_at: { $lt: weekAgo } } },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    totalStock: { $sum: '$variants.stock_quantity' }
+                }
+            },
+            { $match: { totalStock: { $gte: 1, $lte: 5 } } },
+            { $count: 'lowStockLastWeek' }
+        ]);
+
+        const outOfStock = await Product.aggregate([
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    totalStock: { $sum: '$variants.stock_quantity' }
+                }
+            },
+            { $match: { totalStock: 0 } },
+            { $count: 'outOfStock' }
+        ]);
+
+        const outOfStockYesterday = await Product.aggregate([
+            { $match: { created_at: { $lt: yesterday } } },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            {
+                $group: {
+                    _id: '$_id',
+                    totalStock: { $sum: '$variants.stock_quantity' }
+                }
+            },
+            { $match: { totalStock: 0 } },
+            { $count: 'outOfStockYesterday' }
+        ]);
+
+        res.json({
+            success: true,
+            stats: {
+                total,
+                totalLastMonth,
+                inStock: inStock[0]?.inStock || 0,
+                inStockLastMonth: inStockLastMonth[0]?.inStockLastMonth || 0,
+                lowStock: lowStock[0]?.lowStock || 0,
+                lowStockLastWeek: lowStockLastWeek[0]?.lowStockLastWeek || 0,
+                outOfStock: outOfStock[0]?.outOfStock || 0,
+                outOfStockYesterday: outOfStockYesterday[0]?.outOfStockYesterday || 0
             }
-            res.json({ success: true, products });
-        }
-    );
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-// Fetch top customers for the vendor
-const getVendorTopCustomers = (req, res) => {
-    const vendorId = req.params.id;
-    db.all(
-        `SELECT 
-            u.id AS customer_id, 
-            u.name AS customer_name, 
-            COUNT(DISTINCT o.id) AS total_orders, 
-            SUM(o.total_amount) AS total_spent, 
-            MAX(o.order_date) AS last_purchase 
-         FROM users u 
-         JOIN orders o ON u.id = o.user_id 
-         JOIN order_items oi ON o.id = oi.order_id 
-         JOIN products p ON oi.product_id = p.id 
-         WHERE p.vendor_id = ? 
-         GROUP BY u.id, u.name 
-         ORDER BY total_spent DESC 
-         LIMIT 5`,
-        [vendorId],
-        (err, customers) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            res.json({ success: true, customers });
-        }
-    );
+const dashBoardStats = async (req, res) => {
+    try {
+        const totalUsers = await User.countDocuments();
+        const totalVendors = await Vendor.countDocuments();
+        res.json({
+            success: true,
+            stats: { totalUsers, totalVendors }
+        });
+    } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-// Update a vendor's details
-const updateVendor = (req, res) => {
-    const vendorId = req.params.id;
-    const { vendor_name, store_name, store_location } = req.body;
+const adminGetUsers = async (req, res) => {
+    try {
+        const users = await User.find()
+            .select('user_name user_email created_at')
+            .sort({ created_at: -1 })
+            .limit(5);
+        res.json({ success: true, users: users.map(user => ({
+            id: user._id,
+            name: user.user_name,
+            email: user.user_email,
+            joined_date: user.created_at
+        })) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
 
-    if (!vendor_name) return res.status(400).json({ success: false, message: 'Name is required' });
-    if (vendor_name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
-    if (store_name && store_name.length < 2) return res.status(400).json({ success: false, message: 'Store name must be at least 2 characters' });
-    if (store_location && store_location.length < 5) return res.status(400).json({ success: false, message: 'Store location must be at least 5 characters' });
+const getVendors = async (req, res) => {
+    try {
+        const vendors = await Vendor.find()
+            .select('name email store_name store_location created_at')
+            .sort({ created_at: -1 });
+        res.json({ success: true, vendors: vendors.map(vendor => ({
+            id: vendor._id,
+            name: vendor.name,
+            email: vendor.email,
+            store_name: vendor.store_name,
+            store_location: vendor.store_location,
+            joined_date: vendor.created_at
+        })) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
 
-    db.get('SELECT * FROM vendors WHERE id = ?', [vendorId], (err, vendor) => {
-        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+const getVendorStats = async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+        const total = await Vendor.countDocuments();
+        const monthly = await Vendor.countDocuments({ created_at: { $gte: monthAgo } });
+        const weekly = await Vendor.countDocuments({ created_at: { $gte: weekAgo } });
+        const daily = await Vendor.countDocuments({ created_at: { $gte: today } });
+
+        res.json({
+            success: true,
+            stats: { total, monthly, weekly, daily }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false });
+    }
+};
+
+const adminGetVendors = async (req, res) => {
+    try {
+        const vendors = await Vendor.find()
+            .select('name email created_at')
+            .sort({ created_at: -1 })
+            .limit(5);
+        res.json({ success: true, vendors: vendors.map(vendor => ({
+            id: vendor._id,
+            name: vendor.name,
+            email: vendor.email,
+            joined_date: vendor.created_at
+        })) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const getVendor = async (req, res) => {
+    try {
+        const vendorId = req.params.id;
+        const vendor = await Vendor.findById(vendorId)
+            .select('name email store_name store_location created_at');
+        if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
+        res.json({ success: true, vendor: {
+            id: vendor._id,
+            name: vendor.name,
+            email: vendor.email,
+            store_name: vendor.store_name,
+            store_location: vendor.store_location,
+            joined_date: vendor.created_at
+        } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const getVendorRevenueMetrics = async (req, res) => {
+    try {
+        const vendorId = req.params.id;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const oneMonthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const threeMonthsAgo = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
+
+        const todayRevenue = await Order.aggregate([
+            { $match: { order_date: { $gte: today } } },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $group: { _id: null, today_revenue: { $sum: '$total_amount' } } }
+        ]);
+
+        const weeklyRevenue = await Order.aggregate([
+            { $match: { order_date: { $gte: oneWeekAgo } } },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $group: { _id: null, weekly_revenue: { $sum: '$total_amount' } } }
+        ]);
+
+        const monthlyRevenue = await Order.aggregate([
+            { $match: { order_date: { $gte: oneMonthAgo } } },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $group: { _id: null, monthly_revenue: { $sum: '$total_amount' } } }
+        ]);
+
+        const quarterlyRevenue = await Order.aggregate([
+            { $match: { order_date: { $gte: threeMonthsAgo } } },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $group: { _id: null, quarterly_revenue: { $sum: '$total_amount' } } }
+        ]);
+
+        const monthlyBreakdown = await Order.aggregate([
+            { $match: { order_date: { $gte: threeMonthsAgo } } },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m", date: "$order_date" } },
+                    total_sales: { $sum: '$total_amount' },
+                    orders: { $addToSet: '$_id' }
+                }
+            },
+            {
+                $project: {
+                    month: '$_id',
+                    total_sales: 1,
+                    orders: { $size: '$orders' },
+                    avg_order_value: { $divide: ['$total_sales', { $size: '$orders' }] }
+                }
+            },
+            { $sort: { month: -1 } },
+            { $limit: 3 }
+        ]);
+
+        res.json({
+            success: true,
+            metrics: {
+                today_revenue: todayRevenue[0]?.today_revenue || 0,
+                weekly_revenue: weeklyRevenue[0]?.weekly_revenue || 0,
+                monthly_revenue: monthlyRevenue[0]?.monthly_revenue || 0,
+                quarterly_revenue: quarterlyRevenue[0]?.quarterly_revenue || 0,
+                monthly_breakdown: monthlyBreakdown
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const getVendorProducts = async (req, res) => {
+    try {
+        const vendorId = req.params.id;
+        const products = await Product.aggregate([
+            { $match: { vendor_id: parseInt(vendorId) } },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            { $unwind: '$variants' },
+            {
+                $project: {
+                    product_id: '$_id',
+                    product_name: 1,
+                    category: '$product_category',
+                    price: '$variants.regular_price',
+                    stock: '$variants.stock_quantity'
+                }
+            },
+            { $group: { _id: '$product_id', product: { $first: '$$ROOT' } } },
+            { $replaceRoot: { newRoot: '$product' } }
+        ]);
+        res.json({ success: true, products });
+    } catch (error) {
+        console.error('Error fetching vendor products:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const getVendorTopCustomers = async (req, res) => {
+    try {
+        const vendorId = req.params.id;
+        const customers = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            { $unwind: '$user' },
+            {
+                $group: {
+                    _id: '$user._id',
+                    customer_name: { $first: '$user.user_name' },
+                    total_orders: { $addToSet: '$_id' },
+                    total_spent: { $sum: '$total_amount' },
+                    last_purchase: { $max: '$order_date' }
+                }
+            },
+            {
+                $project: {
+                    customer_id: '$_id',
+                    customer_name: 1,
+                    total_orders: { $size: '$total_orders' },
+                    total_spent: 1,
+                    last_purchase: 1
+                }
+            },
+            { $sort: { total_spent: -1 } },
+            { $limit: 5 }
+        ]);
+        res.json({ success: true, customers });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const updateVendor = async (req, res) => {
+    try {
+        const vendorId = req.params.id;
+        const { vendor_name, store_name, store_location } = req.body;
+
+        if (!vendor_name) return res.status(400).json({ success: false, message: 'Name is required' });
+        if (vendor_name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
+        if (store_name && store_name.length < 2) return res.status(400).json({ success: false, message: 'Store name must be at least 2 characters' });
+        if (store_location && store_location.length < 5) return res.status(400).json({ success: false, message: 'Store location must be at least 5 characters' });
+
+        const vendor = await Vendor.findByIdAndUpdate(
+            vendorId,
+            { name: vendor_name, store_name: store_name || null, store_location: store_location || null },
+            { new: true }
+        );
         if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
 
-        db.run(
-            `UPDATE vendors 
-             SET name = ?, store_name = ?, store_location = ? 
-             WHERE id = ?`,
-            [vendor_name, store_name || null, store_location || null, vendorId],
-            (err) => {
-                if (err) return res.status(500).json({ success: false, message: 'Failed to update vendor' });
-                res.json({ success: true, message: 'Vendor updated successfully' });
-            }
-        );
-    });
+        res.json({ success: true, message: 'Vendor updated successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to update vendor' });
+    }
 };
 
-// Delete a vendor
-const deleteVendor = (req, res) => {
-    const vendorId = req.params.id;
-
-    db.get('SELECT * FROM vendors WHERE id = ?', [vendorId], (err, vendor) => {
-        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+const deleteVendor = async (req, res) => {
+    try {
+        const vendorId = req.params.id;
+        const vendor = await Vendor.findById(vendorId);
         if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
 
-        // Step 1: Delete associated order_items
-        db.run(
-            `DELETE FROM order_items WHERE product_id IN (SELECT id FROM products WHERE vendor_id = ?)`,
-            [vendorId],
-            (err) => {
-                if (err) return res.status(500).json({ success: false, message: 'Server error' });
+        // Delete associated order items
+        const products = await Product.find({ vendor_id: parseInt(vendorId) });
+        const productIds = products.map(p => p._id);
+        await OrderItem.deleteMany({ product_id: { $in: productIds } });
 
-                // Step 2: Delete associated products
-                db.run(`DELETE FROM products WHERE vendor_id = ?`, [vendorId], (err) => {
-                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
+        // Delete associated products
+        await Product.deleteMany({ vendor_id: parseInt(vendorId) });
 
-                    // Step 3: Delete the vendor
-                    db.run(`DELETE FROM vendors WHERE id = ?`, [vendorId], (err) => {
-                        if (err) return res.status(500).json({ success: false, message: 'Server error' });
-                        res.json({ success: true, message: 'Vendor deleted successfully' });
-                    });
-                });
-            }
-        );
-    });
+        // Delete the vendor
+        await Vendor.findByIdAndDelete(vendorId);
+
+        res.json({ success: true, message: 'Vendor deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-const getEventManagers = (req, res) => {
-    db.all(
-        `SELECT id, name, email, company_name AS organization, created_at AS joined_date 
-         FROM event_managers ORDER BY created_at DESC`,
-        [],
-        (err, eventManagers) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            res.json({ success: true, eventManagers });
-        }
-    );
+const getEventManagers = async (req, res) => {
+    try {
+        const eventManagers = await EventManager.find()
+            .select('name email company_name created_at')
+            .sort({ created_at: -1 });
+        res.json({ success: true, eventManagers: eventManagers.map(manager => ({
+            id: manager._id,
+            name: manager.name,
+            email: manager.email,
+            organization: manager.company_name,
+            joined_date: manager.created_at
+        })) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-// Fetch event manager statistics
-const getEventManagerStats = (req, res) => {
-    const today = new Date().toISOString().split('T')[0];
-    const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+const getEventManagerStats = async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    db.get('SELECT COUNT(*) as total FROM event_managers', (err, total) => {
-        if (err) return res.status(500).json({ success: false });
-        db.get('SELECT COUNT(*) as monthly FROM event_managers WHERE created_at >= ?', [monthAgo], (err, monthly) => {
-            if (err) return res.status(500).json({ success: false });
-            db.get('SELECT COUNT(*) as today FROM events WHERE date_time LIKE ?', [`${today}%`], (err, todayEvents) => {
-                if (err) return res.status(500).json({ success: false });
-                db.get(
-                    `SELECT SUM(ticket_price * tickets_sold) as revenue 
-                     FROM events WHERE status IN ('Past', 'Ongoing')`,
-                    (err, revenue) => {
-                        if (err) return res.status(500).json({ success: false });
-                        res.json({
-                            success: true,
-                            stats: {
-                                total: total.total,
-                                monthly: monthly.monthly,
-                                todayEvents: todayEvents.today,
-                                revenue: revenue.revenue || 0
-                            }
-                        });
-                    }
-                );
-            });
+        const total = await EventManager.countDocuments();
+        const monthly = await EventManager.countDocuments({ created_at: { $gte: monthAgo } });
+        const todayEvents = await Event.countDocuments({
+            date_time: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) }
         });
-    });
+        const revenue = await Event.aggregate([
+            { $match: { status: { $in: ['Past', 'Ongoing'] } } },
+            { $group: { _id: null, revenue: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
+        ]);
+
+        res.json({
+            success: true,
+            stats: {
+                total,
+                monthly,
+                todayEvents,
+                revenue: revenue[0]?.revenue || 0
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false });
+    }
 };
 
-// Fetch total number of events
-const getTotalEvents = (req, res) => {
-    db.get('SELECT COUNT(*) as total FROM events', (err, result) => {
-        if (err) {
-            console.error('Error fetching total events:', err);
-            return res.status(500).json({ success: false, message: 'Server error' });
-        }
-        res.json({ success: true, total: result.total || 0 });
-    });
+const getTotalEvents = async (req, res) => {
+    try {
+        const total = await Event.countDocuments();
+        res.json({ success: true, total: total || 0 });
+    } catch (error) {
+        console.error('Error fetching total events:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-// controllers/adminController.js
-
-// Fetch a single event manager by ID
-const getEventManager = (req, res) => {
-    const managerId = req.params.id;
-    db.get(
-        `SELECT id, name, email, contact_number AS phone, company_name AS organization, 
-                location, created_at AS joined_date 
-         FROM event_managers WHERE id = ?`,
-        [managerId],
-        (err, manager) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
-            res.json({ success: true, manager });
-        }
-    );
+const getEventManager = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        const manager = await EventManager.findById(managerId)
+            .select('name email contact_number company_name location created_at');
+        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
+        res.json({ success: true, manager: {
+            id: manager._id,
+            name: manager.name,
+            email: manager.email,
+            phone: manager.contact_number,
+            organization: manager.company_name,
+            location: manager.location,
+            joined_date: manager.created_at
+        } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-// Fetch event performance metrics for an event manager
-const getEventManagerMetrics = (req, res) => {
-    const managerId = req.params.id;
-    const today = new Date().toISOString().split('T')[0];
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-    const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+const getEventManagerMetrics = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const threeMonthsAgo = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
 
-    // Upcoming events
-    db.get(
-        `SELECT COUNT(*) AS upcoming 
-         FROM events WHERE event_manager_id = ? AND date_time > ?`,
-        [managerId, today],
-        (err, upcoming) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
+        const upcoming = await Event.countDocuments({ event_manager_id: parseInt(managerId), date_time: { $gt: today } });
+        const weekly = await Event.countDocuments({
+            event_manager_id: parseInt(managerId),
+            date_time: { $gte: weekAgo, $lte: today }
+        });
+        const monthly = await Event.countDocuments({ event_manager_id: parseInt(managerId), date_time: { $gte: monthAgo } });
 
-            // This week's events
-            db.get(
-                `SELECT COUNT(*) AS weekly 
-                 FROM events WHERE event_manager_id = ? AND date_time >= ? AND date_time <= ?`,
-                [managerId, weekAgo, today],
-                (err, weekly) => {
-                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                    // Monthly events
-                    db.get(
-                        `SELECT COUNT(*) AS monthly 
-                         FROM events WHERE event_manager_id = ? AND date_time >= ?`,
-                        [managerId, monthAgo],
-                        (err, monthly) => {
-                            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                            // Monthly breakdown (last 3 months)
-                            db.all(
-                                `SELECT 
-                                    strftime('%Y-%m', date_time) AS month, 
-                                    COUNT(*) AS total_events, 
-                                    SUM(tickets_sold) AS attendees, 
-                                    AVG(tickets_sold) AS avg_attendance 
-                                 FROM events 
-                                 WHERE event_manager_id = ? AND date_time >= ? 
-                                 GROUP BY strftime('%Y-%m', date_time) 
-                                 ORDER BY month DESC 
-                                 LIMIT 3`,
-                                [managerId, new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]],
-                                (err, monthlyBreakdown) => {
-                                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
-
-                                    res.json({
-                                        success: true,
-                                        metrics: {
-                                            upcoming: upcoming.upcoming || 0,
-                                            weekly: weekly.weekly || 0,
-                                            monthly: monthly.monthly || 0,
-                                            monthly_breakdown: monthlyBreakdown
-                                        }
-                                    });
-                                }
-                            );
-                        }
-                    );
+        const monthlyBreakdown = await Event.aggregate([
+            { $match: { event_manager_id: parseInt(managerId), date_time: { $gte: threeMonthsAgo } } },
+            {
+                $group: {
+                    _id: { $dateToString: { format: "%Y-%m", date: "$date_time" } },
+                    total_events: { $sum: 1 },
+                    attendees: { $sum: '$tickets_sold' }
                 }
-            );
-        }
-    );
-};
+            },
+            {
+                $project: {
+                    month: '$_id',
+                    total_events: 1,
+                    attendees: 1,
+                    avg_attendance: { $divide: ['$attendees', '$total_events'] }
+                }
+            },
+            { $sort: { month: -1 } },
+            { $limit: 3 }
+        ]);
 
-// Fetch upcoming events for an event manager
-const getUpcomingEvents = (req, res) => {
-    const managerId = req.params.id;
-    const today = new Date().toISOString().split('T')[0];
-    db.all(
-        `SELECT id AS event_id, event_name, date_time AS date, venue AS location, 
-                total_tickets, tickets_sold, status 
-         FROM events 
-         WHERE event_manager_id = ? AND date_time > ? 
-         ORDER BY date_time ASC`,
-        [managerId, today],
-        (err, events) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            res.json({ success: true, events });
-        }
-    );
-};
-
-// Fetch past events for an event manager
-const getPastEvents = (req, res) => {
-    const managerId = req.params.id;
-    const today = new Date().toISOString().split('T')[0];
-    db.all(
-        `SELECT id AS event_id, event_name, date_time AS date, tickets_sold AS attendees 
-         FROM events 
-         WHERE event_manager_id = ? AND date_time < ? 
-         ORDER BY date_time DESC`,
-        [managerId, today],
-        (err, events) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            res.json({ success: true, events });
-        }
-    );
-};
-
-// Update an event manager
-const updateEventManager = (req, res) => {
-    const managerId = req.params.id;
-    const { name, email, phone, organization } = req.body;
-
-    if (!name || !email || !organization) return res.status(400).json({ success: false, message: 'Name, email, and organization are required' });
-    if (name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Invalid email format' });
-    if (phone && !/^\+91[6-9][0-9]{9}$/.test(phone)) return res.status(400).json({ success: false, message: 'Phone must be a valid Indian number (+91XXXXXXXXXX)' });
-    if (organization.length < 3) return res.status(400).json({ success: false, message: 'Organization must be at least 3 characters' });
-
-    db.get('SELECT * FROM event_managers WHERE id = ?', [managerId], (err, manager) => {
-        if (err) return res.status(500).json({ success: false, message: 'Database error' });
-        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
-
-        db.run(
-            `UPDATE event_managers SET name = ?, email = ?, contact_number = ?, company_name = ? WHERE id = ?`,
-            [name, email, phone || null, organization, managerId],
-            (err) => {
-                if (err) return res.status(500).json({ success: false, message: 'Failed to update event manager' });
-                res.json({ success: true, message: 'Event manager updated successfully' });
+        res.json({
+            success: true,
+            metrics: {
+                upcoming: upcoming || 0,
+                weekly: weekly || 0,
+                monthly: monthly || 0,
+                monthly_breakdown: monthlyBreakdown
             }
-        );
-    });
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-// Delete an event manager
-const deleteEventManager = (req, res) => {
-    const managerId = req.params.id;
+const getUpcomingEvents = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const events = await Event.find({
+            event_manager_id: parseInt(managerId),
+            date_time: { $gt: today }
+        })
+            .select('event_name date_time venue total_tickets tickets_sold status')
+            .sort({ date_time: 1 });
+        res.json({ success: true, events: events.map(event => ({
+            event_id: event._id,
+            event_name: event.event_name,
+            date: event.date_time,
+            location: event.venue,
+            total_tickets: event.total_tickets,
+            tickets_sold: event.tickets_sold,
+            status: event.status
+        })) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
 
-    db.get('SELECT * FROM event_managers WHERE id = ?', [managerId], (err, manager) => {
-        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+const getPastEvents = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const events = await Event.find({
+            event_manager_id: parseInt(managerId),
+            date_time: { $lt: today }
+        })
+            .select('event_name date_time tickets_sold')
+            .sort({ date_time: -1 });
+        res.json({ success: true, events: events.map(event => ({
+            event_id: event._id,
+            event_name: event.event_name,
+            date: event.date_time,
+            attendees: event.tickets_sold
+        })) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const updateEventManager = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        const { name, email, phone, organization } = req.body;
+
+        if (!name || !email || !organization) return res.status(400).json({ success: false, message: 'Name, email, and organization are required' });
+        if (name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Invalid email format' });
+        if (phone && !/^\+91[6-9][0-9]{9}$/.test(phone)) return res.status(400).json({ success: false, message: 'Phone must be a valid Indian number (+91XXXXXXXXXX)' });
+        if (organization.length < 3) return res.status(400).json({ success: false, message: 'Organization must be at least 3 characters' });
+
+        const manager = await EventManager.findByIdAndUpdate(
+            managerId,
+            { name, email, contact_number: phone || null, company_name: organization },
+            { new: true }
+        );
         if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
 
-        // Delete associated events and attendees first
-        db.run('DELETE FROM event_attendees WHERE event_id IN (SELECT id FROM events WHERE event_manager_id = ?)', [managerId], (err) => {
-            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-            db.run('DELETE FROM events WHERE event_manager_id = ?', [managerId], (err) => {
-                if (err) return res.status(500).json({ success: false, message: 'Server error' });
-                db.run('DELETE FROM event_managers WHERE id = ?', [managerId], (err) => {
-                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
-                    res.json({ success: true, message: 'Event manager deleted successfully' });
-                });
-            });
-        });
-    });
+        res.json({ success: true, message: 'Event manager updated successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to update event manager' });
+    }
 };
 
-const deleteProduct = (req, res) => {
-    const productId = req.params.id;
+const deleteEventManager = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        const manager = await EventManager.findById(managerId);
+        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
 
-    db.get('SELECT * FROM products WHERE id = ?', [productId], (err, product) => {
-        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+        // Delete associated event attendees and events
+        const events = await Event.find({ event_manager_id: parseInt(managerId) });
+        const eventIds = events.map(e => e._id);
+        await EventAttendee.deleteMany({ event_id: { $in: eventIds } });
+        await Event.deleteMany({ event_manager_id: parseInt(managerId) });
+
+        // Delete the event manager
+        await EventManager.findByIdAndDelete(managerId);
+
+        res.json({ success: true, message: 'Event manager deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const product = await Product.findById(productId);
         if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
 
-        // Step 1: Delete associated order_items
-        db.run(
-            `DELETE FROM order_items WHERE product_id = ?`,
-            [productId],
-            (err) => {
-                if (err) return res.status(500).json({ success: false, message: 'Server error' });
+        // Delete associated order items
+        await OrderItem.deleteMany({ product_id: parseInt(productId) });
 
-                // Step 2: Delete associated product_variants
-                db.run(`DELETE FROM product_variants WHERE product_id = ?`, [productId], (err) => {
-                    if (err) return res.status(500).json({ success: false, message: 'Server error' });
+        // Delete associated product variants and images
+        await ProductVariant.deleteMany({ product_id: parseInt(productId) });
+        await ProductImage.deleteMany({ product_id: parseInt(productId) });
 
-                    // Step 3: Delete associated product_images
-                    db.run(`DELETE FROM product_images WHERE product_id = ?`, [productId], (err) => {
-                        if (err) return res.status(500).json({ success: false, message: 'Server error' });
+        // Delete the product
+        await Product.findByIdAndDelete(productId);
 
-                        // Step 4: Delete the product
-                        db.run(`DELETE FROM products WHERE id = ?`, [productId], (err) => {
-                            if (err) return res.status(500).json({ success: false, message: 'Server error' });
-                            res.json({ success: true, message: 'Product deleted successfully' });
-                        });
-                    });
-                });
-            }
-        );
-    });
+        res.json({ success: true, message: 'Product deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
 };
 
-// Add to exports
 module.exports = {
     adminLogin,
     getUsers,
@@ -824,5 +956,5 @@ module.exports = {
     getPastEvents,
     updateEventManager,
     deleteEventManager,
-    deleteProduct // Add this
+    deleteProduct
 };

@@ -1,397 +1,1351 @@
-// models/database.js
-const sqlite3 = require('sqlite3').verbose();
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const db = new sqlite3.Database(':memory:', (err) => {
-    if (err) {
-        console.error('Database connection error:', err);
-        process.exit(1);
-    }
-    console.log('Connected to SQLite database');
+// MongoDB connection URI
+const uri = 'mongodb://localhost:27017/happytails';
+
+// Define schemas
+const UserSchema = new Schema({
+  user_name: {
+    type: String,
+    required: true
+  },
+  user_email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  user_password: {
+    type: String,
+    required: true
+  },
+  user_phone: {
+    type: String,
+    default: null
+  },
+  user_address: {
+    type: String,
+    default: null
+  },
+  profile_pic: {
+    type: String,
+    default: null
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
+  }
 });
 
-function createTables(callback) {
-    db.serialize(() => {
-        // Existing table creations (unchanged)
-        db.run(`
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_name TEXT NOT NULL,
-                user_email TEXT UNIQUE NOT NULL,
-                user_password TEXT NOT NULL,
-                user_phone TEXT DEFAULT NULL,
-                user_address TEXT DEFAULT NULL,
-                profile_pic TEXT DEFAULT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `, (err) => { if (err) console.error('Error creating users table:', err); else console.log('Users table created'); });
+const VendorSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  contact_number: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  store_name: {
+    type: String,
+    required: true
+  },
+  store_location: {
+    type: String,
+    required: true
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
+  }
+});
 
-        db.run(`
-            CREATE TABLE IF NOT EXISTS vendors (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                contact_number TEXT NOT NULL,
-                email TEXT UNIQUE NOT NULL,
-                password TEXT NOT NULL,
-                store_name TEXT NOT NULL,
-                store_location TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `, (err) => { if (err) console.error('Error creating vendors table:', err); else console.log('Vendors table created'); });
-        // Add new table for event managers
-        db.run(`
-    CREATE TABLE IF NOT EXISTS event_managers (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL,
-        contact_number TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
-        company_name TEXT NOT NULL, 
-        location TEXT NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-`, (err) => { if (err) console.error('Error creating event_managers table:', err); else console.log('Event_managers table created'); });
-        db.run(`
-            CREATE TABLE IF NOT EXISTS products (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                vendor_id INTEGER NOT NULL,
-                product_name TEXT NOT NULL,
-                product_category TEXT NOT NULL,
-                product_type TEXT NOT NULL,
-                product_description TEXT NOT NULL,
-                sku TEXT,
-                stock_status TEXT NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (vendor_id) REFERENCES vendors(id)
-            )
-        `, (err) => { if (err) console.error('Error creating products table:', err); else console.log('Products table created'); });
+const EventManagerSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  contact_number: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  company_name: {
+    type: String,
+    required: true
+  },
+  location: {
+    type: String,
+    required: true
+  },
+  event_type: {
+    type: String,
+    default: null
+  },
+  license: {
+    type: String,
+    default: null
+  },
+  bio: {
+    type: String,
+    default: null
+  },
+  member_since: {
+    type: String,
+    default: null
+  },
+  image: {
+    type: String,
+    default: null
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
+  }
+});
 
-        db.run(`
-            CREATE TABLE IF NOT EXISTS product_variants (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                product_id INTEGER NOT NULL,
-                size TEXT,
-                color TEXT,
-                regular_price REAL NOT NULL,
-                sale_price REAL,
-                stock_quantity INTEGER NOT NULL,
-                sku TEXT,
-                FOREIGN KEY (product_id) REFERENCES products(id)
-            )
-        `, (err) => { if (err) console.error('Error creating product_variants table:', err); else console.log('Product_variants table created'); });
+const ProductSchema = new Schema({
+  vendor_id: {
+    type: Number,
+    required: true
+  },
+  product_name: {
+    type: String,
+    required: true
+  },
+  product_category: {
+    type: String,
+    required: true
+  },
+  product_type: {
+    type: String,
+    required: true
+  },
+  product_description: {
+    type: String,
+    required: true
+  },
+  sku: {
+    type: String
+  },
+  stock_status: {
+    type: String,
+    required: true
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
+  }
+});
 
-        db.run(`
-            CREATE TABLE IF NOT EXISTS product_images (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                product_id INTEGER NOT NULL,
-                image_path TEXT NOT NULL,
-                is_primary BOOLEAN DEFAULT 0,
-                FOREIGN KEY (product_id) REFERENCES products(id)
-            )
-        `, (err) => { if (err) console.error('Error creating product_images table:', err); else console.log('Product_images table created'); });
+const ProductVariantSchema = new Schema({
+  product_id: {
+    type: Number,
+    required: true
+  },
+  size: {
+    type: String,
+    default: null
+  },
+  color: {
+    type: String,
+    default: null
+  },
+  regular_price: {
+    type: Number,
+    required: true
+  },
+  sale_price: {
+    type: Number,
+    default: null
+  },
+  stock_quantity: {
+    type: Number,
+    required: true
+  },
+  sku: {
+    type: String
+  }
+});
 
-        db.run(`
-            CREATE TABLE IF NOT EXISTS orders (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                status TEXT NOT NULL DEFAULT 'Pending',
-                subtotal REAL NOT NULL,
-                total_amount REAL NOT NULL,
-                delivery_date TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id)
-            )
-        `, (err) => { if (err) console.error('Error creating orders table:', err); else console.log('Orders table created'); });
+const ProductImageSchema = new Schema({
+  product_id: {
+    type: Number,
+    required: true
+  },
+  image_path: {
+    type: String,
+    required: true
+  },
+  is_primary: {
+    type: Boolean,
+    default: false
+  }
+});
 
-        db.run(`
-            CREATE TABLE IF NOT EXISTS order_items (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                order_id INTEGER NOT NULL,
-                product_id INTEGER,
-                variant_id INTEGER,
-                product_name TEXT NOT NULL,
-                quantity INTEGER NOT NULL,
-                price REAL NOT NULL,    
-                size TEXT,
-                color TEXT,
-                FOREIGN KEY (order_id) REFERENCES orders(id),
-                FOREIGN KEY (product_id) REFERENCES products(id),
-                FOREIGN KEY (variant_id) REFERENCES product_variants(id)
-            )
-        `, (err) => { if (err) console.error('Error creating order_items table:', err); else console.log('Order_items table created'); callback(); });
+const OrderSchema = new Schema({
+  user_id: {
+    type: Number,
+    required: true
+  },
+  order_date: {
+    type: Date,
+    default: Date.now
+  },
+  status: {
+    type: String,
+    default: 'Pending'
+  },
+  subtotal: {
+    type: Number,
+    required: true
+  },
+  total_amount: {
+    type: Number,
+    required: true
+  },
+  delivery_date: {
+    type: Date,
+    default: null
+  }
+});
 
-                    // New table: events
-                    db.run(`
-                        CREATE TABLE IF NOT EXISTS events (
-                            id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            event_manager_id INTEGER NOT NULL,
-                            event_name TEXT NOT NULL,
-                            about_event TEXT NOT NULL,
-                            language TEXT NOT NULL,
-                            duration TEXT NOT NULL,
-                            ticket_price REAL NOT NULL,
-                            age_limit INTEGER NOT NULL,
-                            instructions TEXT NOT NULL,
-                            venue TEXT NOT NULL,
-                            terms TEXT NOT NULL,
-                            category TEXT NOT NULL,
-                            date_time TIMESTAMP NOT NULL,
-                            status TEXT NOT NULL DEFAULT 'Upcoming',
-                            total_tickets INTEGER NOT NULL DEFAULT 1000,
-                            tickets_sold INTEGER NOT NULL DEFAULT 0,
-                            city TEXT NOT NULL,
-                            contact_number TEXT NOT NULL,
-                            image TEXT,
-                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            FOREIGN KEY (event_manager_id) REFERENCES event_managers(id)
-                        )
-                    `, (err) => { if (err) console.error('Error creating events table:', err); else console.log('Events table created'); });
-        // New table: event_attendees
-        db.run(`
-            CREATE TABLE IF NOT EXISTS event_attendees (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                event_id INTEGER NOT NULL,
-                user_id INTEGER,
-                name TEXT NOT NULL,
-                phone_number TEXT NOT NULL,
-                email TEXT NOT NULL,
-                address TEXT NOT NULL,
-                seats INTEGER NOT NULL DEFAULT 1,
-                with_pet BOOLEAN NOT NULL DEFAULT 0,
-                pet_name TEXT,
-                pet_breed TEXT,
-                pet_dob DATE,
-                registration_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (event_id) REFERENCES events(id),
-                FOREIGN KEY (user_id) REFERENCES users(id)
-            )
-        `, (err) => { if (err) console.error('Error creating event_attendees table:', err); else console.log('Event_attendees table created'); });
-       
-        db.run(`
-            CREATE TABLE IF NOT EXISTS event_managers (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                contact_number TEXT NOT NULL,
-                email TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL,
-                company_name TEXT NOT NULL,
-                location TEXT NOT NULL,
-                event_type TEXT, -- New field
-                license TEXT, -- New field
-                bio TEXT, -- New field
-                member_since TEXT, -- New field
-                image TEXT -- New field
-            )
-        `, (err) => {
-            if (err) console.error('Error creating event_managers table:', err);
-            else console.log('event_managers table created successfully');
-        });
+const OrderItemSchema = new Schema({
+  order_id: {
+    type: Number,
+    required: true
+  },
+  product_id: {
+    type: Number,
+    default: null
+  },
+  variant_id: {
+    type: Number,
+    default: null
+  },
+  product_name: {
+    type: String,
+    required: true
+  },
+  quantity: {
+    type: Number,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  size: {
+    type: String,
+    default: null
+  },
+  color: {
+    type: String,
+    default: null
+  }
+});
 
-    });
+const EventSchema = new Schema({
+  event_manager_id: {
+    type: Number,
+    required: true
+  },
+  event_name: {
+    type: String,
+    required: true
+  },
+  about_event: {
+    type: String,
+    required: true
+  },
+  language: {
+    type: String,
+    required: true
+  },
+  duration: {
+    type: String,
+    required: true
+  },
+  ticket_price: {
+    type: Number,
+    required: true
+  },
+  age_limit: {
+    type: Number,
+    required: true
+  },
+  instructions: {
+    type: String,
+    required: true
+  },
+  venue: {
+    type: String,
+    required: true
+  },
+  terms: {
+    type: String,
+    required: true
+  },
+  category: {
+    type: String,
+    required: true
+  },
+  date_time: {
+    type: Date,
+    required: true
+  },
+  status: {
+    type: String,
+    default: 'Upcoming'
+  },
+  total_tickets: {
+    type: Number,
+    default: 1000
+  },
+  tickets_sold: {
+    type: Number,
+    default: 0
+  },
+  city: {
+    type: String,
+    required: true
+  },
+  contact_number: {
+    type: String,
+    required: true
+  },
+  image: {
+    type: String,
+    default: null
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const EventAttendeeSchema = new Schema({
+  event_id: {
+    type: Number,
+    required: true
+  },
+  user_id: {
+    type: Number,
+    default: null
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  phone_number: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true
+  },
+  address: {
+    type: String,
+    required: true
+  },
+  seats: {
+    type: Number,
+    default: 1
+  },
+  with_pet: {
+    type: Boolean,
+    default: false
+  },
+  pet_name: {
+    type: String,
+    default: null
+  },
+  pet_breed: {
+    type: String,
+    default: null
+  },
+  pet_dob: {
+    type: Date,
+    default: null
+  },
+  registration_date: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Create models
+const User = mongoose.model('User', UserSchema);
+const Vendor = mongoose.model('Vendor', VendorSchema);
+const EventManager = mongoose.model('EventManager', EventManagerSchema);
+const Product = mongoose.model('Product', ProductSchema);
+const ProductVariant = mongoose.model('ProductVariant', ProductVariantSchema);
+const ProductImage = mongoose.model('ProductImage', ProductImageSchema);
+const Order = mongoose.model('Order', OrderSchema);
+const OrderItem = mongoose.model('OrderItem', OrderItemSchema);
+const Event = mongoose.model('Event', EventSchema);
+const EventAttendee = mongoose.model('EventAttendee', EventAttendeeSchema);
+
+// Function to insert sample user data
+const insertSampleUsers = async () => {
+  try {
+    const count = await User.countDocuments();
+    if (count > 0) {
+      console.log('Sample users already exist');
+      return;
+    }
+
+    const sampleUsers = [
+      {
+        user_name: 'Gautam Thota',
+        user_email: 'gautam.thota@example.com',
+        user_password: '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W'
+      },
+      {
+        user_name: 'Veda Prakash',
+        user_email: 'veda.prakash@example.com',
+        user_password: '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W'
+      },
+      {
+        user_name: 'Akshay',
+        user_email: 'akshay@example.com',
+        user_password: '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W'
+      }
+    ];
+
+    await User.insertMany(sampleUsers);
+    console.log('Sample users inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample users:', error.message);
+  }
+};
+
+// Function to insert sample vendor data
+const insertSampleVendors = async () => {
+  try {
+    const count = await Vendor.countDocuments();
+    if (count > 0) {
+      console.log('Sample vendors already exist');
+      return;
+    }
+
+    const sampleVendors = [
+      {
+        name: 'Gautam Thota',
+        contact_number: '9876543210',
+        email: 'gautam.thota.vendor@example.com',
+        password: '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W',
+        store_name: 'Pet Haven',
+        store_location: 'Vijayawada'
+      },
+      {
+        name: 'Veda Prakash',
+        contact_number: '8765432109',
+        email: 'veda.prakash.vendor@example.com',
+        password: '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W',
+        store_name: 'Furry Friends',
+        store_location: 'Hyderabad'
+      },
+      {
+        name: 'Akshay',
+        contact_number: '7654321098',
+        email: 'akshay.vendor@example.com',
+        password: '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W',
+        store_name: 'Paws & Claws',
+        store_location: 'Bangalore'
+      }
+    ];
+
+    await Vendor.insertMany(sampleVendors);
+    console.log('Sample vendors inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample vendors:', error.message);
+  }
+};
+
+// Function to insert sample event manager data
+const insertSampleEventManagers = async () => {
+  try {
+    const count = await EventManager.countDocuments();
+    if (count > 0) {
+      console.log('Sample event managers already exist');
+      return;
+    }
+
+    const sampleEventManagers = [
+      {
+        name: 'Jeevankumar',
+        contact_number: '5551234567',
+        email: 'jeevan.kumar@happytails.com',
+        password: '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W',
+        company_name: 'Happy Events',
+        location: 'Hyderabad'
+      }
+    ];
+
+    await EventManager.insertMany(sampleEventManagers);
+    console.log('Sample event managers inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample event managers:', error.message);
+  }
+};
+
+// Function to insert sample product data
+const insertSampleProducts = async () => {
+  try {
+    const count = await Product.countDocuments();
+    if (count > 0) {
+      console.log('Sample products already exist');
+      return;
+    }
+
+    const sampleProducts = [
+      {
+        vendor_id: 1,
+        product_name: 'Cozy Pet Bed',
+        product_category: 'beds',
+        product_type: 'Pet Beds',
+        product_description: 'A soft and cozy bed perfect for pets to relax in.',
+        sku: 'PB001',
+        stock_status: 'In Stock'
+      },
+      {
+        vendor_id: 1,
+        product_name: 'Chicken-Flavored Dog Food',
+        product_category: 'food',
+        product_type: 'Dry',
+        product_description: 'Nutritious dry food for dogs with a chicken flavor.',
+        sku: 'DF001',
+        stock_status: 'In Stock'
+      },
+      {
+        vendor_id: 2,
+        product_name: 'Cat Scratching Post',
+        product_category: 'toys',
+        product_type: 'Furniture',
+        product_description: 'Durable scratching post to keep cats entertained.',
+        sku: 'SP001',
+        stock_status: 'In Stock'
+      },
+      {
+        vendor_id: 2,
+        product_name: 'Fish-Flavored Treats',
+        product_category: 'food',
+        product_type: 'Treats',
+        product_description: 'Delicious fish-flavored treats for cats.',
+        sku: 'FT001',
+        stock_status: 'In Stock'
+      },
+      {
+        vendor_id: 3,
+        product_name: 'Grooming Brush',
+        product_category: 'grooming',
+        product_type: 'Grooming Supplies',
+        product_description: 'Gentle brush for keeping pet fur smooth.',
+        sku: 'GB001',
+        stock_status: 'In Stock'
+      },
+      {
+        vendor_id: 3,
+        product_name: 'Pet Carrier',
+        product_category: 'beds',
+        product_type: 'Carrier',
+        product_description: 'Portable carrier for small pets.',
+        sku: 'PC001',
+        stock_status: 'In Stock'
+      },
+      {
+        vendor_id: 1,
+        product_name: 'Interactive Dog Ball',
+        product_category: 'toys',
+        product_type: 'Toys',
+        product_description: 'A durable ball that lights up for interactive play.',
+        sku: 'DB001',
+        stock_status: 'In Stock'
+      },
+      {
+        vendor_id: 2,
+        product_name: 'Luxury Cat Bed',
+        product_category: 'beds',
+        product_type: 'Pet Beds',
+        product_description: 'A plush bed with extra cushioning for cats.',
+        sku: 'CB001',
+        stock_status: 'In Stock'
+      }
+    ];
+
+    await Product.insertMany(sampleProducts);
+    console.log('Sample products inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample products:', error.message);
+  }
+};
+
+// Function to insert sample product variant data
+const insertSampleProductVariants = async () => {
+  try {
+    const count = await ProductVariant.countDocuments();
+    if (count > 0) {
+      console.log('Sample product variants already exist');
+      return;
+    }
+
+    const sampleProductVariants = [
+      {
+        product_id: 1,
+        size: 'Small',
+        color: 'Brown',
+        regular_price: 1999.99,
+        sale_price: 1799.99,
+        stock_quantity: 10,
+        sku: 'PB001-SM-BRN'
+      },
+      {
+        product_id: 1,
+        size: 'Medium',
+        color: 'Brown',
+        regular_price: 2999.99,
+        sale_price: 2499.99,
+        stock_quantity: 20,
+        sku: 'PB001-MD-BRN'
+      },
+      {
+        product_id: 1,
+        size: 'Large',
+        color: 'Brown',
+        regular_price: 3999.99,
+        sale_price: 3499.99,
+        stock_quantity: 15,
+        sku: 'PB001-LG-BRN'
+      },
+      {
+        product_id: 1,
+        size: 'Medium',
+        color: 'Grey',
+        regular_price: 2999.99,
+        sale_price: 2599.99,
+        stock_quantity: 8,
+        sku: 'PB001-MD-GRY'
+      },
+      {
+        product_id: 2,
+        size: '1kg',
+        color: null,
+        regular_price: 499.99,
+        sale_price: null,
+        stock_quantity: 30,
+        sku: 'DF001-1KG'
+      },
+      {
+        product_id: 2,
+        size: '5kg',
+        color: null,
+        regular_price: 1499.99,
+        sale_price: null,
+        stock_quantity: 50,
+        sku: 'DF001-5KG'
+      },
+      {
+        product_id: 3,
+        size: 'Small',
+        color: 'Grey',
+        regular_price: 999.99,
+        sale_price: 899.99,
+        stock_quantity: 25,
+        sku: 'SP001-SM-GRY'
+      },
+      {
+        product_id: 3,
+        size: 'Large',
+        color: 'Grey',
+        regular_price: 1999.99,
+        sale_price: 1799.99,
+        stock_quantity: 15,
+        sku: 'SP001-LG-GRY'
+      },
+      {
+        product_id: 4,
+        size: '100g',
+        color: null,
+        regular_price: 199.99,
+        sale_price: null,
+        stock_quantity: 100,
+        sku: 'FT001-100G'
+      },
+      {
+        product_id: 4,
+        size: '250g',
+        color: null,
+        regular_price: 499.99,
+        sale_price: null,
+        stock_quantity: 75,
+        sku: 'FT001-250G'
+      },
+      {
+        product_id: 5,
+        size: null,
+        color: 'Blue',
+        regular_price: 799.99,
+        sale_price: 699.99,
+        stock_quantity: 30,
+        sku: 'GB001-BLU'
+      },
+      {
+        product_id: 5,
+        size: null,
+        color: 'Red',
+        regular_price: 799.99,
+        sale_price: 699.99,
+        stock_quantity: 20,
+        sku: 'GB001-RED'
+      },
+      {
+        product_id: 6,
+        size: 'Small',
+        color: 'Grey',
+        regular_price: 2999.99,
+        sale_price: 2799.99,
+        stock_quantity: 12,
+        sku: 'PC001-SM-GRY'
+      },
+      {
+        product_id: 6,
+        size: 'Medium',
+        color: 'Grey',
+        regular_price: 3999.99,
+        sale_price: 3499.99,
+        stock_quantity: 10,
+        sku: 'PC001-MD-GRY'
+      },
+      {
+        product_id: 7,
+        size: 'Small',
+        color: 'Green',
+        regular_price: 599.99,
+        sale_price: 549.99,
+        stock_quantity: 40,
+        sku: 'DB001-SM-GRN'
+      },
+      {
+        product_id: 7,
+        size: 'Medium',
+        color: 'Green',
+        regular_price: 799.99,
+        sale_price: 699.99,
+        stock_quantity: 30,
+        sku: 'DB001-MD-GRN'
+      },
+      {
+        product_id: 8,
+        size: 'Small',
+        color: 'Purple',
+        regular_price: 2499.99,
+        sale_price: 2299.99,
+        stock_quantity: 15,
+        sku: 'CB001-SM-PUR'
+      },
+      {
+        product_id: 8,
+        size: 'Large',
+        color: 'Purple',
+        regular_price: 3499.99,
+        sale_price: 3199.99,
+        stock_quantity: 10,
+        sku: 'CB001-LG-PUR'
+      },
+      {
+        product_id: 8,
+        size: 'Large',
+        color: 'White',
+        regular_price: 3499.99,
+        sale_price: 3199.99,
+        stock_quantity: 8,
+        sku: 'CB001-LG-WHT'
+      }
+    ];
+
+    await ProductVariant.insertMany(sampleProductVariants);
+    console.log('Sample product variants inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample product variants:', error.message);
+  }
+};
+
+// Function to insert sample product image data
+const insertSampleProductImages = async () => {
+  try {
+    const count = await ProductImage.countDocuments();
+    if (count > 0) {
+      console.log('Sample product images already exist');
+      return;
+    }
+
+    const sampleProductImages = [
+      {
+        product_id: 1,
+        image_path: '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg',
+        is_primary: true
+      },
+      {
+        product_id: 1,
+        image_path: '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg',
+        is_primary: false
+      },
+      {
+        product_id: 2,
+        image_path: 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg',
+        is_primary: true
+      },
+      {
+        product_id: 3,
+        image_path: 'https://outdocart.s3.amazonaws.com/uploads/petamore/productImages/full/16674284952277The-Grey.jpg',
+        is_primary: true
+      },
+      {
+        product_id: 4,
+        image_path: 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg',
+        is_primary: true
+      },
+      {
+        product_id: 5,
+        image_path: 'https://m.media-amazon.com/images/I/31aUaDQjrML._SY300_SX300_QL70_FMwebp_.jpg',
+        is_primary: true
+      },
+      {
+        product_id: 5,
+        image_path: 'https://m.media-amazon.com/images/I/812do46q6rL._SY450_.jpg',
+        is_primary: false
+      },
+      {
+        product_id: 6,
+        image_path: 'https://animeal.in/cdn/shop/files/I04885_1.webp?v=1705649283&width=493',
+        is_primary: true
+      },
+      {
+        product_id: 7,
+        image_path: 'https://qpets.in/cdn/shop/files/61V2I5Y6RkL_1800x1800.jpg?v=1732756268',
+        is_primary: true
+      },
+      {
+        product_id: 8,
+        image_path: 'https://headsupfortails.com/cdn/shop/products/HUFT-Personalised-Cosy-Puppy-Cat-Bed---Lilac.jpg?v=1739045338&width=823',
+        is_primary: true
+      },
+      {
+        product_id: 8,
+        image_path: '/images/luxury_cat_bed_white.jpg',
+        is_primary: false
+      }
+    ];
+
+    await ProductImage.insertMany(sampleProductImages);
+    console.log('Sample product images inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample product images:', error.message);
+  }
+};
+
+// Function to insert sample order data
+const insertSampleOrders = async () => {
+  try {
+    const count = await Order.countDocuments();
+    if (count > 0) {
+      console.log('Sample orders already exist');
+      return;
+    }
+
+    const sampleOrders = [
+      {
+        user_id: 1,
+        order_date: new Date('2025-03-01T10:00:00Z'),
+        status: 'Delivered',
+        subtotal: 1799.99,
+        total_amount: 1799.99,
+        delivery_date: new Date('2025-03-05T14:00:00Z')
+      },
+      {
+        user_id: 1,
+        order_date: new Date('2025-03-10T12:00:00Z'),
+        status: 'Pending',
+        subtotal: 549.99,
+        total_amount: 549.99
+      },
+      {
+        user_id: 2,
+        order_date: new Date('2025-03-15T09:00:00Z'),
+        status: 'Delivered',
+        subtotal: 899.99,
+        total_amount: 899.99,
+        delivery_date: new Date('2025-03-20T14:00:00Z')
+      },
+      {
+        user_id: 2,
+        order_date: new Date('2025-03-18T11:00:00Z'),
+        status: 'Pending',
+        subtotal: 199.99,
+        total_amount: 199.99
+      },
+      {
+        user_id: 3,
+        order_date: new Date('2025-03-20T15:00:00Z'),
+        status: 'Delivered',
+        subtotal: 2299.99,
+        total_amount: 2299.99,
+        delivery_date: new Date('2025-03-25T10:00:00Z')
+      }
+    ];
+
+    await Order.insertMany(sampleOrders);
+    console.log('Sample orders inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample orders:', error.message);
+  }
+};
+
+// Function to insert sample order item data
+const insertSampleOrderItems = async () => {
+  try {
+    const count = await OrderItem.countDocuments();
+    if (count > 0) {
+      console.log('Sample order items already exist');
+      return;
+    }
+
+    const sampleOrderItems = [
+      {
+        order_id: 1,
+        product_id: 1,
+        variant_id: 1,
+        product_name: 'Cozy Pet Bed',
+        quantity: 1,
+        price: 1799.99,
+        size: 'Small',
+        color: 'Brown'
+      },
+      {
+        order_id: 2,
+        product_id: 7,
+        variant_id: 15,
+        product_name: 'Interactive Dog Ball',
+        quantity: 1,
+        price: 549.99,
+        size: 'Small',
+        color: 'Green'
+      },
+      {
+        order_id: 3,
+        product_id: 3,
+        variant_id: 7,
+        product_name: 'Cat Scratching Post',
+        quantity: 1,
+        price: 899.99,
+        size: 'Small',
+        color: 'Grey'
+      },
+      {
+        order_id: 4,
+        product_id: 4,
+        variant_id: 9,
+        product_name: 'Fish-Flavored Treats',
+        quantity: 1,
+        price: 199.99,
+        size: '100g',
+        color: null
+      },
+      {
+        order_id: 5,
+        product_id: 8,
+        variant_id: 17,
+        product_name: 'Luxury Cat Bed',
+        quantity: 1,
+        price: 2299.99,
+        size: 'Small',
+        color: 'Purple'
+      }
+    ];
+
+    await OrderItem.insertMany(sampleOrderItems);
+    console.log('Sample order items inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample order items:', error.message);
+  }
+};
+
+// Function to insert sample event data
+const insertSampleEvents = async () => {
+  try {
+    const count = await Event.countDocuments();
+    if (count > 0) {
+      console.log('Sample events already exist');
+      return;
+    }
+
+    const sampleEvents = [
+      {
+        event_manager_id: 1,
+        event_name: 'Pet Adoption Drive',
+        about_event: 'A drive to find homes for shelter pets.',
+        language: 'English',
+        duration: '3h',
+        ticket_price: 0.00,
+        age_limit: 0,
+        instructions: 'Bring ID proof.',
+        venue: 'Shelter Grounds, Bangalore',
+        terms: 'Free entry.',
+        category: 'Pets',
+        date_time: new Date('2025-03-15T10:00:00Z'),
+        status: 'Past',
+        total_tickets: 500,
+        tickets_sold: 450,
+        city: 'Bangalore',
+        contact_number: '1234567890',
+        image: 'https://thumbs.dreamstime.com/z/adorable-kittens-play-yarn-sunlit-living-room-perfect-pet-adoption-promotion-lively-frolic-colorful-pastel-rug-341932672.jpg?ct=jpeg'
+      },
+      {
+        event_manager_id: 1,
+        event_name: 'Fancy Dress Show',
+        about_event: 'A fun fancy dress show for pets.',
+        language: 'English',
+        duration: '2h',
+        ticket_price: 5.00,
+        age_limit: 0,
+        instructions: 'Bring your pet in a costume.',
+        venue: 'Central Park, Delhi',
+        terms: 'No refunds.',
+        category: 'Pets',
+        date_time: new Date('2025-03-27T17:00:00Z'),
+        status: 'Ongoing',
+        total_tickets: 1000,
+        tickets_sold: 900,
+        city: 'Delhi',
+        contact_number: '1234567890',
+        image: 'https://thumbs.dreamstime.com/b/small-dog-wearing-blue-gold-dress-generative-ai-small-dog-wearing-blue-gold-dress-ai-generated-328996362.jpg'
+      },
+      {
+        event_manager_id: 1,
+        event_name: 'Dog Run',
+        about_event: 'A running competition for dogs.',
+        language: 'English',
+        duration: '1h',
+        ticket_price: 5.00,
+        age_limit: 0,
+        instructions: 'Ensure your dog is healthy.',
+        venue: 'Sports Ground, Delhi',
+        terms: 'No refunds.',
+        category: 'Pets',
+        date_time: new Date('2025-03-27T10:00:00Z'),
+        status: 'Ongoing',
+        total_tickets: 1000,
+        tickets_sold: 100,
+        city: 'Delhi',
+        contact_number: '1234567890',
+        image: 'https://thumbs.dreamstime.com/z/dog-running-grass-smile-his-face-ai-328994856.jpg?ct=jpeg'
+      },
+      {
+        event_manager_id: 1,
+        event_name: 'Dog Agility Competitions',
+        about_event: 'A competition for dog agility.',
+        language: 'English',
+        duration: '2h',
+        ticket_price: 5.00,
+        age_limit: 0,
+        instructions: 'Bring your dog.',
+        venue: 'Park, Hyderabad',
+        terms: 'No refunds.',
+        category: 'Pets',
+        date_time: new Date('2025-04-01T09:30:00Z'),
+        status: 'Upcoming',
+        total_tickets: 1000,
+        tickets_sold: 850,
+        city: 'Hyderabad',
+        contact_number: '1234567890',
+        image: 'https://thumbs.dreamstime.com/z/dog-jumping-agility-poles-golden-retriever-jumps-over-set-mid-air-white-red-stripes-out-focus-344721458.jpg?ct=jpeg'
+      },
+      {
+        event_manager_id: 1,
+        event_name: 'Pet Festival',
+        about_event: 'A festival for pet lovers.',
+        language: 'English',
+        duration: '3h',
+        ticket_price: 10.00,
+        age_limit: 0,
+        instructions: 'Bring your pet.',
+        venue: 'Mumbai Park',
+        terms: 'No refunds.',
+        category: 'Pets',
+        date_time: new Date('2025-04-05T11:00:00Z'),
+        status: 'Upcoming',
+        total_tickets: 1500,
+        tickets_sold: 740,
+        city: 'Mumbai',
+        contact_number: '1234567890',
+        image: 'https://thumbs.dreamstime.com/z/joyful-dog-running-amidst-vibrant-colors-indian-holi-festival-concept-cultural-celebration-pet-happiness-ai-generated-joyful-354114015.jpg?ct=jpeg'
+      },
+      {
+        event_manager_id: 1,
+        event_name: 'Cat Show',
+        about_event: 'A showcase of feline beauty.',
+        language: 'English',
+        duration: '2h',
+        ticket_price: 8.00,
+        age_limit: 0,
+        instructions: 'Bring your cat.',
+        venue: 'Convention Center, Chennai',
+        terms: 'No refunds.',
+        category: 'Pets',
+        date_time: new Date('2025-04-10T14:00:00Z'),
+        status: 'Upcoming',
+        total_tickets: 800,
+        tickets_sold: 300,
+        city: 'Chennai',
+        contact_number: '1234567890',
+        image: 'https://thumbs.dreamstime.com/z/stylish-cat-draped-pearls-stands-gracefully-theater-surrounded-rich-red-curtains-embodying-sophistication-charm-354845853.jpg?ct=jpeg'
+      }
+    ];
+
+    await Event.insertMany(sampleEvents);
+    console.log('Sample events inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample events:', error.message);
+  }
+};
+
+// Function to insert sample event attendee data
+const insertSampleEventAttendees = async () => {
+  try {
+    const count = await EventAttendee.countDocuments();
+    if (count > 0) {
+      console.log('Sample event attendees already exist');
+      return;
+    }
+
+    const sampleEventAttendees = [
+      {
+        event_id: 1,
+        user_id: 1,
+        name: 'Christopher Blake',
+        phone_number: '946776866876',
+        email: 'christopher.blake@example.com',
+        address: '123 Main St, Bangalore',
+        seats: 5,
+        with_pet: true,
+        pet_name: 'Max',
+        pet_breed: 'Golden Retriever',
+        pet_dob: new Date('2020-05-15'),
+        registration_date: new Date('2025-02-20T10:00:00Z')
+      },
+      {
+        event_id: 1,
+        user_id: null,
+        name: 'Sarah Lee',
+        phone_number: '9876543210',
+        email: 'sarah.lee@example.com',
+        address: '456 Elm St, Bangalore',
+        seats: 2,
+        with_pet: false,
+        pet_name: null,
+        pet_breed: null,
+        pet_dob: null,
+        registration_date: new Date('2025-02-25T14:30:00Z')
+      },
+      {
+        event_id: 2,
+        user_id: null,
+        name: 'Peter Roy',
+        phone_number: '943787457878',
+        email: 'peter.roy@example.com',
+        address: '456 Park Ave, Delhi',
+        seats: 1,
+        with_pet: false,
+        pet_name: null,
+        pet_breed: null,
+        pet_dob: null,
+        registration_date: new Date('2025-02-15T09:30:00Z')
+      },
+      {
+        event_id: 2,
+        user_id: 2,
+        name: 'Emily Davis',
+        phone_number: '9123456789',
+        email: 'emily.davis@example.com',
+        address: '789 Oak Rd, Delhi',
+        seats: 3,
+        with_pet: true,
+        pet_name: 'Bella',
+        pet_breed: 'Beagle',
+        pet_dob: new Date('2021-03-10'),
+        registration_date: new Date('2025-03-01T12:00:00Z')
+      },
+      {
+        event_id: 3,
+        user_id: 3,
+        name: 'Michael Chen',
+        phone_number: '9234567890',
+        email: 'michael.chen@example.com',
+        address: '321 Pine St, Delhi',
+        seats: 1,
+        with_pet: true,
+        pet_name: 'Rocky',
+        pet_breed: 'Husky',
+        pet_dob: new Date('2019-11-05'),
+        registration_date: new Date('2025-03-10T08:45:00Z')
+      },
+      {
+        event_id: 4,
+        user_id: 2,
+        name: 'Jake Paul',
+        phone_number: '941779828690',
+        email: 'jake.paul@example.com',
+        address: '789 Oak St, Hyderabad',
+        seats: 3,
+        with_pet: true,
+        pet_name: 'Luna',
+        pet_breed: 'Labrador',
+        pet_dob: new Date('2019-08-10'),
+        registration_date: new Date('2025-03-01T08:00:00Z')
+      },
+      {
+        event_id: 4,
+        user_id: null,
+        name: 'Lisa Kumar',
+        phone_number: '9345678901',
+        email: 'lisa.kumar@example.com',
+        address: '654 Cedar Ave, Hyderabad',
+        seats: 2,
+        with_pet: true,
+        pet_name: 'Buddy',
+        pet_breed: 'Poodle',
+        pet_dob: new Date('2020-12-15'),
+        registration_date: new Date('2025-03-20T15:00:00Z')
+      },
+      {
+        event_id: 5,
+        user_id: 3,
+        name: 'Akshay',
+        phone_number: '7654321098',
+        email: 'akshay@example.com',
+        address: '321 Pine St, Mumbai',
+        seats: 2,
+        with_pet: true,
+        pet_name: 'Milo',
+        pet_breed: 'Persian',
+        pet_dob: new Date('2021-01-20'),
+        registration_date: new Date('2025-03-25T12:00:00Z')
+      },
+      {
+        event_id: 5,
+        user_id: null,
+        name: 'Priya Sharma',
+        phone_number: '9456789012',
+        email: 'priya.sharma@example.com',
+        address: '987 Maple Ln, Mumbai',
+        seats: 4,
+        with_pet: true,
+        pet_name: 'Toby',
+        pet_breed: 'Dachshund',
+        pet_dob: new Date('2022-06-01'),
+        registration_date: new Date('2025-03-26T09:15:00Z')
+      },
+      {
+        event_id: 6,
+        user_id: 1,
+        name: 'Gautam Thota',
+        phone_number: '9876543210',
+        email: 'gautam.thota@example.com',
+        address: '123 Main St, Chennai',
+        seats: 1,
+        with_pet: true,
+        pet_name: 'Whiskers',
+        pet_breed: 'Siamese',
+        pet_dob: new Date('2020-09-25'),
+        registration_date: new Date('2025-03-27T10:30:00Z')
+      },
+      {
+        event_id: 6,
+        user_id: null,
+        name: 'Anita Rao',
+        phone_number: '9567890123',
+        email: 'anita.rao@example.com',
+        address: '456 Birch Rd, Chennai',
+        seats: 2,
+        with_pet: true,
+        pet_name: 'Snowball',
+        pet_breed: 'Maine Coon',
+        pet_dob: new Date('2021-04-12'),
+        registration_date: new Date('2025-03-28T14:00:00Z')
+      }
+    ];
+
+    await EventAttendee.insertMany(sampleEventAttendees);
+    console.log('Sample event attendees inserted successfully');
+  } catch (error) {
+    console.error('Error inserting sample event attendees:', error.message);
+  }
+};
+
+// Connect to MongoDB and insert sample data
+async function connectToMongo(callback) {
+  try {
+    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log('Connected to MongoDB');
+
+    // Insert sample data for all collections
+    await insertSampleUsers();
+    await insertSampleVendors();
+    await insertSampleEventManagers();
+    await insertSampleProducts();
+    await insertSampleProductVariants();
+    await insertSampleProductImages();
+    await insertSampleOrders();
+    await insertSampleOrderItems();
+    await insertSampleEvents();
+    await insertSampleEventAttendees();
+
+    if (callback) callback();
+  } catch (err) {
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
+  }
 }
-function insertSampleData(callback) {
-    db.serialize(() => {
-        // Clear tables before inserting to avoid duplicates
-        db.run('DELETE FROM order_items', (err) => { if (err) console.error('Error clearing order_items:', err); });
-        db.run('DELETE FROM orders', (err) => { if (err) console.error('Error clearing orders:', err); });
-        db.run('DELETE FROM product_images', (err) => { if (err) console.error('Error clearing product_images:', err); });
-        db.run('DELETE FROM product_variants', (err) => { if (err) console.error('Error clearing product_variants:', err); });
-        db.run('DELETE FROM products', (err) => { if (err) console.error('Error clearing products:', err); });
-        db.run('DELETE FROM vendors', (err) => { if (err) console.error('Error clearing vendors:', err); });
-        db.run('DELETE FROM users', (err) => { if (err) console.error('Error clearing users:', err); });
-        db.run('DELETE FROM event_managers', (err) => { if (err) console.error('Error clearing event_managers:', err); });
-        db.run('DELETE FROM event_attendees', (err) => { if (err) console.error('Error clearing event_attendees:', err); });
-        db.run('DELETE FROM events', (err) => { if (err) console.error('Error clearing events:', err); });
 
-        const queries = [
-            // Users
-            `INSERT INTO users (user_name, user_email, user_password) VALUES 
-             ('Gautam Thota', 'gautam.thota@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
-            `INSERT INTO users (user_name, user_email, user_password) VALUES 
-             ('Veda Prakash', 'veda.prakash@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
-            `INSERT INTO users (user_name, user_email, user_password) VALUES 
-             ('Akshay', 'akshay@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W')`,
-
-            // Vendors
-            `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
-             ('Gautam Thota', '9876543210', 'gautam.thota.vendor@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Pet Haven', 'Vijayawada')`,
-            `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
-             ('Veda Prakash', '8765432109', 'veda.prakash.vendor@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Furry Friends', 'Hyderabad')`,
-            `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES 
-             ('Akshay', '7654321098', 'akshay.vendor@example.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Paws & Claws', 'Bangalore')`,
-
-            // Products (unchanged)
-            `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
-             (1, 'Cozy Pet Bed', 'beds', 'Pet Beds', 'A soft and cozy bed perfect for pets to relax in.', 'PB001', 'In Stock')`,
-            `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
-             (1, 'Chicken-Flavored Dog Food', 'food', 'Dry', 'Nutritious dry food for dogs with a chicken flavor.', 'DF001', 'In Stock')`,
-            `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
-             (2, 'Cat Scratching Post', 'toys', 'Furniture', 'Durable scratching post to keep cats entertained.', 'SP001', 'In Stock')`,
-            `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
-             (2, 'Fish-Flavored Treats', 'food', 'Treats', 'Delicious fish-flavored treats for cats.', 'FT001', 'In Stock')`,
-            `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
-             (3, 'Grooming Brush', 'grooming', 'Grooming Supplies', 'Gentle brush for keeping pet fur smooth.', 'GB001', 'In Stock')`,
-            `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
-             (3, 'Pet Carrier', 'beds', 'Carrier', 'Portable carrier for small pets.', 'PC001', 'In Stock')`,
-            `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
-             (1, 'Interactive Dog Ball', 'toys', 'Toys', 'A durable ball that lights up for interactive play.', 'DB001', 'In Stock')`,
-            `INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, sku, stock_status) VALUES 
-             (2, 'Luxury Cat Bed', 'beds', 'Pet Beds', 'A plush bed with extra cushioning for cats.', 'CB001', 'In Stock')`,
-
-            // Product Variants (unchanged)
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (1, 'Small', 'Brown', 1999.99, 1799.99, 10, 'PB001-SM-BRN')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (1, 'Medium', 'Brown', 2999.99, 2499.99, 20, 'PB001-MD-BRN')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (1, 'Large', 'Brown', 3999.99, 3499.99, 15, 'PB001-LG-BRN')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (1, 'Medium', 'Grey', 2999.99, 2599.99, 8, 'PB001-MD-GRY')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (2, '1kg', NULL, 499.99, NULL, 30, 'DF001-1KG')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (2, '5kg', NULL, 1499.99, NULL, 50, 'DF001-5KG')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (3, 'Small', 'Grey', 999.99, 899.99, 25, 'SP001-SM-GRY')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (3, 'Large', 'Grey', 1999.99, 1799.99, 15, 'SP001-LG-GRY')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (4, '100g', NULL, 199.99, NULL, 100, 'FT001-100G')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (4, '250g', NULL, 499.99, NULL, 75, 'FT001-250G')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (5, NULL, 'Blue', 799.99, 699.99, 30, 'GB001-BLU')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (5, NULL, 'Red', 799.99, 699.99, 20, 'GB001-RED')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (6, 'Small', 'Grey', 2999.99, 2799.99, 12, 'PC001-SM-GRY')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (6, 'Medium', 'Grey', 3999.99, 3499.99, 10, 'PC001-MD-GRY')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (7, 'Small', 'Green', 599.99, 549.99, 40, 'DB001-SM-GRN')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (7, 'Medium', 'Green', 799.99, 699.99, 30, 'DB001-MD-GRN')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (8, 'Small', 'Purple', 2499.99, 2299.99, 15, 'CB001-SM-PUR')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (8, 'Large', 'Purple', 3499.99, 3199.99, 10, 'CB001-LG-PUR')`,
-            `INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity, sku) VALUES 
-             (8, 'Large', 'White', 3499.99, 3199.99, 8, 'CB001-LG-WHT')`,
-
-            // Product Images (unchanged)
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (1, '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg', 1)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (1, '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg', 0)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (2, 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg', 1)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (3, 'https://outdocart.s3.amazonaws.com/uploads/petamore/productImages/full/16674284952277The-Grey.jpg', 1)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (4, 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg', 1)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (5, 'https://m.media-amazon.com/images/I/31aUaDQjrML._SY300_SX300_QL70_FMwebp_.jpg', 1)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (5, 'https://m.media-amazon.com/images/I/812do46q6rL._SY450_.jpg', 0)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (6, 'https://animeal.in/cdn/shop/files/I04885_1.webp?v=1705649283&width=493', 1)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (7, 'https://qpets.in/cdn/shop/files/61V2I5Y6RkL_1800x1800.jpg?v=1732756268', 1)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (8, 'https://headsupfortails.com/cdn/shop/products/HUFT-Personalised-Cosy-Puppy-Cat-Bed---Lilac.jpg?v=1739045338&width=823', 1)`,
-            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES 
-             (8, '/images/luxury_cat_bed_white.jpg', 0)`,
-
-            // Sample Orders
-            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
-            (1, '2025-03-01 10:00:00', 'Delivered', 1799.99, 1799.99, '2025-03-05 14:00:00')`,
-            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (1, 1, 1, 'Cozy Pet Bed', 1, 1799.99, 'Small', 'Brown')`,
-            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES 
-            (1, '2025-03-10 12:00:00', 'Pending', 549.99, 549.99)`,
-            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (2, 7, 13, 'Interactive Dog Ball', 1, 549.99, 'Small', 'Green')`,
-            // Orders for Veda Prakash (vendor_id 2)
-            // Order 3: Veda Prakash's product (Cat Scratching Post, product_id 3, variant_id 7)
-            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
-            (2, '2025-03-15 09:00:00', 'Delivered', 899.99, 899.99, '2025-03-20 14:00:00')`,
-            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (3, 3, 7, 'Cat Scratching Post', 1, 899.99, 'Small', 'Grey')`,
-            // Order 4: Veda Prakash's product (Fish-Flavored Treats, product_id 4, variant_id 9)
-            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount) VALUES 
-            (2, '2025-03-18 11:00:00', 'Pending', 199.99, 199.99)`,
-            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (4, 4, 9, 'Fish-Flavored Treats', 1, 199.99, '100g', NULL)`,
-            // Order 5: Veda Prakash's product (Luxury Cat Bed, product_id 8, variant_id 17)
-            `INSERT INTO orders (user_id, order_date, status, subtotal, total_amount, delivery_date) VALUES 
-            (3, '2025-03-20 15:00:00', 'Delivered', 2299.99, 2299.99, '2025-03-25 10:00:00')`,
-            `INSERT INTO order_items (order_id, product_id, variant_id, product_name, quantity, price, size, color) VALUES 
-            (5, 8, 17, 'Luxury Cat Bed', 1, 2299.99, 'Small', 'Purple')`,
-
-            // Sample Event Manager
-            `INSERT INTO event_managers (name, contact_number, email, password, company_name, location) VALUES 
-            ('Jeevankumar', '5551234567', 'jeevan.kumar@happytails.com', '$2a$10$pgfWUFy0onfpdOn0dWtWW.7ORHjTouxrwqNcnvNfolhHf9ehFEF4W', 'Happy Events', 'Hyderabad')`,
-
-            // Sample Events (Updated with Past, Ongoing, and Upcoming)
-            // Past Event
-            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Pet Adoption Drive', 'A drive to find homes for shelter pets.', 'English', '3h', 0.00, 0, 'Bring ID proof.', 'Shelter Grounds, Bangalore', 'Free entry.', 'Pets', '2025-03-15 10:00:00', 'Past', 500, 450, 'Bangalore', '1234567890', 'https://thumbs.dreamstime.com/z/adorable-kittens-play-yarn-sunlit-living-room-perfect-pet-adoption-promotion-lively-frolic-colorful-pastel-rug-341932672.jpg?ct=jpeg')`,
-            // Ongoing Events (on March 27, 2025)
-            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Fancy Dress Show', 'A fun fancy dress show for pets.', 'English', '2h', 5.00, 0, 'Bring your pet in a costume.', 'Central Park, Delhi', 'No refunds.', 'Pets', '2025-03-27 17:00:00', 'Ongoing', 1000, 900, 'Delhi', '1234567890', 'https://thumbs.dreamstime.com/b/small-dog-wearing-blue-gold-dress-generative-ai-small-dog-wearing-blue-gold-dress-ai-generated-328996362.jpg')`,
-            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Dog Run', 'A running competition for dogs.', 'English', '1h', 5.00, 0, 'Ensure your dog is healthy.', 'Sports Ground, Delhi', 'No refunds.', 'Pets', '2025-03-27 10:00:00', 'Ongoing', 1000, 100, 'Delhi', '1234567890', 'https://thumbs.dreamstime.com/z/dog-running-grass-smile-his-face-ai-328994856.jpg?ct=jpeg')`,
-            // Upcoming Events (after March 27, 2025)
-            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Dog Agility Competitions', 'A competition for dog agility.', 'English', '2h', 5.00, 0, 'Bring your dog.', 'Park, Hyderabad', 'No refunds.', 'Pets', '2025-04-01 09:30:00', 'Upcoming', 1000, 850, 'Hyderabad', '1234567890', 'https://thumbs.dreamstime.com/z/dog-jumping-agility-poles-golden-retriever-jumps-over-set-mid-air-white-red-stripes-out-focus-344721458.jpg?ct=jpeg')`,
-            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Pet Festival', 'A festival for pet lovers.', 'English', '3h', 10.00, 0, 'Bring your pet.', 'Mumbai Park', 'No refunds.', 'Pets', '2025-04-05 11:00:00', 'Upcoming', 1500, 740, 'Mumbai', '1234567890', 'https://thumbs.dreamstime.com/z/joyful-dog-running-amidst-vibrant-colors-indian-holi-festival-concept-cultural-celebration-pet-happiness-ai-generated-joyful-354114015.jpg?ct=jpeg')`,
-            `INSERT INTO events (event_manager_id, event_name, about_event, language, duration, ticket_price, age_limit, instructions, venue, terms, category, date_time, status, total_tickets, tickets_sold, city, contact_number, image) VALUES 
-            (1, 'Cat Show', 'A showcase of feline beauty.', 'English', '2h', 8.00, 0, 'Bring your cat.', 'Convention Center, Chennai', 'No refunds.', 'Pets', '2025-04-10 14:00:00', 'Upcoming', 800, 300, 'Chennai', '1234567890', 'https://thumbs.dreamstime.com/z/stylish-cat-draped-pearls-stands-gracefully-theater-surrounded-rich-red-curtains-embodying-sophistication-charm-354845853.jpg?ct=jpeg')`,
-            
-
-            // Sample Event Attendees
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (1, 1, 'Christopher Blake', '946776866876', 'christopher.blake@example.com', '123 Main St, Bangalore', 5, 1, 'Max', 'Golden Retriever', '2020-05-15', '2025-02-20 10:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (1, NULL, 'Sarah Lee', '9876543210', 'sarah.lee@example.com', '456 Elm St, Bangalore', 2, 0, NULL, NULL, NULL, '2025-02-25 14:30:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (2, NULL, 'Peter Roy', '943787457878', 'peter.roy@example.com', '456 Park Ave, Delhi', 1, 0, NULL, NULL, NULL, '2025-02-15 09:30:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (2, 2, 'Emily Davis', '9123456789', 'emily.davis@example.com', '789 Oak Rd, Delhi', 3, 1, 'Bella', 'Beagle', '2021-03-10', '2025-03-01 12:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (3, 3, 'Michael Chen', '9234567890', 'michael.chen@example.com', '321 Pine St, Delhi', 1, 1, 'Rocky', 'Husky', '2019-11-05', '2025-03-10 08:45:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (4, 2, 'Jake Paul', '941779828690', 'jake.paul@example.com', '789 Oak St, Hyderabad', 3, 1, 'Luna', 'Labrador', '2019-08-10', '2025-03-01 08:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (4, NULL, 'Lisa Kumar', '9345678901', 'lisa.kumar@example.com', '654 Cedar Ave, Hyderabad', 2, 1, 'Buddy', 'Poodle', '2020-12-15', '2025-03-20 15:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (5, 3, 'Akshay', '7654321098', 'akshay@example.com', '321 Pine St, Mumbai', 2, 1, 'Milo', 'Persian', '2021-01-20', '2025-03-25 12:00:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (5, NULL, 'Priya Sharma', '9456789012', 'priya.sharma@example.com', '987 Maple Ln, Mumbai', 4, 1, 'Toby', 'Dachshund', '2022-06-01', '2025-03-26 09:15:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (6, 1, 'Gautam Thota', '9876543210', 'gautam.thota@example.com', '123 Main St, Chennai', 1, 1, 'Whiskers', 'Siamese', '2020-09-25', '2025-03-27 10:30:00')`,
-            `INSERT INTO event_attendees (event_id, user_id, name, phone_number, email, address, seats, with_pet, pet_name, pet_breed, pet_dob, registration_date) VALUES 
-            (6, NULL, 'Anita Rao', '9567890123', 'anita.rao@example.com', '456 Birch Rd, Chennai', 2, 1, 'Snowball', 'Maine Coon', '2021-04-12', '2025-03-28 14:00:00')`   
-
-
-        ];
-
-        let completedQueries = 0;
-        const totalQueries = queries.length;
-        db.all("SELECT * FROM USERS", [], (err, rows) => {
-            console.log('', rows);
-        });
-        queries.forEach((query, index) => {
-            db.run(query, (err) => {
-                if (err) console.error(`Error inserting data at step ${index + 1}:`, err.message);
-                else console.log(`Inserted data at step ${index + 1} successfully`);
-                completedQueries++;
-                if (completedQueries === totalQueries) callback();
-            });
-        });
-    });
-}
-module.exports = { db, createTables, insertSampleData };
-
-
-
+module.exports = {
+  connectToMongo,
+  User,
+  Vendor,
+  EventManager,
+  Product,
+  ProductVariant,
+  ProductImage,
+  Order,
+  OrderItem,
+  Event,
+  EventAttendee,
+  insertSampleUsers,
+  insertSampleVendors,
+  insertSampleEventManagers,
+  insertSampleProducts,
+  insertSampleProductVariants,
+  insertSampleProductImages,
+  insertSampleOrders,
+  insertSampleOrderItems,
+  insertSampleEvents,
+  insertSampleEventAttendees
+};

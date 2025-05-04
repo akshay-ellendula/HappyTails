@@ -1,7 +1,6 @@
-// controllers/userController.js
-const { db } = require('../models/database');
+const { User } = require('../models/connection');
 
-const updateProfile = (req, res) => {
+const updateProfile = async (req, res) => {
     const { user_name, user_phone, user_address } = req.body;
     const user_email = req.session.user.user_email;
 
@@ -13,20 +12,22 @@ const updateProfile = (req, res) => {
     }
 
     let imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
-    let query = "UPDATE users SET ";
-    const values = [];
-    const updates = [];
+    const updates = {};
 
-    if (user_name) { updates.push("user_name=?"); values.push(user_name); }
-    if (user_phone) { updates.push("user_phone=?"); values.push(user_phone); }
-    if (user_address) { updates.push("user_address=?"); values.push(user_address); }
-    if (imageUrl) { updates.push("profile_pic=?"); values.push(imageUrl); }
+    if (user_name) updates.user_name = user_name;
+    if (user_phone) updates.user_phone = user_phone;
+    if (user_address) updates.user_address = user_address;
+    if (imageUrl) updates.profile_pic = imageUrl;
 
-    query += updates.join(", ") + " WHERE user_email=?";
-    values.push(user_email);
+    try {
+        const result = await User.updateOne(
+            { user_email: user_email },
+            { $set: updates }
+        );
 
-    db.run(query, values, function (err) {
-        if (err) return res.status(500).json({ success: false, message: "Database update failed" });
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
 
         if (user_name) req.session.user.user_name = user_name;
         if (user_phone) req.session.user.user_phone = user_phone;
@@ -34,7 +35,9 @@ const updateProfile = (req, res) => {
         if (imageUrl) req.session.user.profile_pic = imageUrl;
 
         res.json({ success: true, message: 'Profile updated successfully' });
-    });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Database update failed' });
+    }
 };
 
 const getUserInfo = (req, res) => {

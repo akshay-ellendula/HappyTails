@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { db } = require('../models/database');
+const { Vendor, Order, OrderItem, Product, ProductVariant, ProductImage, User, EventManager } = require('../models/connection');
 const multer = require('multer');
 const path = require('path');
 
@@ -24,32 +24,66 @@ const getVendorOrders = async (req, res) => {
     const statusFilter = req.query.status || 'all'; // Default to 'all' if no status is provided
 
     try {
-        // Construct the query to fetch orders
-        let ordersQuery = `
-            SELECT o.id, o.order_date, o.status, o.total_amount, u.user_name,
-                   GROUP_CONCAT(oi.product_name, ', ') as products
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            JOIN users u ON o.user_id = u.id
-            WHERE p.vendor_id = ?
-        `;
-        const queryParams = [vendorId];
+        // Fetch orders for the vendor
+        let matchStage = {
+            'products.vendor_id': parseInt(vendorId)
+        };
 
-        // Add status filter if not 'all'
         if (statusFilter !== 'all') {
-            ordersQuery += ` AND o.status = ?`;
-            queryParams.push(statusFilter);
+            matchStage['orders.status'] = statusFilter;
         }
 
-        ordersQuery += ` GROUP BY o.id ORDER BY o.order_date DESC`;
-
-        const orders = await new Promise((resolve, reject) => {
-            db.all(ordersQuery, queryParams, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const orders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: 'id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: 'id',
+                    as: 'products'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: 'id',
+                    as: 'user'
+                }
+            },
+            {
+                $match: matchStage
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $project: {
+                    id: '$id',
+                    order_date: '$order_date',
+                    status: '$status',
+                    total_amount: '$total_amount',
+                    user_name: '$user.user_name',
+                    products: {
+                        $map: {
+                            input: '$order_items',
+                            as: 'item',
+                            in: '$$item.product_name'
+                        }
+                    }
+                }
+            },
+            {
+                $sort: { order_date: -1 }
+            }
+        ]);
 
         res.render('shop-orders', {
             vendor: req.session.vendor,
@@ -57,7 +91,7 @@ const getVendorOrders = async (req, res) => {
                 id: order.id,
                 order_id: `#ORD-${order.id}`,
                 customer: order.user_name,
-                products: order.products,
+                products: order.products.join(', '),
                 total: order.total_amount.toFixed(2),
                 date: new Date(order.order_date).toLocaleDateString('en-US', {
                     month: 'short',
@@ -84,37 +118,68 @@ const getVendorProducts = async (req, res) => {
 
     try {
         // Fetch products for the vendor along with their primary image
-        const productsQuery = `
-            SELECT p.id, p.product_name, p.product_category, p.product_type, pv.sale_price, pv.stock_quantity, pi.image_path
-            FROM products p
-            LEFT JOIN product_variants pv ON p.id = pv.product_id
-            LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = 1
-            WHERE p.vendor_id = ?
-        `;
-        const products = await new Promise((resolve, reject) => {
-            db.all(productsQuery, [vendorId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const products = await Product.aggregate([
+            {
+                $match: { vendor_id: parseInt(vendorId) }
+            },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: 'id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'productimages',
+                    localField: 'id',
+                    foreignField: 'product_id',
+                    as: 'images'
+                }
+            },
+            {
+                $project: {
+                    id: '$id',
+                    product_name: '$product_name',
+                    product_category: '$product_category',
+                    product_type: '$product_type',
+                    sale_price: { $arrayElemAt: ['$variants.sale_price', 0] },
+                    stock_quantity: { $arrayElemAt: ['$variants.stock_quantity', 0] },
+                    image_path: {
+                        $arrayElemAt: [
+                            {
+                                $filter: {
+                                    input: '$images',
+                                    as: 'image',
+                                    cond: { $eq: ['$$image.is_primary', true] }
+                                }
+                            },
+                            0
+                        ]
+                    }
+                }
+            }
+        ]);
 
         // Calculate sold quantity for each product
         const productsWithSold = await Promise.all(products.map(async (product) => {
-            const soldQuery = `
-                SELECT SUM(oi.quantity) as sold
-                FROM order_items oi
-                WHERE oi.product_id = ?
-            `;
-            const soldResult = await new Promise((resolve, reject) => {
-                db.get(soldQuery, [product.id], (err, row) => {
-                    if (err) return reject(err);
-                    resolve(row);
-                });
-            });
+            const soldResult = await OrderItem.aggregate([
+                {
+                    $match: { product_id: product.id }
+                },
+                {
+                    $group: {
+                        _id: null,
+                        sold: { $sum: '$quantity' }
+                    }
+                }
+            ]);
+
             return {
                 ...product,
-                sold: soldResult.sold || 0,
-                image_path: product.image_path || '/images/default.jpg' // Fallback image if no image is found
+                sold: soldResult[0]?.sold || 0,
+                image_path: product.image_path?.image_path || '/images/default.jpg' // Fallback image if no image is found
             };
         }));
 
@@ -139,75 +204,168 @@ const getVendorProfile = async (req, res) => {
 
     try {
         // Fetch vendor details from the database
-        const vendorDetails = await new Promise((resolve, reject) => {
-            db.get(`SELECT * FROM vendors WHERE id = ?`, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row);
-            });
-        });
+        const vendorDetails = await Vendor.findOne({ id: parseInt(vendorId) });
+        if (!vendorDetails) {
+            return res.status(404).send('Vendor not found');
+        }
 
         // Calculate total revenue
-        const totalRevenueQuery = `
-            SELECT SUM(oi.price * oi.quantity) as totalRevenue
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-        `;
-        const totalRevenue = await new Promise((resolve, reject) => {
-            db.get(totalRevenueQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.totalRevenue || 0);
-            });
-        });
+        const totalRevenueResult = await OrderItem.aggregate([
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: 'order_id',
+                    foreignField: 'id',
+                    as: 'order'
+                }
+            },
+            {
+                $unwind: '$order'
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product_id',
+                    foreignField: 'id',
+                    as: 'product'
+                }
+            },
+            {
+                $unwind: '$product'
+            },
+            {
+                $match: { 'product.vendor_id': parseInt(vendorId) }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: { $sum: { $multiply: ['$price', '$quantity'] } }
+                }
+            }
+        ]);
+        const totalRevenue = totalRevenueResult[0]?.totalRevenue || 0;
 
         // Calculate products sold
-        const productsSoldQuery = `
-            SELECT SUM(oi.quantity) as productsSold
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-        `;
-        const productsSold = await new Promise((resolve, reject) => {
-            db.get(productsSoldQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.productsSold || 0);
-            });
-        });
+        const productsSoldResult = await OrderItem.aggregate([
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: 'order_id',
+                    foreignField: 'id',
+                    as: 'order'
+                }
+            },
+            {
+                $unwind: '$order'
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product_id',
+                    foreignField: 'id',
+                    as: 'product'
+                }
+            },
+            {
+                $unwind: '$product'
+            },
+            {
+                $match: { 'product.vendor_id': parseInt(vendorId) }
+            },
+            {
+                $group: {
+                    _id: null,
+                    productsSold: { $sum: '$quantity' }
+                }
+            }
+        ]);
+        const productsSold = productsSoldResult[0]?.productsSold || 0;
 
         // Calculate new orders
-        const newOrdersQuery = `
-            SELECT COUNT(DISTINCT o.id) as newOrders
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ? AND o.status = 'Pending'
-        `;
-        const newOrders = await new Promise((resolve, reject) => {
-            db.get(newOrdersQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.newOrders || 0);
-            });
-        });
+        const newOrdersResult = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: 'id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: 'id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: {
+                    'products.vendor_id': parseInt(vendorId),
+                    status: 'Pending'
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    newOrders: { $sum: 1 }
+                }
+            }
+        ]);
+        const newOrders = newOrdersResult[0]?.newOrders || 0;
 
         // Fetch recent orders
-        const recentOrdersQuery = `
-            SELECT o.id, o.order_date, o.status, o.total_amount, u.user_name, oi.product_name
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            JOIN users u ON o.user_id = u.id
-            WHERE p.vendor_id = ?
-            ORDER BY o.order_date DESC
-            LIMIT 4
-        `;
-        const recentOrders = await new Promise((resolve, reject) => {
-            db.all(recentOrdersQuery, [vendorId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const recentOrders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: 'id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: 'id',
+                    as: 'products'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: 'id',
+                    as: 'user'
+                }
+            },
+            {
+                $match: { 'products.vendor_id': parseInt(vendorId) }
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $unwind: '$order_items'
+            },
+            {
+                $project: {
+                    id: '$id',
+                    order_date: '$order_date',
+                    status: '$status',
+                    total_amount: '$total_amount',
+                    user_name: '$user.user_name',
+                    product_name: '$order_items.product_name'
+                }
+            },
+            {
+                $sort: { order_date: -1 }
+            },
+            {
+                $limit: 4
+            }
+        ]);
 
         // Render the profile page with the vendor's data
         res.render('shop-profile', {
@@ -240,51 +398,46 @@ const serviceProviderLogin = async (req, res) => {
     }
 
     try {
-        let table, sessionKey, redirect;
+        let Model, sessionKey, redirect;
         if (role === 'store-manager') {
-            table = 'vendors';
+            Model = Vendor;
             sessionKey = 'vendor';
         } else if (role === 'event-manager') {
-            table = 'event_managers';
+            Model = EventManager;
             sessionKey = 'eventManager';
         } else {
             return res.status(400).json({ success: false, message: 'Invalid role. Use "store-manager" or "event-manager"' });
         }
 
-        db.get(`SELECT * FROM ${table} WHERE email = ?`, [email], async (err, user) => {
-            if (err) {
-                console.error('Database error:', err);
-                return res.status(500).json({ success: false, message: 'Database error' });
-            }
-            if (!user) {
-                console.log('User not found for email:', email);
-                return res.status(401).json({ success: false, message: 'Invalid email or password' });
-            }
+        const user = await Model.findOne({ email });
+        if (!user) {
+            console.log('User not found for email:', email);
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
 
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                console.log('Password mismatch for:', email);
-                return res.status(401).json({ success: false, message: 'Invalid email or password' });
-            }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            console.log('Password mismatch for:', email);
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
 
-            req.session[sessionKey] = { 
-                id: user.id, 
-                email: user.email, 
-                role, 
-                store_name: user.store_name || null
-            };
-            console.log('Session set:', req.session[sessionKey]); // Debug: Log session
+        req.session[sessionKey] = { 
+            id: user.id, 
+            email: user.email, 
+            role, 
+            store_name: user.store_name || null
+        };
+        console.log('Session set:', req.session[sessionKey]); // Debug: Log session
 
-            if (role === 'store-manager') {
-                const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
-                redirect = `/shop-dashboard/${storeNameSlug}`;
-            } else if (role === 'event-manager') {
-                redirect = '/eventmanager_dashboard';
-            }
+        if (role === 'store-manager') {
+            const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
+            redirect = `/shop-dashboard/${storeNameSlug}`;
+        } else if (role === 'event-manager') {
+            redirect = '/eventmanager_dashboard';
+        }
 
-            console.log('Redirecting to:', redirect); // Debug: Log redirect
-            res.status(200).json({ success: true, message: 'Login successful', redirect });
-        });
+        console.log('Redirecting to:', redirect); // Debug: Log redirect
+        res.status(200).json({ success: true, message: 'Login successful', redirect });
     } catch (error) {
         console.error('Server error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -309,64 +462,163 @@ const getVendorDashboard = async (req, res) => {
     const vendorId = vendor.id;
 
     try {
-        const totalRevenueQuery = `
-            SELECT SUM(oi.price * oi.quantity) as totalRevenue
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-        `;
-        const totalRevenue = await new Promise((resolve, reject) => {
-            db.get(totalRevenueQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.totalRevenue || 0);
-            });
-        });
+        // Calculate total revenue
+        const totalRevenueResult = await OrderItem.aggregate([
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: 'order_id',
+                    foreignField: 'id',
+                    as: 'order'
+                }
+            },
+            {
+                $unwind: '$order'
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product_id',
+                    foreignField: 'id',
+                    as: 'product'
+                }
+            },
+            {
+                $unwind: '$product'
+            },
+            {
+                $match: { 'product.vendor_id': parseInt(vendorId) }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: { $sum: { $multiply: ['$price', '$quantity'] } }
+                }
+            }
+        ]);
+        const totalRevenue = totalRevenueResult[0]?.totalRevenue || 0;
 
-        const productsSoldQuery = `
-            SELECT SUM(oi.quantity) as productsSold
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-        `;
-        const productsSold = await new Promise((resolve, reject) => {
-            db.get(productsSoldQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.productsSold || 0);
-            });
-        });
+        // Calculate products sold
+        const productsSoldResult = await OrderItem.aggregate([
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: 'order_id',
+                    foreignField: 'id',
+                    as: 'order'
+                }
+            },
+            {
+                $unwind: '$order'
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product_id',
+                    foreignField: 'id',
+                    as: 'product'
+                }
+            },
+            {
+                $unwind: '$product'
+            },
+            {
+                $match: { 'product.vendor_id': parseInt(vendorId) }
+            },
+            {
+                $group: {
+                    _id: null,
+                    productsSold: { $sum: '$quantity' }
+                }
+            }
+        ]);
+        const productsSold = productsSoldResult[0]?.productsSold || 0;
 
-        const newOrdersQuery = `
-            SELECT COUNT(DISTINCT o.id) as newOrders
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ? AND o.status = 'Pending'
-        `;
-        const newOrders = await new Promise((resolve, reject) => {
-            db.get(newOrdersQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.newOrders || 0);
-            });
-        });
+        // Calculate new orders
+        const newOrdersResult = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: 'id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: 'id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: {
+                    'products.vendor_id': parseInt(vendorId),
+                    status: 'Pending'
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    newOrders: { $sum: 1 }
+                }
+            }
+        ]);
+        const newOrders = newOrdersResult[0]?.newOrders || 0;
 
-        const recentOrdersQuery = `
-            SELECT o.id, o.order_date, o.status, o.total_amount, u.user_name, oi.product_name
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            JOIN users u ON o.user_id = u.id
-            WHERE p.vendor_id = ?
-            ORDER BY o.order_date DESC
-            LIMIT 4
-        `;
-        const recentOrders = await new Promise((resolve, reject) => {
-            db.all(recentOrdersQuery, [vendorId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        // Fetch recent orders
+        const recentOrders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: 'id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: 'id',
+                    as: 'products'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: 'id',
+                    as: 'user'
+                }
+            },
+            {
+                $match: { 'products.vendor_id': parseInt(vendorId) }
+            },
+            {
+                $unwind: '$user'
+            },
+            {
+                $unwind: '$order_items'
+            },
+            {
+                $project: {
+                    id: '$id',
+                    order_date: '$order_date',
+                    status: '$status',
+                    total_amount: '$total_amount',
+                    user_name: '$user.user_name',
+                    product_name: '$order_items.product_name'
+                }
+            },
+            {
+                $sort: { order_date: -1 }
+            },
+            {
+                $limit: 4
+            }
+        ]);
 
         res.render('shop-dashboard', {
             vendor: req.session.vendor,
@@ -398,41 +650,36 @@ const storeSignup = async (req, res) => {
 
     try {
         // Check if email already exists
-        db.get("SELECT * FROM vendors WHERE email = ?", [email], async (err, row) => {
-            if (err) return res.status(500).json({ success: false, message: 'Database error' });
-            if (row) return res.status(400).json({ success: false, message: 'Email already registered' });
+        const existingVendor = await Vendor.findOne({ email });
+        if (existingVendor) return res.status(400).json({ success: false, message: 'Email already registered' });
 
-            const hashedPassword = await bcrypt.hash(password, 10);
-            // Insert the new vendor into the database
-            db.run(
-                `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES (?, ?, ?, ?, ?, ?)`,
-                [name, contactnumber, email, hashedPassword, storename, storelocation],
-                function (err) {
-                    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        // Create the new vendor
+        const newVendor = await Vendor.create({
+            name,
+            contact_number: contactnumber,
+            email,
+            password: hashedPassword,
+            store_name: storename,
+            store_location: storelocation,
+            created_at: new Date()
+        });
 
-                    // Fetch the newly created vendor to set the session
-                    db.get("SELECT * FROM vendors WHERE email = ?", [email], (err, newVendor) => {
-                        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+        // Set the session for the new vendor
+        req.session.vendor = {
+            id: newVendor.id,
+            email: newVendor.email,
+            store_name: newVendor.store_name
+        };
 
-                        // Set the session for the new vendor
-                        req.session.vendor = {
-                            id: newVendor.id,
-                            email: newVendor.email,
-                            store_name: newVendor.store_name
-                        };
+        // Generate the storeName slug for the redirect URL
+        const storeNameSlug = newVendor.store_name.toLowerCase().replace(/\s+/g, '-');
+        const redirectUrl = `/shop-dashboard/${storeNameSlug}`;
 
-                        // Generate the storeName slug for the redirect URL
-                        const storeNameSlug = newVendor.store_name.toLowerCase().replace(/\s+/g, '-');
-                        const redirectUrl = `/shop-dashboard/${storeNameSlug}`;
-
-                        res.status(201).json({
-                            success: true,
-                            redirect: redirectUrl,
-                            message: 'Vendor signup successful'
-                        });
-                    });
-                }
-            );
+        res.status(201).json({
+            success: true,
+            redirect: redirectUrl,
+            message: 'Vendor signup successful'
         });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
@@ -456,50 +703,20 @@ const getProductForEdit = async (req, res) => {
     }
 
     const vendorId = req.session.vendor.id;
-    const productId = req.params.productId;
+    const productId = parseInt(req.params.productId);
 
     try {
         // Fetch product details
-        const productQuery = `
-            SELECT p.*
-            FROM products p
-            WHERE p.id = ? AND p.vendor_id = ?
-        `;
-        const product = await new Promise((resolve, reject) => {
-            db.get(productQuery, [productId, vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row);
-            });
-        });
-
+        const product = await Product.findOne({ id: productId, vendor_id: parseInt(vendorId) });
         if (!product) {
-            // Redirect to products page with an error message
             return res.redirect('/shop-products?error=Product not found or you do not have permission to edit it.');
         }
 
         // Fetch all variants for the product
-        const variantsQuery = `
-            SELECT pv.*
-            FROM product_variants pv
-            WHERE pv.product_id = ?
-        `;
-        const variants = await new Promise((resolve, reject) => {
-            db.all(variantsQuery, [productId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const variants = await ProductVariant.find({ product_id: productId });
 
         // Fetch product images
-        const imagesQuery = `
-            SELECT * FROM product_images WHERE product_id = ?
-        `;
-        const images = await new Promise((resolve, reject) => {
-            db.all(imagesQuery, [productId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const images = await ProductImage.find({ product_id: productId });
 
         // Render the edit product page with the product data
         res.render('shop-product-edit', {
@@ -530,7 +747,7 @@ const updateProduct = [
         }
 
         const vendorId = req.session.vendor.id;
-        const productId = req.params.productId;
+        const productId = parseInt(req.params.productId);
         const {
             productName,
             productCategory,
@@ -560,36 +777,25 @@ const updateProduct = [
 
         try {
             // Verify the product belongs to the vendor
-            const productCheck = await new Promise((resolve, reject) => {
-                db.get(`SELECT * FROM products WHERE id = ? AND vendor_id = ?`, [productId, vendorId], (err, row) => {
-                    if (err) return reject(err);
-                    resolve(row);
-                });
-            });
-
-            if (!productCheck) {
+            const product = await Product.findOne({ id: productId, vendor_id: parseInt(vendorId) });
+            if (!product) {
                 return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to edit it.' });
             }
 
             // Update product details
-            await new Promise((resolve, reject) => {
-                db.run(
-                    `UPDATE products SET product_name = ?, product_category = ?, product_type = ?, product_description = ?, stock_status = ? WHERE id = ?`,
-                    [productName, productCategory, productType, productDescription, stock_status, productId],
-                    (err) => {
-                        if (err) return reject(err);
-                        resolve();
-                    }
-                );
-            });
+            await Product.updateOne(
+                { id: productId },
+                {
+                    product_name: productName,
+                    product_category: productCategory,
+                    product_type: productType,
+                    product_description: productDescription,
+                    stock_status: stock_status
+                }
+            );
 
             // Delete existing variants
-            await new Promise((resolve, reject) => {
-                db.run(`DELETE FROM product_variants WHERE product_id = ?`, [productId], (err) => {
-                    if (err) return reject(err);
-                    resolve();
-                });
-            });
+            await ProductVariant.deleteMany({ product_id: productId });
 
             // Insert updated variants
             for (let i = 0; i < variantSizes.length; i++) {
@@ -608,46 +814,28 @@ const updateProduct = [
                     return res.status(400).json({ success: false, message: 'Sale price must be less than regular price for all variants' });
                 }
 
-                const variantInsertQuery = `
-                    INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                `;
-                await new Promise((resolve, reject) => {
-                    db.run(
-                        variantInsertQuery,
-                        [productId, size, color, regularPrice, salePrice, stockQuantity],
-                        (err) => {
-                            if (err) return reject(err);
-                            resolve();
-                        }
-                    );
+                await ProductVariant.create({
+                    product_id: productId,
+                    size,
+                    color,
+                    regular_price: regularPrice,
+                    sale_price: salePrice,
+                    stock_quantity: stockQuantity
                 });
             }
 
             // Handle image uploads
             if (req.files && req.files.length > 0) {
                 // Delete existing images
-                await new Promise((resolve, reject) => {
-                    db.run(`DELETE FROM product_images WHERE product_id = ?`, [productId], (err) => {
-                        if (err) return reject(err);
-                        resolve();
-                    });
-                });
+                await ProductImage.deleteMany({ product_id: productId });
 
                 // Insert new images
-                const imagePromises = req.files.map((file, index) => {
-                    return new Promise((resolve, reject) => {
-                        db.run(
-                            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (?, ?, ?)`,
-                            [productId, `/uploads/products/${file.filename}`, index === 0 ? 1 : 0],
-                            (err) => {
-                                if (err) return reject(err);
-                                resolve();
-                            }
-                        );
-                    });
-                });
-                await Promise.all(imagePromises);
+                const images = req.files.map((file, index) => ({
+                    product_id: productId,
+                    image_path: `/uploads/products/${file.filename}`,
+                    is_primary: index === 0 ? true : false
+                }));
+                await ProductImage.insertMany(images);
             }
 
             res.status(200).json({ success: true, message: 'Product updated successfully', redirect: '/shop-products' });
@@ -668,29 +856,63 @@ const getVendorCustomers = async (req, res) => {
 
     try {
         // Query to fetch customers who have placed orders with the vendor
-        const customersQuery = `
-            SELECT 
-                u.id AS customer_id,
-                u.user_name,
-                u.user_email AS email,
-                COUNT(DISTINCT o.id) AS total_orders,
-                SUM(o.total_amount) AS total_spent,
-                MAX(o.order_date) AS last_order_date
-            FROM users u
-            JOIN orders o ON u.id = o.user_id
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-            GROUP BY u.id, u.user_name, u.user_email
-            ORDER BY last_order_date DESC
-        `;
-
-        const customers = await new Promise((resolve, reject) => {
-            db.all(customersQuery, [vendorId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const customers = await User.aggregate([
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: 'id',
+                    foreignField: 'user_id',
+                    as: 'orders'
+                }
+            },
+            {
+                $unwind: '$orders'
+            },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: 'orders.id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: 'id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: { 'products.vendor_id': parseInt(vendorId) }
+            },
+            {
+                $group: {
+                    _id: {
+                        id: '$id',
+                        user_name: '$user_name',
+                        user_email: '$user_email'
+                    },
+                    total_orders: { $addToSet: '$orders.id' },
+                    total_spent: { $sum: '$orders.total_amount' },
+                    last_order_date: { $max: '$orders.order_date' }
+                }
+            },
+            {
+                $project: {
+                    customer_id: '$_id.id',
+                    user_name: '$_id.user_name',
+                    email: '$_id.user_email',
+                    total_orders: { $size: '$total_orders' },
+                    total_spent: '$total_spent',
+                    last_order_date: '$last_order_date'
+                }
+            },
+            {
+                $sort: { last_order_date: -1 }
+            }
+        ]);
 
         // Format the customer data for the template
         const formattedCustomers = customers.map((customer, index) => ({
@@ -756,29 +978,27 @@ const submitProduct = [
         }
 
         try {
-            // Insert the product
-            const productInsertQuery = `
-                INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, stock_status)
-                VALUES (?, ?, ?, ?, ?, ?)
-            `;
-            const productResult = await new Promise((resolve, reject) => {
-                db.run(
-                    productInsertQuery,
-                    [vendorId, product_name, product_category, product_type, product_description, stock_status],
-                    function (err) {
-                        if (err) return reject(err);
-                        resolve(this.lastID);
-                    }
-                );
-            });
+            // Get the highest product ID to generate the next one
+            const lastProduct = await Product.findOne().sort({ id: -1 });
+            const productId = lastProduct ? lastProduct.id + 1 : 1;
 
-            const productId = productResult;
+            // Insert the product
+            await Product.create({
+                id: productId,
+                vendor_id: parseInt(vendorId),
+                product_name,
+                product_category,
+                product_type,
+                product_description,
+                stock_status,
+                created_at: new Date()
+            });
 
             // Insert all variants
             for (let i = 0; i < variantSizes.length; i++) {
                 const size = variantSizes[i] ? variantSizes[i].trim() : null;
                 const color = variantColors[i] ? variantColors[i].trim() : null;
-                const regularPrice = parseFLOAT(variantRegularPrices[i]);
+                const regularPrice = parseFloat(variantRegularPrices[i]);
                 const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
                 const stockQuantity = parseInt(variantStockQuantities[i]);
 
@@ -793,41 +1013,24 @@ const submitProduct = [
                     return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
                 }
 
-                const variantInsertQuery = `
-                    INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                `;
-                await new Promise((resolve, reject) => {
-                    db.run(
-                        variantInsertQuery,
-                        [productId, size, color, regularPrice, salePrice, stockQuantity],
-                        (err) => {
-                            if (err) return reject(err);
-                            resolve();
-                        }
-                    );
+                await ProductVariant.create({
+                    product_id: productId,
+                    size,
+                    color,
+                    regular_price: regularPrice,
+                    sale_price: salePrice,
+                    stock_quantity: stockQuantity
                 });
             }
 
             // Insert images
             if (req.files && req.files.length > 0) {
-                const imagePromises = req.files.map((file, index) => {
-                    return new Promise((resolve, reject) => {
-                        const imageInsertQuery = `
-                            INSERT INTO product_images (product_id, image_path, is_primary)
-                            VALUES (?, ?, ?)
-                        `;
-                        db.run(
-                            imageInsertQuery,
-                            [productId, `/uploads/products/${file.filename}`, index === 0 ? 1 : 0],
-                            (err) => {
-                                if (err) return reject(err);
-                                resolve();
-                            }
-                        );
-                    });
-                });
-                await Promise.all(imagePromises);
+                const images = req.files.map((file, index) => ({
+                    product_id: productId,
+                    image_path: `/uploads/products/${file.filename}`,
+                    is_primary: index === 0 ? true : false
+                }));
+                await ProductImage.insertMany(images);
             }
 
             res.status(200).json({ success: true, message: 'Product added successfully', redirect: '/shop-products' });

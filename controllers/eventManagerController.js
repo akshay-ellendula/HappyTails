@@ -1,6 +1,5 @@
-// controllers/eventManagerController.js
 const bcrypt = require('bcryptjs');
-const { db } = require('../models/database');
+const { EventManager } = require('../models/connection');
 
 const eventManagerSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, companyname, location, termsandconditions } = req.body;
@@ -83,37 +82,33 @@ const eventManagerSignup = async (req, res) => {
     }
 
     try {
-        // Check if email already exists in event_managers table
-        db.get("SELECT * FROM event_managers WHERE email = ?", [email], async (err, row) => {
-            if (err) {
-                return res.status(500).json({ success: false, message: 'Database error' });
-            }
-            if (row) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Validation failed',
-                    errors: [{ field: 'email', message: 'Email already registered' }]
-                });
-            }
+        // Check if email already exists in EventManager collection
+        const existingEventManager = await EventManager.findOne({ email });
+        if (existingEventManager) {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: [{ field: 'email', message: 'Email already registered' }]
+            });
+        }
 
-            // Hash the password
-            const hashedPassword = await bcrypt.hash(password, 10);
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-            // Insert the new event manager into the database
-            db.run(
-                `INSERT INTO event_managers (name, contact_number, email, password, company_name, location) VALUES (?, ?, ?, ?, ?, ?)`,
-                [name, contactnumber, email, hashedPassword, companyname, location],
-                function (err) {
-                    if (err) {
-                        return res.status(500).json({ success: false, message: 'Database error' });
-                    }
-                    res.status(201).json({
-                        success: true,
-                        redirect: '/service_provider_login',
-                        message: 'Event manager signup successful'
-                    });
-                }
-            );
+        // Create a new event manager
+        await EventManager.create({
+            name,
+            contact_number: contactnumber,
+            email,
+            password: hashedPassword,
+            company_name: companyname,
+            location
+        });
+
+        res.status(201).json({
+            success: true,
+            redirect: '/service_provider_login',
+            message: 'Event manager signup successful'
         });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
