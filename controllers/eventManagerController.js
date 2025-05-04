@@ -111,7 +111,7 @@ const eventManagerSignup = async (req, res) => {
             message: 'Event manager signup successful'
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: `Server error: ${error.message}` });
     }
 };
 

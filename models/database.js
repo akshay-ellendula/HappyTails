@@ -123,7 +123,8 @@ const EventManagerSchema = new Schema({
 
 const ProductSchema = new Schema({
   vendor_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Vendor',
     required: true
   },
   product_name: {
@@ -157,7 +158,8 @@ const ProductSchema = new Schema({
 
 const ProductVariantSchema = new Schema({
   product_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
     required: true
   },
   size: {
@@ -187,7 +189,8 @@ const ProductVariantSchema = new Schema({
 
 const ProductImageSchema = new Schema({
   product_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
     required: true
   },
   image_path: {
@@ -202,7 +205,8 @@ const ProductImageSchema = new Schema({
 
 const OrderSchema = new Schema({
   user_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   },
   order_date: {
@@ -229,15 +233,18 @@ const OrderSchema = new Schema({
 
 const OrderItemSchema = new Schema({
   order_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Order',
     required: true
   },
   product_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
     default: null
   },
   variant_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'ProductVariant',
     default: null
   },
   product_name: {
@@ -264,7 +271,8 @@ const OrderItemSchema = new Schema({
 
 const EventSchema = new Schema({
   event_manager_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'EventManager',
     required: true
   },
   event_name: {
@@ -343,11 +351,13 @@ const EventSchema = new Schema({
 
 const EventAttendeeSchema = new Schema({
   event_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Event',
     required: true
   },
   user_id: {
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     default: null
   },
   name: {
@@ -517,9 +527,18 @@ const insertSampleProducts = async () => {
       return;
     }
 
+    const vendor1 = await Vendor.findOne({ email: 'gautam.thota.vendor@example.com' });
+    const vendor2 = await Vendor.findOne({ email: 'veda.prakash.vendor@example.com' });
+    const vendor3 = await Vendor.findOne({ email: 'akshay.vendor@example.com' });
+
+    if (!vendor1 || !vendor2 || !vendor3) {
+      console.error('Vendors not found for product insertion');
+      return;
+    }
+
     const sampleProducts = [
       {
-        vendor_id: 1,
+        vendor_id: vendor1._id,
         product_name: 'Cozy Pet Bed',
         product_category: 'beds',
         product_type: 'Pet Beds',
@@ -528,7 +547,7 @@ const insertSampleProducts = async () => {
         stock_status: 'In Stock'
       },
       {
-        vendor_id: 1,
+        vendor_id: vendor1._id,
         product_name: 'Chicken-Flavored Dog Food',
         product_category: 'food',
         product_type: 'Dry',
@@ -537,7 +556,7 @@ const insertSampleProducts = async () => {
         stock_status: 'In Stock'
       },
       {
-        vendor_id: 2,
+        vendor_id: vendor2._id,
         product_name: 'Cat Scratching Post',
         product_category: 'toys',
         product_type: 'Furniture',
@@ -546,7 +565,7 @@ const insertSampleProducts = async () => {
         stock_status: 'In Stock'
       },
       {
-        vendor_id: 2,
+        vendor_id: vendor2._id,
         product_name: 'Fish-Flavored Treats',
         product_category: 'food',
         product_type: 'Treats',
@@ -555,7 +574,7 @@ const insertSampleProducts = async () => {
         stock_status: 'In Stock'
       },
       {
-        vendor_id: 3,
+        vendor_id: vendor3._id,
         product_name: 'Grooming Brush',
         product_category: 'grooming',
         product_type: 'Grooming Supplies',
@@ -564,7 +583,7 @@ const insertSampleProducts = async () => {
         stock_status: 'In Stock'
       },
       {
-        vendor_id: 3,
+        vendor_id: vendor3._id,
         product_name: 'Pet Carrier',
         product_category: 'beds',
         product_type: 'Carrier',
@@ -573,7 +592,7 @@ const insertSampleProducts = async () => {
         stock_status: 'In Stock'
       },
       {
-        vendor_id: 1,
+        vendor_id: vendor1._id,
         product_name: 'Interactive Dog Ball',
         product_category: 'toys',
         product_type: 'Toys',
@@ -582,7 +601,7 @@ const insertSampleProducts = async () => {
         stock_status: 'In Stock'
       },
       {
-        vendor_id: 2,
+        vendor_id: vendor2._id,
         product_name: 'Luxury Cat Bed',
         product_category: 'beds',
         product_type: 'Pet Beds',
@@ -608,9 +627,15 @@ const insertSampleProductVariants = async () => {
       return;
     }
 
+    const products = await Product.find().lean();
+    const productMap = products.reduce((map, product, index) => {
+      map[index + 1] = product._id;
+      return map;
+    }, {});
+
     const sampleProductVariants = [
       {
-        product_id: 1,
+        product_id: productMap[1],
         size: 'Small',
         color: 'Brown',
         regular_price: 1999.99,
@@ -619,7 +644,7 @@ const insertSampleProductVariants = async () => {
         sku: 'PB001-SM-BRN'
       },
       {
-        product_id: 1,
+        product_id: productMap[1],
         size: 'Medium',
         color: 'Brown',
         regular_price: 2999.99,
@@ -628,7 +653,7 @@ const insertSampleProductVariants = async () => {
         sku: 'PB001-MD-BRN'
       },
       {
-        product_id: 1,
+        product_id: productMap[1],
         size: 'Large',
         color: 'Brown',
         regular_price: 3999.99,
@@ -637,7 +662,7 @@ const insertSampleProductVariants = async () => {
         sku: 'PB001-LG-BRN'
       },
       {
-        product_id: 1,
+        product_id: productMap[1],
         size: 'Medium',
         color: 'Grey',
         regular_price: 2999.99,
@@ -646,7 +671,7 @@ const insertSampleProductVariants = async () => {
         sku: 'PB001-MD-GRY'
       },
       {
-        product_id: 2,
+        product_id: productMap[2],
         size: '1kg',
         color: null,
         regular_price: 499.99,
@@ -655,7 +680,7 @@ const insertSampleProductVariants = async () => {
         sku: 'DF001-1KG'
       },
       {
-        product_id: 2,
+        product_id: productMap[2],
         size: '5kg',
         color: null,
         regular_price: 1499.99,
@@ -664,7 +689,7 @@ const insertSampleProductVariants = async () => {
         sku: 'DF001-5KG'
       },
       {
-        product_id: 3,
+        product_id: productMap[3],
         size: 'Small',
         color: 'Grey',
         regular_price: 999.99,
@@ -673,7 +698,7 @@ const insertSampleProductVariants = async () => {
         sku: 'SP001-SM-GRY'
       },
       {
-        product_id: 3,
+        product_id: productMap[3],
         size: 'Large',
         color: 'Grey',
         regular_price: 1999.99,
@@ -682,7 +707,7 @@ const insertSampleProductVariants = async () => {
         sku: 'SP001-LG-GRY'
       },
       {
-        product_id: 4,
+        product_id: productMap[4],
         size: '100g',
         color: null,
         regular_price: 199.99,
@@ -691,7 +716,7 @@ const insertSampleProductVariants = async () => {
         sku: 'FT001-100G'
       },
       {
-        product_id: 4,
+        product_id: productMap[4],
         size: '250g',
         color: null,
         regular_price: 499.99,
@@ -700,7 +725,7 @@ const insertSampleProductVariants = async () => {
         sku: 'FT001-250G'
       },
       {
-        product_id: 5,
+        product_id: productMap[5],
         size: null,
         color: 'Blue',
         regular_price: 799.99,
@@ -709,7 +734,7 @@ const insertSampleProductVariants = async () => {
         sku: 'GB001-BLU'
       },
       {
-        product_id: 5,
+        product_id: productMap[5],
         size: null,
         color: 'Red',
         regular_price: 799.99,
@@ -718,7 +743,7 @@ const insertSampleProductVariants = async () => {
         sku: 'GB001-RED'
       },
       {
-        product_id: 6,
+        product_id: productMap[6],
         size: 'Small',
         color: 'Grey',
         regular_price: 2999.99,
@@ -727,7 +752,7 @@ const insertSampleProductVariants = async () => {
         sku: 'PC001-SM-GRY'
       },
       {
-        product_id: 6,
+        product_id: productMap[6],
         size: 'Medium',
         color: 'Grey',
         regular_price: 3999.99,
@@ -736,7 +761,7 @@ const insertSampleProductVariants = async () => {
         sku: 'PC001-MD-GRY'
       },
       {
-        product_id: 7,
+        product_id: productMap[7],
         size: 'Small',
         color: 'Green',
         regular_price: 599.99,
@@ -745,7 +770,7 @@ const insertSampleProductVariants = async () => {
         sku: 'DB001-SM-GRN'
       },
       {
-        product_id: 7,
+        product_id: productMap[7],
         size: 'Medium',
         color: 'Green',
         regular_price: 799.99,
@@ -754,7 +779,7 @@ const insertSampleProductVariants = async () => {
         sku: 'DB001-MD-GRN'
       },
       {
-        product_id: 8,
+        product_id: productMap[8],
         size: 'Small',
         color: 'Purple',
         regular_price: 2499.99,
@@ -763,7 +788,7 @@ const insertSampleProductVariants = async () => {
         sku: 'CB001-SM-PUR'
       },
       {
-        product_id: 8,
+        product_id: productMap[8],
         size: 'Large',
         color: 'Purple',
         regular_price: 3499.99,
@@ -772,7 +797,7 @@ const insertSampleProductVariants = async () => {
         sku: 'CB001-LG-PUR'
       },
       {
-        product_id: 8,
+        product_id: productMap[8],
         size: 'Large',
         color: 'White',
         regular_price: 3499.99,
@@ -798,59 +823,65 @@ const insertSampleProductImages = async () => {
       return;
     }
 
+    const products = await Product.find().lean();
+    const productMap = products.reduce((map, product, index) => {
+      map[index + 1] = product._id;
+      return map;
+    }, {});
+
     const sampleProductImages = [
       {
-        product_id: 1,
+        product_id: productMap[1],
         image_path: '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg',
         is_primary: true
       },
       {
-        product_id: 1,
+        product_id: productMap[1],
         image_path: '/images/cat in cat cave, to advertise the cat cave with a plane grey background, a little bigger.jpg',
         is_primary: false
       },
       {
-        product_id: 2,
+        product_id: productMap[2],
         image_path: 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg',
         is_primary: true
       },
       {
-        product_id: 3,
+        product_id: productMap[3],
         image_path: 'https://outdocart.s3.amazonaws.com/uploads/petamore/productImages/full/16674284952277The-Grey.jpg',
         is_primary: true
       },
       {
-        product_id: 4,
+        product_id: productMap[4],
         image_path: 'https://m.media-amazon.com/images/I/71bQdtBbRdL._SX679_.jpg',
         is_primary: true
       },
       {
-        product_id: 5,
+        product_id: productMap[5],
         image_path: 'https://m.media-amazon.com/images/I/31aUaDQjrML._SY300_SX300_QL70_FMwebp_.jpg',
         is_primary: true
       },
       {
-        product_id: 5,
+        product_id: productMap[5],
         image_path: 'https://m.media-amazon.com/images/I/812do46q6rL._SY450_.jpg',
         is_primary: false
       },
       {
-        product_id: 6,
+        product_id: productMap[6],
         image_path: 'https://animeal.in/cdn/shop/files/I04885_1.webp?v=1705649283&width=493',
         is_primary: true
       },
       {
-        product_id: 7,
+        product_id: productMap[7],
         image_path: 'https://qpets.in/cdn/shop/files/61V2I5Y6RkL_1800x1800.jpg?v=1732756268',
         is_primary: true
       },
       {
-        product_id: 8,
+        product_id: productMap[8],
         image_path: 'https://headsupfortails.com/cdn/shop/products/HUFT-Personalised-Cosy-Puppy-Cat-Bed---Lilac.jpg?v=1739045338&width=823',
         is_primary: true
       },
       {
-        product_id: 8,
+        product_id: productMap[8],
         image_path: '/images/luxury_cat_bed_white.jpg',
         is_primary: false
       }
@@ -872,9 +903,15 @@ const insertSampleOrders = async () => {
       return;
     }
 
+    const users = await User.find().lean();
+    const userMap = users.reduce((map, user, index) => {
+      map[index + 1] = user._id;
+      return map;
+    }, {});
+
     const sampleOrders = [
       {
-        user_id: 1,
+        user_id: userMap[1],
         order_date: new Date('2025-03-01T10:00:00Z'),
         status: 'Delivered',
         subtotal: 1799.99,
@@ -882,14 +919,14 @@ const insertSampleOrders = async () => {
         delivery_date: new Date('2025-03-05T14:00:00Z')
       },
       {
-        user_id: 1,
+        user_id: userMap[1],
         order_date: new Date('2025-03-10T12:00:00Z'),
         status: 'Pending',
         subtotal: 549.99,
         total_amount: 549.99
       },
       {
-        user_id: 2,
+        user_id: userMap[2],
         order_date: new Date('2025-03-15T09:00:00Z'),
         status: 'Delivered',
         subtotal: 899.99,
@@ -897,14 +934,14 @@ const insertSampleOrders = async () => {
         delivery_date: new Date('2025-03-20T14:00:00Z')
       },
       {
-        user_id: 2,
+        user_id: userMap[2],
         order_date: new Date('2025-03-18T11:00:00Z'),
         status: 'Pending',
         subtotal: 199.99,
         total_amount: 199.99
       },
       {
-        user_id: 3,
+        user_id: userMap[3],
         order_date: new Date('2025-03-20T15:00:00Z'),
         status: 'Delivered',
         subtotal: 2299.99,
@@ -929,11 +966,29 @@ const insertSampleOrderItems = async () => {
       return;
     }
 
+    const orders = await Order.find().lean();
+    const orderMap = orders.reduce((map, order, index) => {
+      map[index + 1] = order._id;
+      return map;
+    }, {});
+
+    const products = await Product.find().lean();
+    const productMap = products.reduce((map, product, index) => {
+      map[index + 1] = product._id;
+      return map;
+    }, {});
+
+    const variants = await ProductVariant.find().lean();
+    const variantMap = variants.reduce((map, variant, index) => {
+      map[index + 1] = variant._id;
+      return map;
+    }, {});
+
     const sampleOrderItems = [
       {
-        order_id: 1,
-        product_id: 1,
-        variant_id: 1,
+        order_id: orderMap[1],
+        product_id: productMap[1],
+        variant_id: variantMap[1],
         product_name: 'Cozy Pet Bed',
         quantity: 1,
         price: 1799.99,
@@ -941,9 +996,9 @@ const insertSampleOrderItems = async () => {
         color: 'Brown'
       },
       {
-        order_id: 2,
-        product_id: 7,
-        variant_id: 15,
+        order_id: orderMap[2],
+        product_id: productMap[7],
+        variant_id: variantMap[15],
         product_name: 'Interactive Dog Ball',
         quantity: 1,
         price: 549.99,
@@ -951,9 +1006,9 @@ const insertSampleOrderItems = async () => {
         color: 'Green'
       },
       {
-        order_id: 3,
-        product_id: 3,
-        variant_id: 7,
+        order_id: orderMap[3],
+        product_id: productMap[3],
+        variant_id: variantMap[7],
         product_name: 'Cat Scratching Post',
         quantity: 1,
         price: 899.99,
@@ -961,9 +1016,9 @@ const insertSampleOrderItems = async () => {
         color: 'Grey'
       },
       {
-        order_id: 4,
-        product_id: 4,
-        variant_id: 9,
+        order_id: orderMap[4],
+        product_id: productMap[4],
+        variant_id: variantMap[9],
         product_name: 'Fish-Flavored Treats',
         quantity: 1,
         price: 199.99,
@@ -971,9 +1026,9 @@ const insertSampleOrderItems = async () => {
         color: null
       },
       {
-        order_id: 5,
-        product_id: 8,
-        variant_id: 17,
+        order_id: orderMap[5],
+        product_id: productMap[8],
+        variant_id: variantMap[17],
         product_name: 'Luxury Cat Bed',
         quantity: 1,
         price: 2299.99,
@@ -998,9 +1053,15 @@ const insertSampleEvents = async () => {
       return;
     }
 
+    const eventManagers = await EventManager.find().lean();
+    const eventManagerMap = eventManagers.reduce((map, manager, index) => {
+      map[index + 1] = manager._id;
+      return map;
+    }, {});
+
     const sampleEvents = [
       {
-        event_manager_id: 1,
+        event_manager_id: eventManagerMap[1],
         event_name: 'Pet Adoption Drive',
         about_event: 'A drive to find homes for shelter pets.',
         language: 'English',
@@ -1020,7 +1081,7 @@ const insertSampleEvents = async () => {
         image: 'https://thumbs.dreamstime.com/z/adorable-kittens-play-yarn-sunlit-living-room-perfect-pet-adoption-promotion-lively-frolic-colorful-pastel-rug-341932672.jpg?ct=jpeg'
       },
       {
-        event_manager_id: 1,
+        event_manager_id: eventManagerMap[1],
         event_name: 'Fancy Dress Show',
         about_event: 'A fun fancy dress show for pets.',
         language: 'English',
@@ -1040,7 +1101,7 @@ const insertSampleEvents = async () => {
         image: 'https://thumbs.dreamstime.com/b/small-dog-wearing-blue-gold-dress-generative-ai-small-dog-wearing-blue-gold-dress-ai-generated-328996362.jpg'
       },
       {
-        event_manager_id: 1,
+        event_manager_id: eventManagerMap[1],
         event_name: 'Dog Run',
         about_event: 'A running competition for dogs.',
         language: 'English',
@@ -1060,7 +1121,7 @@ const insertSampleEvents = async () => {
         image: 'https://thumbs.dreamstime.com/z/dog-running-grass-smile-his-face-ai-328994856.jpg?ct=jpeg'
       },
       {
-        event_manager_id: 1,
+        event_manager_id: eventManagerMap[1],
         event_name: 'Dog Agility Competitions',
         about_event: 'A competition for dog agility.',
         language: 'English',
@@ -1080,7 +1141,7 @@ const insertSampleEvents = async () => {
         image: 'https://thumbs.dreamstime.com/z/dog-jumping-agility-poles-golden-retriever-jumps-over-set-mid-air-white-red-stripes-out-focus-344721458.jpg?ct=jpeg'
       },
       {
-        event_manager_id: 1,
+        event_manager_id: eventManagerMap[1],
         event_name: 'Pet Festival',
         about_event: 'A festival for pet lovers.',
         language: 'English',
@@ -1100,7 +1161,7 @@ const insertSampleEvents = async () => {
         image: 'https://thumbs.dreamstime.com/z/joyful-dog-running-amidst-vibrant-colors-indian-holi-festival-concept-cultural-celebration-pet-happiness-ai-generated-joyful-354114015.jpg?ct=jpeg'
       },
       {
-        event_manager_id: 1,
+        event_manager_id: eventManagerMap[1],
         event_name: 'Cat Show',
         about_event: 'A showcase of feline beauty.',
         language: 'English',
@@ -1137,10 +1198,22 @@ const insertSampleEventAttendees = async () => {
       return;
     }
 
+    const events = await Event.find().lean();
+    const eventMap = events.reduce((map, event, index) => {
+      map[index + 1] = event._id;
+      return map;
+    }, {});
+
+    const users = await User.find().lean();
+    const userMap = users.reduce((map, user, index) => {
+      map[index + 1] = user._id;
+      return map;
+    }, {});
+
     const sampleEventAttendees = [
       {
-        event_id: 1,
-        user_id: 1,
+        event_id: eventMap[1],
+        user_id: userMap[1],
         name: 'Christopher Blake',
         phone_number: '946776866876',
         email: 'christopher.blake@example.com',
@@ -1153,7 +1226,7 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-02-20T10:00:00Z')
       },
       {
-        event_id: 1,
+        event_id: eventMap[1],
         user_id: null,
         name: 'Sarah Lee',
         phone_number: '9876543210',
@@ -1167,7 +1240,7 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-02-25T14:30:00Z')
       },
       {
-        event_id: 2,
+        event_id: eventMap[2],
         user_id: null,
         name: 'Peter Roy',
         phone_number: '943787457878',
@@ -1181,12 +1254,12 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-02-15T09:30:00Z')
       },
       {
-        event_id: 2,
-        user_id: 2,
+        event_id: eventMap[2],
+        user_id: userMap[2],
         name: 'Emily Davis',
         phone_number: '9123456789',
         email: 'emily.davis@example.com',
-        address: '789 Oak Rd, Delhi',
+        address: '789 Oak St, Delhi',
         seats: 3,
         with_pet: true,
         pet_name: 'Bella',
@@ -1195,8 +1268,8 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-03-01T12:00:00Z')
       },
       {
-        event_id: 3,
-        user_id: 3,
+        event_id: eventMap[3],
+        user_id: userMap[3],
         name: 'Michael Chen',
         phone_number: '9234567890',
         email: 'michael.chen@example.com',
@@ -1209,8 +1282,8 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-03-10T08:45:00Z')
       },
       {
-        event_id: 4,
-        user_id: 2,
+        event_id: eventMap[4],
+        user_id: userMap[2],
         name: 'Jake Paul',
         phone_number: '941779828690',
         email: 'jake.paul@example.com',
@@ -1223,7 +1296,7 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-03-01T08:00:00Z')
       },
       {
-        event_id: 4,
+        event_id: eventMap[4],
         user_id: null,
         name: 'Lisa Kumar',
         phone_number: '9345678901',
@@ -1237,8 +1310,8 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-03-20T15:00:00Z')
       },
       {
-        event_id: 5,
-        user_id: 3,
+        event_id: eventMap[5],
+        user_id: userMap[3],
         name: 'Akshay',
         phone_number: '7654321098',
         email: 'akshay@example.com',
@@ -1251,7 +1324,7 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-03-25T12:00:00Z')
       },
       {
-        event_id: 5,
+        event_id: eventMap[5],
         user_id: null,
         name: 'Priya Sharma',
         phone_number: '9456789012',
@@ -1265,8 +1338,8 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-03-26T09:15:00Z')
       },
       {
-        event_id: 6,
-        user_id: 1,
+        event_id: eventMap[6],
+        user_id: userMap[1],
         name: 'Gautam Thota',
         phone_number: '9876543210',
         email: 'gautam.thota@example.com',
@@ -1279,7 +1352,7 @@ const insertSampleEventAttendees = async () => {
         registration_date: new Date('2025-03-27T10:30:00Z')
       },
       {
-        event_id: 6,
+        event_id: eventMap[6],
         user_id: null,
         name: 'Anita Rao',
         phone_number: '9567890123',
@@ -1304,8 +1377,14 @@ const insertSampleEventAttendees = async () => {
 // Connect to MongoDB and insert sample data
 async function connectToMongo(callback) {
   try {
-    await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect(uri);
     console.log('Connected to MongoDB');
+
+    // Drop problematic indexes
+    await mongoose.connection.db.collection('vendors').dropIndex('id_1').catch(err => console.log('Index drop error (vendors):', err.message));
+    await mongoose.connection.db.collection('products').dropIndex('id_1').catch(err => console.log('Index drop error (products):', err.message));
+    await mongoose.connection.db.collection('orders').dropIndex('id_1').catch(err => console.log('Index drop error (orders):', err.message));
+    await mongoose.connection.db.collection('events').dropIndex('id_1').catch(err => console.log('Index drop error (events):', err.message));
 
     // Insert sample data for all collections
     await insertSampleUsers();

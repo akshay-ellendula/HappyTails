@@ -108,12 +108,16 @@
                     <h3>Color</h3>
                     <button class="expand-button">+</button>
                 </div>
-                <% filters.colors.forEach(color => { %>
-                    <p class="hidden">
-                        <input type="checkbox" id="<%= color.replace(/\s+/g, '-').toLowerCase() %>" name="color" value="<%= color %>">
-                        <label for="<%= color.replace(/\s+/g, '-').toLowerCase() %>"><%= color %></label>
-                    </p>
-                <% }); %>
+                <% if (filters && filters.colors && Array.isArray(filters.colors)) { %>
+                    <% filters.colors.forEach(color => { %>
+                        <% if (color) { %>
+                            <p class="hidden">
+                                <input type="checkbox" id="<%= color.replace(/\s+/g, '-').toLowerCase() %>" name="color" value="<%= color %>">
+                                <label for="<%= color.replace(/\s+/g, '-').toLowerCase() %>"><%= color %></label>
+                            </p>
+                        <% } %>
+                    <% }); %>
+                <% } %>
             </div>
             <hr>
             <!-- Size Filter -->
@@ -122,12 +126,16 @@
                     <h3>Size</h3>
                     <button class="expand-button">+</button>
                 </div>
-                <% filters.sizes.forEach(size => { %>
-                    <p class="hidden">
-                        <input type="checkbox" id="<%= size.toLowerCase() %>" name="size" value="<%= size %>">
-                        <label for="<%= size.toLowerCase() %>"><%= size %></label>
-                    </p>
-                <% }); %>
+                <% if (filters && filters.sizes && Array.isArray(filters.sizes)) { %>
+                    <% filters.sizes.forEach(size => { %>
+                        <% if (size) { %>
+                            <p class="hidden">
+                                <input type="checkbox" id="<%= size.toLowerCase() %>" name="size" value="<%= size %>">
+                                <label for="<%= size.toLowerCase() %>"><%= size %></label>
+                            </p>
+                        <% } %>
+                    <% }); %>
+                <% } %>
             </div>
             <button type="submit">Apply Filter</button>
         </form>
@@ -186,8 +194,6 @@
         </div>
     </footer>
 
-    
-    
     <script id="products-data" type="text/plain">
         <%- productsData %>
     </script>

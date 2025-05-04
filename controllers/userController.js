@@ -1,8 +1,14 @@
+const mongoose = require('mongoose');
 const { User } = require('../models/database');
 
 const updateProfile = async (req, res) => {
     const { user_name, user_phone, user_address } = req.body;
-    const user_email = req.session.user.user_email;
+
+    // Validate user_id from session
+    if (!req.session.user || !mongoose.Types.ObjectId.isValid(req.session.user.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid user session or ID' });
+    }
+    const userId = new mongoose.Types.ObjectId(req.session.user.id);
 
     if (!user_name && !user_phone && !user_address && !req.file) {
         return res.status(400).json({ success: false, message: 'No fields to update' });
@@ -21,7 +27,7 @@ const updateProfile = async (req, res) => {
 
     try {
         const result = await User.updateOne(
-            { user_email: user_email },
+            { _id: userId },
             { $set: updates }
         );
 
@@ -36,7 +42,7 @@ const updateProfile = async (req, res) => {
 
         res.json({ success: true, message: 'Profile updated successfully' });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Database update failed' });
+        res.status(500).json({ success: false, message: `Database update failed: ${err.message}` });
     }
 };
 

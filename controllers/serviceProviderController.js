@@ -15,12 +15,29 @@ const serviceProviderLogin = async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password' });
 
-        if (role === 'event-manager') req.session.eventManagerId = user._id;
-        else req.session.vendorId = user._id;
+        // Store user data in session
+        if (role === 'event-manager') {
+            req.session.eventManager = {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                contact_number: user.contact_number,
+                company_name: user.company_name,
+                location: user.location
+            };
+        } else {
+            req.session.vendor = {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                store_name: user.store_name,
+                store_location: user.store_location
+            };
+        }
 
         res.status(200).json({ success: true, redirect: redirectUrl, message: 'Login successful' });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: `Server error: ${error.message}` });
     }
 };
 

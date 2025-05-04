@@ -5,9 +5,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const { Event, EventAttendee, EventManager } = require('../models/database');
 const { eventManagerSignup } = require('../controllers/eventManagerController');
-
-// Route for event manager signup (already updated in controller)
-router.post('/event-manager-signup', eventManagerSignup);
+const bcrypt = require('bcrypt');
 
 // Multer setup for file uploads
 const storage = multer.diskStorage({
@@ -22,22 +20,20 @@ const upload = multer({ storage });
 
 // Middleware to check if event manager is authenticated
 const isAuthenticated = (req, res, next) => {
-    if (req.session.eventManager) {
-        next();
-    } else {
-        console.log('No eventManager session, redirecting to login');
-        res.redirect('/service_provider_login');
+    if (!req.session.eventManager || !mongoose.Types.ObjectId.isValid(req.session.eventManager.id)) {
+        console.log('No eventManager session or invalid ID, redirecting to login');
+        return res.redirect('/service_provider_login');
     }
+    next();
 };
 
 // GET /eventmanager_dashboard - Dashboard with overview, events, and attendees
 router.get('/eventmanager_dashboard', isAuthenticated, async (req, res) => {
     try {
-        const eventManagerId = req.session.eventManager.id;
+        const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
 
-        // Fetch overview metrics
         const overview = await Event.aggregate([
-            { $match: { event_manager_id: new mongoose.Types.ObjectId(eventManagerId) } },
+            { $match: { event_manager_id: eventManagerId } },
             {
                 $group: {
                     _id: null,
@@ -49,19 +45,16 @@ router.get('/eventmanager_dashboard', isAuthenticated, async (req, res) => {
         ]);
         const overviewData = overview[0] || { totalEvents: 0, totalBookings: 0, totalEarnings: 0 };
 
-        // Fetch ongoing events (limit to 3)
         const ongoingEvents = await Event.find({
             event_manager_id: eventManagerId,
             status: 'Ongoing'
         }).limit(3).lean();
 
-        // Fetch upcoming events (limit to 3)
         const upcomingEvents = await Event.find({
             event_manager_id: eventManagerId,
             status: 'Upcoming'
         }).limit(3).lean();
 
-        // Fetch attendees (limit to 3)
         const attendees = await EventAttendee.aggregate([
             {
                 $lookup: {
@@ -72,7 +65,7 @@ router.get('/eventmanager_dashboard', isAuthenticated, async (req, res) => {
                 }
             },
             { $unwind: '$event' },
-            { $match: { 'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId) } },
+            { $match: { 'event.event_manager_id': eventManagerId } },
             {
                 $project: {
                     id: '$_id',
@@ -95,14 +88,14 @@ router.get('/eventmanager_dashboard', isAuthenticated, async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send(`Internal Server Error: ${error.message}`);
     }
 });
 
 // POST /eventmanager_dashboard/create-event - Create a new event
 router.post('/eventmanager_dashboard/create-event', isAuthenticated, upload.single('eventPhoto'), async (req, res) => {
     try {
-        const eventManagerId = req.session.eventManager.id;
+        const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
         const {
             eventName, aboutEvent, language, duration, tickets, ageLimit,
             instructions, venue, terms, category, dateTime
@@ -131,7 +124,7 @@ router.post('/eventmanager_dashboard/create-event', isAuthenticated, upload.sing
         res.status(200).json({ message: 'Event created successfully' });
     } catch (error) {
         console.error('Error creating event:', error);
-        res.status(500).json({ message: 'Error creating event' });
+        res.status(500).json({ message: `Error creating event: ${error.message}` });
     }
 });
 
@@ -139,17 +132,24 @@ router.post('/eventmanager_dashboard/create-event', isAuthenticated, upload.sing
 router.put('/eventmanager_dashboard/update-attendee/:id', isAuthenticated, async (req, res) => {
     try {
         const attendeeId = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(attendeeId)) {
+            return res.status(400).json({ message: 'Invalid attendee ID' });
+        }
         const { name, phone_number, seats } = req.body;
 
-        await EventAttendee.updateOne(
-            { _id: attendeeId },
+        const result = await EventAttendee.updateOne(
+            { _id: new mongoose.Types.ObjectId(attendeeId) },
             { name, phone_number, seats: parseInt(seats) }
         );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: 'Attendee not found' });
+        }
 
         res.status(200).json({ message: 'Attendee updated successfully' });
     } catch (error) {
         console.error('Error updating attendee:', error);
-        res.status(500).json({ message: 'Error updating attendee' });
+        res.status(500).json({ message: `Error updating attendee: ${error.message}` });
     }
 });
 
@@ -157,28 +157,42 @@ router.put('/eventmanager_dashboard/update-attendee/:id', isAuthenticated, async
 router.delete('/eventmanager_dashboard/delete-attendee/:id', isAuthenticated, async (req, res) => {
     try {
         const attendeeId = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(attendeeId)) {
+            return res.status(400).json({ message: 'Invalid attendee ID' });
+        }
 
-        await EventAttendee.deleteOne({ _id: attendeeId });
+        const result = await EventAttendee.deleteOne({ _id: new mongoose.Types.ObjectId(attendeeId) });
+
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: 'Attendee not found' });
+        }
 
         res.status(200).json({ message: 'Attendee deleted successfully' });
     } catch (error) {
         console.error('Error deleting attendee:', error);
-        res.status(500).json({ message: 'Error deleting attendee' });
+        res.status(500).json({ message: `Error deleting attendee: ${error.message}` });
     }
 });
 
 // GET /eventmanager_events - Fetch events for the dashboard
 router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
-    const eventManagerId = req.session.eventManager.id;
+    const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
     const today = new Date();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+    const todayEnd = new Date(todayStart);
+    todayEnd.setHours(23, 59, 59, 999);
 
     const [previousEvents, ongoingEvents, upcomingEvents] = await Promise.all([
-        // Previous events (Past or before today)
         Event.aggregate([
-            { $match: { 
-                event_manager_id: new mongoose.Types.ObjectId(eventManagerId),
-                $or: [{ status: 'Past' }, { date_time: { $lt: today } }]
-            }},
+            {
+                $match: {
+                    event_manager_id: eventManagerId,
+                    $or: [
+                        { status: 'Past' },
+                        { date_time: { $lt: todayStart } }
+                    ]
+                }
+            },
             {
                 $lookup: {
                     from: 'eventattendees',
@@ -206,16 +220,17 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
                 }
             }
         ]),
-        // Ongoing events (status = 'Ongoing' and on today)
         Event.aggregate([
-            { $match: { 
-                event_manager_id: new mongoose.Types.ObjectId(eventManagerId),
-                status: 'Ongoing',
-                date_time: {
-                    $gte: new Date(today.setHours(0, 0, 0, 0)),
-                    $lt: new Date(today.setHours(23, 59, 59, 999))
+            {
+                $match: {
+                    event_manager_id: eventManagerId,
+                    status: 'Ongoing',
+                    date_time: {
+                        $gte: todayStart,
+                        $lte: todayEnd
+                    }
                 }
-            }},
+            },
             {
                 $lookup: {
                     from: 'eventattendees',
@@ -243,13 +258,14 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
                 }
             }
         ]),
-        // Upcoming events (status = 'Upcoming' and after today)
         Event.aggregate([
-            { $match: { 
-                event_manager_id: new mongoose.Types.ObjectId(eventManagerId),
-                status: 'Upcoming',
-                date_time: { $gt: today }
-            }},
+            {
+                $match: {
+                    event_manager_id: eventManagerId,
+                    status: 'Upcoming',
+                    date_time: { $gt: todayEnd }
+                }
+            },
             {
                 $lookup: {
                     from: 'eventattendees',
@@ -290,13 +306,17 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
 // POST /eventmanager_events/update - Update event
 router.post('/eventmanager_events/update', isAuthenticated, async (req, res) => {
     try {
+        const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
         const { eventId, eventName, eventDate, eventTime, eventVenue, eventCapacity, eventTicketPrice, eventDescription } = req.body;
-        const eventManagerId = req.session.eventManager.id;
+
+        if (!mongoose.Types.ObjectId.isValid(eventId)) {
+            return res.status(400).json({ success: false, message: 'Invalid event ID' });
+        }
 
         const eventDateTime = new Date(`${eventDate} ${eventTime}:00`);
 
-        await Event.updateOne(
-            { _id: eventId, event_manager_id: eventManagerId },
+        const result = await Event.updateOne(
+            { _id: new mongoose.Types.ObjectId(eventId), event_manager_id: eventManagerId },
             {
                 event_name: eventName,
                 date_time: eventDateTime,
@@ -307,17 +327,24 @@ router.post('/eventmanager_events/update', isAuthenticated, async (req, res) => 
             }
         );
 
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ success: false, message: 'Event not found or you do not have permission to update it' });
+        }
+
         res.redirect('/eventmanager_events');
     } catch (error) {
         console.error('Error updating event:', error);
-        res.status(500).json({ success: false, message: 'Failed to update event' });
+        res.status(500).json({ success: false, message: `Failed to update event: ${error.message}` });
     }
 });
 
 // GET /eventmanager_attendees - Fetch attendees
 router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
-    const eventManagerId = req.session.eventManager.id;
+    const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
     const today = new Date();
+    const todayStart = new Date(today.setHours(0, 0, 0, 0));
+    const todayEnd = new Date(todayStart);
+    todayEnd.setHours(23, 59, 59, 999);
 
     const formatDate = (date) => {
         if (!date) return 'N/A';
@@ -338,7 +365,6 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
     };
 
     const [pastOngoingAttendees, upcomingAttendees] = await Promise.all([
-        // Past and Ongoing Attendees
         EventAttendee.aggregate([
             {
                 $lookup: {
@@ -351,10 +377,10 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
             { $unwind: '$event' },
             {
                 $match: {
-                    'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId),
+                    'event.event_manager_id': eventManagerId,
                     $or: [
                         { 'event.status': { $in: ['Past', 'Ongoing'] } },
-                        { 'event.date_time': { $lte: today } }
+                        { 'event.date_time': { $lte: todayEnd } }
                     ]
                 }
             },
@@ -393,7 +419,6 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
             formattedDate: formatDate(result.date_time),
             formattedRegDate: formatDate(attendee.registration_date)
         })))),
-        // Upcoming Attendees
         EventAttendee.aggregate([
             {
                 $lookup: {
@@ -406,9 +431,9 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
             { $unwind: '$event' },
             {
                 $match: {
-                    'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId),
+                    'event.event_manager_id': eventManagerId,
                     'event.status': 'Upcoming',
-                    'event.date_time': { $gt: today }
+                    'event.date_time': { $gt: todayEnd }
                 }
             },
             {
@@ -438,17 +463,15 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
 
 // GET /eventmanager_analytics - Fetch analytics
 router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
-    const eventManagerId = req.session.eventManager.id;
+    const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
     const today = new Date();
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay());
-    const startOfMonth = new Date(today);
-    startOfMonth.setDate(1);
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
     const [revenueData, attendeesData, avgTicketData] = await Promise.all([
-        // Revenue Data
         Event.aggregate([
-            { $match: { event_manager_id: new mongoose.Types.ObjectId(eventManagerId) } },
+            { $match: { event_manager_id: eventManagerId } },
             {
                 $lookup: {
                     from: 'eventattendees',
@@ -502,7 +525,6 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
                 }
             }
         ]).then(result => result[0] || { totalRevenue: 0, todayRevenue: 0, thisWeekRevenue: 0, thisMonthRevenue: 0 }),
-        // Attendees Data
         EventAttendee.aggregate([
             {
                 $lookup: {
@@ -513,7 +535,7 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
                 }
             },
             { $unwind: '$event' },
-            { $match: { 'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId) } },
+            { $match: { 'event.event_manager_id': eventManagerId } },
             {
                 $group: {
                     _id: null,
@@ -553,9 +575,8 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
                 }
             }
         ]).then(result => result[0] || { totalAttendees: 0, todayAttendees: 0, thisWeekAttendees: 0, thisMonthAttendees: 0 }),
-        // Average Ticket Price Data
         Event.aggregate([
-            { $match: { event_manager_id: new mongoose.Types.ObjectId(eventManagerId), ticket_price: { $gt: 0 } } },
+            { $match: { event_manager_id: eventManagerId, ticket_price: { $gt: 0 } } },
             {
                 $group: {
                     _id: null,
@@ -634,12 +655,10 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
     });
 });
 
-const bcrypt = require('bcrypt');
-
 // GET /eventmanager_profile - Render profile page
 router.get('/eventmanager_profile', isAuthenticated, async (req, res) => {
     try {
-        const eventManagerId = req.session.eventManager.id;
+        const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
 
         const eventManager = await EventManager.findById(eventManagerId).lean();
         if (!eventManager) {
@@ -678,27 +697,36 @@ router.get('/eventmanager_profile', isAuthenticated, async (req, res) => {
 // POST /eventmanager_profile - Update profile
 router.post('/eventmanager_profile', isAuthenticated, upload.single('profilePic'), async (req, res) => {
     try {
-        const eventManagerId = req.session.eventManager.id;
+        const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
         const { firstName, lastName, email, phone, eventType, license, bio } = req.body;
         const name = `${firstName} ${lastName}`.trim();
         const contact_number = phone.replace(/\D/g, '').slice(-10);
 
-        await EventManager.updateOne(
+        const result = await EventManager.updateOne(
             { _id: eventManagerId },
             { name, email, contact_number }
         );
 
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ success: false, message: 'Event manager not found' });
+        }
+
+        // Update session data
+        req.session.eventManager.name = name;
+        req.session.eventManager.email = email;
+        req.session.eventManager.contact_number = contact_number;
+
         res.redirect('/eventmanager_profile');
     } catch (error) {
         console.error('Error updating profile:', error);
-        res.status(500).json({ success: false, message: 'Failed to update profile' });
+        res.status(500).json({ success: false, message: `Failed to update profile: ${error.message}` });
     }
 });
 
 // POST /eventmanager_profile/password - Update password
 router.post('/eventmanager_profile/password', isAuthenticated, async (req, res) => {
     try {
-        const eventManagerId = req.session.eventManager.id;
+        const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
         const { currentPassword, newPassword } = req.body;
 
         const eventManager = await EventManager.findById(eventManagerId);
@@ -717,7 +745,7 @@ router.post('/eventmanager_profile/password', isAuthenticated, async (req, res) 
         res.json({ success: true, message: 'Password updated successfully' });
     } catch (error) {
         console.error('Error updating password:', error);
-        res.status(500).json({ success: false, message: 'Failed to update password' });
+        res.status(500).json({ success: false, message: `Failed to update password: ${error.message}` });
     }
 });
 
@@ -745,7 +773,7 @@ router.get('/Events', async (req, res) => {
         res.render('Events', { events: formattedEvents, user: req.session.user });
     } catch (error) {
         console.error('Error fetching events:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(500).send(`Internal Server Error: ${error.message}`);
     }
 });
 
@@ -753,11 +781,11 @@ router.get('/Events', async (req, res) => {
 router.get('/event_booking_form', async (req, res) => {
     try {
         const eventId = req.query.eventId;
-        if (!eventId) {
-            return res.status(400).send('Event ID is required');
+        if (!eventId || !mongoose.Types.ObjectId.isValid(eventId)) {
+            return res.status(400).send('Invalid Event ID');
         }
 
-        const event = await Event.findById(eventId).lean();
+        const event = await Event.findById(new mongoose.Types.ObjectId(eventId)).lean();
         if (!event) {
             return res.status(404).send('Event not found');
         }
@@ -769,18 +797,18 @@ router.get('/event_booking_form', async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching event:', error);
-        res.status(500).send('Server error');
+        res.status(500).send(`Server error: ${error.message}`);
     }
 });
 
 // POST /event_booking - Book an event
 router.post('/event_booking', async (req, res) => {
-    if (!req.session.user) {
-        return res.status(401).json({ success: false, message: 'Please log in to book an event' });
+    if (!req.session.user || !mongoose.Types.ObjectId.isValid(req.session.user.id)) {
+        return res.status(401).json({ success: false, message: 'Please log in with a valid user to book an event' });
     }
 
     try {
-        const user = req.session.user;
+        const userId = new mongoose.Types.ObjectId(req.session.user.id);
         const {
             eventId,
             name,
@@ -794,7 +822,10 @@ router.post('/event_booking', async (req, res) => {
             pet_dob
         } = req.body;
 
-        if (!eventId || !name || !email || !phone_number || !address) {
+        if (!eventId || !mongoose.Types.ObjectId.isValid(eventId)) {
+            return res.status(400).json({ success: false, message: 'Invalid event ID' });
+        }
+        if (!name || !email || !phone_number || !address) {
             return res.status(400).json({
                 success: false,
                 message: 'Missing required fields',
@@ -802,29 +833,36 @@ router.post('/event_booking', async (req, res) => {
             });
         }
 
+        const eventObjectId = new mongoose.Types.ObjectId(eventId);
+        const event = await Event.findById(eventObjectId);
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+
         const attendee = await EventAttendee.create({
-            event_id: eventId,
-            user_id: user.id,
+            event_id: eventObjectId,
+            user_id: userId,
             name,
             phone_number,
             email,
             address,
-            seats: seats || 1,
+            seats: seats ? parseInt(seats) : 1,
             with_pet: with_pet === 'yes',
             pet_name: pet_name || null,
             pet_breed: pet_breed || null,
-            pet_dob: pet_dob ? new Date(pet_dob) : null
+            pet_dob: pet_dob ? new Date(pet_dob) : null,
+            registration_date: new Date()
         });
 
         await Event.updateOne(
-            { _id: eventId },
-            { $inc: { tickets_sold: seats || 1 } }
+            { _id: eventObjectId },
+            { $inc: { tickets_sold: seats ? parseInt(seats) : 1 } }
         );
 
         res.json({ success: true, message: 'Ticket booked successfully' });
     } catch (error) {
         console.error('Error registering attendee:', error);
-        res.status(500).json({ success: false, message: 'Registration failed', error: error.message });
+        res.status(500).json({ success: false, message: `Registration failed: ${error.message}` });
     }
 });
 

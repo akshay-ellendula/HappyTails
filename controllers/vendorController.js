@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const { Vendor, Order, OrderItem, Product, ProductVariant, ProductImage, User, EventManager } = require('../models/database');
 const multer = require('multer');
@@ -6,10 +7,10 @@ const path = require('path');
 // Configure Multer for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/uploads/products/'); // Ensure this directory exists
+        cb(null, 'public/uploads/products/');
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+        cb(null, Date.now() + path.extname(file.originalname));
     }
 });
 const upload = multer({ storage: storage });
@@ -20,15 +21,15 @@ const getVendorOrders = async (req, res) => {
         return res.redirect('/service_provider_login');
     }
 
-    const vendorId = req.session.vendor.id;
-    const statusFilter = req.query.status || 'all'; // Default to 'all' if no status is provided
+    // Validate vendor_id
+    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    }
+    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+    const statusFilter = req.query.status || 'all';
 
     try {
-        // Fetch orders for the vendor
-        let matchStage = {
-            'products.vendor_id': parseInt(vendorId)
-        };
-
+        let matchStage = { 'products.vendor_id': vendorId };
         if (statusFilter !== 'all') {
             matchStage['orders.status'] = statusFilter;
         }
@@ -37,7 +38,7 @@ const getVendorOrders = async (req, res) => {
             {
                 $lookup: {
                     from: 'orderitems',
-                    localField: 'id',
+                    localField: '_id',
                     foreignField: 'order_id',
                     as: 'order_items'
                 }
@@ -46,7 +47,7 @@ const getVendorOrders = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'order_items.product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'products'
                 }
             },
@@ -54,7 +55,7 @@ const getVendorOrders = async (req, res) => {
                 $lookup: {
                     from: 'users',
                     localField: 'user_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'user'
                 }
             },
@@ -66,7 +67,7 @@ const getVendorOrders = async (req, res) => {
             },
             {
                 $project: {
-                    id: '$id',
+                    id: '$_id',
                     order_date: '$order_date',
                     status: '$status',
                     total_amount: '$total_amount',
@@ -100,11 +101,11 @@ const getVendorOrders = async (req, res) => {
                 }),
                 status: order.status
             })),
-            status: statusFilter // Pass the status filter to the template
+            status: statusFilter
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        res.status(500).send('Server error');
+        res.status(500).send(`Server error: ${error.message}`);
     }
 };
 
@@ -113,19 +114,21 @@ const getVendorProducts = async (req, res) => {
         return res.redirect('/service_provider_login');
     }
 
-    const vendor = req.session.vendor;
-    const vendorId = vendor.id;
+    // Validate vendor_id
+    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    }
+    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
 
     try {
-        // Fetch products for the vendor along with their primary image
         const products = await Product.aggregate([
             {
-                $match: { vendor_id: parseInt(vendorId) }
+                $match: { vendor_id: vendorId }
             },
             {
                 $lookup: {
                     from: 'productvariants',
-                    localField: 'id',
+                    localField: '_id',
                     foreignField: 'product_id',
                     as: 'variants'
                 }
@@ -133,14 +136,14 @@ const getVendorProducts = async (req, res) => {
             {
                 $lookup: {
                     from: 'productimages',
-                    localField: 'id',
+                    localField: '_id',
                     foreignField: 'product_id',
                     as: 'images'
                 }
             },
             {
                 $project: {
-                    id: '$id',
+                    id: '$_id',
                     product_name: '$product_name',
                     product_category: '$product_category',
                     product_type: '$product_type',
@@ -162,7 +165,6 @@ const getVendorProducts = async (req, res) => {
             }
         ]);
 
-        // Calculate sold quantity for each product
         const productsWithSold = await Promise.all(products.map(async (product) => {
             const soldResult = await OrderItem.aggregate([
                 {
@@ -179,18 +181,17 @@ const getVendorProducts = async (req, res) => {
             return {
                 ...product,
                 sold: soldResult[0]?.sold || 0,
-                image_path: product.image_path?.image_path || '/images/default.jpg' // Fallback image if no image is found
+                image_path: product.image_path?.image_path || '/images/default.jpg'
             };
         }));
 
-        // Render the products page with the vendor's data
         res.render('shop-products', {
             vendor: req.session.vendor,
             products: productsWithSold
         });
     } catch (error) {
         console.error('Error fetching products:', error);
-        res.status(500).send('Server error');
+        res.status(500).send(`Server error: ${error.message}`);
     }
 };
 
@@ -199,23 +200,24 @@ const getVendorProfile = async (req, res) => {
         return res.redirect('/service_provider_login');
     }
 
-    const vendor = req.session.vendor;
-    const vendorId = vendor.id;
+    // Validate vendor_id
+    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    }
+    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
 
     try {
-        // Fetch vendor details from the database
-        const vendorDetails = await Vendor.findOne({ id: parseInt(vendorId) });
+        const vendorDetails = await Vendor.findById(vendorId);
         if (!vendorDetails) {
             return res.status(404).send('Vendor not found');
         }
 
-        // Calculate total revenue
         const totalRevenueResult = await OrderItem.aggregate([
             {
                 $lookup: {
                     from: 'orders',
                     localField: 'order_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'order'
                 }
             },
@@ -226,7 +228,7 @@ const getVendorProfile = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'product'
                 }
             },
@@ -234,7 +236,7 @@ const getVendorProfile = async (req, res) => {
                 $unwind: '$product'
             },
             {
-                $match: { 'product.vendor_id': parseInt(vendorId) }
+                $match: { 'product.vendor_id': vendorId }
             },
             {
                 $group: {
@@ -245,13 +247,12 @@ const getVendorProfile = async (req, res) => {
         ]);
         const totalRevenue = totalRevenueResult[0]?.totalRevenue || 0;
 
-        // Calculate products sold
         const productsSoldResult = await OrderItem.aggregate([
             {
                 $lookup: {
                     from: 'orders',
                     localField: 'order_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'order'
                 }
             },
@@ -262,7 +263,7 @@ const getVendorProfile = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'product'
                 }
             },
@@ -270,7 +271,7 @@ const getVendorProfile = async (req, res) => {
                 $unwind: '$product'
             },
             {
-                $match: { 'product.vendor_id': parseInt(vendorId) }
+                $match: { 'product.vendor_id': vendorId }
             },
             {
                 $group: {
@@ -281,12 +282,11 @@ const getVendorProfile = async (req, res) => {
         ]);
         const productsSold = productsSoldResult[0]?.productsSold || 0;
 
-        // Calculate new orders
         const newOrdersResult = await Order.aggregate([
             {
                 $lookup: {
                     from: 'orderitems',
-                    localField: 'id',
+                    localField: '_id',
                     foreignField: 'order_id',
                     as: 'order_items'
                 }
@@ -295,13 +295,13 @@ const getVendorProfile = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'order_items.product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'products'
                 }
             },
             {
                 $match: {
-                    'products.vendor_id': parseInt(vendorId),
+                    'products.vendor_id': vendorId,
                     status: 'Pending'
                 }
             },
@@ -314,12 +314,11 @@ const getVendorProfile = async (req, res) => {
         ]);
         const newOrders = newOrdersResult[0]?.newOrders || 0;
 
-        // Fetch recent orders
         const recentOrders = await Order.aggregate([
             {
                 $lookup: {
                     from: 'orderitems',
-                    localField: 'id',
+                    localField: '_id',
                     foreignField: 'order_id',
                     as: 'order_items'
                 }
@@ -328,7 +327,7 @@ const getVendorProfile = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'order_items.product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'products'
                 }
             },
@@ -336,12 +335,12 @@ const getVendorProfile = async (req, res) => {
                 $lookup: {
                     from: 'users',
                     localField: 'user_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'user'
                 }
             },
             {
-                $match: { 'products.vendor_id': parseInt(vendorId) }
+                $match: { 'products.vendor_id': vendorId }
             },
             {
                 $unwind: '$user'
@@ -351,7 +350,7 @@ const getVendorProfile = async (req, res) => {
             },
             {
                 $project: {
-                    id: '$id',
+                    id: '$_id',
                     order_date: '$order_date',
                     status: '$status',
                     total_amount: '$total_amount',
@@ -367,7 +366,6 @@ const getVendorProfile = async (req, res) => {
             }
         ]);
 
-        // Render the profile page with the vendor's data
         res.render('shop-profile', {
             vendor: {
                 store_name: vendorDetails.store_name,
@@ -375,23 +373,23 @@ const getVendorProfile = async (req, res) => {
                 email: vendorDetails.email,
                 phone: vendorDetails.contact_number,
                 address: vendorDetails.store_location,
-                description: 'Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs. All our products are designed with pet comfort and safety in mind, using sustainable materials whenever possible.' // You can add a description field to the vendors table if needed
+                description: 'Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs.'
             },
             totalRevenue: totalRevenue.toFixed(2),
             productsSold,
             newOrders,
             recentOrders,
-            customerRatings: '4.8/5' // Hardcoded for now; you can add a ratings system later
+            customerRatings: '4.8/5'
         });
     } catch (error) {
         console.error('Error fetching profile data:', error);
-        res.status(500).send('Server error');
+        res.status(500).send(`Server error: ${error.message}`);
     }
 };
 
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;
-    console.log('Login attempt:', { email, role }); // Debug: Log input
+    console.log('Login attempt:', { email, role });
 
     if (!email || !password || !role) {
         return res.status(400).json({ success: false, message: 'Email, password, and role are required' });
@@ -422,12 +420,17 @@ const serviceProviderLogin = async (req, res) => {
         }
 
         req.session[sessionKey] = { 
-            id: user.id, 
+            id: user._id, 
             email: user.email, 
             role, 
-            store_name: user.store_name || null
+            store_name: user.store_name || null,
+            name: user.name,
+            contact_number: user.contact_number || null,
+            store_location: user.store_location || null,
+            company_name: user.company_name || null,
+            location: user.location || null
         };
-        console.log('Session set:', req.session[sessionKey]); // Debug: Log session
+        console.log('Session set:', req.session[sessionKey]);
 
         if (role === 'store-manager') {
             const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
@@ -436,15 +439,14 @@ const serviceProviderLogin = async (req, res) => {
             redirect = '/eventmanager_dashboard';
         }
 
-        console.log('Redirecting to:', redirect); // Debug: Log redirect
+        console.log('Redirecting to:', redirect);
         res.status(200).json({ success: true, message: 'Login successful', redirect });
     } catch (error) {
         console.error('Server error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: `Server error: ${error.message}` });
     }
 };
 
-// vendorController.js (getVendorDashboard)
 const getVendorDashboard = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
@@ -459,16 +461,19 @@ const getVendorDashboard = async (req, res) => {
         return res.status(403).send('Unauthorized: You can only access your own dashboard.');
     }
 
-    const vendorId = vendor.id;
+    // Validate vendor_id
+    if (!mongoose.Types.ObjectId.isValid(vendor.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    }
+    const vendorId = new mongoose.Types.ObjectId(vendor.id);
 
     try {
-        // Calculate total revenue
         const totalRevenueResult = await OrderItem.aggregate([
             {
                 $lookup: {
                     from: 'orders',
                     localField: 'order_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'order'
                 }
             },
@@ -479,7 +484,7 @@ const getVendorDashboard = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'product'
                 }
             },
@@ -487,7 +492,7 @@ const getVendorDashboard = async (req, res) => {
                 $unwind: '$product'
             },
             {
-                $match: { 'product.vendor_id': parseInt(vendorId) }
+                $match: { 'product.vendor_id': vendorId }
             },
             {
                 $group: {
@@ -498,13 +503,12 @@ const getVendorDashboard = async (req, res) => {
         ]);
         const totalRevenue = totalRevenueResult[0]?.totalRevenue || 0;
 
-        // Calculate products sold
         const productsSoldResult = await OrderItem.aggregate([
             {
                 $lookup: {
                     from: 'orders',
                     localField: 'order_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'order'
                 }
             },
@@ -515,7 +519,7 @@ const getVendorDashboard = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'product'
                 }
             },
@@ -523,7 +527,7 @@ const getVendorDashboard = async (req, res) => {
                 $unwind: '$product'
             },
             {
-                $match: { 'product.vendor_id': parseInt(vendorId) }
+                $match: { 'product.vendor_id': vendorId }
             },
             {
                 $group: {
@@ -534,12 +538,11 @@ const getVendorDashboard = async (req, res) => {
         ]);
         const productsSold = productsSoldResult[0]?.productsSold || 0;
 
-        // Calculate new orders
         const newOrdersResult = await Order.aggregate([
             {
                 $lookup: {
                     from: 'orderitems',
-                    localField: 'id',
+                    localField: '_id',
                     foreignField: 'order_id',
                     as: 'order_items'
                 }
@@ -548,13 +551,13 @@ const getVendorDashboard = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'order_items.product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'products'
                 }
             },
             {
                 $match: {
-                    'products.vendor_id': parseInt(vendorId),
+                    'products.vendor_id': vendorId,
                     status: 'Pending'
                 }
             },
@@ -567,12 +570,11 @@ const getVendorDashboard = async (req, res) => {
         ]);
         const newOrders = newOrdersResult[0]?.newOrders || 0;
 
-        // Fetch recent orders
         const recentOrders = await Order.aggregate([
             {
                 $lookup: {
                     from: 'orderitems',
-                    localField: 'id',
+                    localField: '_id',
                     foreignField: 'order_id',
                     as: 'order_items'
                 }
@@ -581,7 +583,7 @@ const getVendorDashboard = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'order_items.product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'products'
                 }
             },
@@ -589,12 +591,12 @@ const getVendorDashboard = async (req, res) => {
                 $lookup: {
                     from: 'users',
                     localField: 'user_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'user'
                 }
             },
             {
-                $match: { 'products.vendor_id': parseInt(vendorId) }
+                $match: { 'products.vendor_id': vendorId }
             },
             {
                 $unwind: '$user'
@@ -604,7 +606,7 @@ const getVendorDashboard = async (req, res) => {
             },
             {
                 $project: {
-                    id: '$id',
+                    id: '$_id',
                     order_date: '$order_date',
                     status: '$status',
                     total_amount: '$total_amount',
@@ -629,11 +631,10 @@ const getVendorDashboard = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        res.status(500).send('Server error');
+        res.status(500).send(`Server error: ${error.message}`);
     }
 };
 
-// vendorController.js
 const storeSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, storename, storelocation } = req.body;
 
@@ -649,12 +650,10 @@ const storeSignup = async (req, res) => {
     if (storelocation.length < 3) return res.status(400).json({ success: false, message: 'Invalid store location' });
 
     try {
-        // Check if email already exists
         const existingVendor = await Vendor.findOne({ email });
         if (existingVendor) return res.status(400).json({ success: false, message: 'Email already registered' });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        // Create the new vendor
         const newVendor = await Vendor.create({
             name,
             contact_number: contactnumber,
@@ -665,14 +664,15 @@ const storeSignup = async (req, res) => {
             created_at: new Date()
         });
 
-        // Set the session for the new vendor
         req.session.vendor = {
-            id: newVendor.id,
+            id: newVendor._id,
             email: newVendor.email,
-            store_name: newVendor.store_name
+            store_name: newVendor.store_name,
+            name: newVendor.name,
+            contact_number: newVendor.contact_number,
+            store_location: newVendor.store_location
         };
 
-        // Generate the storeName slug for the redirect URL
         const storeNameSlug = newVendor.store_name.toLowerCase().replace(/\s+/g, '-');
         const redirectUrl = `/shop-dashboard/${storeNameSlug}`;
 
@@ -682,7 +682,7 @@ const storeSignup = async (req, res) => {
             message: 'Vendor signup successful'
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: `Server error: ${error.message}` });
     }
 };
 
@@ -690,70 +690,82 @@ const logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
-            return res.status(500).send('Server error');
+            return res.status(500).json({ success: false, message: 'Logout failed' });
         }
-        res.redirect('/service_provider_login');
+        res.status(200).json({ success: true, redirect: '/service_provider_login', message: 'Logout successful' });
     });
 };
 
-// Fetch product data for editing
 const getProductForEdit = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
     }
 
-    const vendorId = req.session.vendor.id;
-    const productId = parseInt(req.params.productId);
+    // Validate vendor_id
+    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    }
+    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+
+    const productId = req.params.productId;
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return res.redirect('/shop-products?error=Invalid product ID');
+    }
+    const productObjectId = new mongoose.Types.ObjectId(productId);
 
     try {
-        // Fetch product details
-        const product = await Product.findOne({ id: productId, vendor_id: parseInt(vendorId) });
+        const product = await Product.findOne({ _id: productObjectId, vendor_id: vendorId });
         if (!product) {
             return res.redirect('/shop-products?error=Product not found or you do not have permission to edit it.');
         }
 
-        // Fetch all variants for the product
-        const variants = await ProductVariant.find({ product_id: productId });
+        const variants = await ProductVariant.find({ product_id: productObjectId });
+        const images = await ProductImage.find({ product_id: productObjectId });
 
-        // Fetch product images
-        const images = await ProductImage.find({ product_id: productId });
-
-        // Render the edit product page with the product data
         res.render('shop-product-edit', {
             vendor: req.session.vendor,
             product: {
-                id: product.id,
+                id: product._id,
                 product_name: product.product_name,
                 product_category: product.product_category,
                 product_type: product.product_type,
                 product_description: product.product_description,
                 stock_status: product.stock_status,
-                variants: variants || [], // Pass all variants
+                variants: variants || [],
                 images: images || []
             }
         });
     } catch (error) {
         console.error('Error fetching product for edit:', error);
-        res.redirect('/shop-products?error=Server error while fetching product data.');
+        res.redirect(`/shop-products?error=Server error while fetching product data: ${error.message}`);
     }
 };
 
-// Update product
 const updateProduct = [
-    upload.array('productImages', 4), // Allow up to 4 images
+    upload.array('productImages', 4),
     async (req, res) => {
         if (!req.session.vendor) {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
-        const vendorId = req.session.vendor.id;
-        const productId = parseInt(req.params.productId);
+        // Validate vendor_id
+        if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        }
+        const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+
+        const productId = req.params.productId;
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({ success: false, message: 'Invalid product ID' });
+        }
+        const productObjectId = new mongoose.Types.ObjectId(productId);
+
         const {
             productName,
             productCategory,
             productType,
             productDescription,
-            stock_status, // Add stock_status
+            stock_status,
             'variant_size[]': variantSizes,
             'variant_color[]': variantColors,
             'variant_regular_price[]': variantRegularPrices,
@@ -761,7 +773,6 @@ const updateProduct = [
             'variant_stock_quantity[]': variantStockQuantities
         } = req.body;
 
-        // Validate required fields
         if (!productName || !productCategory || !productType || !productDescription || !stock_status) {
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
@@ -770,21 +781,18 @@ const updateProduct = [
             return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
         }
 
-        // Validate stock_status
         if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         try {
-            // Verify the product belongs to the vendor
-            const product = await Product.findOne({ id: productId, vendor_id: parseInt(vendorId) });
+            const product = await Product.findOne({ _id: productObjectId, vendor_id: vendorId });
             if (!product) {
                 return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to edit it.' });
             }
 
-            // Update product details
             await Product.updateOne(
-                { id: productId },
+                { _id: productObjectId },
                 {
                     product_name: productName,
                     product_category: productCategory,
@@ -794,10 +802,8 @@ const updateProduct = [
                 }
             );
 
-            // Delete existing variants
-            await ProductVariant.deleteMany({ product_id: productId });
+            await ProductVariant.deleteMany({ product_id: productObjectId });
 
-            // Insert updated variants
             for (let i = 0; i < variantSizes.length; i++) {
                 const size = variantSizes[i] || null;
                 const color = variantColors[i] || null;
@@ -809,13 +815,12 @@ const updateProduct = [
                     return res.status(400).json({ success: false, message: 'Regular price and stock quantity are required for each variant' });
                 }
 
-                // Validate sale price is less than regular price
                 if (salePrice && salePrice >= regularPrice) {
                     return res.status(400).json({ success: false, message: 'Sale price must be less than regular price for all variants' });
                 }
 
                 await ProductVariant.create({
-                    product_id: productId,
+                    product_id: productObjectId,
                     size,
                     color,
                     regular_price: regularPrice,
@@ -824,14 +829,11 @@ const updateProduct = [
                 });
             }
 
-            // Handle image uploads
             if (req.files && req.files.length > 0) {
-                // Delete existing images
-                await ProductImage.deleteMany({ product_id: productId });
+                await ProductImage.deleteMany({ product_id: productObjectId });
 
-                // Insert new images
                 const images = req.files.map((file, index) => ({
-                    product_id: productId,
+                    product_id: productObjectId,
                     image_path: `/uploads/products/${file.filename}`,
                     is_primary: index === 0 ? true : false
                 }));
@@ -841,26 +843,28 @@ const updateProduct = [
             res.status(200).json({ success: true, message: 'Product updated successfully', redirect: '/shop-products' });
         } catch (error) {
             console.error('Error updating product:', error);
-            res.status(500).json({ success: false, message: 'Server error' });
+            res.status(500).json({ success: false, message: `Server error: ${error.message}` });
         }
     }
 ];
 
-// Fetch vendor customers
 const getVendorCustomers = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
     }
 
-    const vendorId = req.session.vendor.id;
+    // Validate vendor_id
+    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    }
+    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
 
     try {
-        // Query to fetch customers who have placed orders with the vendor
         const customers = await User.aggregate([
             {
                 $lookup: {
                     from: 'orders',
-                    localField: 'id',
+                    localField: '_id',
                     foreignField: 'user_id',
                     as: 'orders'
                 }
@@ -871,7 +875,7 @@ const getVendorCustomers = async (req, res) => {
             {
                 $lookup: {
                     from: 'orderitems',
-                    localField: 'orders.id',
+                    localField: 'orders._id',
                     foreignField: 'order_id',
                     as: 'order_items'
                 }
@@ -880,21 +884,21 @@ const getVendorCustomers = async (req, res) => {
                 $lookup: {
                     from: 'products',
                     localField: 'order_items.product_id',
-                    foreignField: 'id',
+                    foreignField: '_id',
                     as: 'products'
                 }
             },
             {
-                $match: { 'products.vendor_id': parseInt(vendorId) }
+                $match: { 'products.vendor_id': vendorId }
             },
             {
                 $group: {
                     _id: {
-                        id: '$id',
+                        id: '$_id',
                         user_name: '$user_name',
                         user_email: '$user_email'
                     },
-                    total_orders: { $addToSet: '$orders.id' },
+                    total_orders: { $addToSet: '$orders._id' },
                     total_spent: { $sum: '$orders.total_amount' },
                     last_order_date: { $max: '$orders.order_date' }
                 }
@@ -914,10 +918,9 @@ const getVendorCustomers = async (req, res) => {
             }
         ]);
 
-        // Format the customer data for the template
         const formattedCustomers = customers.map((customer, index) => ({
-            customer_id: `C${String(index + 1).padStart(3, '0')}`, // Generate a customer ID like C001, C002, etc.
-            user_id: customer.customer_id, // Actual user ID for linking to details
+            customer_id: `C${String(index + 1).padStart(3, '0')}`,
+            user_id: customer.customer_id,
             name: customer.user_name,
             email: customer.email,
             total_orders: customer.total_orders,
@@ -937,11 +940,10 @@ const getVendorCustomers = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching customers:', error);
-        res.status(500).send('Server error');
+        res.status(500).send(`Server error: ${error.message}`);
     }
 };
 
-// Submit new product
 const submitProduct = [
     upload.array('product_images', 4),
     async (req, res) => {
@@ -949,21 +951,25 @@ const submitProduct = [
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
-        const vendorId = req.session.vendor.id;
+        // Validate vendor_id
+        if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        }
+        const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+
         const {
             product_name,
             product_category,
             product_type,
             product_description,
             stock_status,
-            'variant_size[]': variantSizes, // Array of sizes
-            'variant_color[]': variantColors, // Array of colors
-            'variant_regular_price[]': variantRegularPrices, // Array of regular prices
-            'variant_sale_price[]': variantSalePrices, // Array of sale prices
-            'variant_stock_quantity[]': variantStockQuantities // Array of stock quantities
+            'variant_size[]': variantSizes,
+            'variant_color[]': variantColors,
+            'variant_regular_price[]': variantRegularPrices,
+            'variant_sale_price[]': variantSalePrices,
+            'variant_stock_quantity[]': variantStockQuantities
         } = req.body;
 
-        // Validate required fields
         if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
@@ -972,20 +978,13 @@ const submitProduct = [
             return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
         }
 
-        // Validate stock_status
         if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         try {
-            // Get the highest product ID to generate the next one
-            const lastProduct = await Product.findOne().sort({ id: -1 });
-            const productId = lastProduct ? lastProduct.id + 1 : 1;
-
-            // Insert the product
-            await Product.create({
-                id: productId,
-                vendor_id: parseInt(vendorId),
+            const product = await Product.create({
+                vendor_id: vendorId,
                 product_name,
                 product_category,
                 product_type,
@@ -994,7 +993,6 @@ const submitProduct = [
                 created_at: new Date()
             });
 
-            // Insert all variants
             for (let i = 0; i < variantSizes.length; i++) {
                 const size = variantSizes[i] ? variantSizes[i].trim() : null;
                 const color = variantColors[i] ? variantColors[i].trim() : null;
@@ -1002,7 +1000,6 @@ const submitProduct = [
                 const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
                 const stockQuantity = parseInt(variantStockQuantities[i]);
 
-                // Validate variant data
                 if (isNaN(regularPrice) || regularPrice <= 0) {
                     return res.status(400).json({ success: false, message: 'Regular price must be a positive number' });
                 }
@@ -1014,7 +1011,7 @@ const submitProduct = [
                 }
 
                 await ProductVariant.create({
-                    product_id: productId,
+                    product_id: product._id,
                     size,
                     color,
                     regular_price: regularPrice,
@@ -1023,10 +1020,9 @@ const submitProduct = [
                 });
             }
 
-            // Insert images
             if (req.files && req.files.length > 0) {
                 const images = req.files.map((file, index) => ({
-                    product_id: productId,
+                    product_id: product._id,
                     image_path: `/uploads/products/${file.filename}`,
                     is_primary: index === 0 ? true : false
                 }));
@@ -1036,10 +1032,9 @@ const submitProduct = [
             res.status(200).json({ success: true, message: 'Product added successfully', redirect: '/shop-products' });
         } catch (error) {
             console.error('Error adding product:', error);
-            res.status(500).json({ success: false, message: 'Server error' });
+            res.status(500).json({ success: false, message: `Server error: ${error.message}` });
         }
     }
-];     
+];
 
-// Export all controllers, including submitProduct
 module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct };

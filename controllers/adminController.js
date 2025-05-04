@@ -31,6 +31,10 @@ const getUsers = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const userId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
+        }
         const user = await User.findById(userId)
             .select('user_name user_email user_phone user_address created_at');
         if (!user) {
@@ -52,6 +56,10 @@ const getUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const userId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
+        }
         const { user_name, user_phone, user_address } = req.body;
 
         if (!user_name) return res.status(400).json({ success: false, message: 'Name is required' });
@@ -75,6 +83,10 @@ const updateUser = async (req, res) => {
 const deleteUser = async (req, res) => {
     try {
         const userId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ success: false, message: 'Invalid user ID' });
+        }
         const user = await User.findByIdAndDelete(userId);
         if (!user) return res.status(404).json({ success: false, message: 'User not found' });
         res.json({ success: true, message: 'User deleted successfully' });
@@ -372,6 +384,10 @@ const adminGetVendors = async (req, res) => {
 const getVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        }
         const vendor = await Vendor.findById(vendorId)
             .select('name email store_name store_location created_at');
         if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
@@ -390,7 +406,12 @@ const getVendor = async (req, res) => {
 
 const getVendorRevenueMetrics = async (req, res) => {
     try {
-        const vendorId = new mongoose.Types.ObjectId(req.params.id);
+        const vendorId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        }
+        const vendorObjectId = new mongoose.Types.ObjectId(vendorId);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -417,7 +438,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': vendorId } },
+            { $match: { 'product.vendor_id': vendorObjectId } },
             { $group: { _id: null, today_revenue: { $sum: '$total_amount' } } }
         ]);
 
@@ -441,7 +462,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': vendorId } },
+            { $match: { 'product.vendor_id': vendorObjectId } },
             { $group: { _id: null, weekly_revenue: { $sum: '$total_amount' } } }
         ]);
 
@@ -465,7 +486,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': vendorId } },
+            { $match: { 'product.vendor_id': vendorObjectId } },
             { $group: { _id: null, monthly_revenue: { $sum: '$total_amount' } } }
         ]);
 
@@ -489,7 +510,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': vendorId } },
+            { $match: { 'product.vendor_id': vendorObjectId } },
             { $group: { _id: null, quarterly_revenue: { $sum: '$total_amount' } } }
         ]);
 
@@ -513,7 +534,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': vendorId } },
+            { $match: { 'product.vendor_id': vendorObjectId } },
             {
                 $group: {
                     _id: { $dateToString: { format: "%Y-%m", date: "$order_date" } },
@@ -550,9 +571,14 @@ const getVendorRevenueMetrics = async (req, res) => {
 
 const getVendorProducts = async (req, res) => {
     try {
-        const vendorId = new mongoose.Types.ObjectId(req.params.id);
+        const vendorId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        }
+        const vendorObjectId = new mongoose.Types.ObjectId(vendorId);
         const products = await Product.aggregate([
-            { $match: { vendor_id: vendorId } },
+            { $match: { vendor_id: vendorObjectId } },
             {
                 $lookup: {
                     from: 'productvariants',
@@ -583,7 +609,12 @@ const getVendorProducts = async (req, res) => {
 
 const getVendorTopCustomers = async (req, res) => {
     try {
-        const vendorId = new mongoose.Types.ObjectId(req.params.id);
+        const vendorId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        }
+        const vendorObjectId = new mongoose.Types.ObjectId(vendorId);
         const customers = await Order.aggregate([
             {
                 $lookup: {
@@ -603,7 +634,7 @@ const getVendorTopCustomers = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': vendorId } },
+            { $match: { 'product.vendor_id': vendorObjectId } },
             {
                 $lookup: {
                     from: 'users',
@@ -643,6 +674,10 @@ const getVendorTopCustomers = async (req, res) => {
 const updateVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        }
         const { vendor_name, store_name, store_location } = req.body;
 
         if (!vendor_name) return res.status(400).json({ success: false, message: 'Name is required' });
@@ -666,16 +701,21 @@ const updateVendor = async (req, res) => {
 const deleteVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(vendorId)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        }
+        const vendorObjectId = new mongoose.Types.ObjectId(vendorId);
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
 
         // Delete associated order items
-        const products = await Product.find({ vendor_id: vendorId });
+        const products = await Product.find({ vendor_id: vendorObjectId });
         const productIds = products.map(p => p._id);
         await OrderItem.deleteMany({ product_id: { $in: productIds } });
 
         // Delete associated products
-        await Product.deleteMany({ vendor_id: vendorId });
+        await Product.deleteMany({ vendor_id: vendorObjectId });
 
         // Delete the vendor
         await Vendor.findByIdAndDelete(vendorId);
@@ -746,6 +786,10 @@ const getTotalEvents = async (req, res) => {
 const getEventManager = async (req, res) => {
     try {
         const managerId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(managerId)) {
+            return res.status(400).json({ success: false, message: 'Invalid event manager ID' });
+        }
         const manager = await EventManager.findById(managerId)
             .select('name email contact_number company_name location created_at');
         if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
@@ -765,22 +809,27 @@ const getEventManager = async (req, res) => {
 
 const getEventManagerMetrics = async (req, res) => {
     try {
-        const managerId = new mongoose.Types.ObjectId(req.params.id);
+        const managerId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(managerId)) {
+            return res.status(400).json({ success: false, message: 'Invalid event manager ID' });
+        }
+        const managerObjectId = new mongoose.Types.ObjectId(managerId);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
         const threeMonthsAgo = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
 
-        const upcoming = await Event.countDocuments({ event_manager_id: managerId, date_time: { $gt: today } });
+        const upcoming = await Event.countDocuments({ event_manager_id: managerObjectId, date_time: { $gt: today } });
         const weekly = await Event.countDocuments({
-            event_manager_id: managerId,
+            event_manager_id: managerObjectId,
             date_time: { $gte: weekAgo, $lte: today }
         });
-        const monthly = await Event.countDocuments({ event_manager_id: managerId, date_time: { $gte: monthAgo } });
+        const monthly = await Event.countDocuments({ event_manager_id: managerObjectId, date_time: { $gte: monthAgo } });
 
         const monthlyBreakdown = await Event.aggregate([
-            { $match: { event_manager_id: managerId, date_time: { $gte: threeMonthsAgo } } },
+            { $match: { event_manager_id: managerObjectId, date_time: { $gte: threeMonthsAgo } } },
             {
                 $group: {
                     _id: { $dateToString: { format: "%Y-%m", date: "$date_time" } },
@@ -816,11 +865,16 @@ const getEventManagerMetrics = async (req, res) => {
 
 const getUpcomingEvents = async (req, res) => {
     try {
-        const managerId = new mongoose.Types.ObjectId(req.params.id);
+        const managerId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(managerId)) {
+            return res.status(400).json({ success: false, message: 'Invalid event manager ID' });
+        }
+        const managerObjectId = new mongoose.Types.ObjectId(managerId);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const events = await Event.find({
-            event_manager_id: managerId,
+            event_manager_id: managerObjectId,
             date_time: { $gt: today }
         })
             .select('event_name date_time venue total_tickets tickets_sold status')
@@ -836,6 +890,121 @@ const getUpcomingEvents = async (req, res) => {
         })) });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({ success: false, message: 'Invalid product ID' });
+        }
+        const productObjectId = new mongoose.Types.ObjectId(productId);
+
+        // Check if the product exists
+        const product = await Product.findById(productObjectId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        // Delete associated product variants
+        await ProductVariant.deleteMany({ product_id: productObjectId });
+
+        // Delete associated order items
+        await OrderItem.deleteMany({ product_id: productObjectId });
+
+        // Delete the product
+        await Product.findByIdAndDelete(productObjectId);
+
+        res.json({ success: true, message: 'Product deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).json({ success: false, message: 'Failed to delete product' });
+    }
+};
+
+const getPastEvents = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(managerId)) {
+            return res.status(400).json({ success: false, message: 'Invalid event manager ID' });
+        }
+        const managerObjectId = new mongoose.Types.ObjectId(managerId);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const events = await Event.find({
+            event_manager_id: managerObjectId,
+            date_time: { $lt: today }
+        })
+            .select('event_name date_time venue total_tickets tickets_sold status')
+            .sort({ date_time: -1 });
+        res.json({ success: true, events: events.map(event => ({
+            event_id: event._id,
+            event_name: event.event_name,
+            date_time: event.date_time,
+            venue: event.venue,
+            total_tickets: event.total_tickets,
+            tickets_sold: event.tickets_sold,
+            status: event.status
+        })) });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const updateEventManager = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(managerId)) {
+            return res.status(400).json({ success: false, message: 'Invalid event manager ID' });
+        }
+        const { name, contact_number, company_name, location } = req.body;
+
+        if (!name) return res.status(400).json({ success: false, message: 'Name is required' });
+        if (name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
+        if (contact_number && !/^[0-9]{10}$/.test(contact_number)) return res.status(400).json({ success: false, message: 'Phone must be a 10-digit number' });
+        if (company_name && company_name.length < 2) return res.status(400).json({ success: false, message: 'Company name must be at least 2 characters' });
+        if (location && location.length < 5) return res.status(400).json({ success: false, message: 'Location must be at least 5 characters' });
+
+        const manager = await EventManager.findByIdAndUpdate(
+            managerId,
+            { name, contact_number: contact_number || null, company_name: company_name || null, location: location || null },
+            { new: true }
+        );
+        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
+
+        res.json({ success: true, message: 'Event manager updated successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to update event manager' });
+    }
+};
+
+const deleteEventManager = async (req, res) => {
+    try {
+        const managerId = req.params.id;
+        // Validate ObjectId
+        if (!mongoose.Types.ObjectId.isValid(managerId)) {
+            return res.status(400).json({ success: false, message: 'Invalid event manager ID' });
+        }
+        const managerObjectId = new mongoose.Types.ObjectId(managerId);
+        const manager = await EventManager.findById(managerId);
+        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
+
+        // Delete associated events
+        const events = await Event.find({ event_manager_id: managerObjectId });
+        const eventIds = events.map(e => e._id);
+        await EventAttendee.deleteMany({ event_id: { $in: eventIds } });
+        await Event.deleteMany({ event_manager_id: managerObjectId });
+
+        // Delete the event manager
+        await EventManager.findByIdAndDelete(managerId);
+
+        res.json({ success: true, message: 'Event manager deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to delete event manager' });
     }
 };
 
@@ -864,5 +1033,9 @@ module.exports = {
     getTotalEvents,
     getEventManager,
     getEventManagerMetrics,
-    getUpcomingEvents
+    getUpcomingEvents,
+    getPastEvents,
+    updateEventManager,
+    deleteEventManager,
+    deleteProduct
 };

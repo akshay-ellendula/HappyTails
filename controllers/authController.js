@@ -58,7 +58,7 @@ const login = async (req, res) => {
 
         // Set session data
         req.session.user = {
-            id: user._id, // Mongoose uses _id instead of id
+            id: user._id,
             user_name: user.user_name,
             user_email: user.user_email,
             user_phone: user.user_phone || null,
@@ -73,8 +73,10 @@ const login = async (req, res) => {
 
 const logout = (req, res) => {
     req.session.destroy((err) => {
-        if (err) return res.status(500).json({ success: false, message: 'Logout failed' });
-        res.redirect('/home');
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Logout failed' });
+        }
+        res.status(200).json({ success: true, redirect: '/home', message: 'Logout successful' });
     });
 };
 
