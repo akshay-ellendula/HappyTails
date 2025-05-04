@@ -1,12 +1,11 @@
-// controllers/eventManagerController.js
 const bcrypt = require('bcryptjs');
-const { db } = require('../models/database');
+const { EventManager } = require('../models/database');
 
 const eventManagerSignup = async (req, res) => {
-    const { name, contactnumber, email, password, confirmpassword, companyname, location, termsandconditions } = req.body;
+    const { name, contact_number, email, password, confirmpassword, company_name, location, termsandconditions } = req.body;
 
     // Validation: Check if all fields are provided
-    if (!name || !contactnumber || !email || !password || !confirmpassword || !companyname || !location || termsandconditions === undefined) {
+    if (!name || !contact_number || !email || !password || !confirmpassword || !company_name || !location || termsandconditions === undefined) {
         return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
@@ -20,11 +19,11 @@ const eventManagerSignup = async (req, res) => {
     }
 
     // Validation: Contact number must be a 10-digit number
-    if (!/^\d{10}$/.test(contactnumber)) {
+    if (!/^\d{10}$/.test(contact_number)) {
         return res.status(400).json({
             success: false,
             message: 'Validation failed',
-            errors: [{ field: 'contactnumber', message: 'Please enter a valid 10-digit phone number' }]
+            errors: [{ field: 'contact_number', message: 'Please enter a valid 10-digit phone number' }]
         });
     }
 
@@ -56,11 +55,11 @@ const eventManagerSignup = async (req, res) => {
     }
 
     // Validation: Company name must be at least 2 characters
-    if (companyname.length < 2) {
+    if (company_name.length < 2) {
         return res.status(400).json({
             success: false,
             message: 'Validation failed',
-            errors: [{ field: 'companyname', message: 'Company name must be at least 2 characters long' }]
+            errors: [{ field: 'company_name', message: 'Company name must be at least 2 characters long' }]
         });
     }
 
@@ -83,39 +82,37 @@ const eventManagerSignup = async (req, res) => {
     }
 
     try {
-        // Check if email already exists in event_managers table
-        db.get("SELECT * FROM event_managers WHERE email = ?", [email], async (err, row) => {
-            if (err) {
-                return res.status(500).json({ success: false, message: 'Database error' });
-            }
-            if (row) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'Validation failed',
-                    errors: [{ field: 'email', message: 'Email already registered' }]
-                });
-            }
+        // Check if email already exists in EventManager collection
+        const existingEventManager = await EventManager.findOne({ email });
+        if (existingEventManager) {
+            return res.status(400).json({
+                success: false,
+                message: 'Validation failed',
+                errors: [{ field: 'email', message: 'Email already registered' }]
+            });
+        }
 
-            // Hash the password
-            const hashedPassword = await bcrypt.hash(password, 10);
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-            // Insert the new event manager into the database
-            db.run(
-                `INSERT INTO event_managers (name, contact_number, email, password, company_name, location) VALUES (?, ?, ?, ?, ?, ?)`,
-                [name, contactnumber, email, hashedPassword, companyname, location],
-                function (err) {
-                    if (err) {
-                        return res.status(500).json({ success: false, message: 'Database error' });
-                    }
-                    res.status(201).json({
-                        success: true,
-                        redirect: '/service_provider_login',
-                        message: 'Event manager signup successful'
-                    });
-                }
-            );
+        // Create and save the new event manager
+        const newEventManager = new EventManager({
+            name,
+            contact_number,
+            email,
+            password: hashedPassword,
+            company_name,
+            location
+        });
+        await newEventManager.save();
+
+        res.status(201).json({
+            success: true,
+            redirect: '/service_provider_login',
+            message: 'Event manager signup successful'
         });
     } catch (error) {
+        console.error('Error during event manager signup:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
