@@ -1,4 +1,4 @@
-const { User } = require('../models/connection');
+const { User } = require('../models/database');
 
 const updateProfile = async (req, res) => {
     const { user_name, user_phone, user_address } = req.body;

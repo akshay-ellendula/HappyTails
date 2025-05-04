@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const mongoose = require('mongoose');
-const { Event, EventAttendee, EventManager } = require('../models/connection');
+const { Event, EventAttendee, EventManager } = require('../models/database');
 const { eventManagerSignup } = require('../controllers/eventManagerController');
 
 // Route for event manager signup (already updated in controller)

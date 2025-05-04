@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct } = require('../controllers/vendorController');
-const { Product } = require('../models/connection'); // Import the Product model for MongoDB
+const { Product } = require('../models/database'); // Import the Product model for MongoDB
 
 router.get('/service_provider_login', (req, res) => {
     res.render('service_provider_login');

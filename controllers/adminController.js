@@ -1,8 +1,9 @@
-const { User, Vendor, EventManager, Product, ProductVariant, Order, OrderItem, Event, EventAttendee } = require('../models/connection');
+const mongoose = require('mongoose');
+const { User, Vendor, EventManager, Product, ProductVariant, Order, OrderItem, Event, EventAttendee } = require('../models/database');
 
 const adminLogin = (req, res) => {
     const { admin_email, admin_password } = req.body;
-    const admin = { email: "admin@gmail.com", password: "admin123#" };
+    const admin = { email: "admin@gmail.com", password: "admin123#" }; // Hardcoded credentials
     if (admin_email === admin.email && admin_password === admin.password) {
         req.session.admin = { email: admin_email };
         res.json({ success: true });
@@ -389,7 +390,7 @@ const getVendor = async (req, res) => {
 
 const getVendorRevenueMetrics = async (req, res) => {
     try {
-        const vendorId = req.params.id;
+        const vendorId = new mongoose.Types.ObjectId(req.params.id);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -416,7 +417,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $match: { 'product.vendor_id': vendorId } },
             { $group: { _id: null, today_revenue: { $sum: '$total_amount' } } }
         ]);
 
@@ -440,7 +441,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $match: { 'product.vendor_id': vendorId } },
             { $group: { _id: null, weekly_revenue: { $sum: '$total_amount' } } }
         ]);
 
@@ -464,7 +465,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $match: { 'product.vendor_id': vendorId } },
             { $group: { _id: null, monthly_revenue: { $sum: '$total_amount' } } }
         ]);
 
@@ -488,7 +489,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $match: { 'product.vendor_id': vendorId } },
             { $group: { _id: null, quarterly_revenue: { $sum: '$total_amount' } } }
         ]);
 
@@ -512,7 +513,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $match: { 'product.vendor_id': vendorId } },
             {
                 $group: {
                     _id: { $dateToString: { format: "%Y-%m", date: "$order_date" } },
@@ -549,9 +550,9 @@ const getVendorRevenueMetrics = async (req, res) => {
 
 const getVendorProducts = async (req, res) => {
     try {
-        const vendorId = req.params.id;
+        const vendorId = new mongoose.Types.ObjectId(req.params.id);
         const products = await Product.aggregate([
-            { $match: { vendor_id: parseInt(vendorId) } },
+            { $match: { vendor_id: vendorId } },
             {
                 $lookup: {
                     from: 'productvariants',
@@ -582,7 +583,7 @@ const getVendorProducts = async (req, res) => {
 
 const getVendorTopCustomers = async (req, res) => {
     try {
-        const vendorId = req.params.id;
+        const vendorId = new mongoose.Types.ObjectId(req.params.id);
         const customers = await Order.aggregate([
             {
                 $lookup: {
@@ -602,7 +603,7 @@ const getVendorTopCustomers = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': parseInt(vendorId) } },
+            { $match: { 'product.vendor_id': vendorId } },
             {
                 $lookup: {
                     from: 'users',
@@ -669,12 +670,12 @@ const deleteVendor = async (req, res) => {
         if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
 
         // Delete associated order items
-        const products = await Product.find({ vendor_id: parseInt(vendorId) });
+        const products = await Product.find({ vendor_id: vendorId });
         const productIds = products.map(p => p._id);
         await OrderItem.deleteMany({ product_id: { $in: productIds } });
 
         // Delete associated products
-        await Product.deleteMany({ vendor_id: parseInt(vendorId) });
+        await Product.deleteMany({ vendor_id: vendorId });
 
         // Delete the vendor
         await Vendor.findByIdAndDelete(vendorId);
@@ -764,22 +765,22 @@ const getEventManager = async (req, res) => {
 
 const getEventManagerMetrics = async (req, res) => {
     try {
-        const managerId = req.params.id;
+        const managerId = new mongoose.Types.ObjectId(req.params.id);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
         const threeMonthsAgo = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
 
-        const upcoming = await Event.countDocuments({ event_manager_id: parseInt(managerId), date_time: { $gt: today } });
+        const upcoming = await Event.countDocuments({ event_manager_id: managerId, date_time: { $gt: today } });
         const weekly = await Event.countDocuments({
-            event_manager_id: parseInt(managerId),
+            event_manager_id: managerId,
             date_time: { $gte: weekAgo, $lte: today }
         });
-        const monthly = await Event.countDocuments({ event_manager_id: parseInt(managerId), date_time: { $gte: monthAgo } });
+        const monthly = await Event.countDocuments({ event_manager_id: managerId, date_time: { $gte: monthAgo } });
 
         const monthlyBreakdown = await Event.aggregate([
-            { $match: { event_manager_id: parseInt(managerId), date_time: { $gte: threeMonthsAgo } } },
+            { $match: { event_manager_id: managerId, date_time: { $gte: threeMonthsAgo } } },
             {
                 $group: {
                     _id: { $dateToString: { format: "%Y-%m", date: "$date_time" } },
@@ -815,11 +816,11 @@ const getEventManagerMetrics = async (req, res) => {
 
 const getUpcomingEvents = async (req, res) => {
     try {
-        const managerId = req.params.id;
+        const managerId = new mongoose.Types.ObjectId(req.params.id);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const events = await Event.find({
-            event_manager_id: parseInt(managerId),
+            event_manager_id: managerId,
             date_time: { $gt: today }
         })
             .select('event_name date_time venue total_tickets tickets_sold status')
@@ -827,101 +828,12 @@ const getUpcomingEvents = async (req, res) => {
         res.json({ success: true, events: events.map(event => ({
             event_id: event._id,
             event_name: event.event_name,
-            date: event.date_time,
-            location: event.venue,
+            date_time: event.date_time,
+            venue: event.venue,
             total_tickets: event.total_tickets,
             tickets_sold: event.tickets_sold,
             status: event.status
         })) });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-};
-
-const getPastEvents = async (req, res) => {
-    try {
-        const managerId = req.params.id;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const events = await Event.find({
-            event_manager_id: parseInt(managerId),
-            date_time: { $lt: today }
-        })
-            .select('event_name date_time tickets_sold')
-            .sort({ date_time: -1 });
-        res.json({ success: true, events: events.map(event => ({
-            event_id: event._id,
-            event_name: event.event_name,
-            date: event.date_time,
-            attendees: event.tickets_sold
-        })) });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-};
-
-const updateEventManager = async (req, res) => {
-    try {
-        const managerId = req.params.id;
-        const { name, email, phone, organization } = req.body;
-
-        if (!name || !email || !organization) return res.status(400).json({ success: false, message: 'Name, email, and organization are required' });
-        if (name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Invalid email format' });
-        if (phone && !/^\+91[6-9][0-9]{9}$/.test(phone)) return res.status(400).json({ success: false, message: 'Phone must be a valid Indian number (+91XXXXXXXXXX)' });
-        if (organization.length < 3) return res.status(400).json({ success: false, message: 'Organization must be at least 3 characters' });
-
-        const manager = await EventManager.findByIdAndUpdate(
-            managerId,
-            { name, email, contact_number: phone || null, company_name: organization },
-            { new: true }
-        );
-        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
-
-        res.json({ success: true, message: 'Event manager updated successfully' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Failed to update event manager' });
-    }
-};
-
-const deleteEventManager = async (req, res) => {
-    try {
-        const managerId = req.params.id;
-        const manager = await EventManager.findById(managerId);
-        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
-
-        // Delete associated event attendees and events
-        const events = await Event.find({ event_manager_id: parseInt(managerId) });
-        const eventIds = events.map(e => e._id);
-        await EventAttendee.deleteMany({ event_id: { $in: eventIds } });
-        await Event.deleteMany({ event_manager_id: parseInt(managerId) });
-
-        // Delete the event manager
-        await EventManager.findByIdAndDelete(managerId);
-
-        res.json({ success: true, message: 'Event manager deleted successfully' });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-};
-
-const deleteProduct = async (req, res) => {
-    try {
-        const productId = req.params.id;
-        const product = await Product.findById(productId);
-        if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
-
-        // Delete associated order items
-        await OrderItem.deleteMany({ product_id: parseInt(productId) });
-
-        // Delete associated product variants and images
-        await ProductVariant.deleteMany({ product_id: parseInt(productId) });
-        await ProductImage.deleteMany({ product_id: parseInt(productId) });
-
-        // Delete the product
-        await Product.findByIdAndDelete(productId);
-
-        res.json({ success: true, message: 'Product deleted successfully' });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -952,9 +864,5 @@ module.exports = {
     getTotalEvents,
     getEventManager,
     getEventManagerMetrics,
-    getUpcomingEvents,
-    getPastEvents,
-    updateEventManager,
-    deleteEventManager,
-    deleteProduct
+    getUpcomingEvents
 };

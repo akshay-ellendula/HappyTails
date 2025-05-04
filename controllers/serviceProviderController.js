@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { Vendor, EventManager } = require('../models/connection');
+const { Vendor, EventManager } = require('../models/database');
 
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;

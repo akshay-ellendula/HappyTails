@@ -1,4 +1,4 @@
-const { Product, ProductVariant, ProductImage, Order, OrderItem } = require('../models/connection');
+const { Product, ProductVariant, ProductImage, Order, OrderItem } = require('../models/database');
 const multer = require('multer');
 const path = require('path');
 

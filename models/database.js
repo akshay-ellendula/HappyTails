@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 // MongoDB connection URI
-const uri = 'mongodb://localhost:27017/happytails';
+const uri = 'mongodb+srv://vedaprakash8341:vedaprakash9491@cluster0.jykgpnw.mongodb.net/happytails';
 
 // Define schemas
 const UserSchema = new Schema({

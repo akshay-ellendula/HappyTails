@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { EventManager } = require('../models/connection');
+const { EventManager } = require('../models/database');
 
 const eventManagerSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, companyname, location, termsandconditions } = req.body;

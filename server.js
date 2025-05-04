@@ -19,7 +19,7 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
-    secret: 'your-secure-secret-key-here-12345', // Hardcoded secret (not recommended for production)
+    secret: 'your-secure-secret-key-here-12345', // Hardcoded session secret
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false } // Set to true if using HTTPS in production
@@ -33,14 +33,14 @@ if (!fs.existsSync(productUploadDir)) {
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 // Load and connect to MongoDB
-const { connectToMongo } = require('./models/connection');
+const { connectToMongo } = require('./models/database');
 connectToMongo()
     .then(() => {
         console.log('MongoDB connection established successfully');
     })
     .catch((err) => {
         console.error('Failed to connect to MongoDB:', err);
-        process.exit(1); // Exit the process if the connection fails
+        process.exit(1);
     });
 
 // Mount routes (order matters)
@@ -52,12 +52,18 @@ app.use('/', productRoutes);
 app.use('/', adminRoutes);
 app.use('/', staticRoutes);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
 // Start the server
 const PORT = 3000; // Hardcoded port
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    console.log('http://localhost:3000/pet_accessory');
-    console.log('http://localhost:3000/home');
-    console.log('http://localhost:3000/service_provider_login');
-    console.log('http://localhost:3000/event_manager_signup');
+    console.log(`http://localhost:${PORT}/pet_accessory`);
+    console.log(`http://localhost:${PORT}/home`);
+    console.log(`http://localhost:${PORT}/service_provider_login`);
+    console.log(`http://localhost:${PORT}/event_manager_signup`);
 });

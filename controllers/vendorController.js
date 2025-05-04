@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { Vendor, Order, OrderItem, Product, ProductVariant, ProductImage, User, EventManager } = require('../models/connection');
+const { Vendor, Order, OrderItem, Product, ProductVariant, ProductImage, User, EventManager } = require('../models/database');
 const multer = require('multer');
 const path = require('path');
 
