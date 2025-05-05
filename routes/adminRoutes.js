@@ -1,4 +1,3 @@
-// routes/adminRoutes.js
 const express = require('express');
 const router = express.Router();
 const { 
@@ -30,7 +29,7 @@ const {
     getPastEvents,
     updateEventManager,
     deleteEventManager,
-    deleteProduct // Add this
+    deleteProduct
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
 
@@ -41,7 +40,7 @@ router.get('/admin/user/:id', isAdminAuthenticated, getUser);
 router.put('/admin/user/:id', isAdminAuthenticated, updateUser);
 router.delete('/admin/user/:id', isAdminAuthenticated, deleteUser);
 router.get('/admin/products', isAdminAuthenticated, getProducts);
-router.delete('/admin/product/:id', isAdminAuthenticated, deleteProduct); // Add this
+router.delete('/admin/product/:id', isAdminAuthenticated, deleteProduct);
 router.get('/admin/user-stats', isAdminAuthenticated, getUserStats);
 router.get('/admin/product-stats', isAdminAuthenticated, getProductStats);
 router.get('/admin/dashboard-stats', isAdminAuthenticated, dashBoardStats);

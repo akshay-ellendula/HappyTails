@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const { Product } = require('../models/database');
 const { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct } = require('../controllers/vendorController');
-const { db } = require('../models/database');
 
 router.get('/service_provider_login', (req, res) => {
     res.render('service_provider_login');
@@ -16,20 +16,9 @@ router.get('/shop-product-form', async (req, res) => {
         return res.redirect('/service_provider_login');
     }
     try {
-        const categoriesQuery = `SELECT DISTINCT product_category FROM products`;
-        const categories = await new Promise((resolve, reject) => {
-            db.all(categoriesQuery, [], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows.map(row => row.product_category));
-            });
-        });
-        const petTypesQuery = `SELECT DISTINCT product_type FROM products`;
-        const petTypes = await new Promise((resolve, reject) => {
-            db.all(petTypesQuery, [], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows.map(row => row.product_type));
-            });
-        });
+        const categories = await Product.distinct('product_category');
+        const petTypes = await Product.distinct('product_type');
+
         res.render('shop-product-form', {
             vendor: req.session.vendor,
             categories: categories.length > 0 ? categories : ['beds', 'toys', 'grooming', 'food'],
@@ -47,7 +36,7 @@ router.post('/submit-product', submitProduct);
 router.get('/shop-orders', getVendorOrders);
 router.get('/shop-customers', getVendorCustomers);
 router.post('/store-signup', storeSignup);
-router.post('/service_provider_login', serviceProviderLogin); // Unified route
+router.post('/service_provider_login', serviceProviderLogin);
 router.get('/logout', logout);
 
 module.exports = router;

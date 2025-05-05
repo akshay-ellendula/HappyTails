@@ -1,15 +1,16 @@
 const bcrypt = require('bcryptjs');
-const { db } = require('../models/database');
+const { Vendor, Order, OrderItem, Product, ProductVariant, ProductImage, User, EventManager } = require('../models/database');
+const mongoose = require('mongoose');
 const multer = require('multer');
 const path = require('path');
 
 // Configure Multer for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/uploads/products/'); // Ensure this directory exists
+        cb(null, 'public/uploads/products/');
     },
     filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+        cb(null, Date.now() + path.extname(file.originalname));
     }
 });
 const upload = multer({ storage: storage });
@@ -21,35 +22,77 @@ const getVendorOrders = async (req, res) => {
     }
 
     const vendorId = req.session.vendor.id;
-    const statusFilter = req.query.status || 'all'; // Default to 'all' if no status is provided
+    const statusFilter = req.query.status || 'all';
 
     try {
-        // Construct the query to fetch orders
-        let ordersQuery = `
-            SELECT o.id, o.order_date, o.status, o.total_amount, u.user_name,
-                   GROUP_CONCAT(oi.product_name, ', ') as products
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            JOIN users u ON o.user_id = u.id
-            WHERE p.vendor_id = ?
-        `;
-        const queryParams = [vendorId];
-
-        // Add status filter if not 'all'
+        let matchStage = { 'products.vendor_id': mongoose.Types.ObjectId(vendorId) };
         if (statusFilter !== 'all') {
-            ordersQuery += ` AND o.status = ?`;
-            queryParams.push(statusFilter);
+            matchStage['status'] = statusFilter;
         }
 
-        ordersQuery += ` GROUP BY o.id ORDER BY o.order_date DESC`;
-
-        const orders = await new Promise((resolve, reject) => {
-            db.all(ordersQuery, queryParams, (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const orders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            { $match: matchStage },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            { $unwind: '$user' },
+            {
+                $group: {
+                    _id: '$_id',
+                    id: { $first: '$_id' },
+                    order_date: { $first: '$order_date' },
+                    status: { $first: '$status' },
+                    total_amount: { $first: '$total_amount' },
+                    user_name: { $first: '$user.user_name' },
+                    products: { $first: '$order_items.product_name' }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    id: 1,
+                    order_date: 1,
+                    status: 1,
+                    total_amount: 1,
+                    user_name: 1,
+                    products: {
+                        $reduce: {
+                            input: '$products',
+                            initialValue: '',
+                            in: {
+                                $concat: [
+                                    '$$value',
+                                    { $cond: [{ $eq: ['$$value', ''] }, '', ', '] },
+                                    '$$this'
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            { $sort: { order_date: -1 } }
+        ]);
 
         res.render('shop-orders', {
             vendor: req.session.vendor,
@@ -66,7 +109,7 @@ const getVendorOrders = async (req, res) => {
                 }),
                 status: order.status
             })),
-            status: statusFilter // Pass the status filter to the template
+            status: statusFilter
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
@@ -83,45 +126,57 @@ const getVendorProducts = async (req, res) => {
     const vendorId = vendor.id;
 
     try {
-        // Fetch products for the vendor along with their primary image
-        const productsQuery = `
-            SELECT p.id, p.product_name, p.product_category, p.product_type, pv.sale_price, pv.stock_quantity, pi.image_path
-            FROM products p
-            LEFT JOIN product_variants pv ON p.id = pv.product_id
-            LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_primary = 1
-            WHERE p.vendor_id = ?
-        `;
-        const products = await new Promise((resolve, reject) => {
-            db.all(productsQuery, [vendorId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const products = await Product.aggregate([
+            { $match: { vendor_id: mongoose.Types.ObjectId(vendorId) } },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'productimages',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'images'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$images',
+                    preserveNullAndEmptyArrays: true
+                }
+            },
+            { $match: { 'images.is_primary': true } },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $project: {
+                    id: '$_id',
+                    product_name: 1,
+                    product_category: 1,
+                    product_type: 1,
+                    sale_price: { $arrayElemAt: ['$variants.sale_price', 0] },
+                    stock_quantity: { $arrayElemAt: ['$variants.stock_quantity', 0] },
+                    image_path: { $ifNull: ['$images.image_path', '/images/default.jpg'] },
+                    sold: { $sum: '$order_items.quantity' },
+                    _id: 0
+                }
+            }
+        ]);
 
-        // Calculate sold quantity for each product
-        const productsWithSold = await Promise.all(products.map(async (product) => {
-            const soldQuery = `
-                SELECT SUM(oi.quantity) as sold
-                FROM order_items oi
-                WHERE oi.product_id = ?
-            `;
-            const soldResult = await new Promise((resolve, reject) => {
-                db.get(soldQuery, [product.id], (err, row) => {
-                    if (err) return reject(err);
-                    resolve(row);
-                });
-            });
-            return {
-                ...product,
-                sold: soldResult.sold || 0,
-                image_path: product.image_path || '/images/default.jpg' // Fallback image if no image is found
-            };
-        }));
-
-        // Render the products page with the vendor's data
         res.render('shop-products', {
             vendor: req.session.vendor,
-            products: productsWithSold
+            products
         });
     } catch (error) {
         console.error('Error fetching products:', error);
@@ -138,78 +193,151 @@ const getVendorProfile = async (req, res) => {
     const vendorId = vendor.id;
 
     try {
-        // Fetch vendor details from the database
-        const vendorDetails = await new Promise((resolve, reject) => {
-            db.get(`SELECT * FROM vendors WHERE id = ?`, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row);
-            });
-        });
+        const vendorDetails = await Vendor.findById(vendorId);
 
-        // Calculate total revenue
-        const totalRevenueQuery = `
-            SELECT SUM(oi.price * oi.quantity) as totalRevenue
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-        `;
-        const totalRevenue = await new Promise((resolve, reject) => {
-            db.get(totalRevenueQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.totalRevenue || 0);
-            });
-        });
+        const totalRevenue = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            { $match: { 'products.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            {
+                $unwind: '$order_items'
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: { $sum: { $multiply: ['$order_items.price', '$order_items.quantity'] } }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalRevenue: { $ifNull: ['$totalRevenue', 0] }
+                }
+            }
+        ]);
 
-        // Calculate products sold
-        const productsSoldQuery = `
-            SELECT SUM(oi.quantity) as productsSold
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-        `;
-        const productsSold = await new Promise((resolve, reject) => {
-            db.get(productsSoldQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.productsSold || 0);
-            });
-        });
+        const productsSold = await OrderItem.aggregate([
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $match: { 'product.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            {
+                $group: {
+                    _id: null,
+                    productsSold: { $sum: '$quantity' }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    productsSold: { $ifNull: ['$productsSold', 0] }
+                }
+            }
+        ]);
 
-        // Calculate new orders
-        const newOrdersQuery = `
-            SELECT COUNT(DISTINCT o.id) as newOrders
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ? AND o.status = 'Pending'
-        `;
-        const newOrders = await new Promise((resolve, reject) => {
-            db.get(newOrdersQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.newOrders || 0);
-            });
-        });
+        const newOrders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: {
+                    'products.vendor_id': mongoose.Types.ObjectId(vendorId),
+                    status: 'Pending'
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    newOrders: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    newOrders: { $ifNull: ['$newOrders', 0] }
+                }
+            }
+        ]);
 
-        // Fetch recent orders
-        const recentOrdersQuery = `
-            SELECT o.id, o.order_date, o.status, o.total_amount, u.user_name, oi.product_name
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            JOIN users u ON o.user_id = u.id
-            WHERE p.vendor_id = ?
-            ORDER BY o.order_date DESC
-            LIMIT 4
-        `;
-        const recentOrders = await new Promise((resolve, reject) => {
-            db.all(recentOrdersQuery, [vendorId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const recentOrders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: {
+                    'products.vendor_id': mongoose.Types.ObjectId(vendorId)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            { $unwind: '$user' },
+            { $unwind: '$order_items' },
+            {
+                $project: {
+                    id: '$_id',
+                    order_date: 1,
+                    status: 1,
+                    total_amount: 1,
+                    user_name: '$user.user_name',
+                    product_name: '$order_items.product_name',
+                    _id: 0
+                }
+            },
+            { $sort: { order_date: -1 } },
+            { $limit: 4 }
+        ]);
 
-        // Render the profile page with the vendor's data
         res.render('shop-profile', {
             vendor: {
                 store_name: vendorDetails.store_name,
@@ -217,13 +345,13 @@ const getVendorProfile = async (req, res) => {
                 email: vendorDetails.email,
                 phone: vendorDetails.contact_number,
                 address: vendorDetails.store_location,
-                description: 'Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs. All our products are designed with pet comfort and safety in mind, using sustainable materials whenever possible.' // You can add a description field to the vendors table if needed
+                description: 'Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs. All our products are designed with pet comfort and safety in mind, using sustainable materials whenever possible.'
             },
-            totalRevenue: totalRevenue.toFixed(2),
-            productsSold,
-            newOrders,
+            totalRevenue: (totalRevenue[0]?.totalRevenue || 0).toFixed(2),
+            productsSold: productsSold[0]?.productsSold || 0,
+            newOrders: newOrders[0]?.newOrders || 0,
             recentOrders,
-            customerRatings: '4.8/5' // Hardcoded for now; you can add a ratings system later
+            customerRatings: '4.8/5'
         });
     } catch (error) {
         console.error('Error fetching profile data:', error);
@@ -233,65 +361,59 @@ const getVendorProfile = async (req, res) => {
 
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;
-    console.log('Login attempt:', { email, role }); // Debug: Log input
+    console.log('Login attempt:', { email, role });
 
     if (!email || !password || !role) {
         return res.status(400).json({ success: false, message: 'Email, password, and role are required' });
     }
 
     try {
-        let table, sessionKey, redirect;
+        let Model, sessionKey, redirect;
         if (role === 'store-manager') {
-            table = 'vendors';
+            Model = Vendor;
             sessionKey = 'vendor';
         } else if (role === 'event-manager') {
-            table = 'event_managers';
+            Model = EventManager;
             sessionKey = 'eventManager';
         } else {
             return res.status(400).json({ success: false, message: 'Invalid role. Use "store-manager" or "event-manager"' });
         }
 
-        db.get(`SELECT * FROM ${table} WHERE email = ?`, [email], async (err, user) => {
-            if (err) {
-                console.error('Database error:', err);
-                return res.status(500).json({ success: false, message: 'Database error' });
-            }
-            if (!user) {
-                console.log('User not found for email:', email);
-                return res.status(401).json({ success: false, message: 'Invalid email or password' });
-            }
+        const user = await Model.findOne({ email });
+        if (!user) {
+            console.log('User not found for email:', email);
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
 
-            const isMatch = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                console.log('Password mismatch for:', email);
-                return res.status(401).json({ success: false, message: 'Invalid email or password' });
-            }
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            console.log('Password mismatch for:', email);
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
 
-            req.session[sessionKey] = { 
-                id: user.id, 
-                email: user.email, 
-                role, 
-                store_name: user.store_name || null
-            };
-            console.log('Session set:', req.session[sessionKey]); // Debug: Log session
+        req.session[sessionKey] = {
+            id: user._id.toString(),
+            email: user.email,
+            role,
+            store_name: user.store_name || null
+        };
+        console.log('Session set:', req.session[sessionKey]);
 
-            if (role === 'store-manager') {
-                const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
-                redirect = `/shop-dashboard/${storeNameSlug}`;
-            } else if (role === 'event-manager') {
-                redirect = '/eventmanager_dashboard';
-            }
+        if (role === 'store-manager') {
+            const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
+            redirect = `/shop-dashboard/${storeNameSlug}`;
+        } else if (role === 'event-manager') {
+            redirect = '/eventmanager_dashboard';
+        }
 
-            console.log('Redirecting to:', redirect); // Debug: Log redirect
-            res.status(200).json({ success: true, message: 'Login successful', redirect });
-        });
+        console.log('Redirecting to:', redirect);
+        res.status(200).json({ success: true, message: 'Login successful', redirect });
     } catch (error) {
         console.error('Server error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
-// vendorController.js (getVendorDashboard)
 const getVendorDashboard = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
@@ -309,70 +431,154 @@ const getVendorDashboard = async (req, res) => {
     const vendorId = vendor.id;
 
     try {
-        const totalRevenueQuery = `
-            SELECT SUM(oi.price * oi.quantity) as totalRevenue
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-        `;
-        const totalRevenue = await new Promise((resolve, reject) => {
-            db.get(totalRevenueQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.totalRevenue || 0);
-            });
-        });
+        const totalRevenue = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            { $match: { 'products.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            {
+                $unwind: '$order_items'
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: { $sum: { $multiply: ['$order_items.price', '$order_items.quantity'] } }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalRevenue: { $ifNull: ['$totalRevenue', 0] }
+                }
+            }
+        ]);
 
-        const productsSoldQuery = `
-            SELECT SUM(oi.quantity) as productsSold
-            FROM order_items oi
-            JOIN orders o ON oi.order_id = o.id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-        `;
-        const productsSold = await new Promise((resolve, reject) => {
-            db.get(productsSoldQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.productsSold || 0);
-            });
-        });
+        const productsSold = await OrderItem.aggregate([
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $match: { 'product.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            {
+                $group: {
+                    _id: null,
+                    productsSold: { $sum: '$quantity' }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    productsSold: { $ifNull: ['$productsSold', 0] }
+                }
+            }
+        ]);
 
-        const newOrdersQuery = `
-            SELECT COUNT(DISTINCT o.id) as newOrders
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ? AND o.status = 'Pending'
-        `;
-        const newOrders = await new Promise((resolve, reject) => {
-            db.get(newOrdersQuery, [vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row.newOrders || 0);
-            });
-        });
+        const newOrders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: {
+                    'products.vendor_id': mongoose.Types.ObjectId(vendorId),
+                    status: 'Pending'
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    newOrders: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    newOrders: { $ifNull: ['$newOrders', 0] }
+                }
+            }
+        ]);
 
-        const recentOrdersQuery = `
-            SELECT o.id, o.order_date, o.status, o.total_amount, u.user_name, oi.product_name
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            JOIN users u ON o.user_id = u.id
-            WHERE p.vendor_id = ?
-            ORDER BY o.order_date DESC
-            LIMIT 4
-        `;
-        const recentOrders = await new Promise((resolve, reject) => {
-            db.all(recentOrdersQuery, [vendorId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const recentOrders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: {
+                    'products.vendor_id': mongoose.Types.ObjectId(vendorId)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            { $unwind: '$user' },
+            { $unwind: '$order_items' },
+            {
+                $project: {
+                    id: '$_id',
+                    order_date: 1,
+                    status: 1,
+                    total_amount: 1,
+                    user_name: '$user.user_name',
+                    product_name: '$order_items.product_name',
+                    _id: 0
+                }
+            },
+            { $sort: { order_date: -1 } },
+            { $limit: 4 }
+        ]);
 
         res.render('shop-dashboard', {
             vendor: req.session.vendor,
-            totalRevenue: totalRevenue.toFixed(2),
-            productsSold,
-            newOrders,
+            totalRevenue: (totalRevenue[0]?.totalRevenue || 0).toFixed(2),
+            productsSold: productsSold[0]?.productsSold || 0,
+            newOrders: newOrders[0]?.newOrders || 0,
             recentOrders
         });
     } catch (error) {
@@ -381,7 +587,6 @@ const getVendorDashboard = async (req, res) => {
     }
 };
 
-// vendorController.js
 const storeSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, storename, storelocation } = req.body;
 
@@ -397,42 +602,34 @@ const storeSignup = async (req, res) => {
     if (storelocation.length < 3) return res.status(400).json({ success: false, message: 'Invalid store location' });
 
     try {
-        // Check if email already exists
-        db.get("SELECT * FROM vendors WHERE email = ?", [email], async (err, row) => {
-            if (err) return res.status(500).json({ success: false, message: 'Database error' });
-            if (row) return res.status(400).json({ success: false, message: 'Email already registered' });
+        const existingVendor = await Vendor.findOne({ email });
+        if (existingVendor) {
+            return res.status(400).json({ success: false, message: 'Email already registered' });
+        }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
-            // Insert the new vendor into the database
-            db.run(
-                `INSERT INTO vendors (name, contact_number, email, password, store_name, store_location) VALUES (?, ?, ?, ?, ?, ?)`,
-                [name, contactnumber, email, hashedPassword, storename, storelocation],
-                function (err) {
-                    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newVendor = await Vendor.create({
+            name,
+            contact_number: contactnumber,
+            email,
+            password: hashedPassword,
+            store_name: storename,
+            store_location: storelocation
+        });
 
-                    // Fetch the newly created vendor to set the session
-                    db.get("SELECT * FROM vendors WHERE email = ?", [email], (err, newVendor) => {
-                        if (err) return res.status(500).json({ success: false, message: 'Database error' });
+        req.session.vendor = {
+            id: newVendor._id.toString(),
+            email: newVendor.email,
+            store_name: newVendor.store_name
+        };
 
-                        // Set the session for the new vendor
-                        req.session.vendor = {
-                            id: newVendor.id,
-                            email: newVendor.email,
-                            store_name: newVendor.store_name
-                        };
+        const storeNameSlug = newVendor.store_name.toLowerCase().replace(/\s+/g, '-');
+        const redirectUrl = `/shop-dashboard/${storeNameSlug}`;
 
-                        // Generate the storeName slug for the redirect URL
-                        const storeNameSlug = newVendor.store_name.toLowerCase().replace(/\s+/g, '-');
-                        const redirectUrl = `/shop-dashboard/${storeNameSlug}`;
-
-                        res.status(201).json({
-                            success: true,
-                            redirect: redirectUrl,
-                            message: 'Vendor signup successful'
-                        });
-                    });
-                }
-            );
+        res.status(201).json({
+            success: true,
+            redirect: redirectUrl,
+            message: 'Vendor signup successful'
         });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
@@ -449,7 +646,6 @@ const logout = (req, res) => {
     });
 };
 
-// Fetch product data for editing
 const getProductForEdit = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
@@ -459,59 +655,24 @@ const getProductForEdit = async (req, res) => {
     const productId = req.params.productId;
 
     try {
-        // Fetch product details
-        const productQuery = `
-            SELECT p.*
-            FROM products p
-            WHERE p.id = ? AND p.vendor_id = ?
-        `;
-        const product = await new Promise((resolve, reject) => {
-            db.get(productQuery, [productId, vendorId], (err, row) => {
-                if (err) return reject(err);
-                resolve(row);
-            });
-        });
-
+        const product = await Product.findOne({ _id: productId, vendor_id: vendorId });
         if (!product) {
-            // Redirect to products page with an error message
             return res.redirect('/shop-products?error=Product not found or you do not have permission to edit it.');
         }
 
-        // Fetch all variants for the product
-        const variantsQuery = `
-            SELECT pv.*
-            FROM product_variants pv
-            WHERE pv.product_id = ?
-        `;
-        const variants = await new Promise((resolve, reject) => {
-            db.all(variantsQuery, [productId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
+        const variants = await ProductVariant.find({ product_id: productId });
+        const images = await ProductImage.find({ product_id: productId });
 
-        // Fetch product images
-        const imagesQuery = `
-            SELECT * FROM product_images WHERE product_id = ?
-        `;
-        const images = await new Promise((resolve, reject) => {
-            db.all(imagesQuery, [productId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
-
-        // Render the edit product page with the product data
         res.render('shop-product-edit', {
             vendor: req.session.vendor,
             product: {
-                id: product.id,
+                id: product._id,
                 product_name: product.product_name,
                 product_category: product.product_category,
                 product_type: product.product_type,
                 product_description: product.product_description,
                 stock_status: product.stock_status,
-                variants: variants || [], // Pass all variants
+                variants: variants || [],
                 images: images || []
             }
         });
@@ -521,9 +682,8 @@ const getProductForEdit = async (req, res) => {
     }
 };
 
-// Update product
 const updateProduct = [
-    upload.array('productImages', 4), // Allow up to 4 images
+    upload.array('productImages', 4),
     async (req, res) => {
         if (!req.session.vendor) {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -536,7 +696,7 @@ const updateProduct = [
             productCategory,
             productType,
             productDescription,
-            stock_status, // Add stock_status
+            stock_status,
             'variant_size[]': variantSizes,
             'variant_color[]': variantColors,
             'variant_regular_price[]': variantRegularPrices,
@@ -544,7 +704,6 @@ const updateProduct = [
             'variant_stock_quantity[]': variantStockQuantities
         } = req.body;
 
-        // Validate required fields
         if (!productName || !productCategory || !productType || !productDescription || !stock_status) {
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
@@ -553,112 +712,72 @@ const updateProduct = [
             return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
         }
 
-        // Validate stock_status
         if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         try {
-            // Verify the product belongs to the vendor
-            const productCheck = await new Promise((resolve, reject) => {
-                db.get(`SELECT * FROM products WHERE id = ? AND vendor_id = ?`, [productId, vendorId], (err, row) => {
-                    if (err) return reject(err);
-                    resolve(row);
-                });
-            });
-
-            if (!productCheck) {
+            const product = await Product.findOne({ _id: productId, vendor_id: vendorId });
+            if (!product) {
                 return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to edit it.' });
             }
 
-            // Update product details
-            await new Promise((resolve, reject) => {
-                db.run(
-                    `UPDATE products SET product_name = ?, product_category = ?, product_type = ?, product_description = ?, stock_status = ? WHERE id = ?`,
-                    [productName, productCategory, productType, productDescription, stock_status, productId],
-                    (err) => {
-                        if (err) return reject(err);
-                        resolve();
-                    }
-                );
-            });
+            await Product.updateOne(
+                { _id: productId },
+                {
+                    product_name: productName,
+                    product_category: productCategory,
+                    product_type: productType,
+                    product_description: productDescription,
+                    stock_status
+                }
+            );
 
-            // Delete existing variants
-            await new Promise((resolve, reject) => {
-                db.run(`DELETE FROM product_variants WHERE product_id = ?`, [productId], (err) => {
-                    if (err) return reject(err);
-                    resolve();
-                });
-            });
+            await ProductVariant.deleteMany({ product_id: productId });
 
-            // Insert updated variants
-            for (let i = 0; i < variantSizes.length; i++) {
-                const size = variantSizes[i] || null;
-                const color = variantColors[i] || null;
+            const variants = variantSizes.map((size, i) => {
                 const regularPrice = parseFloat(variantRegularPrices[i]);
                 const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
                 const stockQuantity = parseInt(variantStockQuantities[i]);
 
                 if (!regularPrice || !stockQuantity) {
-                    return res.status(400).json({ success: false, message: 'Regular price and stock quantity are required for each variant' });
+                    throw new Error('Regular price and stock quantity are required for each variant');
                 }
 
-                // Validate sale price is less than regular price
                 if (salePrice && salePrice >= regularPrice) {
-                    return res.status(400).json({ success: false, message: 'Sale price must be less than regular price for all variants' });
+                    throw new Error('Sale price must be less than regular price for all variants');
                 }
 
-                const variantInsertQuery = `
-                    INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                `;
-                await new Promise((resolve, reject) => {
-                    db.run(
-                        variantInsertQuery,
-                        [productId, size, color, regularPrice, salePrice, stockQuantity],
-                        (err) => {
-                            if (err) return reject(err);
-                            resolve();
-                        }
-                    );
-                });
-            }
+                return {
+                    product_id: productId,
+                    size: size || null,
+                    color: variantColors[i] || null,
+                    regular_price: regularPrice,
+                    sale_price: salePrice,
+                    stock_quantity: stockQuantity
+                };
+            });
 
-            // Handle image uploads
+            await ProductVariant.insertMany(variants);
+
             if (req.files && req.files.length > 0) {
-                // Delete existing images
-                await new Promise((resolve, reject) => {
-                    db.run(`DELETE FROM product_images WHERE product_id = ?`, [productId], (err) => {
-                        if (err) return reject(err);
-                        resolve();
-                    });
-                });
-
-                // Insert new images
-                const imagePromises = req.files.map((file, index) => {
-                    return new Promise((resolve, reject) => {
-                        db.run(
-                            `INSERT INTO product_images (product_id, image_path, is_primary) VALUES (?, ?, ?)`,
-                            [productId, `/uploads/products/${file.filename}`, index === 0 ? 1 : 0],
-                            (err) => {
-                                if (err) return reject(err);
-                                resolve();
-                            }
-                        );
-                    });
-                });
-                await Promise.all(imagePromises);
+                await ProductImage.deleteMany({ product_id: productId });
+                const images = req.files.map((file, index) => ({
+                    product_id: productId,
+                    image_path: `/uploads/products/${file.filename}`,
+                    is_primary: index === 0
+                }));
+                await ProductImage.insertMany(images);
             }
 
             res.status(200).json({ success: true, message: 'Product updated successfully', redirect: '/shop-products' });
         } catch (error) {
             console.error('Error updating product:', error);
-            res.status(500).json({ success: false, message: 'Server error' });
+            res.status(500).json({ success: false, message: error.message || 'Server error' });
         }
     }
 ];
 
-// Fetch vendor customers
 const getVendorCustomers = async (req, res) => {
     if (!req.session.vendor) {
         return res.redirect('/service_provider_login');
@@ -667,35 +786,60 @@ const getVendorCustomers = async (req, res) => {
     const vendorId = req.session.vendor.id;
 
     try {
-        // Query to fetch customers who have placed orders with the vendor
-        const customersQuery = `
-            SELECT 
-                u.id AS customer_id,
-                u.user_name,
-                u.user_email AS email,
-                COUNT(DISTINCT o.id) AS total_orders,
-                SUM(o.total_amount) AS total_spent,
-                MAX(o.order_date) AS last_order_date
-            FROM users u
-            JOIN orders o ON u.id = o.user_id
-            JOIN order_items oi ON o.id = oi.order_id
-            JOIN products p ON oi.product_id = p.id
-            WHERE p.vendor_id = ?
-            GROUP BY u.id, u.user_name, u.user_email
-            ORDER BY last_order_date DESC
-        `;
+        const customers = await User.aggregate([
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: '_id',
+                    foreignField: 'user_id',
+                    as: 'orders'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: 'orders._id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            { $match: { 'products.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            {
+                $group: {
+                    _id: '$_id',
+                    customer_id: { $first: '$_id' },
+                    user_name: { $first: '$user_name' },
+                    email: { $first: '$user_email' },
+                    total_orders: { $addToSet: '$orders._id' },
+                    total_spent: { $sum: '$orders.total_amount' },
+                    last_order_date: { $max: '$orders.order_date' }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    customer_id: 1,
+                    user_name: 1,
+                    email: 1,
+                    total_orders: { $size: '$total_orders' },
+                    total_spent: 1,
+                    last_order_date: 1
+                }
+            },
+            { $sort: { last_order_date: -1 } }
+        ]);
 
-        const customers = await new Promise((resolve, reject) => {
-            db.all(customersQuery, [vendorId], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
-        });
-
-        // Format the customer data for the template
         const formattedCustomers = customers.map((customer, index) => ({
-            customer_id: `C${String(index + 1).padStart(3, '0')}`, // Generate a customer ID like C001, C002, etc.
-            user_id: customer.customer_id, // Actual user ID for linking to details
+            customer_id: `C${String(index + 1).padStart(3, '0')}`,
+            user_id: customer.customer_id,
             name: customer.user_name,
             email: customer.email,
             total_orders: customer.total_orders,
@@ -719,7 +863,6 @@ const getVendorCustomers = async (req, res) => {
     }
 };
 
-// Submit new product
 const submitProduct = [
     upload.array('product_images', 4),
     async (req, res) => {
@@ -734,14 +877,13 @@ const submitProduct = [
             product_type,
             product_description,
             stock_status,
-            'variant_size[]': variantSizes, // Array of sizes
-            'variant_color[]': variantColors, // Array of colors
-            'variant_regular_price[]': variantRegularPrices, // Array of regular prices
-            'variant_sale_price[]': variantSalePrices, // Array of sale prices
-            'variant_stock_quantity[]': variantStockQuantities // Array of stock quantities
+            'variant_size[]': variantSizes,
+            'variant_color[]': variantColors,
+            'variant_regular_price[]': variantRegularPrices,
+            'variant_sale_price[]': variantSalePrices,
+            'variant_stock_quantity[]': variantStockQuantities
         } = req.body;
 
-        // Validate required fields
         if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
@@ -750,93 +892,62 @@ const submitProduct = [
             return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
         }
 
-        // Validate stock_status
         if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         try {
-            // Insert the product
-            const productInsertQuery = `
-                INSERT INTO products (vendor_id, product_name, product_category, product_type, product_description, stock_status)
-                VALUES (?, ?, ?, ?, ?, ?)
-            `;
-            const productResult = await new Promise((resolve, reject) => {
-                db.run(
-                    productInsertQuery,
-                    [vendorId, product_name, product_category, product_type, product_description, stock_status],
-                    function (err) {
-                        if (err) return reject(err);
-                        resolve(this.lastID);
-                    }
-                );
+            const product = await Product.create({
+                vendor_id: vendorId,
+                product_name,
+                product_category,
+                product_type,
+                product_description,
+                stock_status
             });
 
-            const productId = productResult;
-
-            // Insert all variants
-            for (let i = 0; i < variantSizes.length; i++) {
-                const size = variantSizes[i] ? variantSizes[i].trim() : null;
-                const color = variantColors[i] ? variantColors[i].trim() : null;
-                const regularPrice = parseFLOAT(variantRegularPrices[i]);
+            const variants = variantSizes.map((size, i) => {
+                const regularPrice = parseFloat(variantRegularPrices[i]);
                 const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
                 const stockQuantity = parseInt(variantStockQuantities[i]);
 
-                // Validate variant data
                 if (isNaN(regularPrice) || regularPrice <= 0) {
-                    return res.status(400).json({ success: false, message: 'Regular price must be a positive number' });
+                    throw new Error('Regular price must be a positive number');
                 }
                 if (isNaN(stockQuantity) || stockQuantity < 0) {
-                    return res.status(400).json({ success: false, message: 'Stock quantity must be a non-negative number' });
+                    throw new Error('Stock quantity must be a non-negative number');
                 }
                 if (salePrice && salePrice >= regularPrice) {
-                    return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
+                    throw new Error('Sale price must be less than regular price');
                 }
 
-                const variantInsertQuery = `
-                    INSERT INTO product_variants (product_id, size, color, regular_price, sale_price, stock_quantity)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                `;
-                await new Promise((resolve, reject) => {
-                    db.run(
-                        variantInsertQuery,
-                        [productId, size, color, regularPrice, salePrice, stockQuantity],
-                        (err) => {
-                            if (err) return reject(err);
-                            resolve();
-                        }
-                    );
-                });
-            }
+                return {
+                    product_id: product._id,
+                    size: size ? size.trim() : null,
+                    color: variantColors[i] ? variantColors[i].trim() : null,
+                    regular_price: regularPrice,
+                    sale_price: salePrice,
+                    stock_quantity: stockQuantity
+                };
+            });
 
-            // Insert images
+            await ProductVariant.insertMany(variants);
+
             if (req.files && req.files.length > 0) {
-                const imagePromises = req.files.map((file, index) => {
-                    return new Promise((resolve, reject) => {
-                        const imageInsertQuery = `
-                            INSERT INTO product_images (product_id, image_path, is_primary)
-                            VALUES (?, ?, ?)
-                        `;
-                        db.run(
-                            imageInsertQuery,
-                            [productId, `/uploads/products/${file.filename}`, index === 0 ? 1 : 0],
-                            (err) => {
-                                if (err) return reject(err);
-                                resolve();
-                            }
-                        );
-                    });
-                });
-                await Promise.all(imagePromises);
+                const images = req.files.map((file, index) => ({
+                    product_id: product._id,
+                    image_path: `/uploads/products/${file.filename}`,
+                    is_primary: index === 0
+                }));
+                await ProductImage.insertMany(images);
             }
 
             res.status(200).json({ success: true, message: 'Product added successfully', redirect: '/shop-products' });
         } catch (error) {
             console.error('Error adding product:', error);
-            res.status(500).json({ success: false, message: 'Server error' });
+            res.status(500).json({ success: false, message: error.message || 'Server error' });
         }
     }
-];     
+];
 
-// Export all controllers, including submitProduct
 module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct };

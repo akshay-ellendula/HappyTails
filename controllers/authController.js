@@ -1,6 +1,5 @@
-// controllers/authController.js
 const bcrypt = require('bcryptjs');
-const { db } = require('../models/database');
+const { User } = require('../models/database');
 
 const signup = async (req, res) => {
     const { user_name, user_email, user_password } = req.body;
@@ -15,20 +14,19 @@ const signup = async (req, res) => {
     }
 
     try {
-        db.get("SELECT * FROM users WHERE user_email = ?", [user_email], async (err, row) => {
-            if (err) return res.status(500).json({ success: false, message: 'Database error' });
-            if (row) return res.status(400).json({ success: false, message: 'Email already registered' });
+        const existingUser = await User.findOne({ user_email });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: 'Email already registered' });
+        }
 
-            const hashedPassword = await bcrypt.hash(user_password, 10);
-            db.run(
-                "INSERT INTO users (user_name, user_email, user_password) VALUES (?, ?, ?)",
-                [user_name, user_email, hashedPassword],
-                function (err) {
-                    if (err) return res.status(500).json({ success: false, message: 'Database error' });
-                    res.status(201).json({ success: true, message: 'Signup successful' });
-                }
-            );
+        const hashedPassword = await bcrypt.hash(user_password, 10);
+        await User.create({
+            user_name,
+            user_email,
+            user_password: hashedPassword
         });
+
+        res.status(201).json({ success: true, message: 'Signup successful' });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -41,23 +39,25 @@ const login = async (req, res) => {
     }
 
     try {
-        db.get("SELECT * FROM users WHERE user_email = ?", [user_email], async (err, user) => {
-            if (err) return res.status(500).json({ success: false, message: 'Database error' });
-            if (!user) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        const user = await User.findOne({ user_email });
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
 
-            const isMatch = await bcrypt.compare(user_password, user.user_password);
-            if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        const isMatch = await bcrypt.compare(user_password, user.user_password);
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
 
-            req.session.user = {
-                id: user.id,
-                user_name: user.user_name,
-                user_email: user.user_email,
-                user_phone: user.user_phone || null,
-                user_address: user.user_address || null,
-                profile_pic: user.profile_pic || null
-            };
-            res.status(200).json({ success: true, redirect: '/home', message: 'Login successful' });
-        });
+        req.session.user = {
+            id: user._id,
+            user_name: user.user_name,
+            user_email: user.user_email,
+            user_phone: user.user_phone || null,
+            user_address: user.user_address || null,
+            profile_pic: user.profile_pic || null
+        };
+        res.status(200).json({ success: true, redirect: '/home', message: 'Login successful' });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }

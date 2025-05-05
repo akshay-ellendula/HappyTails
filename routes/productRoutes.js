@@ -1,4 +1,3 @@
-// routes/productRoutes.js
 const express = require('express');
 const router = express.Router();
 const { 
@@ -13,8 +12,7 @@ const {
     getUserOrders,      
     reorder             
 } = require('../controllers/productController');
-const { isVendorAuthenticated } = require('../middleware/authMiddleware');
-const { isUserAuthenticated } = require('../middleware/authMiddleware');
+const { isVendorAuthenticated, isUserAuthenticated } = require('../middleware/authMiddleware');
 
 // Existing routes
 router.get('/pet_accessory', getPetAccessories);
