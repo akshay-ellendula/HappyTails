@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Connect to MongoDB Cluster
 async function connectToMongoDB() {
     try {
-        await mongoose.connect('mongodb://localhost:27017/happytails', {});
+        await mongoose.connect('mongodb+srv://vedaprakash8341:bmfk3zoZflpB8k9L@cluster0.jykgpnw.mongodb.net/happytails', {});
         console.log('Connected to MongoDB Cluster');
     } catch (err) {
         console.error('Database connection error:', err);
@@ -30,6 +30,14 @@ const vendorSchema = new mongoose.Schema({
     store_name: { type: String, required: true },
     store_location: { type: String, required: true },
     created_at: { type: Date, default: Date.now },
+});
+
+// Sanitize store_name before saving
+vendorSchema.pre('save', function(next) {
+    if (this.store_name) {
+        this.store_name = this.store_name.trim().replace(/[^a-zA-Z0-9\s]/g, '');
+    }
+    next();
 });
 
 const eventManagerSchema = new mongoose.Schema({
