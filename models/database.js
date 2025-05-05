@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Connect to MongoDB Cluster
 async function connectToMongoDB() {
     try {
-        await mongoose.connect('mongodb+srv://vedaprakash8341:vedaprakash9491@cluster0.jykgpnw.mongodb.net/', {});
+        await mongoose.connect('mongodb://localhost:27017/happytails', {});
         console.log('Connected to MongoDB Cluster');
     } catch (err) {
         console.error('Database connection error:', err);
