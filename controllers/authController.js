@@ -3,8 +3,13 @@ const { User } = require('../models/database');
 
 const signup = async (req, res) => {
     const { user_name, user_email, user_password } = req.body;
+
+    // Input validation
     if (!user_name || !user_email || !user_password) {
         return res.status(400).json({ success: false, message: 'All fields are required' });
+    }
+    if (user_name.length < 2) {
+        return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_email)) {
         return res.status(400).json({ success: false, message: 'Invalid email format' });
@@ -27,20 +32,30 @@ const signup = async (req, res) => {
         const newUser = new User({
             user_name,
             user_email,
-            user_password: hashedPassword
+            user_password: hashedPassword,
+            user_phone: null,
+            user_address: null,
+            profile_pic: null,
+            created_at: new Date()
         });
 
         await newUser.save();
         res.status(201).json({ success: true, message: 'Signup successful' });
     } catch (error) {
+        console.error('Error during signup:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
 const login = async (req, res) => {
     const { user_email, user_password } = req.body;
+
+    // Input validation
     if (!user_email || !user_password) {
         return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(user_email)) {
+        return res.status(400).json({ success: false, message: 'Invalid email format' });
     }
 
     try {
@@ -58,7 +73,7 @@ const login = async (req, res) => {
 
         // Set session data
         req.session.user = {
-            id: user._id,
+            id: user._id.toString(), // Convert ObjectId to string
             user_name: user.user_name,
             user_email: user.user_email,
             user_phone: user.user_phone || null,
@@ -67,6 +82,7 @@ const login = async (req, res) => {
         };
         res.status(200).json({ success: true, redirect: '/home', message: 'Login successful' });
     } catch (error) {
+        console.error('Error during login:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
@@ -74,6 +90,7 @@ const login = async (req, res) => {
 const logout = (req, res) => {
     req.session.destroy((err) => {
         if (err) {
+            console.error('Error during logout:', err);
             return res.status(500).json({ success: false, message: 'Logout failed' });
         }
         res.status(200).json({ success: true, redirect: '/home', message: 'Logout successful' });

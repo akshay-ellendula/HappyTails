@@ -50,7 +50,7 @@
             <a href="/my_blogs">My Blogs</a>
         </div>
 
-        <div class="logout sidebar_divs">`
+        <div class="logout sidebar_divs">
             <a href="/logout">Logout</a>
         </div>
     </div>
@@ -86,7 +86,7 @@
                     <div class="dotted_circle">
                         <img src="icons/camera-svgrepo-com.svg" class="camera" height="50" alt="camera photo">
                         <span class="change_pic_text">Change Profile Picture</span>
-                        <input class="file_upload_input" type="file" id="user_photo_button" accept="image/*" name="profile_pic" hidden>
+                        <input class="file_upload_input" type="file" id="user_photo_button" accept="image/*" name="profilePic" hidden>
                     </div>
                 </div>
                 <div class="form-row">
@@ -105,12 +105,12 @@
                     <div class="form-group">
                         <label for="phone">Phone:</label>
                         <span id="phoneSpan"><%= user.user_phone || 'Enter Phone Number' %></span>
-                        <input type="text" pattern="\d{10}" id="phone" name="user_phone" value="<%= user.user_phone || '' %>" style="display: none;" required>
+                        <input type="text" pattern="\d{10}" id="phone" name="user_phone" value="<%= user.user_phone || '' %>" style="display: none;">
                     </div>
                     <div class="form-group">
                         <label for="address">Contact Address:</label>
                         <span id="addressSpan"><%= user.user_address || 'Enter Your Address' %></span>
-                        <input type="text" id="address" name="user_address" value="<%= user.user_address || '' %>" style="display: none;" required>
+                        <input type="text" id="address" name="user_address" value="<%= user.user_address || '' %>" style="display: none;">
                     </div>
                 </div>
 
@@ -119,7 +119,6 @@
             </form>
         </div>
     </div>
-
 
     <footer class="footer">
         <div class="footer-container">
@@ -132,7 +131,6 @@
                 </ul>
             </div>
         
-    
             <div class="footer-column">
                 <h3>Partner</h3>
                 <ul>  
@@ -150,15 +148,9 @@
                     <li><a href="#">Terms & Conditions</a></li>
                 </ul>
                 <div class="footer-social" >
-                    <a href="#"><img
-                            src="/icons/facebook-3-logo-svgrepo-com.svg"
-                            alt="Facebook"></a>
-                    <a href="#"><img
-                            src="/icons/instagram-2016-logo-svgrepo-com.svg"
-                            alt="Instagram"></a>
-                    <a href="#"><img
-                            src="/icons/youtube-icon-logo-svgrepo-com.svg"
-                            alt="YouTube"></a>
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
                 </div>
             </div>
         </div>

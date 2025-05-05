@@ -17,15 +17,17 @@ const upload = multer({ storage: storage });
 
 // Fetch vendor orders
 const getVendorOrders = async (req, res) => {
-    if (!req.session.vendor) {
+    if (!req.session.vendor || !req.session.vendor.id) {
         return res.redirect('/service_provider_login');
     }
 
     // Validate vendor_id
-    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
-        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    const vendorIdString = req.session.vendor.id;
+    if (!mongoose.Types.ObjectId.isValid(vendorIdString)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID in session' });
     }
-    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+    const vendorId = new mongoose.Types.ObjectId(vendorIdString);
+
     const statusFilter = req.query.status || 'all';
 
     try {
@@ -89,8 +91,8 @@ const getVendorOrders = async (req, res) => {
         res.render('shop-orders', {
             vendor: req.session.vendor,
             orders: orders.map(order => ({
-                id: order.id,
-                order_id: `#ORD-${order.id}`,
+                id: order.id.toString(),
+                order_id: `#ORD-${order.id.toString()}`,
                 customer: order.user_name,
                 products: order.products.join(', '),
                 total: order.total_amount.toFixed(2),
@@ -105,20 +107,21 @@ const getVendorOrders = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        res.status(500).send(`Server error: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Server error while fetching orders' });
     }
 };
 
 const getVendorProducts = async (req, res) => {
-    if (!req.session.vendor) {
+    if (!req.session.vendor || !req.session.vendor.id) {
         return res.redirect('/service_provider_login');
     }
 
     // Validate vendor_id
-    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
-        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    const vendorIdString = req.session.vendor.id;
+    if (!mongoose.Types.ObjectId.isValid(vendorIdString)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID in session' });
     }
-    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+    const vendorId = new mongoose.Types.ObjectId(vendorIdString);
 
     try {
         const products = await Product.aggregate([
@@ -179,7 +182,12 @@ const getVendorProducts = async (req, res) => {
             ]);
 
             return {
-                ...product,
+                id: product.id.toString(),
+                product_name: product.product_name,
+                product_category: product.product_category,
+                product_type: product.product_type,
+                sale_price: product.sale_price || 0,
+                stock_quantity: product.stock_quantity || 0,
                 sold: soldResult[0]?.sold || 0,
                 image_path: product.image_path?.image_path || '/images/default.jpg'
             };
@@ -191,25 +199,26 @@ const getVendorProducts = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching products:', error);
-        res.status(500).send(`Server error: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Server error while fetching products' });
     }
 };
 
 const getVendorProfile = async (req, res) => {
-    if (!req.session.vendor) {
+    if (!req.session.vendor || !req.session.vendor.id) {
         return res.redirect('/service_provider_login');
     }
 
     // Validate vendor_id
-    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
-        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    const vendorIdString = req.session.vendor.id;
+    if (!mongoose.Types.ObjectId.isValid(vendorIdString)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID in session' });
     }
-    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+    const vendorId = new mongoose.Types.ObjectId(vendorIdString);
 
     try {
         const vendorDetails = await Vendor.findById(vendorId);
         if (!vendorDetails) {
-            return res.status(404).send('Vendor not found');
+            return res.status(404).json({ success: false, message: 'Vendor not found' });
         }
 
         const totalRevenueResult = await OrderItem.aggregate([
@@ -378,21 +387,34 @@ const getVendorProfile = async (req, res) => {
             totalRevenue: totalRevenue.toFixed(2),
             productsSold,
             newOrders,
-            recentOrders,
+            recentOrders: recentOrders.map(order => ({
+                id: order.id.toString(),
+                order_date: new Date(order.order_date).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                }),
+                status: order.status,
+                total_amount: order.total_amount.toFixed(2),
+                user_name: order.user_name,
+                product_name: order.product_name
+            })),
             customerRatings: '4.8/5'
         });
     } catch (error) {
         console.error('Error fetching profile data:', error);
-        res.status(500).send(`Server error: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Server error while fetching profile data' });
     }
 };
 
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;
-    console.log('Login attempt:', { email, role });
 
     if (!email || !password || !role) {
         return res.status(400).json({ success: false, message: 'Email, password, and role are required' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ success: false, message: 'Invalid email format' });
     }
 
     try {
@@ -409,20 +431,18 @@ const serviceProviderLogin = async (req, res) => {
 
         const user = await Model.findOne({ email });
         if (!user) {
-            console.log('User not found for email:', email);
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            console.log('Password mismatch for:', email);
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
 
         req.session[sessionKey] = { 
-            id: user._id, 
-            email: user.email, 
-            role, 
+            id: user._id.toString(),
+            email: user.email,
+            role,
             store_name: user.store_name || null,
             name: user.name,
             contact_number: user.contact_number || null,
@@ -430,7 +450,6 @@ const serviceProviderLogin = async (req, res) => {
             company_name: user.company_name || null,
             location: user.location || null
         };
-        console.log('Session set:', req.session[sessionKey]);
 
         if (role === 'store-manager') {
             const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
@@ -439,16 +458,15 @@ const serviceProviderLogin = async (req, res) => {
             redirect = '/eventmanager_dashboard';
         }
 
-        console.log('Redirecting to:', redirect);
         res.status(200).json({ success: true, message: 'Login successful', redirect });
     } catch (error) {
-        console.error('Server error:', error);
-        res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+        console.error('Error during login:', error);
+        res.status(500).json({ success: false, message: 'Server error during login' });
     }
 };
 
 const getVendorDashboard = async (req, res) => {
-    if (!req.session.vendor) {
+    if (!req.session.vendor || !req.session.vendor.id) {
         return res.redirect('/service_provider_login');
     }
 
@@ -458,14 +476,15 @@ const getVendorDashboard = async (req, res) => {
     const expectedStoreNameSlug = vendor.store_name.toLowerCase().replace(/\s+/g, '-');
 
     if (storeNameSlug !== expectedStoreNameSlug) {
-        return res.status(403).send('Unauthorized: You can only access your own dashboard.');
+        return res.status(403).json({ success: false, message: 'Unauthorized: You can only access your own dashboard' });
     }
 
     // Validate vendor_id
-    if (!mongoose.Types.ObjectId.isValid(vendor.id)) {
-        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    const vendorIdString = req.session.vendor.id;
+    if (!mongoose.Types.ObjectId.isValid(vendorIdString)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID in session' });
     }
-    const vendorId = new mongoose.Types.ObjectId(vendor.id);
+    const vendorId = new mongoose.Types.ObjectId(vendorIdString);
 
     try {
         const totalRevenueResult = await OrderItem.aggregate([
@@ -627,31 +646,59 @@ const getVendorDashboard = async (req, res) => {
             totalRevenue: totalRevenue.toFixed(2),
             productsSold,
             newOrders,
-            recentOrders
+            recentOrders: recentOrders.map(order => ({
+                id: order.id.toString(),
+                order_date: new Date(order.order_date).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                }),
+                status: order.status,
+                total_amount: order.total_amount.toFixed(2),
+                user_name: order.user_name,
+                product_name: order.product_name
+            }))
         });
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        res.status(500).send(`Server error: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Server error while fetching dashboard data' });
     }
 };
 
 const storeSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, storename, storelocation } = req.body;
 
-    if (!name || !contactnumber || !email || !password || !storename || !storelocation) {
+    // Input validation
+    if (!name || !contactnumber || !email || !password || !confirmpassword || !storename || !storelocation) {
         return res.status(400).json({ success: false, message: 'All fields are required' });
     }
-    if (name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
-    if (!/^\d{10}$/.test(contactnumber)) return res.status(400).json({ success: false, message: 'Invalid phone number format' });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Invalid email format' });
-    if (password.length < 8 || !/\d/.test(password)) return res.status(400).json({ success: false, message: 'Password must be 8+ characters with a number' });
-    if (password !== confirmpassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
-    if (storename.length < 2) return res.status(400).json({ success: false, message: 'Store name must be at least 2 characters' });
-    if (storelocation.length < 3) return res.status(400).json({ success: false, message: 'Invalid store location' });
+    if (name.length < 2) {
+        return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
+    }
+    if (!/^\d{10}$/.test(contactnumber)) {
+        return res.status(400).json({ success: false, message: 'Phone number must be a 10-digit number' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ success: false, message: 'Invalid email format' });
+    }
+    if (password.length < 8 || !/\d/.test(password)) {
+        return res.status(400).json({ success: false, message: 'Password must be at least 8 characters and contain a number' });
+    }
+    if (password !== confirmpassword) {
+        return res.status(400).json({ success: false, message: 'Passwords do not match' });
+    }
+    if (storename.length < 2) {
+        return res.status(400).json({ success: false, message: 'Store name must be at least 2 characters' });
+    }
+    if (storelocation.length < 5) {
+        return res.status(400).json({ success: false, message: 'Store location must be at least 5 characters' });
+    }
 
     try {
         const existingVendor = await Vendor.findOne({ email });
-        if (existingVendor) return res.status(400).json({ success: false, message: 'Email already registered' });
+        if (existingVendor) {
+            return res.status(400).json({ success: false, message: 'Email already registered' });
+        }
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newVendor = await Vendor.create({
@@ -665,7 +712,7 @@ const storeSignup = async (req, res) => {
         });
 
         req.session.vendor = {
-            id: newVendor._id,
+            id: newVendor._id.toString(),
             email: newVendor.email,
             store_name: newVendor.store_name,
             name: newVendor.name,
@@ -682,7 +729,8 @@ const storeSignup = async (req, res) => {
             message: 'Vendor signup successful'
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+        console.error('Error during vendor signup:', error);
+        res.status(500).json({ success: false, message: 'Server error during signup' });
     }
 };
 
@@ -697,15 +745,16 @@ const logout = (req, res) => {
 };
 
 const getProductForEdit = async (req, res) => {
-    if (!req.session.vendor) {
+    if (!req.session.vendor || !req.session.vendor.id) {
         return res.redirect('/service_provider_login');
     }
 
     // Validate vendor_id
-    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
-        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    const vendorIdString = req.session.vendor.id;
+    if (!mongoose.Types.ObjectId.isValid(vendorIdString)) {
+        return res.redirect('/shop-products?error=Invalid vendor ID in session');
     }
-    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+    const vendorId = new mongoose.Types.ObjectId(vendorIdString);
 
     const productId = req.params.productId;
     if (!mongoose.Types.ObjectId.isValid(productId)) {
@@ -716,7 +765,7 @@ const getProductForEdit = async (req, res) => {
     try {
         const product = await Product.findOne({ _id: productObjectId, vendor_id: vendorId });
         if (!product) {
-            return res.redirect('/shop-products?error=Product not found or you do not have permission to edit it.');
+            return res.redirect('/shop-products?error=Product not found or you do not have permission to edit it');
         }
 
         const variants = await ProductVariant.find({ product_id: productObjectId });
@@ -725,34 +774,46 @@ const getProductForEdit = async (req, res) => {
         res.render('shop-product-edit', {
             vendor: req.session.vendor,
             product: {
-                id: product._id,
+                id: product._id.toString(),
                 product_name: product.product_name,
                 product_category: product.product_category,
                 product_type: product.product_type,
                 product_description: product.product_description,
                 stock_status: product.stock_status,
-                variants: variants || [],
-                images: images || []
+                variants: variants.map(variant => ({
+                    id: variant._id.toString(),
+                    size: variant.size,
+                    color: variant.color,
+                    regular_price: variant.regular_price,
+                    sale_price: variant.sale_price,
+                    stock_quantity: variant.stock_quantity
+                })),
+                images: images.map(image => ({
+                    id: image._id.toString(),
+                    image_path: image.image_path,
+                    is_primary: image.is_primary
+                }))
             }
         });
     } catch (error) {
         console.error('Error fetching product for edit:', error);
-        res.redirect(`/shop-products?error=Server error while fetching product data: ${error.message}`);
+        res.redirect('/shop-products?error=Server error while fetching product data');
     }
 };
 
 const updateProduct = [
     upload.array('productImages', 4),
     async (req, res) => {
-        if (!req.session.vendor) {
+        if (!req.session.vendor || !req.session.vendor.id) {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
         // Validate vendor_id
-        if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
-            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        const vendorIdString = req.session.vendor.id;
+        if (!mongoose.Types.ObjectId.isValid(vendorIdString)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID in session' });
         }
-        const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+        const vendorId = new mongoose.Types.ObjectId(vendorIdString);
 
         const productId = req.params.productId;
         if (!mongoose.Types.ObjectId.isValid(productId)) {
@@ -773,22 +834,28 @@ const updateProduct = [
             'variant_stock_quantity[]': variantStockQuantities
         } = req.body;
 
+        // Input validation
         if (!productName || !productCategory || !productType || !productDescription || !stock_status) {
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
-
-        if (!variantSizes || !variantRegularPrices || !variantStockQuantities) {
-            return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
+        if (productName.length < 2) {
+            return res.status(400).json({ success: false, message: 'Product name must be at least 2 characters' });
         }
-
+        if (productDescription.length < 10) {
+            return res.status(400).json({ success: false, message: 'Product description must be at least 10 characters' });
+        }
         if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
+        }
+
+        if (!variantSizes || !variantRegularPrices || !variantStockQuantities || variantSizes.length === 0) {
+            return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
         }
 
         try {
             const product = await Product.findOne({ _id: productObjectId, vendor_id: vendorId });
             if (!product) {
-                return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to edit it.' });
+                return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to edit it' });
             }
 
             await Product.updateOne(
@@ -805,16 +872,21 @@ const updateProduct = [
             await ProductVariant.deleteMany({ product_id: productObjectId });
 
             for (let i = 0; i < variantSizes.length; i++) {
-                const size = variantSizes[i] || null;
-                const color = variantColors[i] || null;
+                const size = variantSizes[i] ? variantSizes[i].trim() : null;
+                const color = variantColors[i] ? variantColors[i].trim() : null;
                 const regularPrice = parseFloat(variantRegularPrices[i]);
                 const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
                 const stockQuantity = parseInt(variantStockQuantities[i]);
 
-                if (!regularPrice || !stockQuantity) {
-                    return res.status(400).json({ success: false, message: 'Regular price and stock quantity are required for each variant' });
+                if (isNaN(regularPrice) || regularPrice <= 0) {
+                    return res.status(400).json({ success: false, message: 'Regular price must be a positive number for all variants' });
                 }
-
+                if (isNaN(stockQuantity) || stockQuantity < 0) {
+                    return res.status(400).json({ success: false, message: 'Stock quantity must be a non-negative number for all variants' });
+                }
+                if (salePrice && (isNaN(salePrice) || salePrice <= 0)) {
+                    return res.status(400).json({ success: false, message: 'Sale price must be a positive number if provided' });
+                }
                 if (salePrice && salePrice >= regularPrice) {
                     return res.status(400).json({ success: false, message: 'Sale price must be less than regular price for all variants' });
                 }
@@ -835,7 +907,7 @@ const updateProduct = [
                 const images = req.files.map((file, index) => ({
                     product_id: productObjectId,
                     image_path: `/uploads/products/${file.filename}`,
-                    is_primary: index === 0 ? true : false
+                    is_primary: index === 0
                 }));
                 await ProductImage.insertMany(images);
             }
@@ -843,21 +915,22 @@ const updateProduct = [
             res.status(200).json({ success: true, message: 'Product updated successfully', redirect: '/shop-products' });
         } catch (error) {
             console.error('Error updating product:', error);
-            res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+            res.status(500).json({ success: false, message: 'Server error while updating product' });
         }
     }
 ];
 
 const getVendorCustomers = async (req, res) => {
-    if (!req.session.vendor) {
+    if (!req.session.vendor || !req.session.vendor.id) {
         return res.redirect('/service_provider_login');
     }
 
     // Validate vendor_id
-    if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
-        return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+    const vendorIdString = req.session.vendor.id;
+    if (!mongoose.Types.ObjectId.isValid(vendorIdString)) {
+        return res.status(400).json({ success: false, message: 'Invalid vendor ID in session' });
     }
-    const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+    const vendorId = new mongoose.Types.ObjectId(vendorIdString);
 
     try {
         const customers = await User.aggregate([
@@ -920,7 +993,7 @@ const getVendorCustomers = async (req, res) => {
 
         const formattedCustomers = customers.map((customer, index) => ({
             customer_id: `C${String(index + 1).padStart(3, '0')}`,
-            user_id: customer.customer_id,
+            user_id: customer.customer_id.toString(),
             name: customer.user_name,
             email: customer.email,
             total_orders: customer.total_orders,
@@ -940,22 +1013,23 @@ const getVendorCustomers = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching customers:', error);
-        res.status(500).send(`Server error: ${error.message}`);
+        res.status(500).json({ success: false, message: 'Server error while fetching customers' });
     }
 };
 
 const submitProduct = [
     upload.array('product_images', 4),
     async (req, res) => {
-        if (!req.session.vendor) {
+        if (!req.session.vendor || !req.session.vendor.id) {
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
         // Validate vendor_id
-        if (!mongoose.Types.ObjectId.isValid(req.session.vendor.id)) {
-            return res.status(400).json({ success: false, message: 'Invalid vendor ID' });
+        const vendorIdString = req.session.vendor.id;
+        if (!mongoose.Types.ObjectId.isValid(vendorIdString)) {
+            return res.status(400).json({ success: false, message: 'Invalid vendor ID in session' });
         }
-        const vendorId = new mongoose.Types.ObjectId(req.session.vendor.id);
+        const vendorId = new mongoose.Types.ObjectId(vendorIdString);
 
         const {
             product_name,
@@ -970,16 +1044,22 @@ const submitProduct = [
             'variant_stock_quantity[]': variantStockQuantities
         } = req.body;
 
+        // Input validation
         if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
+        }
+        if (product_name.length < 2) {
+            return res.status(400).json({ success: false, message: 'Product name must be at least 2 characters' });
+        }
+        if (product_description.length < 10) {
+            return res.status(400).json({ success: false, message: 'Product description must be at least 10 characters' });
+        }
+        if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
+            return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         if (!variantSizes || !variantRegularPrices || !variantStockQuantities || variantSizes.length === 0) {
             return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
-        }
-
-        if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
-            return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         try {
@@ -1001,13 +1081,16 @@ const submitProduct = [
                 const stockQuantity = parseInt(variantStockQuantities[i]);
 
                 if (isNaN(regularPrice) || regularPrice <= 0) {
-                    return res.status(400).json({ success: false, message: 'Regular price must be a positive number' });
+                    return res.status(400).json({ success: false, message: 'Regular price must be a positive number for all variants' });
                 }
                 if (isNaN(stockQuantity) || stockQuantity < 0) {
-                    return res.status(400).json({ success: false, message: 'Stock quantity must be a non-negative number' });
+                    return res.status(400).json({ success: false, message: 'Stock quantity must be a non-negative number for all variants' });
+                }
+                if (salePrice && (isNaN(salePrice) || salePrice <= 0)) {
+                    return res.status(400).json({ success: false, message: 'Sale price must be a positive number if provided' });
                 }
                 if (salePrice && salePrice >= regularPrice) {
-                    return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
+                    return res.status(400).json({ success: false, message: 'Sale price must be less than regular price for all variants' });
                 }
 
                 await ProductVariant.create({
@@ -1024,7 +1107,7 @@ const submitProduct = [
                 const images = req.files.map((file, index) => ({
                     product_id: product._id,
                     image_path: `/uploads/products/${file.filename}`,
-                    is_primary: index === 0 ? true : false
+                    is_primary: index === 0
                 }));
                 await ProductImage.insertMany(images);
             }
@@ -1032,7 +1115,7 @@ const submitProduct = [
             res.status(200).json({ success: true, message: 'Product added successfully', redirect: '/shop-products' });
         } catch (error) {
             console.error('Error adding product:', error);
-            res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+            res.status(500).json({ success: false, message: 'Server error while adding product' });
         }
     }
 ];

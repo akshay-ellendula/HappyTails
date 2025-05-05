@@ -63,17 +63,17 @@ const eventManagerSignup = async (req, res) => {
         });
     }
 
-    // Validation: Location must be at least 3 characters
-    if (location.length < 3) {
+    // Validation: Location must be at least 5 characters (aligned with vendorsController)
+    if (location.length < 5) {
         return res.status(400).json({
             success: false,
             message: 'Validation failed',
-            errors: [{ field: 'location', message: 'Please enter a valid location (minimum 3 characters)' }]
+            errors: [{ field: 'location', message: 'Location must be at least 5 characters long' }]
         });
     }
 
     // Validation: Terms and conditions must be accepted
-    if (!termsandconditions) {
+    if (termsandconditions !== 'on') {
         return res.status(400).json({
             success: false,
             message: 'Validation failed',
@@ -96,22 +96,35 @@ const eventManagerSignup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Create a new event manager
-        await EventManager.create({
+        const newEventManager = await EventManager.create({
             name,
             contact_number: contactnumber,
             email,
             password: hashedPassword,
             company_name: companyname,
-            location
+            location,
+            created_at: new Date()
         });
+
+        // Set session data for immediate login (aligned with vendorsController)
+        req.session.eventManager = {
+            id: newEventManager._id.toString(),
+            email: newEventManager.email,
+            role: 'event-manager',
+            name: newEventManager.name,
+            contact_number: newEventManager.contact_number,
+            company_name: newEventManager.company_name,
+            location: newEventManager.location
+        };
 
         res.status(201).json({
             success: true,
-            redirect: '/service_provider_login',
+            redirect: '/eventmanager_dashboard',
             message: 'Event manager signup successful'
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: `Server error: ${error.message}` });
+        console.error('Error during event manager signup:', error);
+        res.status(500).json({ success: false, message: 'Server error during signup' });
     }
 };
 

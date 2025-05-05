@@ -17,12 +17,15 @@ const getUsers = async (req, res) => {
         const users = await User.find()
             .select('user_name user_email created_at')
             .sort({ created_at: -1 });
-        res.json({ success: true, users: users.map(user => ({
-            id: user._id,
-            name: user.user_name,
-            email: user.user_email,
-            joined_date: user.created_at
-        })) });
+        res.json({
+            success: true,
+            users: users.map(user => ({
+                id: user._id.toString(),
+                name: user.user_name,
+                email: user.user_email,
+                joined_date: user.created_at
+            }))
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -40,14 +43,17 @@ const getUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
-        res.json({ success: true, user: {
-            id: user._id,
-            name: user.user_name,
-            email: user.user_email,
-            phone: user.user_phone,
-            address: user.user_address,
-            joined_date: user.created_at
-        } });
+        res.json({
+            success: true,
+            user: {
+                id: user._id.toString(),
+                name: user.user_name,
+                email: user.user_email,
+                phone: user.user_phone,
+                address: user.user_address,
+                joined_date: user.created_at
+            }
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -115,7 +121,7 @@ const getProducts = async (req, res) => {
                     as: 'variants'
                 }
             },
-            { $unwind: '$variants' },
+            { $unwind: { path: '$variants', preserveNullAndEmptyArrays: true } },
             {
                 $project: {
                     id: '$_id',
@@ -131,7 +137,13 @@ const getProducts = async (req, res) => {
             { $group: { _id: '$id', product: { $first: '$$ROOT' } } },
             { $replaceRoot: { newRoot: '$product' } }
         ]);
-        res.json({ success: true, products });
+        res.json({
+            success: true,
+            products: products.map(product => ({
+                ...product,
+                id: product.id.toString()
+            }))
+        });
     } catch (error) {
         console.error('Error fetching products:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -155,13 +167,14 @@ const getUserStats = async (req, res) => {
             stats: { total, monthly, weekly, daily }
         });
     } catch (error) {
-        res.status(500).json({ success: false });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
 const getProductStats = async (req, res) => {
     try {
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
         const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
         const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
         const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
@@ -178,6 +191,7 @@ const getProductStats = async (req, res) => {
                     as: 'variants'
                 }
             },
+            { $unwind: { path: '$variants', preserveNullAndEmptyArrays: true } },
             { $match: { 'variants.stock_quantity': { $gt: 0 } } },
             { $group: { _id: null, count: { $addToSet: '$_id' } } },
             { $project: { inStock: { $size: '$count' } } }
@@ -193,6 +207,7 @@ const getProductStats = async (req, res) => {
                     as: 'variants'
                 }
             },
+            { $unwind: { path: '$variants', preserveNullAndEmptyArrays: true } },
             { $match: { 'variants.stock_quantity': { $gt: 0 } } },
             { $group: { _id: null, count: { $addToSet: '$_id' } } },
             { $project: { inStockLastMonth: { $size: '$count' } } }
@@ -207,10 +222,11 @@ const getProductStats = async (req, res) => {
                     as: 'variants'
                 }
             },
+            { $unwind: { path: '$variants', preserveNullAndEmptyArrays: true } },
             {
                 $group: {
                     _id: '$_id',
-                    totalStock: { $sum: '$variants.stock_quantity' }
+                    totalStock: { $sum: { $ifNull: ['$variants.stock_quantity', 0] } }
                 }
             },
             { $match: { totalStock: { $gte: 1, $lte: 5 } } },
@@ -227,10 +243,11 @@ const getProductStats = async (req, res) => {
                     as: 'variants'
                 }
             },
+            { $unwind: { path: '$variants', preserveNullAndEmptyArrays: true } },
             {
                 $group: {
                     _id: '$_id',
-                    totalStock: { $sum: '$variants.stock_quantity' }
+                    totalStock: { $sum: { $ifNull: ['$variants.stock_quantity', 0] } }
                 }
             },
             { $match: { totalStock: { $gte: 1, $lte: 5 } } },
@@ -246,10 +263,11 @@ const getProductStats = async (req, res) => {
                     as: 'variants'
                 }
             },
+            { $unwind: { path: '$variants', preserveNullAndEmptyArrays: true } },
             {
                 $group: {
                     _id: '$_id',
-                    totalStock: { $sum: '$variants.stock_quantity' }
+                    totalStock: { $sum: { $ifNull: ['$variants.stock_quantity', 0] } }
                 }
             },
             { $match: { totalStock: 0 } },
@@ -266,10 +284,11 @@ const getProductStats = async (req, res) => {
                     as: 'variants'
                 }
             },
+            { $unwind: { path: '$variants', preserveNullAndEmptyArrays: true } },
             {
                 $group: {
                     _id: '$_id',
-                    totalStock: { $sum: '$variants.stock_quantity' }
+                    totalStock: { $sum: { $ifNull: ['$variants.stock_quantity', 0] } }
                 }
             },
             { $match: { totalStock: 0 } },
@@ -314,12 +333,15 @@ const adminGetUsers = async (req, res) => {
             .select('user_name user_email created_at')
             .sort({ created_at: -1 })
             .limit(5);
-        res.json({ success: true, users: users.map(user => ({
-            id: user._id,
-            name: user.user_name,
-            email: user.user_email,
-            joined_date: user.created_at
-        })) });
+        res.json({
+            success: true,
+            users: users.map(user => ({
+                id: user._id.toString(),
+                name: user.user_name,
+                email: user.user_email,
+                joined_date: user.created_at
+            }))
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -330,14 +352,17 @@ const getVendors = async (req, res) => {
         const vendors = await Vendor.find()
             .select('name email store_name store_location created_at')
             .sort({ created_at: -1 });
-        res.json({ success: true, vendors: vendors.map(vendor => ({
-            id: vendor._id,
-            name: vendor.name,
-            email: vendor.email,
-            store_name: vendor.store_name,
-            store_location: vendor.store_location,
-            joined_date: vendor.created_at
-        })) });
+        res.json({
+            success: true,
+            vendors: vendors.map(vendor => ({
+                id: vendor._id.toString(),
+                name: vendor.name,
+                email: vendor.email,
+                store_name: vendor.store_name,
+                store_location: vendor.store_location,
+                joined_date: vendor.created_at
+            }))
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -360,7 +385,7 @@ const getVendorStats = async (req, res) => {
             stats: { total, monthly, weekly, daily }
         });
     } catch (error) {
-        res.status(500).json({ success: false });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
@@ -370,12 +395,15 @@ const adminGetVendors = async (req, res) => {
             .select('name email created_at')
             .sort({ created_at: -1 })
             .limit(5);
-        res.json({ success: true, vendors: vendors.map(vendor => ({
-            id: vendor._id,
-            name: vendor.name,
-            email: vendor.email,
-            joined_date: vendor.created_at
-        })) });
+        res.json({
+            success: true,
+            vendors: vendors.map(vendor => ({
+                id: vendor._id.toString(),
+                name: vendor.name,
+                email: vendor.email,
+                joined_date: vendor.created_at
+            }))
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -391,14 +419,17 @@ const getVendor = async (req, res) => {
         const vendor = await Vendor.findById(vendorId)
             .select('name email store_name store_location created_at');
         if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
-        res.json({ success: true, vendor: {
-            id: vendor._id,
-            name: vendor.name,
-            email: vendor.email,
-            store_name: vendor.store_name,
-            store_location: vendor.store_location,
-            joined_date: vendor.created_at
-        } });
+        res.json({
+            success: true,
+            vendor: {
+                id: vendor._id.toString(),
+                name: vendor.name,
+                email: vendor.email,
+                store_name: vendor.store_name,
+                store_location: vendor.store_location,
+                joined_date: vendor.created_at
+            }
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -587,7 +618,7 @@ const getVendorProducts = async (req, res) => {
                     as: 'variants'
                 }
             },
-            { $unwind: '$variants' },
+            { $unwind: { path: '$variants', preserveNullAndEmptyArrays: true } },
             {
                 $project: {
                     product_id: '$_id',
@@ -600,7 +631,13 @@ const getVendorProducts = async (req, res) => {
             { $group: { _id: '$product_id', product: { $first: '$$ROOT' } } },
             { $replaceRoot: { newRoot: '$product' } }
         ]);
-        res.json({ success: true, products });
+        res.json({
+            success: true,
+            products: products.map(product => ({
+                ...product,
+                product_id: product.product_id.toString()
+            }))
+        });
     } catch (error) {
         console.error('Error fetching vendor products:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -665,7 +702,13 @@ const getVendorTopCustomers = async (req, res) => {
             { $sort: { total_spent: -1 } },
             { $limit: 5 }
         ]);
-        res.json({ success: true, customers });
+        res.json({
+            success: true,
+            customers: customers.map(customer => ({
+                ...customer,
+                customer_id: customer.customer_id.toString()
+            }))
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -714,7 +757,8 @@ const deleteVendor = async (req, res) => {
         const productIds = products.map(p => p._id);
         await OrderItem.deleteMany({ product_id: { $in: productIds } });
 
-        // Delete associated products
+        // Delete associated products and their variants
+        await ProductVariant.deleteMany({ product_id: { $in: productIds } });
         await Product.deleteMany({ vendor_id: vendorObjectId });
 
         // Delete the vendor
@@ -731,13 +775,16 @@ const getEventManagers = async (req, res) => {
         const eventManagers = await EventManager.find()
             .select('name email company_name created_at')
             .sort({ created_at: -1 });
-        res.json({ success: true, eventManagers: eventManagers.map(manager => ({
-            id: manager._id,
-            name: manager.name,
-            email: manager.email,
-            organization: manager.company_name,
-            joined_date: manager.created_at
-        })) });
+        res.json({
+            success: true,
+            eventManagers: eventManagers.map(manager => ({
+                id: manager._id.toString(),
+                name: manager.name,
+                email: manager.email,
+                organization: manager.company_name,
+                joined_date: manager.created_at
+            }))
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -769,7 +816,7 @@ const getEventManagerStats = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).json({ success: false });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
@@ -793,15 +840,18 @@ const getEventManager = async (req, res) => {
         const manager = await EventManager.findById(managerId)
             .select('name email contact_number company_name location created_at');
         if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
-        res.json({ success: true, manager: {
-            id: manager._id,
-            name: manager.name,
-            email: manager.email,
-            phone: manager.contact_number,
-            organization: manager.company_name,
-            location: manager.location,
-            joined_date: manager.created_at
-        } });
+        res.json({
+            success: true,
+            manager: {
+                id: manager._id.toString(),
+                name: manager.name,
+                email: manager.email,
+                phone: manager.contact_number,
+                organization: manager.company_name,
+                location: manager.location,
+                joined_date: manager.created_at
+            }
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -879,15 +929,18 @@ const getUpcomingEvents = async (req, res) => {
         })
             .select('event_name date_time venue total_tickets tickets_sold status')
             .sort({ date_time: 1 });
-        res.json({ success: true, events: events.map(event => ({
-            event_id: event._id,
-            event_name: event.event_name,
-            date_time: event.date_time,
-            venue: event.venue,
-            total_tickets: event.total_tickets,
-            tickets_sold: event.tickets_sold,
-            status: event.status
-        })) });
+        res.json({
+            success: true,
+            events: events.map(event => ({
+                event_id: event._id.toString(),
+                event_name: event.event_name,
+                date_time: event.date_time,
+                venue: event.venue,
+                total_tickets: event.total_tickets,
+                tickets_sold: event.tickets_sold,
+                status: event.status
+            }))
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -908,8 +961,9 @@ const deleteProduct = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
 
-        // Delete associated product variants
+        // Delete associated product variants and images
         await ProductVariant.deleteMany({ product_id: productObjectId });
+        await ProductImage.deleteMany({ product_id: productObjectId });
 
         // Delete associated order items
         await OrderItem.deleteMany({ product_id: productObjectId });
@@ -940,15 +994,18 @@ const getPastEvents = async (req, res) => {
         })
             .select('event_name date_time venue total_tickets tickets_sold status')
             .sort({ date_time: -1 });
-        res.json({ success: true, events: events.map(event => ({
-            event_id: event._id,
-            event_name: event.event_name,
-            date_time: event.date_time,
-            venue: event.venue,
-            total_tickets: event.total_tickets,
-            tickets_sold: event.tickets_sold,
-            status: event.status
-        })) });
+        res.json({
+            success: true,
+            events: events.map(event => ({
+                event_id: event._id.toString(),
+                event_name: event.event_name,
+                date_time: event.date_time,
+                venue: event.venue,
+                total_tickets: event.total_tickets,
+                tickets_sold: event.tickets_sold,
+                status: event.status
+            }))
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
@@ -993,7 +1050,7 @@ const deleteEventManager = async (req, res) => {
         const manager = await EventManager.findById(managerId);
         if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
 
-        // Delete associated events
+        // Delete associated events and attendees
         const events = await Event.find({ event_manager_id: managerObjectId });
         const eventIds = events.map(e => e._id);
         await EventAttendee.deleteMany({ event_id: { $in: eventIds } });
