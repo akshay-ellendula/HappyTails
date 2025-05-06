@@ -1,8 +1,9 @@
 const express = require('express');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const path = require('path');
 const fs = require('fs');
-const { initializeDatabase } = require('./models/database'); // Import the initializeDatabase function
+const { initializeDatabase } = require('./models/database');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const vendorRoutes = require('./routes/vendorRoutes');
@@ -22,6 +23,10 @@ app.use(session({
     secret: 'your-secure-secret-key-here-12345',
     resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({
+        mongoUrl: 'mongodb+srv://vedaprakash8341:bmfk3zoZflpB8k9L@cluster0.jykgpnw.mongodb.net/happytails',
+        collectionName: 'sessions'
+    }),
     cookie: { secure: false }
 }));
 

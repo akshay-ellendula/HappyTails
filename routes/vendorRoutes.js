@@ -7,7 +7,11 @@ router.get('/service_provider_login', (req, res) => {
     res.render('service_provider_login');
 });
 
-router.get('/shop-dashboard/:storeName', getVendorDashboard);
+router.get('/shop-dashboard/:storeName', (req, res, next) => {
+    console.log('Dashboard route accessed:', { storeName: req.params.storeName, session: req.session.vendor });
+    getVendorDashboard(req, res, next);
+});
+
 router.get('/shop-profile', getVendorProfile);
 router.get('/shop-products', getVendorProducts);
 
