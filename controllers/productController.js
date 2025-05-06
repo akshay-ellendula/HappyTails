@@ -48,35 +48,79 @@ const getPetAccessories = async (req, res) => {
             },
             { $match: { 'images.is_primary': true } },
             {
-                $group: {
-                    _id: '$_id',
-                    id: { $first: '$_id' },
-                    product_name: { $first: '$product_name' },
-                    product_type: { $first: '$product_type' },
-                    product_category: { $first: '$product_category' },
-                    min_regular_price: { $min: '$variants.regular_price' },
-                    min_sale_price: { $min: '$variants.sale_price' },
-                    image_path: { $first: '$images.image_path' }
-                }
-            },
-            {
                 $project: {
-                    _id: 0,
-                    id: 1,
+                    id: { $toString: '$_id' },
                     product_name: 1,
-                    product_type: 1,
+                    product_type: { $toLower: { $trim: { input: '$product_type' } } }, // Normalize product_type
                     product_category: 1,
-                    min_regular_price: 1,
-                    min_sale_price: 1,
-                    image_path: 1
+                    variants: {
+                        $map: {
+                            input: '$variants',
+                            as: 'variant',
+                            in: {
+                                size: { $toLower: { $trim: { input: '$$variant.size' } } },
+                                color: { $toLower: { $trim: { input: '$$variant.color' } } },
+                                regular_price: '$$variant.regular_price',
+                                sale_price: '$$variant.sale_price'
+                            }
+                        }
+                    },
+                    image_path: '$images.image_path',
+                    _id: 0
                 }
             },
             { $sort: { created_at: -1 } }
         ]);
 
-        const productTypes = await Product.distinct('product_type', { product_type: { $ne: null } });
-        const colors = await ProductVariant.distinct('color', { color: { $ne: null } });
-        const sizes = await ProductVariant.distinct('size', { size: { $ne: null } });
+        // Normalize product types, colors, and sizes as before
+        const productTypesRaw = await Product.aggregate([
+            { $match: { product_type: { $ne: null } } },
+            {
+                $group: {
+                    _id: { $toLower: { $trim: { input: '$product_type' } } }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    product_type: '$_id'
+                }
+            }
+        ]);
+        const productTypes = productTypesRaw.map(item => item.product_type).sort();
+
+        const colorsRaw = await ProductVariant.aggregate([
+            { $match: { color: { $ne: null } } },
+            {
+                $group: {
+                    _id: { $toLower: { $trim: { input: '$color' } } }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    color: '$_id'
+                }
+            }
+        ]);
+        const colors = colorsRaw.map(item => item.color).sort();
+
+        const sizesRaw = await ProductVariant.aggregate([
+            { $match: { size: { $ne: null } } },
+            {
+                $group: {
+                    _id: { $toLower: { $trim: { input: '$size' } } }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    size: '$_id'
+                }
+            }
+        ]);
+        const sizes = sizesRaw.map(item => item.size).sort();
+
         const maxPriceResult = await ProductVariant.find().sort({ regular_price: -1 }).limit(1);
         const maxPrice = maxPriceResult.length > 0 ? maxPriceResult[0].regular_price : 15000;
 
