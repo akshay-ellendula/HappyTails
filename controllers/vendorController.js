@@ -939,7 +939,6 @@ const submitProduct = [
     upload.array('product_images', 4),
     async (req, res) => {
         if (!req.session.vendor) {
-            console.log('No vendor session in submitProduct');
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
@@ -950,33 +949,48 @@ const submitProduct = [
             product_type,
             product_description,
             stock_status,
-            'variant_size[]': variantSizes,
-            'variant_color[]': variantColors,
-            'variant_regular_price[]': variantRegularPrices,
-            'variant_sale_price[]': variantSalePrices,
-            'variant_stock_quantity[]': variantStockQuantities
+            variants
         } = req.body;
 
-        console.log('Submitting product:', { product_name, vendorId });
-
         if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
-            console.log('Missing product fields');
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
 
-        if (!variantSizes || !variantRegularPrices || !variantStockQuantities || variantSizes.length === 0) {
-            console.log('Missing variant fields');
-            return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
+        if (!variants || Object.keys(variants).length === 0) {
+            return res.status(400).json({ success: false, message: 'At least one variant is required' });
+        }
+
+        const variantArray = Object.keys(variants).map(index => ({
+            size: variants[index].size || null,
+            color: variants[index].color || null,
+            regular_price: parseFloat(variants[index].regular_price),
+            sale_price: variants[index].sale_price ? parseFloat(variants[index].sale_price) : null,
+            stock_quantity: parseInt(variants[index].stock_quantity)
+        }));
+
+        for (const variant of variantArray) {
+            if (!variant.size || isNaN(variant.regular_price) || isNaN(variant.stock_quantity)) {
+                return res.status(400).json({ success: false, message: 'Size, regular price, and stock quantity are required for all variants' });
+            }
+            if (variant.regular_price <= 0) {
+                return res.status(400).json({ success: false, message: 'Regular price must be positive' });
+            }
+            if (variant.stock_quantity < 0) {
+                return res.status(400).json({ success: false, message: 'Stock quantity must be non-negative' });
+            }
+            if (variant.sale_price && variant.sale_price >= variant.regular_price) {
+                return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
+            }
         }
 
         if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
-            console.log('Invalid stock status:', stock_status);
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         try {
-            const product = await Product.create({
-                vendor_id: new mongoose.Types.ObjectId(vendorId),
+            // Save product
+            const newProduct = new Product({
+                vendor_id: vendorId,
                 product_name,
                 product_category,
                 product_type,
@@ -984,49 +998,35 @@ const submitProduct = [
                 stock_status
             });
 
-            const variants = variantSizes.map((size, i) => {
-                const regularPrice = parseFloat(variantRegularPrices[i]);
-                const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
-                const stockQuantity = parseInt(variantStockQuantities[i]);
+            const savedProduct = await newProduct.save();
 
-                if (isNaN(regularPrice) || regularPrice <= 0) {
-                    throw new Error('Regular price must be a positive number');
-                }
-                if (isNaN(stockQuantity) || stockQuantity < 0) {
-                    throw new Error('Stock quantity must be a non-negative number');
-                }
-                if (salePrice && salePrice >= regularPrice) {
-                    throw new Error('Sale price must be less than regular price');
-                }
+            // Save variants
+            const variantDocs = variantArray.map(variant => ({
+                ...variant,
+                product_id: savedProduct._id
+            }));
 
-                return {
-                    product_id: product._id,
-                    size: size ? size.trim() : null,
-                    color: variantColors[i] ? variantColors[i].trim() : null,
-                    regular_price: regularPrice,
-                    sale_price: salePrice,
-                    stock_quantity: stockQuantity
-                };
-            });
+            await ProductVariant.insertMany(variantDocs);
 
-            await ProductVariant.insertMany(variants);
-
+            // Save images
             if (req.files && req.files.length > 0) {
-                const images = req.files.map((file, index) => ({
-                    product_id: product._id,
+                const imageDocs = req.files.map((file, index) => ({
+                    product_id: savedProduct._id,
                     image_path: `/uploads/products/${file.filename}`,
                     is_primary: index === 0
                 }));
-                await ProductImage.insertMany(images);
+
+                await ProductImage.insertMany(imageDocs);
             }
 
-            console.log('Product submitted successfully:', { productId: product._id });
             res.status(200).json({ success: true, message: 'Product added successfully', redirect: '/shop-products' });
+
         } catch (error) {
             console.error('Error adding product:', error);
-            res.status(500).json({ success: false, message: error.message || 'Server error' });
+            res.status(500).json({ success: false, message: 'Server error' });
         }
     }
 ];
+
 
 module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct };
