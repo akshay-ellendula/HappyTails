@@ -1028,5 +1028,114 @@ const submitProduct = [
     }
 ];
 
+// Fetch order details for a specific order
+const getOrderDetails = async (req, res) => {
+    if (!req.session.vendor) {
+        console.log('No vendor session in getOrderDetails, redirecting to login');
+        return res.redirect('/service_provider_login');
+    }
 
-module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct };
+    const vendorId = req.session.vendor.id;
+    const orderId = req.params.orderId;
+    console.log('Fetching order details:', { vendorId, orderId });
+
+    try {
+        // Fetch the order and populate user_id for customer details
+        const order = await Order.findById(orderId).populate('user_id');
+        if (!order) {
+            console.log('Order not found:', { orderId });
+            return res.render('shop-order-details', {
+                vendor: req.session.vendor,
+                order: null,
+            });
+        }
+
+        // Fetch order items
+        const orderItems = await OrderItem.find({ order_id: orderId }).populate('product_id variant_id');
+
+        // Verify that the order contains products from this vendor
+        const productMatch = await Order.aggregate([
+            {
+                $match: { _id: new mongoose.Types.ObjectId(orderId) }
+            },
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) }
+            }
+        ]);
+
+        if (!productMatch.length) {
+            console.log('Order does not belong to this vendor:', { orderId, vendorId });
+            return res.status(403).send('Unauthorized: This order does not belong to your store.');
+        }
+
+        // Construct the order object for the EJS page
+        const orderData = {
+            order_id: `#ORD-${order._id.toString()}`, // Match format used in getVendorOrders
+            status: order.status || 'Pending',
+            order_date: order.order_date || new Date(),
+            payment_method: 'Credit Card (****4242)', // Placeholder since not in schema
+            payment_status: 'Paid', // Placeholder since not in schema
+            customer: {
+                name: order.user_id ? order.user_id.user_name : 'Unknown',
+                email: order.user_id ? order.user_id.user_email : 'N/A',
+                phone: order.user_id ? order.user_id.user_phone || 'N/A' : 'N/A',
+            },
+            shipping: {
+                address: order.user_id ? order.user_id.user_address || 'N/A' : 'N/A', // Use user's address as fallback
+                method: 'Standard Shipping', // Placeholder since not in schema
+                tracking_number: null, // Not in schema
+                estimated_delivery: order.delivery_date || null,
+                shipping_cost: 0, // Not in schema, default to 0
+            },
+            items: orderItems.map(item => ({
+                product_name: item.product_name,
+                sku: item.product_id ? item.product_id.sku || 'N/A' : 'N/A',
+                price: item.price,
+                quantity: item.quantity,
+            })),
+            subtotal: order.subtotal,
+            shipping_cost: 0, // Not in schema, default to 0
+            tax: 0, // Not in schema, default to 0
+            total: order.total_amount,
+            timeline: [ // Placeholder timeline since not in schema
+                {
+                    status: order.status,
+                    date: order.order_date,
+                    description: `Order ${order.status.toLowerCase()}`,
+                },
+                {
+                    status: 'Placed',
+                    date: order.order_date,
+                    description: 'Order placed',
+                },
+            ],
+        };
+
+        console.log('Order details fetched:', { orderId });
+        res.render('shop-order-details', {
+            vendor: req.session.vendor,
+            order: orderData,
+        });
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        res.status(500).send('Server error');
+    }
+};
+
+module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails };
