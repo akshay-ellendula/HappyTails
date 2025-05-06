@@ -459,76 +459,35 @@ const checkout = async (req, res) => {
 };
 
 const getUserOrders = async (req, res) => {
-    if (!req.session.user) return res.status(401).json({ success: false, message: 'User not logged in' });
+    if (!req.session.user) {
+        return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
 
     try {
-        const userId = req.session.user.id;
-        const orders = await Order.aggregate([
-            { $match: { user_id: mongoose.Types.ObjectId(userId) } },
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'items'
-                }
-            },
-            { $unwind: { path: '$items', preserveNullAndEmptyArrays: true } },
-            {
-                $lookup: {
-                    from: 'productimages',
-                    localField: 'items.product_id',
-                    foreignField: 'product_id',
-                    as: 'images'
-                }
-            },
-            {
-                $unwind: {
-                    path: '$images',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            { $match: { 'images.is_primary': true } },
-            {
-                $group: {
-                    _id: '$_id',
-                    order_id: { $first: '$_id' },
-                    order_date: { $first: '$order_date' },
-                    status: { $first: '$status' },
-                    subtotal: { $first: '$subtotal' },
-                    total_amount: { $first: '$total_amount' },
-                    delivery_date: { $first: '$delivery_date' },
-                    items: {
-                        $push: {
-                            product_id: '$items.product_id',
-                            variant_id: '$items.variant_id',
-                            product_name: '$items.product_name',
-                            quantity: '$items.quantity',
-                            price: '$items.price',
-                            size: '$items.size',
-                            color: '$items.color',
-                            image_path: { $ifNull: ['$images.image_path', '/images/default-product.jpg'] }
-                        }
-                    }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    order_id: 1,
-                    order_date: 1,
-                    status: 1,
-                    subtotal: 1,
-                    total_amount: 1,
-                    delivery_date: 1,
-                    items: 1
-                }
-            },
-            { $sort: { order_date: -1 } }
-        ]);
+        const orders = await Order.find({ user_id: req.session.user.id })
+            .sort({ order_date: -1 })
+            .lean();
 
-        res.json({ success: true, orders });
-    } catch (err) {
+        const populatedOrders = await Promise.all(orders.map(async order => {
+            const items = await OrderItem.find({ order_id: order._id }).lean();
+
+            const detailedItems = await Promise.all(items.map(async item => {
+                const imageDoc = await ProductImage.findOne({ product_id: item.product_id, is_primary: true });
+                return {
+                    ...item,
+                    image_path: imageDoc?.image_path || '/images/default-product.jpg'
+                };
+            }));
+
+            return {
+                ...order,
+                items: detailedItems
+            };
+        }));
+
+        res.json({ success: true, orders: populatedOrders });
+    } catch (error) {
+        console.error(error);
         res.status(500).json({ success: false, message: 'Failed to fetch orders' });
     }
 };
