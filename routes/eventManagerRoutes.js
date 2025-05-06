@@ -37,7 +37,7 @@ router.get('/eventmanager_dashboard', isAuthenticated, async (req, res) => {
 
         // Fetch overview metrics
         const overview = await Event.aggregate([
-            { $match: { event_manager_id: mongoose.Types.ObjectId(eventManagerId) } },
+            { $match: { event_manager_id: new mongoose.Types.ObjectId(eventManagerId) } },
             {
                 $group: {
                     _id: null,
@@ -58,13 +58,13 @@ router.get('/eventmanager_dashboard', isAuthenticated, async (req, res) => {
 
         // Fetch ongoing events (limit to 3)
         const ongoingEvents = await Event.find(
-            { event_manager_id: eventManagerId, status: 'Ongoing' },
+            { event_manager_id: new mongoose.Types.ObjectId(eventManagerId), status: 'Ongoing' },
             'id event_name tickets_sold ticket_price date_time image'
         ).limit(3).lean();
 
         // Fetch upcoming events (limit to 3)
         const upcomingEvents = await Event.find(
-            { event_manager_id: eventManagerId, status: 'Upcoming' },
+            { event_manager_id: new mongoose.Types.ObjectId(eventManagerId), status: 'Upcoming' },
             'id event_name tickets_sold ticket_price total_tickets date_time image'
         ).limit(3).lean();
 
@@ -79,7 +79,7 @@ router.get('/eventmanager_dashboard', isAuthenticated, async (req, res) => {
                 }
             },
             { $unwind: '$event' },
-            { $match: { 'event.event_manager_id': mongoose.Types.ObjectId(eventManagerId) } },
+            { $match: { 'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId) } },
             {
                 $project: {
                     id: '$_id',
@@ -184,7 +184,7 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
         const previousEvents = await Event.aggregate([
             {
                 $match: {
-                    event_manager_id: mongoose.Types.ObjectId(eventManagerId),
+                    event_manager_id: new mongoose.Types.ObjectId(eventManagerId),
                     $or: [
                         { status: 'Past' },
                         { date_time: { $lt: today } }
@@ -234,7 +234,7 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
         const ongoingEvents = await Event.aggregate([
             {
                 $match: {
-                    event_manager_id: mongoose.Types.ObjectId(eventManagerId),
+                    event_manager_id: new mongoose.Types.ObjectId(eventManagerId),
                     status: 'Ongoing',
                     date_time: {
                         $gte: new Date(today.toISOString().split('T')[0]),
@@ -285,7 +285,7 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
         const upcomingEvents = await Event.aggregate([
             {
                 $match: {
-                    event_manager_id: mongoose.Types.ObjectId(eventManagerId),
+                    event_manager_id: new mongoose.Types.ObjectId(eventManagerId),
                     status: 'Upcoming',
                     date_time: { $gt: today }
                 }
@@ -349,7 +349,7 @@ router.post('/eventmanager_events/update', isAuthenticated, async (req, res) => 
 
         const eventDateTime = new Date(`${eventDate} ${eventTime}:00`);
         await Event.updateOne(
-            { _id: eventId, event_manager_id: eventManagerId },
+            { _id: eventId, event_manager_id: new mongoose.Types.ObjectId(eventManagerId) },
             {
                 event_name: eventName,
                 date_time: eventDateTime,
@@ -404,7 +404,7 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
             { $unwind: '$event' },
             {
                 $match: {
-                    'event.event_manager_id': mongoose.Types.ObjectId(eventManagerId),
+                    'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId),
                     $or: [
                         { 'event.status': { $in: ['Past', 'Ongoing'] } },
                         { 'event.date_time': { $lte: today } }
@@ -482,7 +482,7 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
             { $unwind: '$event' },
             {
                 $match: {
-                    'event.event_manager_id': mongoose.Types.ObjectId(eventManagerId),
+                    'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId),
                     'event.status': 'Upcoming',
                     'event.date_time': { $gt: today }
                 }
@@ -546,7 +546,7 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
         const revenueData = await Event.aggregate([
             {
                 $match: {
-                    event_manager_id: mongoose.Types.ObjectId(eventManagerId)
+                    event_manager_id: new mongoose.Types.ObjectId(eventManagerId)
                 }
             },
             {
@@ -608,7 +608,7 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
             { $unwind: '$event' },
             {
                 $match: {
-                    'event.event_manager_id': mongoose.Types.ObjectId(eventManagerId)
+                    'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId)
                 }
             },
             {
@@ -663,7 +663,7 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
         const avgTicketData = await Event.aggregate([
             {
                 $match: {
-                    event_manager_id: mongoose.Types.ObjectId(eventManagerId),
+                    event_manager_id: new mongoose.Types.ObjectId(eventManagerId),
                     ticket_price: { $gt: 0 }
                 }
             },
