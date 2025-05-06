@@ -83,13 +83,13 @@
 
     <script>
         function goBack() { window.history.back(); }
-
+    
         document.addEventListener('DOMContentLoaded', function() {
             const uploadArea = document.getElementById('upload-area');
             const fileInput = document.getElementById('product-images');
             const imagePreview = document.getElementById('image-preview');
             let uploadedFiles = [];
-
+    
             // Handle image uploads
             uploadArea.addEventListener('click', () => fileInput.click());
             fileInput.addEventListener('change', function() {
@@ -101,12 +101,12 @@
                 uploadedFiles = [...uploadedFiles, ...newFiles];
                 displayImagePreviews();
             });
-
+    
             function removeImage(index) {
                 uploadedFiles.splice(index, 1);
                 displayImagePreviews();
             }
-
+    
             function displayImagePreviews() {
                 imagePreview.innerHTML = '';
                 uploadedFiles.forEach((file, index) => {
@@ -131,37 +131,42 @@
                     }
                 });
             }
-
+    
             // Handle dynamic variants
             const variantsContainer = document.getElementById('variants-container');
             const addVariantBtn = document.getElementById('add-variant');
-
+    
             function addVariant(size = '', color = '', regularPrice = '', salePrice = '', stockQuantity = '') {
                 const variantDiv = document.createElement('div');
                 variantDiv.className = 'variant-entry';
                 variantDiv.innerHTML = `
                     <div class="form-row">
                         <div class="form-group">
-                            <label>Size</label>
-                            <input type="text" name="variant_size[]" class="form-control" value="${size}" placeholder="e.g., Small">
+                            <label>Size*</label>
+                            <input type="text" name="variants[][size]" class="form-control variant-size" 
+                                   value="${size}" placeholder="e.g., Small" required>
                         </div>
                         <div class="form-group">
                             <label>Color</label>
-                            <input type="text" name="variant_color[]" class="form-control" value="${color}" placeholder="e.g., Brown">
+                            <input type="text" name="variants[][color]" class="form-control" 
+                                   value="${color}" placeholder="e.g., Brown">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>Regular Price*</label>
-                            <input type="number" name="variant_regular_price[]" class="form-control" value="${regularPrice}" placeholder="0.00" step="0.01" min="0" required>
+                            <input type="number" name="variants[][regular_price]" class="form-control" 
+                                   value="${regularPrice}" placeholder="0.00" step="0.01" min="0" required>
                         </div>
                         <div class="form-group">
                             <label>Sale Price</label>
-                            <input type="number" name="variant_sale_price[]" class="form-control" value="${salePrice}" placeholder="0.00" step="0.01" min="0">
+                            <input type="number" name="variants[][sale_price]" class="form-control" 
+                                   value="${salePrice}" placeholder="0.00" step="0.01" min="0">
                         </div>
                         <div class="form-group">
                             <label>Stock Quantity*</label>
-                            <input type="number" name="variant_stock_quantity[]" class="form-control" value="${stockQuantity}" placeholder="Enter quantity" min="0" required>
+                            <input type="number" name="variants[][stock_quantity]" class="form-control" 
+                                   value="${stockQuantity}" placeholder="Enter quantity" min="0" required>
                         </div>
                     </div>
                     <button type="button" style="margin-bottom: 30px" class="remove-variant button danger-button">Remove</button>
@@ -175,106 +180,75 @@
                     }
                 });
             }
-
+    
             addVariantBtn.addEventListener('click', () => addVariant());
             addVariant(); // Start with one variant
-
+    
             // Handle form submission
             const form = document.getElementById('product-form');
             const submitStatus = document.getElementById('submit-status');
-
-            form.addEventListener('submit', function(e) {
+    
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
-
-                // Check if at least one variant exists and has valid data
-                const variantEntries = variantsContainer.querySelectorAll('.variant-entry');
+    
+                const formData = new FormData();
+    
+                // Add basic product info
+                formData.append('product_name', document.getElementById('product-name').value);
+                formData.append('product_category', document.getElementById('product-category').value);
+                formData.append('product_type', document.getElementById('product-type').value);
+                formData.append('stock_status', document.getElementById('stock-status').value);
+                formData.append('product_description', document.getElementById('product-description').value);
+    
+                // Handle variants
+                const variantEntries = document.querySelectorAll('.variant-entry');
                 if (variantEntries.length === 0) {
                     submitStatus.innerHTML = 'Please add at least one variant.';
                     submitStatus.className = 'submit-status error';
                     return;
                 }
-
-                let hasValidVariant = false;
-                variantEntries.forEach(entry => {
-                    const sizeInput = entry.querySelector('input[name="variant_size[]"]');
-                    const regularPriceInput = entry.querySelector('input[name="variant_regular_price[]"]');
-                    const stockQuantityInput = entry.querySelector('input[name="variant_stock_quantity[]"]');
-
-                    // Ensure inputs exist
-                    if (!sizeInput || !regularPriceInput || !stockQuantityInput) {
-                        console.error('Variant input not found:', { sizeInput, regularPriceInput, stockQuantityInput });
-                        return;
-                    }
-
-                    const size = sizeInput.value.trim();
-                    const regularPrice = regularPriceInput.value.trim();
-                    const stockQuantity = stockQuantityInput.value.trim();
-
-                    console.log('Variant values:', { size, regularPrice, stockQuantity });
-
-                    // Validate that all fields are non-empty and numbers are valid
-                    const regularPriceNum = parseFloat(regularPrice);
-                    const stockQuantityNum = parseInt(stockQuantity);
-
-                    if (
-                        size !== '' &&
-                        regularPrice !== '' && !isNaN(regularPriceNum) && regularPriceNum > 0 &&
-                        stockQuantity !== '' && !isNaN(stockQuantityNum) && stockQuantityNum >= 0
-                    ) {
-                        hasValidVariant = true;
-                    }
+    
+                variantEntries.forEach((entry, index) => {
+                    formData.append(`variants[${index}][size]`, entry.querySelector('input[name="variants[][size]"]').value);
+                    formData.append(`variants[${index}][color]`, entry.querySelector('input[name="variants[][color]"]').value || '');
+                    formData.append(`variants[${index}][regular_price]`, entry.querySelector('input[name="variants[][regular_price]"]').value);
+                    formData.append(`variants[${index}][sale_price]`, entry.querySelector('input[name="variants[][sale_price]"]').value || '');
+                    formData.append(`variants[${index}][stock_quantity]`, entry.querySelector('input[name="variants[][stock_quantity]"]').value);
                 });
-
-                if (!hasValidVariant) {
-                    submitStatus.innerHTML = 'At least one variant with size, regular price, and stock quantity is required. Ensure all fields are filled and valid.';
-                    submitStatus.className = 'submit-status error';
-                    return;
-                }
-
-                // Validate sale price is less than regular price
-                const regularPrices = form.querySelectorAll('input[name="variant_regular_price[]"]');
-                const salePrices = form.querySelectorAll('input[name="variant_sale_price[]"]');
-                for (let i = 0; i < regularPrices.length; i++) {
-                    const regularPrice = parseFloat(regularPrices[i].value);
-                    const salePrice = salePrices[i].value ? parseFloat(salePrices[i].value) : null;
-                    if (salePrice && salePrice >= regularPrice) {
-                        submitStatus.innerHTML = 'Sale price must be less than regular price for all variants.';
-                        submitStatus.className = 'submit-status error';
-                        return;
-                    }
-                }
-
-                // Create FormData and append files
-                const formData = new FormData(form);
-                uploadedFiles.forEach((file, index) => {
+    
+                // Handle images
+                uploadedFiles.forEach(file => {
                     formData.append('product_images', file);
                 });
-
-                console.log('FormData:', [...formData.entries()]); // Log form data for debugging
-
+    
+                // Debug: Log form data
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+    
                 submitStatus.innerHTML = 'Uploading product...';
                 submitStatus.className = 'submit-status loading';
-
-                fetch('/submit-product', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        submitStatus.innerHTML = 'Product published successfully!';
-                        submitStatus.className = 'submit-status success';
-                        setTimeout(() => window.location.href = data.redirect, 2000);
-                    } else {
-                        submitStatus.innerHTML = 'Error: ' + data.message;
-                        submitStatus.className = 'submit-status error';
+    
+                try {
+                    const response = await fetch('/submit-product', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Submission failed');
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    submitStatus.innerHTML = 'An error occurred. Please try again.';
+    
+                    submitStatus.innerHTML = data.message || 'Product published successfully!';
+                    submitStatus.className = 'submit-status success';
+                    if (data.redirect) {
+                        setTimeout(() => window.location.href = data.redirect, 2000);
+                    }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    submitStatus.innerHTML = `Error: ${error.message}`;
                     submitStatus.className = 'submit-status error';
-                });
+                }
             });
         });
     </script>

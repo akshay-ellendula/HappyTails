@@ -98,57 +98,115 @@ const getPetAccessories = async (req, res) => {
     }
 };
 
-const submitProduct = async (req, res) => {
-    uploadProductImages(req, res, async (err) => {
-        if (err instanceof multer.MulterError) return res.status(400).json({ success: false, message: `Upload error: ${err.message}` });
-        if (err) return res.status(500).json({ success: false, message: `Server error: ${err.message}` });
+const submitProduct = [
+    uploadProductImages,
+    async (req, res) => {
+        if (!req.session.vendor) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
 
         try {
             const {
-                product_name, product_category, product_type, product_description,
-                variant_size, variant_color, variant_regular_price, variant_sale_price, variant_stock_quantity
+                product_name,
+                product_category,
+                product_type,
+                product_description,
+                stock_status,
+                variants // Expect variants as an object with numeric keys
             } = req.body;
 
-            if (!product_name || !product_category || !product_type || !product_description || !variant_size) {
-                return res.status(400).json({ success: false, message: 'Required fields are missing' });
+            // Validate required fields
+            if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
+                return res.status(400).json({ success: false, message: 'All basic information fields are required' });
             }
 
+            if (!variants || Object.keys(variants).length === 0) {
+                return res.status(400).json({ success: false, message: 'At least one variant is required' });
+            }
+
+            if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
+                return res.status(400).json({ success: false, message: 'Invalid stock status' });
+            }
+
+            // Parse variants into an array
+            const variantArray = Object.keys(variants).map(index => ({
+                size: variants[index].size ? variants[index].size.trim() : null,
+                color: variants[index].color ? variants[index].color.trim() : null,
+                regular_price: parseFloat(variants[index].regular_price),
+                sale_price: variants[index].sale_price ? parseFloat(variants[index].sale_price) : null,
+                stock_quantity: parseInt(variants[index].stock_quantity)
+            }));
+
+            // Validate variants
+            for (const variant of variantArray) {
+                if (!variant.size || isNaN(variant.regular_price) || isNaN(variant.stock_quantity)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Size, regular price, and stock quantity are required for all variants'
+                    });
+                }
+                if (variant.regular_price <= 0) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Regular price must be a positive number'
+                    });
+                }
+                if (variant.stock_quantity < 0) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Stock quantity must be a non-negative number'
+                    });
+                }
+                if (variant.sale_price && variant.sale_price >= variant.regular_price) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Sale price must be less than regular price'
+                    });
+                }
+            }
+
+            // Create the product
             const product = await Product.create({
                 vendor_id: req.session.vendor.id,
                 product_name,
                 product_category,
                 product_type,
                 product_description,
-                stock_status: 'In Stock'
+                stock_status
             });
 
-            const variants = variant_size.map((size, i) => ({
+            // Insert variants
+            const variantDocs = variantArray.map(variant => ({
                 product_id: product._id,
-                size: size || null,
-                color: variant_color[i] || null,
-                regular_price: parseFloat(variant_regular_price[i]),
-                sale_price: variant_sale_price[i] ? parseFloat(variant_sale_price[i]) : null,
-                stock_quantity: parseInt(variant_stock_quantity[i])
+                size: variant.size,
+                color: variant.color,
+                regular_price: variant.regular_price,
+                sale_price: variant.sale_price,
+                stock_quantity: variant.stock_quantity
             }));
+            await ProductVariant.insertMany(variantDocs);
 
-            await ProductVariant.insertMany(variants);
-
+            // Insert images
             if (req.files && req.files.length > 0) {
-                const images = req.files.map((file, i) => ({
+                const images = req.files.map((file, index) => ({
                     product_id: product._id,
                     image_path: `/uploads/products/${file.filename}`,
-                    is_primary: i === 0 ? true : false
+                    is_primary: index === 0
                 }));
                 await ProductImage.insertMany(images);
-                res.status(201).json({ success: true, message: 'Product added successfully' });
-            } else {
-                res.status(201).json({ success: true, message: 'Product added successfully (no images)' });
             }
+
+            res.status(200).json({
+                success: true,
+                message: 'Product added successfully',
+                redirect: '/shop-products'
+            });
         } catch (err) {
-            res.status(500).json({ success: false, message: 'Failed to save product' });
+            console.error('Error adding product:', err);
+            res.status(500).json({ success: false, message: `Server error: ${err.message}` });
         }
-    });
-};
+    }
+];
 
 const getVendorProducts = async (req, res) => {
     try {
