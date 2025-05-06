@@ -12,7 +12,7 @@ const updateProfile = async (req, res) => {
     }
 
     try {
-        let imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
+        let imageUrl = `/uploads/profile_pics/${req.file.filename}`;
         const updateFields = {};
         if (user_name) updateFields.user_name = user_name;
         if (user_phone) updateFields.user_phone = user_phone;

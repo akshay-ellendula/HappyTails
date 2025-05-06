@@ -5,7 +5,7 @@ const path = require('path');
 const { updateProfile, getUserInfo } = require('../controllers/userController');
 
 const storage = multer.diskStorage({
-    destination: 'uploads/',
+    destination: 'public/uploads/profile_pics/',
     filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage, limits: { fileSize: 5 * 1024 * 1024 } });
