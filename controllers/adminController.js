@@ -11,6 +11,8 @@ const {
     EventAttendee
 } = require('../models/database');
 
+const mongoose = require('mongoose');
+
 const adminLogin = (req, res) => {
     const { admin_email, admin_password } = req.body;
     const admin = { email: "admin@gmail.com", password: "admin123#" };
@@ -629,20 +631,127 @@ const getVendorStats = async (req, res) => {
     try {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
         const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
+        // Total Shop Managers
         const total = await Vendor.countDocuments();
-        const monthly = await Vendor.countDocuments({ created_at: { $gte: monthAgo } });
-        const weekly = await Vendor.countDocuments({ created_at: { $gte: weekAgo } });
-        const daily = await Vendor.countDocuments({ created_at: { $gte: today } });
+        const totalLastMonth = await Vendor.countDocuments({ created_at: { $lt: monthAgo } });
+        const totalGrowthPercent = totalLastMonth > 0 ? 
+            Math.round(((total - totalLastMonth) / totalLastMonth) * 100) : 0;
+
+        // Total Revenue Generated
+        const totalRevenueResult = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
+                }
+            },
+            { $unwind: '$vendor' },
+            { $group: { _id: null, total: { $sum: '$total_amount' } } }
+        ]);
+        const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].total : 0;
+
+        const lastMonthRevenueResult = await Order.aggregate([
+            { $match: { order_date: { $gte: new Date(monthAgo.getTime() - 30 * 24 * 60 * 60 * 1000), $lt: monthAgo } } },
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
+                }
+            },
+            { $unwind: '$vendor' },
+            { $group: { _id: null, total: { $sum: '$total_amount' } } }
+        ]);
+        const lastMonthRevenue = lastMonthRevenueResult.length > 0 ? lastMonthRevenueResult[0].total : 0;
+        const revenueGrowthPercent = lastMonthRevenue > 0 ? 
+            Math.round(((totalRevenue - lastMonthRevenue) / lastMonthRevenue) * 100) : 0;
+
+        // Total Orders
+        const totalOrdersResult = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
+                }
+            },
+            { $unwind: '$vendor' },
+            { $count: 'totalOrders' }
+        ]);
+        const totalOrders = totalOrdersResult.length > 0 ? totalOrdersResult[0].totalOrders : 0;
+
+        const lastMonthOrdersResult = await Order.aggregate([
+            { $match: { order_date: { $gte: new Date(monthAgo.getTime() - 30 * 24 * 60 * 60 * 1000), $lt: monthAgo } } },
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
+                }
+            },
+            { $unwind: '$vendor' },
+            { $count: 'totalOrders' }
+        ]);
+        const lastMonthOrders = lastMonthOrdersResult.length > 0 ? lastMonthOrdersResult[0].totalOrders : 0;
+        const ordersGrowthPercent = lastMonthOrders > 0 ? 
+            Math.round(((totalOrders - lastMonthOrders) / lastMonthOrders) * 100) : 0;
+
+        // Today's Orders
+        const todaysOrdersResult = await Order.aggregate([
+            { $match: { order_date: { $gte: today } } },
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
+                }
+            },
+            { $unwind: '$vendor' },
+            { $count: 'todaysOrders' }
+        ]);
+        const todaysOrders = todaysOrdersResult.length > 0 ? todaysOrdersResult[0].todaysOrders : 0;
+
+        const yesterdayOrdersResult = await Order.aggregate([
+            { $match: { order_date: { $gte: yesterday, $lt: today } } },
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
+                }
+            },
+            { $unwind: '$vendor' },
+            { $count: 'yesterdayOrders' }
+        ]);
+        const yesterdayOrders = yesterdayOrdersResult.length > 0 ? yesterdayOrdersResult[0].yesterdayOrders : 0;
+        const todaysOrdersChange = todaysOrders - yesterdayOrders;
 
         res.json({
             success: true,
-            stats: { total, monthly, weekly, daily }
+            stats: {
+                total,
+                totalRevenue,
+                totalOrders,
+                todaysOrders,
+                totalGrowthPercent,
+                revenueGrowthPercent,
+                ordersGrowthPercent,
+                todaysOrdersChange
+            }
         });
     } catch (err) {
-        res.status(500).json({ success: false });
+        console.error('Error fetching vendor stats:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
@@ -723,7 +832,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
             { $group: { _id: null, today_revenue: { $sum: '$total_amount' } } }
         ]);
         const today_revenue = todayRevenueResult.length > 0 ? todayRevenueResult[0].today_revenue : 0;
@@ -748,7 +857,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
             { $group: { _id: null, weekly_revenue: { $sum: '$total_amount' } } }
         ]);
         const weekly_revenue = weeklyRevenueResult.length > 0 ? weeklyRevenueResult[0].weekly_revenue : 0;
@@ -773,7 +882,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
             { $group: { _id: null, monthly_revenue: { $sum: '$total_amount' } } }
         ]);
         const monthly_revenue = monthlyRevenueResult.length > 0 ? monthlyRevenueResult[0].monthly_revenue : 0;
@@ -798,7 +907,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
             { $group: { _id: null, quarterly_revenue: { $sum: '$total_amount' } } }
         ]);
         const quarterly_revenue = quarterlyRevenueResult.length > 0 ? quarterlyRevenueResult[0].quarterly_revenue : 0;
@@ -823,7 +932,7 @@ const getVendorRevenueMetrics = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
             {
                 $group: {
                     _id: { $dateToString: { format: '%Y-%m', date: '$order_date' } },
@@ -864,7 +973,7 @@ const getVendorProducts = async (req, res) => {
     try {
         const vendorId = req.params.id;
         const products = await Product.aggregate([
-            { $match: { vendor_id: mongoose.Types.ObjectId(vendorId) } },
+            { $match: { vendor_id: new mongoose.Types.ObjectId(vendorId) } },
             {
                 $lookup: {
                     from: 'productvariants',
@@ -924,7 +1033,7 @@ const getVendorTopCustomers = async (req, res) => {
                 }
             },
             { $unwind: '$product' },
-            { $match: { 'product.vendor_id': mongoose.Types.ObjectId(vendorId) } },
+            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
             {
                 $lookup: {
                     from: 'users',
@@ -1119,7 +1228,7 @@ const getEventManagerMetrics = async (req, res) => {
             date_time: { $gte: monthAgo }
         });
         const monthlyBreakdown = await Event.aggregate([
-            { $match: { event_manager_id: mongoose.Types.ObjectId(managerId), date_time: { $gte: threeMonthsAgo } } },
+            { $match: { event_manager_id: new mongoose.Types.ObjectId(managerId), date_time: { $gte: threeMonthsAgo } } },
             {
                 $group: {
                     _id: { $dateToString: { format: '%Y-%m', date: '$date_time' } },

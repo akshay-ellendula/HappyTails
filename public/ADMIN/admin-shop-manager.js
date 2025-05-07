@@ -51,10 +51,21 @@ function fetchManagerStats() {
         .then(data => {
             if (data.success) {
                 const stats = data.stats;
+                // Update stats cards
                 document.querySelector('.stats-container .stat-card:nth-child(1) .number').textContent = stats.total || 0;
                 document.querySelector('.stats-container .stat-card:nth-child(2) .number').textContent = `$${stats.totalRevenue ? stats.totalRevenue.toLocaleString() : 0}`;
                 document.querySelector('.stats-container .stat-card:nth-child(3) .number').textContent = stats.totalOrders ? stats.totalOrders.toLocaleString() : 0;
                 document.querySelector('.stats-container .stat-card:nth-child(4) .number').textContent = stats.todaysOrders || 0;
+
+                // Update percentage/change labels
+                document.getElementById('totalGrowthPercent').textContent = 
+                    (stats.totalGrowthPercent >= 0 ? '+' : '') + stats.totalGrowthPercent + '% from last month';
+                document.getElementById('revenueGrowthPercent').textContent = 
+                    (stats.revenueGrowthPercent >= 0 ? '+' : '') + stats.revenueGrowthPercent + '% from previous month';
+                document.getElementById('ordersGrowthPercent').textContent = 
+                    (stats.ordersGrowthPercent >= 0 ? '+' : '') + stats.ordersGrowthPercent + '% from last month';
+                document.getElementById('todaysOrdersChange').textContent = 
+                    (stats.todaysOrdersChange >= 0 ? '+' : '') + stats.todaysOrdersChange + ' from yesterday';
             } else {
                 console.error('Failed to fetch shop manager stats:', data.message);
                 updateStatsWithError();

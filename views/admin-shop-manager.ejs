@@ -74,8 +74,20 @@
             <div class="header">
                 <h2>Shop Manager Management</h2>
                 <div class="user-info">
-                    <div class="avatar">A</div>
-                    <span>Admin User</span>
+                    <div class="avatar">
+                        <% if (user && user.email) { %>
+                            <%- user.email.charAt(0).toUpperCase() %>
+                        <% } else { %>
+                            A
+                        <% } %>
+                    </div>
+                    <span>
+                        <% if (user && user.email) { %>
+                            <%- user.email.split('@')[0] %>
+                        <% } else { %>
+                            Admin
+                        <% } %>
+                    </span>
                 </div>
             </div>
 
@@ -83,23 +95,23 @@
             <div class="stats-container">
                 <div class="stat-card">
                     <h3>Total Shop Managers</h3>
-                    <div class="number">127</div>
-                    <div class="change">+5% from last month</div>
+                    <div class="number">Loading...</div>
+                    <div class="change" id="totalGrowthPercent">Loading...</div>
                 </div>
                 <div class="stat-card">
                     <h3>Total Revenue Generated</h3>
-                    <div class="number">$143,250</div>
-                    <div class="change">+9% from previous month</div>
+                    <div class="number">Loading...</div>
+                    <div class="change" id="revenueGrowthPercent">Loading...</div>
                 </div>
                 <div class="stat-card">
                     <h3>Total Orders</h3>
-                    <div class="number">1,482</div>
-                    <div class="change">+11% from last month</div>
+                    <div class="number">Loading...</div>
+                    <div class="change" id="ordersGrowthPercent">Loading...</div>
                 </div>
                 <div class="stat-card">
                     <h3>Today's Orders</h3>
-                    <div class="number">57</div>
-                    <div class="change">+8 from yesterday</div>
+                    <div class="number">Loading...</div>
+                    <div class="change" id="todaysOrdersChange">Loading...</div>
                 </div>
             </div>
 
