@@ -45,8 +45,8 @@
                         <% pastOngoingAttendees.forEach(attendee=> { %>
                             <% if (attendee.name) { %>
                                 <div class="appointment-card">
-                                    <div class="time-badge">
-                                        <%= attendee.eventTime %>
+                                    <div class="time-badge" data-time="<%= attendee.eventTime %>">
+                                        <!-- Time will be set by JavaScript -->
                                     </div>
                                     <h3>
                                         <%= attendee.name %>
@@ -81,8 +81,8 @@
                         <% upcomingAttendees.forEach(attendee=> { %>
                             <% if (attendee.name) { %>
                                 <div class="appointment-card">
-                                    <div class="time-badge">
-                                        <%= attendee.eventTime %>
+                                    <div class="time-badge" data-time="<%= attendee.eventTime %>">
+                                        <!-- Time will be set by JavaScript -->
                                     </div>
                                     <h3>
                                         <%= attendee.name %>
@@ -108,12 +108,30 @@
                                             <% } %>
                 </div>
             </div>
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    // Simplified active link highlighting (already handled by 'active' class in EJS)
-                    console.log('Page loaded:', window.location.pathname);
-                });
-            </script>
+        </div>
+    </div>
+
+    <script>
+        // Function to convert 24-hour time to 12-hour format
+        function convertTo12Hour(time) {
+            const [hours, minutes] = time.split(':').map(Number);
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const adjustedHours = hours % 12 || 12; // Convert 0 to 12 for midnight
+            return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+        }
+
+        // Apply the conversion to all time badges
+        document.querySelectorAll('.time-badge').forEach(badge => {
+            const time = badge.getAttribute('data-time');
+            if (time) {
+                badge.textContent = convertTo12Hour(time);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Page loaded:', window.location.pathname);
+        });
+    </script>
 </body>
 
 </html>

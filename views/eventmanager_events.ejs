@@ -43,8 +43,8 @@
                     <% if (typeof previousEvents !=='undefined' && previousEvents.length> 0) { %>
                         <% previousEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge">
-                                    <%= event.time %>
+                                <div class="time-badge" data-time="<%= event.time %>">
+                                    <!-- Time will be set by JavaScript -->
                                 </div>
                                 <h3>
                                     <%= event.event_name %>
@@ -72,8 +72,8 @@
                     <% if (ongoingEvents.length> 0) { %>
                         <% ongoingEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge">
-                                    <%= event.time %>
+                                <div class="time-badge" data-time="<%= event.time %>">
+                                    <!-- Time will be set by JavaScript -->
                                 </div>
                                 <h3>
                                     <%= event.event_name %>
@@ -84,7 +84,7 @@
                                 <p><strong>Registered:</strong>
                                     <%= event.attendeeCount %> Attendees
                                 </p>
-                                <p><strong>Revenue:</strong> $<%= event.revenue%>
+                                <p><strong>Revenue:</strong> $<%= (event.revenue || 0).toFixed(2) %>
                                 </p>
                             </div>
                             <% }) %>
@@ -101,8 +101,8 @@
                     <% if (typeof upcomingEvents !=='undefined' && upcomingEvents.length> 0) { %>
                         <% upcomingEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge">
-                                    <%= event.time %>
+                                <div class="time-badge" data-time="<%= event.time %>">
+                                    <!-- Time will be set by JavaScript -->
                                 </div>
                                 <h3>
                                     <%= event.event_name %>
@@ -173,6 +173,22 @@
             </div>
 
             <script>
+                // Function to convert 24-hour time to 12-hour format
+                function convertTo12Hour(time) {
+                    const [hours, minutes] = time.split(':').map(Number);
+                    const period = hours >= 12 ? 'PM' : 'AM';
+                    const adjustedHours = hours % 12 || 12; // Convert 0 to 12 for midnight
+                    return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+                }
+
+                // Apply the conversion to all time badges
+                document.querySelectorAll('.time-badge').forEach(badge => {
+                    const time = badge.getAttribute('data-time');
+                    if (time) {
+                        badge.textContent = convertTo12Hour(time);
+                    }
+                });
+
                 // Open edit event modal and populate form
                 window.openEditEvent = (eventId) => {
                     const eventCard = document.getElementById(`event-${eventId}`);
@@ -182,7 +198,13 @@
                     const [month, day, year] = dateTime[0].split(' ');
                     const formattedDate = `${year}-${monthToNumber(month)}-${day.padStart(2, '0')}`;
                     document.getElementById('eventDate').value = formattedDate;
-                    document.getElementById('eventTime').value = eventCard.querySelector('.time-badge').textContent.replace(' ', '').toLowerCase();
+                    const timeBadge = eventCard.querySelector('.time-badge').textContent;
+                    const [time, period] = timeBadge.split(' ');
+                    let [hours, minutes] = time.split(':').map(Number);
+                    if (period === 'PM' && hours !== 12) hours += 12;
+                    if (period === 'AM' && hours === 12) hours = 0;
+                    const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    document.getElementById('eventTime').value = formattedTime;
                     document.getElementById('eventVenue').value = eventCard.querySelector('p:nth-child(3)').textContent.split('Venue: ')[1];
                     document.getElementById('eventCapacity').value = eventCard.querySelector('p:nth-child(4)').textContent.split('Capacity: ')[1];
                     document.getElementById('eventTicketPrice').value = eventCard.querySelector('p:nth-child(5)').textContent.split('Ticket Price: $')[1];

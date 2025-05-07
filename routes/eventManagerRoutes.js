@@ -213,16 +213,22 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
                     category: 1,
                     about_event: 1,
                     attendeeCount: { $size: '$attendees' },
-                    revenue: { $sum: { $multiply: ['$attendees.seats', '$ticket_price'] } },
+                    totalSeats: { $sum: '$attendees.seats' }, // Sum of all seats
+                    revenue: {
+                        $multiply: [
+                            { $sum: '$attendees.seats' }, // Sum seats first
+                            '$ticket_price'
+                        ]
+                    },
                     time: {
                         $dateToString: {
-                            format: '%I:%M %p',
+                            format: '%H:%M', // Use 24-hour format to avoid %I issue
                             date: '$date_time'
                         }
                     },
                     formattedDate: {
                         $dateToString: {
-                            format: '%B %d, %Y, %I:%M %p',
+                            format: '%B %d, %Y, %H:%M',
                             date: '$date_time'
                         }
                     },
@@ -264,16 +270,22 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
                     category: 1,
                     about_event: 1,
                     attendeeCount: { $size: '$attendees' },
-                    revenue: { $sum: { $multiply: ['$attendees.seats', '$ticket_price'] } },
+                    totalSeats: { $sum: '$attendees.seats' },
+                    revenue: {
+                        $multiply: [
+                            { $sum: '$attendees.seats' },
+                            '$ticket_price'
+                        ]
+                    },
                     time: {
                         $dateToString: {
-                            format: '%I:%M %p',
+                            format: '%H:%M',
                             date: '$date_time'
                         }
                     },
                     formattedDate: {
                         $dateToString: {
-                            format: '%B %d, %Y, %I:%M %p',
+                            format: '%B %d, %Y, %H:%M',
                             date: '$date_time'
                         }
                     },
@@ -312,16 +324,22 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
                     category: 1,
                     about_event: 1,
                     attendeeCount: { $size: '$attendees' },
-                    revenue: { $sum: { $multiply: ['$attendees.seats', '$ticket_price'] } },
+                    totalSeats: { $sum: '$attendees.seats' },
+                    revenue: {
+                        $multiply: [
+                            { $sum: '$attendees.seats' },
+                            '$ticket_price'
+                        ]
+                    },
                     time: {
                         $dateToString: {
-                            format: '%I:%M %p',
+                            format: '%H:%M',
                             date: '$date_time'
                         }
                     },
                     formattedDate: {
                         $dateToString: {
-                            format: '%B %d, %Y, %I:%M %p',
+                            format: '%B %d, %Y, %H:%M',
                             date: '$date_time'
                         }
                     },
@@ -371,26 +389,6 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
         const today = new Date();
-
-        const formatDate = (dateString) => {
-            if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric'
-            });
-        };
-
-        const formatTime = (dateString) => {
-            if (!dateString) return 'N/A';
-            const date = new Date(dateString);
-            return date.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
-        };
 
         const pastOngoingAttendees = await EventAttendee.aggregate([
             {
@@ -448,7 +446,7 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
                     totalAttendees: 1,
                     eventTime: {
                         $dateToString: {
-                            format: '%I:%M %p',
+                            format: '%H:%M', // Use 24-hour format
                             date: '$event.date_time'
                         }
                     },
@@ -499,7 +497,7 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
                     date_time: '$event.date_time',
                     eventTime: {
                         $dateToString: {
-                            format: '%I:%M %p',
+                            format: '%H:%M', // Use 24-hour format
                             date: '$event.date_time'
                         }
                     },
@@ -527,10 +525,7 @@ router.get('/eventmanager_attendees', isAuthenticated, async (req, res) => {
         });
     } catch (err) {
         console.error('Error fetching attendees:', err);
-        res.status(500).render('error', { 
-            message: 'Failed to load attendees. Please try again later.',
-            error: err.message 
-        });
+        res.status(500).send('Internal Server Error');
     }
 });
 
@@ -559,39 +554,59 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
             },
             {
                 $project: {
-                    totalRevenue: { $sum: { $multiply: ['$attendees.seats', '$ticket_price'] } },
+                    ticket_price: 1,
+                    date_time: 1,
+                    totalSeats: { $sum: '$attendees.seats' }, // Sum seats for the event
+                    totalRevenue: {
+                        $multiply: [
+                            { $sum: '$attendees.seats' },
+                            '$ticket_price'
+                        ]
+                    },
                     todayRevenue: {
-                        $sum: {
-                            $cond: [
-                                {
-                                    $eq: [
-                                        { $dateToString: { format: '%Y-%m-%d', date: '$date_time' } },
-                                        { $dateToString: { format: '%Y-%m-%d', date: today } }
-                                    ]
-                                },
-                                { $multiply: ['$attendees.seats', '$ticket_price'] },
-                                0
-                            ]
-                        }
+                        $cond: [
+                            {
+                                $eq: [
+                                    { $dateToString: { format: '%Y-%m-%d', date: '$date_time' } },
+                                    { $dateToString: { format: '%Y-%m-%d', date: today } }
+                                ]
+                            },
+                            { $multiply: [{ $sum: '$attendees.seats' }, '$ticket_price'] },
+                            0
+                        ]
                     },
                     thisWeekRevenue: {
-                        $sum: {
-                            $cond: [
-                                { $gte: ['$date_time', startOfWeek] },
-                                { $multiply: ['$attendees.seats', '$ticket_price'] },
-                                0
-                            ]
-                        }
+                        $cond: [
+                            { $gte: ['$date_time', startOfWeek] },
+                            { $multiply: [{ $sum: '$attendees.seats' }, '$ticket_price'] },
+                            0
+                        ]
                     },
                     thisMonthRevenue: {
-                        $sum: {
-                            $cond: [
-                                { $gte: ['$date_time', startOfMonth] },
-                                { $multiply: ['$attendees.seats', '$ticket_price'] },
-                                0
-                            ]
-                        }
+                        $cond: [
+                            { $gte: ['$date_time', startOfMonth] },
+                            { $multiply: [{ $sum: '$attendees.seats' }, '$ticket_price'] },
+                            0
+                        ]
                     }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    totalRevenue: { $sum: '$totalRevenue' },
+                    todayRevenue: { $sum: '$todayRevenue' },
+                    thisWeekRevenue: { $sum: '$thisWeekRevenue' },
+                    thisMonthRevenue: { $sum: '$thisMonthRevenue' }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    totalRevenue: { $ifNull: ['$totalRevenue', 0] },
+                    todayRevenue: { $ifNull: ['$todayRevenue', 0] },
+                    thisWeekRevenue: { $ifNull: ['$thisWeekRevenue', 0] },
+                    thisMonthRevenue: { $ifNull: ['$thisMonthRevenue', 0] }
                 }
             }
         ]);
@@ -763,13 +778,9 @@ router.get('/eventmanager_analytics', isAuthenticated, async (req, res) => {
         });
     } catch (err) {
         console.error('Error fetching analytics:', err);
-        res.status(500).render('error', { 
-            message: 'Failed to load analytics. Please try again later.',
-            error: err.message 
-        });
+        res.status(500).send('Internal Server Error');
     }
 });
-
 // GET: Render profile page
 router.get('/eventmanager_profile', isAuthenticated, async (req, res) => {
     try {
