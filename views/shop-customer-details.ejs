@@ -14,31 +14,26 @@
     
     <div class="customer-container">
         <div class="customer-info">
-            <h2 id="customerName">Customer Name</h2>
-            
+            <h2 id="customerName"><%= customer.name %></h2>
             <div class="info-row">
                 <div class="info-label">Customer ID:</div>
-                <div class="info-value" id="customerId">C001</div>
+                <div class="info-value" id="customerId"><%= customer.id %></div>
             </div>
-            
             <div class="info-row">
                 <div class="info-label">Email:</div>
-                <div class="info-value" id="customerEmail">customer@example.com</div>
+                <div class="info-value" id="customerEmail"><%= customer.email %></div>
             </div>
-            
             <div class="info-row">
                 <div class="info-label">Phone:</div>
-                <div class="info-value" id="customerPhone">(123) 456-7890</div>
+                <div class="info-value" id="customerPhone"><%= customer.phone %></div>
             </div>
-            
             <div class="info-row">
                 <div class="info-label">Joined Date:</div>
-                <div class="info-value" id="customerJoined">January 15, 2025</div>
+                <div class="info-value" id="customerJoined"><%= customer.joined %></div>
             </div>
-            
             <div class="info-row">
                 <div class="info-label">Address:</div>
-                <div class="info-value" id="customerAddress">123 Main St, Anytown, USA</div>
+                <div class="info-value" id="customerAddress"><%= customer.address %></div>
             </div>
         </div>
         
@@ -47,27 +42,27 @@
             <div class="summary-stats">
                 <div class="stat-item">
                     <div class="stat-label">Total Orders</div>
-                    <div class="stat-value" id="totalOrders">5</div>
+                    <div class="stat-value" id="totalOrders"><%= summary.totalOrders %></div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Total Revenue</div>
-                    <div class="stat-value" id="totalRevenue">$234.50</div>
+                    <div class="stat-value" id="totalRevenue">$<%= summary.totalRevenue %></div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Avg. Order Value</div>
-                    <div class="stat-value" id="avgOrderValue">$46.90</div>
+                    <div class="stat-value" id="avgOrderValue">$<%= summary.avgOrderValue %></div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Last Purchase</div>
-                    <div class="stat-value" id="lastPurchase">Mar 10, 2025</div>
+                    <div class="stat-value" id="lastPurchase"><%= summary.lastPurchase %></div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Most Purchased</div>
-                    <div class="stat-value" id="mostPurchased">Dog Food</div>
+                    <div class="stat-value" id="mostPurchased"><%= summary.mostPurchased %></div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-label">Return Rate</div>
-                    <div class="stat-value" id="returnRate">0%</div>
+                    <div class="stat-value" id="returnRate"><%= summary.returnRate %></div>
                 </div>
             </div>
         </div>
@@ -87,42 +82,21 @@
                     </tr>
                 </thead>
                 <tbody id="orderHistoryBody">
-                  
-                    <tr>
-                        <td>ORD-001</td>
-                        <td>Mar 10, 2025</td>
-                        <td>Premium Dog Food (2), Chew Toy (1)</td>
-                        <td>$56.90</td>
-                        <td>Delivered</td>
-                    </tr>
-                    <tr>
-                        <td>ORD-002</td>
-                        <td>Feb 23, 2025</td>
-                        <td>Cat Treats (3), Cat Litter (1)</td>
-                        <td>$42.50</td>
-                        <td>Delivered</td>
-                    </tr>
-                    <tr>
-                        <td>ORD-003</td>
-                        <td>Feb 10, 2025</td>
-                        <td>Pet Bed (1), Dog Shampoo (1)</td>
-                        <td>$65.20</td>
-                        <td>Delivered</td>
-                    </tr>
-                    <tr>
-                        <td>ORD-004</td>
-                        <td>Jan 28, 2025</td>
-                        <td>Premium Dog Food (1), Dog Treats (2)</td>
-                        <td>$38.40</td>
-                        <td>Delivered</td>
-                    </tr>
-                    <tr>
-                        <td>ORD-005</td>
-                        <td>Jan 15, 2025</td>
-                        <td>Dog Collar (1), Leash (1)</td>
-                        <td>$31.50</td>
-                        <td>Delivered</td>
-                    </tr>
+                    <% if (orders && orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
+                            <tr>
+                                <td><%= order.order_id %></td>
+                                <td><%= order.date %></td>
+                                <td><%= order.items %></td>
+                                <td>$<%= order.total %></td>
+                                <td><%= order.status %></td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5">No orders found.</td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>

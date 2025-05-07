@@ -889,7 +889,17 @@ const getVendorCustomers = async (req, res) => {
                     user_name: { $first: '$user_name' },
                     email: { $first: '$user_email' },
                     total_orders: { $addToSet: '$orders._id' },
-                    total_spent: { $sum: '$orders.total_amount' },
+                    total_spent: {
+                        $sum: {
+                            $sum: {
+                                $map: {
+                                    input: '$order_items',
+                                    as: 'item',
+                                    in: { $multiply: ['$$item.price', '$$item.quantity'] }
+                                }
+                            }
+                        }
+                    },
                     last_order_date: { $max: '$orders.order_date' }
                 }
             },
@@ -1138,4 +1148,96 @@ const getOrderDetails = async (req, res) => {
     }
 };
 
-module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails };
+const getCustomerDetails = async (req, res) => {
+    if (!req.session.vendor) {
+        return res.redirect('/service_provider_login');
+    }
+
+    const vendorId = req.session.vendor.id;
+    const userId = req.query.customer;
+
+    try {
+        const customer = await User.findById(userId);
+        if (!customer) {
+            return res.status(404).send('Customer not found');
+        }
+
+        const orders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'order_items'
+                }
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'order_items.product_id',
+                    foreignField: '_id',
+                    as: 'products'
+                }
+            },
+            {
+                $match: {
+                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId),
+                    user_id: new mongoose.Types.ObjectId(userId)
+                }
+            },
+            {
+                $project: {
+                    order_id: '$_id',
+                    order_date: 1,
+                    status: 1,
+                    total_amount: 1,
+                    items: '$order_items',
+                    _id: 0
+                }
+            },
+            { $sort: { order_date: -1 } }
+        ]);
+
+        const totalOrders = orders.length;
+        const totalRevenue = orders.reduce((sum, order) => sum + order.total_amount, 0);
+        const avgOrderValue = totalOrders > 0 ? (totalRevenue / totalOrders).toFixed(2) : '0.00';
+        const mostPurchased = await OrderItem.aggregate([
+            { $match: { order_id: { $in: orders.map(o => o.order_id) } } },
+            { $group: { _id: '$product_name', count: { $sum: '$quantity' } } },
+            { $sort: { count: -1 } },
+            { $limit: 1 }
+        ]);
+
+        res.render('shop-customer-details', {
+            vendor: req.session.vendor,
+            customer: {
+                id: `C${userId.slice(-3).padStart(3, '0')}`,
+                name: customer.user_name,
+                email: customer.user_email,
+                phone: customer.user_phone || 'N/A',
+                address: customer.user_address || 'N/A',
+                joined: customer.created_at ? new Date(customer.created_at).toLocaleDateString('en-US') : 'N/A'
+            },
+            summary: {
+                totalOrders,
+                totalRevenue: totalRevenue.toFixed(2),
+                avgOrderValue,
+                lastPurchase: orders[0]?.order_date ? new Date(orders[0].order_date).toLocaleDateString('en-US') : 'N/A',
+                mostPurchased: mostPurchased[0]?.count > 0 ? mostPurchased[0]._id : 'N/A',
+                returnRate: '0%' // Placeholder, update if return data exists
+            },
+            orders: orders.map(order => ({
+                order_id: `#ORD-${order.order_id}`,
+                date: new Date(order.order_date).toLocaleDateString('en-US'),
+                items: order.items.map(item => `${item.product_name} (${item.quantity})`).join(', '),
+                total: order.total_amount.toFixed(2),
+                status: order.status
+            }))
+        });
+    } catch (error) {
+        console.error('Error fetching customer details:', error);
+        res.status(500).send('Server error');
+    }
+};
+
+module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails, getCustomerDetails };
