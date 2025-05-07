@@ -910,6 +910,98 @@ router.get('/event_booking_form', async (req, res) => {
     }
 });
 
+router.get('/api/my_events', async (req, res) => {
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({ success: false, message: 'Please log in to view your events' });
+        }
+
+        const userId = req.session.user.id;
+        const today = new Date();
+
+        const events = await EventAttendee.aggregate([
+            {
+                $match: { user_id: new mongoose.Types.ObjectId(userId) }
+            },
+            {
+                $lookup: {
+                    from: 'events',
+                    localField: 'event_id',
+                    foreignField: '_id',
+                    as: 'event'
+                }
+            },
+            { $unwind: '$event' },
+            {
+                $project: {
+                    attendee_id: '$_id',
+                    event_id: '$event._id',
+                    event_name: '$event.event_name',
+                    date_time: '$event.date_time',
+                    venue: '$event.venue',
+                    seats: '$seats',
+                    image: '$event.image',
+                    status: {
+                        $cond: [
+                            { $gt: ['$event.date_time', today] },
+                            'Upcoming',
+                            'Past'
+                        ]
+                    },
+                    _id: 0
+                }
+            },
+            { $sort: { 'date_time': -1 } }
+        ]);
+
+        res.json({ success: true, events });
+    } catch (err) {
+        console.error('Error fetching user events:', err);
+        res.status(500).json({ success: false, message: 'Failed to fetch events', error: err.message });
+    }
+});
+
+
+router.delete('/api/cancel_event_booking/:attendeeId', async (req, res) => {
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({ success: false, message: 'Please log in to cancel a booking' });
+        }
+
+        const attendeeId = req.params.attendeeId;
+        const userId = req.session.user.id;
+
+        const attendee = await EventAttendee.findOne({ _id: attendeeId, user_id: userId });
+        if (!attendee) {
+            return res.status(404).json({ success: false, message: 'Booking not found or not authorized' });
+        }
+
+        const event = await Event.findById(attendee.event_id);
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found' });
+        }
+
+        // Only allow cancellation for upcoming events
+        if (new Date(event.date_time) <= new Date()) {
+            return res.status(400).json({ success: false, message: 'Cannot cancel past or ongoing events' });
+        }
+
+        // Delete the attendee record
+        await EventAttendee.deleteOne({ _id: attendeeId });
+
+        // Decrease tickets_sold in the event
+        await Event.updateOne(
+            { _id: attendee.event_id },
+            { $inc: { tickets_sold: -attendee.seats } }
+        );
+
+        res.json({ success: true, message: 'Booking cancelled successfully' });
+    } catch (err) {
+        console.error('Error cancelling booking:', err);
+        res.status(500).json({ success: false, message: 'Failed to cancel booking', error: err.message });
+    }
+});
+
 router.post('/event_booking', async (req, res) => {
     try {
         if (!req.session.user) {

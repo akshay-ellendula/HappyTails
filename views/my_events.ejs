@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Events</title>
+    <link rel="stylesheet" href="/User Profile/myevents.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+    
+            <div class="menu">
+                <a href="/pet_accessory">Pet Essentials</a>
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <a href="/profile">Profile</a>
+            </div>
+
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="/pet_accessory">Pet Essentials</a>      
+                <a href="/Events">Events</a>
+                <a href="/blog">Blog</a>
+                <a href="/profile">Profile</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="sidebar_btn">
+        <button id="sidebar_btn">More</button>
+    </div>
+
+    <div class="mobile_sidebar">
+        <a href="javascript:void(0)" class="close-btn" id="mobile_sidebar_close-btn">&times;</a>
+        <div class="myProfile sidebar_divs">
+            <a href="/profile">My Profile</a>
+        </div>
+
+        <div class="myOrders sidebar_divs">
+            <a href="/my_orders">My Orders</a>
+        </div>
+
+        <div class="myEvents sidebar_divs">
+            <a href="/my_events">My Events</a>
+        </div>
+
+        <div class="myBlogs sidebar_divs">
+            <a href="/my_blogs">My Blogs</a>
+        </div>
+
+        <div class="logout sidebar_divs">
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="myProfile sidebar_divs">
+            <a href="/profile">My Profile</a>
+        </div>
+
+        <div class="myOrders sidebar_divs">
+            <a href="/my_orders">My Orders</a>
+        </div>
+
+        <div class="myEvents sidebar_divs">
+            <a href="/my_events">My Events</a>
+        </div>
+
+        <div class="myBlogs sidebar_divs">
+            <a href="/my_blogs">My Blogs</a>
+        </div>
+
+        <div class="logout sidebar_divs">
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="upcoming_events">
+            <h2>Upcoming Events</h2>
+        </div>
+
+        <div class="past_events">
+            <h2 style="margin-bottom: 30px;">Past Events</h2>
+            <div class="event_container">
+                <!-- Event cards will be dynamically inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Menu and sidebar toggle logic
+            document.getElementById('menuIcon').addEventListener('click', function() {
+                document.getElementById('sideNavbar').classList.toggle('open');
+            });
+            document.getElementById('closeBtn').addEventListener('click', function() {
+                document.getElementById('sideNavbar').classList.remove('open');
+            });
+            document.getElementById('sidebar_btn').addEventListener('click', function() {
+                document.querySelector('.mobile_sidebar').classList.toggle('open');
+            });
+            document.querySelector('#mobile_sidebar_close-btn').addEventListener('click', function() {
+                document.querySelector('.mobile_sidebar').classList.remove('open');
+            });
+
+            // Fetch and display events
+            fetch('/api/my_events', {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Error fetching events: ' + data.message);
+                    return;
+                }
+                const events = data.events;
+                console.log('Fetched events:', JSON.stringify(events, null, 2));
+                const upcomingEventsContainer = document.querySelector('.upcoming_events');
+                const pastEventsContainer = document.querySelector('.past_events .event_container');
+                upcomingEventsContainer.innerHTML = '<h2>Upcoming Events</h2>';
+                pastEventsContainer.innerHTML = '';
+
+                if (events.length === 0) {
+                    upcomingEventsContainer.innerHTML += '<p>No upcoming events.</p>';
+                    pastEventsContainer.innerHTML = '<p>No past events.</p>';
+                    return;
+                }
+
+                events.forEach(event => {
+                    const eventCard = `
+                        <div class="event_card">
+                            <div class="event_left_container">
+                                <h2>${event.status === 'Past' ? 'Attended on ' + new Date(event.date_time).toLocaleDateString() : 'Upcoming Event'}</h2>
+                                <div class="event_image">
+                                    <img src="${event.image || '/images/default_event.jpg'}" alt="${event.event_name}">
+                                </div>
+                            </div>
+                            <div class="event_details">
+                                <h2>${event.event_name}</h2>
+                                <h3>Event ID: ${event.event_id}</h3>
+                                <p><span>Date:</span> ${new Date(event.date_time).toLocaleDateString()}</p>
+                                <p><span>Time:</span> ${new Date(event.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                                <p><span>Venue:</span> ${event.venue}</p>
+                                <p><span>Seats Bookয়াed:</span> ${event.seats}</p>
+                                <p><span>Status:</span> ${event.status}</p>
+                                <div class="button_container">
+                                    ${event.status === 'Upcoming' ? `<button onclick="bookAgain('${event.event_id}')">Book Again</button>` : ''}
+                                    ${event.status === 'Upcoming' ? `<button onclick="cancelBooking('${event.attendee_id}')">Cancel Booking</button>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    if (event.status === 'Upcoming') {
+                        upcomingEventsContainer.insertAdjacentHTML('beforeend', eventCard);
+                    } else {
+                        pastEventsContainer.insertAdjacentHTML('beforeend', eventCard);
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching events:', error));
+        });
+
+        function bookAgain(eventId) {
+            window.location.href = `/event_booking_form?eventId=${eventId}`;
+        }
+
+        function cancelBooking(attendeeId) {
+            if (confirm('Are you sure you want to cancel this booking?')) {
+                fetch(`/api/cancel_event_booking/${attendeeId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Booking cancelled successfully!');
+                        window.location.reload();
+                    } else {
+                        alert('Error cancelling booking: ' + data.message);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        }
+    </script>
+</body>
+</html>
