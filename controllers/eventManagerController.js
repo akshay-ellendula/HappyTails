@@ -1,119 +1,219 @@
-const bcrypt = require('bcryptjs');
-const { EventManager } = require('../models/database');
+const { Event, Attendee } = require('../models/database'); // Adjust path to your database.js
 
-const eventManagerSignup = async (req, res) => {
-    const { name, contactnumber, email, password, confirmpassword, companyname, location, termsandconditions } = req.body;
+// Render event manager dashboard (assumes views/event_manager_dashboard.ejs)
+exports.renderEventManagerDashboard = async (req, res) => {
+  if (!req.session.user || req.session.user.role !== 'event-manager') {
+    req.session.errorMessage = 'Please log in as an Event Manager';
+    return res.redirect('/service_provider_login');
+  }
 
-    // Validation: Check if all fields are provided
-    if (!name || !contactnumber || !email || !password || !confirmpassword || !companyname || !location || termsandconditions === undefined) {
-        return res.status(400).json({ success: false, message: 'All fields are required' });
-    }
+  try {
+    const eventManagerId = req.session.user.id;
 
-    // Validation: Name must be at least 2 characters
-    if (name.length < 2) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'name', message: 'Name must be at least 2 characters long' }]
-        });
-    }
+    // Initialize default values in case of query failures
+    let overview = { totalBookings: 'N/A', totalEarnings: 'N/A', totalEvents: 'N/A' };
+    let ongoingEvents = [];
+    let upcomingEvents = [];
+    let attendees = [];
 
-    // Validation: Contact number must be a 10-digit number
-    if (!/^\d{10}$/.test(contactnumber)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'contactnumber', message: 'Please enter a valid 10-digit phone number' }]
-        });
-    }
-
-    // Validation: Email must be a valid format
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'email', message: 'Please enter a valid email address' }]
-        });
-    }
-
-    // Validation: Password must be at least 8 characters and contain a number
-    if (password.length < 8 || !/\d/.test(password)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'password', message: 'Password must be at least 8 characters long and contain a number' }]
-        });
-    }
-
-    // Validation: Confirm password must match password
-    if (password !== confirmpassword) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'confirmpassword', message: 'Passwords do not match' }]
-        });
-    }
-
-    // Validation: Company name must be at least 2 characters
-    if (companyname.length < 2) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'companyname', message: 'Company name must be at least 2 characters long' }]
-        });
-    }
-
-    // Validation: Location must be at least 3 characters
-    if (location.length < 3) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'location', message: 'Please enter a valid location (minimum 3 characters)' }]
-        });
-    }
-
-    // Validation: Terms and conditions must be accepted
-    if (!termsandconditions) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'terms', message: 'You must agree to the terms and conditions' }]
-        });
-    }
-
+    // Fetch overview metrics
     try {
-        // Check if email already exists in EventManager collection
-        const existingEventManager = await EventManager.findOne({ email });
-        if (existingEventManager) {
-            return res.status(400).json({
-                success: false,
-                message: 'Validation failed',
-                errors: [{ field: 'email', message: 'Email already registered' }]
-            });
+      const totalBookings = await Attendee.countDocuments({ event_manager_id: eventManagerId });
+      const totalEvents = await Event.countDocuments({ event_manager_id: eventManagerId });
+      const earningsResult = await Attendee.aggregate([
+        { $match: { event_manager_id: eventManagerId } },
+        {
+          $lookup: {
+            from: 'events',
+            localField: 'event_id',
+            foreignField: '_id',
+            as: 'event'
+          }
+        },
+        { $unwind: '$event' },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: { $multiply: ['$seats', '$event.ticket_price'] } }
+          }
         }
+      ]);
 
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create a new event manager in the database
-        await EventManager.create({
-            name,
-            contact_number: contactnumber,
-            email,
-            password: hashedPassword,
-            company_name: companyname,
-            location
-        });
-
-        res.status(201).json({
-            success: true,
-            redirect: '/service_provider_login',
-            message: 'Event manager signup successful'
-        });
+      overview = {
+        totalBookings: totalBookings || 0,
+        totalEarnings: earningsResult[0]?.total || 0,
+        totalEvents: totalEvents || 0
+      };
     } catch (error) {
-        console.error('Error during event manager signup:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+      console.error('Error fetching overview metrics:', error);
     }
+
+    // Fetch ongoing events (events happening now)
+    try {
+      const now = new Date();
+      ongoingEvents = await Event.find({
+        event_manager_id: eventManagerId,
+        date_time: { $lte: now },
+        end_time: { $gte: now }
+      }).select('event_name tickets_sold ticket_price image date_time');
+    } catch (error) {
+      console.error('Error fetching ongoing events:', error);
+    }
+
+    // Fetch upcoming events (events in the future)
+    try {
+      const now = new Date();
+      upcomingEvents = await Event.find({
+        event_manager_id: eventManagerId,
+        date_time: { $gt: now }
+      }).select('event_name tickets_sold total_tickets ticket_price image date_time');
+    } catch (error) {
+      console.error('Error fetching upcoming events:', error);
+    }
+
+    // Fetch attendees
+    try {
+      attendees = await Attendee.find({ event_manager_id: eventManagerId })
+        .populate('event_id', 'event_name date_time')
+        .select('name phone_number seats event_id')
+        .lean()
+        .then(attendees => attendees.map(attendee => ({
+          id: attendee._id,
+          name: attendee.name,
+          phone_number: attendee.phone_number,
+          seats: attendee.seats,
+          event_name: attendee.event_id?.event_name || 'N/A',
+          event_date: attendee.event_id?.date_time || null
+        })));
+    } catch (error) {
+      console.error('Error fetching attendees:', error);
+    }
+
+    res.render('/eventmanager_dashboard', {
+      user: req.session.user,
+      overview,
+      ongoingEvents,
+      upcomingEvents,
+      attendees
+    });
+  } catch (error) {
+    console.error('Error rendering event manager dashboard:', error);
+    res.status(500).send('Server error');
+  }
 };
 
-module.exports = { eventManagerSignup };
+// Create a new event
+exports.createEvent = async (req, res) => {
+  if (!req.session.user || req.session.user.role !== 'event-manager') {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  try {
+    const {
+      eventName,
+      aboutEvent,
+      language,
+      duration,
+      tickets,
+      ageLimit,
+      instructions,
+      venue,
+      terms,
+      category,
+      dateTime
+    } = req.body;
+
+    // Validate input
+    if (!eventName || !dateTime || !tickets || !venue || !category) {
+      return res.status(400).json({ success: false, message: 'Required fields are missing' });
+    }
+
+    // Handle file upload
+    const image = req.file ? `/uploads/${req.file.filename}` : '/images/default_event.jpg';
+
+    // Create new event
+    const event = new Event({
+      event_name: eventName,
+      about: aboutEvent,
+      language,
+      duration,
+      ticket_price: parseFloat(tickets),
+      age_limit: parseInt(ageLimit),
+      instructions,
+      venue,
+      terms,
+      category,
+      date_time: new Date(dateTime),
+      image,
+      event_manager_id: req.session.user.id,
+      tickets_sold: 0,
+      total_tickets: 100 // Default value, adjust as needed
+    });
+
+    await event.save();
+
+    res.status(200).json({ success: true, message: 'Event created successfully' });
+  } catch (error) {
+    console.error('Error creating event:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+// Update an attendee
+exports.updateAttendee = async (req, res) => {
+  if (!req.session.user || req.session.user.role !== 'event-manager') {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  try {
+    const { id } = req.params;
+    const { name, phone_number, seats } = req.body;
+
+    // Validate input
+    if (!name || !phone_number || !seats) {
+      return res.status(400).json({ success: false, message: 'Required fields are missing' });
+    }
+
+    // Update attendee
+    const attendee = await Attendee.findOneAndUpdate(
+      { _id: id, event_manager_id: req.session.user.id },
+      { name, phone_number, seats: parseInt(seats) },
+      { new: true }
+    );
+
+    if (!attendee) {
+      return res.status(404).json({ success: false, message: 'Attendee not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Attendee updated successfully' });
+  } catch (error) {
+    console.error('Error updating attendee:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+// Delete an attendee
+exports.deleteAttendee = async (req, res) => {
+  if (!req.session.user || req.session.user.role !== 'event-manager') {
+    return res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
+
+  try {
+    const { id } = req.params;
+
+    // Delete attendee
+    const attendee = await Attendee.findOneAndDelete({
+      _id: id,
+      event_manager_id: req.session.user.id
+    });
+
+    if (!attendee) {
+      return res.status(404).json({ success: false, message: 'Attendee not found' });
+    }
+
+    res.status(200).json({ success: true, message: 'Attendee deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting attendee:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};

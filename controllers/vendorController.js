@@ -380,69 +380,6 @@ const getVendorProfile = async (req, res) => {
     }
 };
 
-// Service provider login
-const serviceProviderLogin = async (req, res) => {
-    const { email, password, role } = req.body;
-    console.log('Login attempt:', { email, role });
-
-    if (!email || !password || !role) {
-        console.log('Missing fields:', { email, password, role });
-        return res.status(400).json({ success: false, message: 'Email, password, and role are required' });
-    }
-
-    try {
-        let Model, sessionKey, redirect;
-        if (role === 'store-manager') {
-            Model = Vendor;
-            sessionKey = 'vendor';
-        } else if (role === 'event-manager') {
-            Model = EventManager;
-            sessionKey = 'eventManager';
-        } else {
-            console.log('Invalid role:', role);
-            return res.status(400).json({ success: false, message: 'Invalid role. Use "store-manager" or "event-manager"' });
-        }
-
-        const user = await Model.findOne({ email });
-        if (!user) {
-            console.log('User not found:', { email, role });
-            return res.status(401).json({ success: false, message: 'Invalid email or password' });
-        }
-        console.log('User found:', { email, role, store_name: user.store_name });
-
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            console.log('Password mismatch:', { email, role });
-            return res.status(401).json({ success: false, message: 'Invalid email or password' });
-        }
-
-        req.session[sessionKey] = {
-            id: user._id.toString(),
-            email: user.email,
-            role,
-            store_name: user.store_name || null
-        };
-        console.log('Session set:', req.session[sessionKey]);
-
-        if (role === 'store-manager') {
-            if (!user.store_name) {
-                console.error('Vendor missing store_name:', user.email);
-                return res.status(500).json({ success: false, message: 'Vendor profile incomplete. Contact support.' });
-            }
-            const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
-            redirect = `/shop-dashboard/${storeNameSlug}`;
-        } else if (role === 'event-manager') {
-            redirect = '/eventmanager_dashboard';
-        }
-
-        console.log('Redirecting to:', redirect);
-        res.status(200).json({ success: true, message: 'Login successful', redirect });
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-};
-
 // Get vendor dashboard
 const getVendorDashboard = async (req, res) => {
     console.log('Accessing dashboard:', { storeName: req.params.storeName, session: req.session.vendor });
@@ -1029,4 +966,4 @@ const submitProduct = [
 ];
 
 
-module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct };
+module.exports = { storeSignup,getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct };
