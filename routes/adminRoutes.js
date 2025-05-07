@@ -29,7 +29,8 @@ const {
     getPastEvents,
     updateEventManager,
     deleteEventManager,
-    deleteProduct
+    deleteProduct,
+    getRevenueChartData
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
 
@@ -63,5 +64,6 @@ router.get('/admin/event-manager/:id/upcoming-events', isAdminAuthenticated, get
 router.get('/admin/event-manager/:id/past-events', isAdminAuthenticated, getPastEvents);
 router.put('/admin/event-manager/:id', isAdminAuthenticated, updateEventManager);
 router.delete('/admin/event-manager/:id', isAdminAuthenticated, deleteEventManager);
+router.get('/admin/revenue-chart-data', isAdminAuthenticated, getRevenueChartData);
 
 module.exports = router;
