@@ -172,6 +172,7 @@ const getVendorProducts = async (req, res) => {
                     product_category: 1,
                     product_type: 1,
                     sale_price: { $arrayElemAt: ['$variants.sale_price', 0] },
+                    regular_price: { $ifNull: [{ $arrayElemAt: ['$variants.regular_price', 0] }, 0] },
                     stock_quantity: { $arrayElemAt: ['$variants.stock_quantity', 0] },
                     image_path: { $ifNull: ['$images.image_path', '/images/default.jpg'] },
                     sold: { $sum: '$order_items.quantity' },
@@ -719,17 +720,35 @@ const getProductForEdit = async (req, res) => {
         const variants = await ProductVariant.find({ product_id: productId });
         const images = await ProductImage.find({ product_id: productId });
 
-        console.log('Product data fetched:', { productName: product.product_name, variants: variants.length, images: images.length });
+        console.log('Product data fetched:', {
+            productName: product.product_name,
+            variants: variants.length,
+            images: images.length,
+            variantDetails: variants.map(v => ({
+                size: v.size,
+                color: v.color,
+                regular_price: v.regular_price,
+                sale_price: v.sale_price,
+                stock_quantity: v.stock_quantity
+            }))
+        });
 
+        const firstVariant = variants[0] || {};
         res.render('shop-product-edit', {
             vendor: req.session.vendor,
             product: {
                 id: product._id,
-                product_name: product.product_name,
-                product_category: product.product_category,
-                product_type: product.product_type,
-                product_description: product.product_description,
-                stock_status: product.stock_status,
+                product_name: product.product_name || '',
+                product_category: product.product_category || '',
+                product_type: product.product_type || '',
+                product_description: product.product_description || '',
+                short_description: product.short_description || '',
+                stock_status: product.stock_status || 'In Stock',
+                size: firstVariant.size || '',
+                color: firstVariant.color || '',
+                regular_price: firstVariant.regular_price || 0.01,
+                sale_price: firstVariant.sale_price || '',
+                stock_quantity: firstVariant.stock_quantity || 0,
                 variants: variants || [],
                 images: images || []
             }
@@ -740,12 +759,10 @@ const getProductForEdit = async (req, res) => {
     }
 };
 
-// Update product
 const updateProduct = [
     upload.array('productImages', 4),
     async (req, res) => {
         if (!req.session.vendor) {
-            console.log('No vendor session in updateProduct');
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
@@ -756,35 +773,44 @@ const updateProduct = [
             productCategory,
             productType,
             productDescription,
-            stock_status,
-            'variant_size[]': variantSizes,
-            'variant_color[]': variantColors,
-            'variant_regular_price[]': variantRegularPrices,
-            'variant_sale_price[]': variantSalePrices,
-            'variant_stock_quantity[]': variantStockQuantities
+            shortDescription,
+            stockStatus,
+            variant_size,
+            variant_color,
+            variant_regular_price,
+            variant_sale_price,
+            variant_stock_quantity
         } = req.body;
 
-        console.log('Updating product:', { productId, vendorId, productName });
+        console.log('Received form data:', {
+            productName,
+            productCategory,
+            productType,
+            productDescription,
+            shortDescription,
+            stockStatus,
+            variant_size,
+            variant_color,
+            variant_regular_price,
+            variant_sale_price,
+            variant_stock_quantity
+        });
 
-        if (!productName || !productCategory || !productType || !productDescription || !stock_status) {
-            console.log('Missing product fields');
+        if (!productName || !productCategory || !productType || !productDescription || !shortDescription || !stockStatus) {
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
 
-        if (!variantSizes || !variantRegularPrices || !variantStockQuantities) {
-            console.log('Missing variant fields');
-            return res.status(400).json({ success: false, message: 'At least one variant with size, regular price, and stock quantity is required' });
+        if (!variant_regular_price || !variant_stock_quantity) {
+            return res.status(400).json({ success: false, message: 'Regular price and stock quantity are required' });
         }
 
-        if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
-            console.log('Invalid stock status:', stock_status);
+        if (!['In Stock', 'Out of Stock'].includes(stockStatus)) {
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         try {
             const product = await Product.findOne({ _id: productId, vendor_id: new mongoose.Types.ObjectId(vendorId) });
             if (!product) {
-                console.log('Product not found or unauthorized:', { productId, vendorId });
                 return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to edit it.' });
             }
 
@@ -795,36 +821,35 @@ const updateProduct = [
                     product_category: productCategory,
                     product_type: productType,
                     product_description: productDescription,
-                    stock_status
+                    short_description: shortDescription,
+                    stock_status: stockStatus
                 }
             );
 
             await ProductVariant.deleteMany({ product_id: productId });
 
-            const variants = variantSizes.map((size, i) => {
-                const regularPrice = parseFloat(variantRegularPrices[i]);
-                const salePrice = variantSalePrices[i] ? parseFloat(variantSalePrices[i]) : null;
-                const stockQuantity = parseInt(variantStockQuantities[i]);
+            const regularPrice = parseFloat(variant_regular_price);
+            const salePrice = variant_sale_price ? parseFloat(variant_sale_price) : null;
+            const stockQuantity = parseInt(variant_stock_quantity);
 
-                if (!regularPrice || !stockQuantity) {
-                    throw new Error('Regular price and stock quantity are required for each variant');
-                }
+            if (isNaN(regularPrice) || regularPrice <= 0) {
+                return res.status(400).json({ success: false, message: 'Regular price must be greater than 0' });
+            }
+            if (isNaN(stockQuantity) || stockQuantity < 0) {
+                return res.status(400).json({ success: false, message: 'Stock quantity must be 0 or greater' });
+            }
+            if (salePrice && salePrice >= regularPrice) {
+                return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
+            }
 
-                if (salePrice && salePrice >= regularPrice) {
-                    throw new Error('Sale price must be less than regular price for all variants');
-                }
-
-                return {
-                    product_id: productId,
-                    size: size || null,
-                    color: variantColors[i] || null,
-                    regular_price: regularPrice,
-                    sale_price: salePrice,
-                    stock_quantity: stockQuantity
-                };
+            await ProductVariant.create({
+                product_id: productId,
+                size: variant_size || null,
+                color: variant_color || null,
+                regular_price: regularPrice,
+                sale_price: salePrice,
+                stock_quantity: stockQuantity
             });
-
-            await ProductVariant.insertMany(variants);
 
             if (req.files && req.files.length > 0) {
                 await ProductImage.deleteMany({ product_id: productId });
@@ -836,19 +861,17 @@ const updateProduct = [
                 await ProductImage.insertMany(images);
             }
 
-            console.log('Product updated successfully:', { productId });
             res.status(200).json({ success: true, message: 'Product updated successfully', redirect: '/shop-products' });
         } catch (error) {
             console.error('Error updating product:', error);
-            res.status(500).json({ success: false, message: error.message || 'Server error' });
+            res.status(500).json({ success: false, message: 'Server error' });
         }
     }
 ];
 
-// Fetch vendor customers
 const getVendorCustomers = async (req, res) => {
     if (!req.session.vendor) {
-        console.log('No vendor session in getVendorCustomers, redirecting to login');
+        console.log('No vendor session, redirecting to login');
         return res.redirect('/service_provider_login');
     }
 
@@ -856,19 +879,11 @@ const getVendorCustomers = async (req, res) => {
     console.log('Fetching customers for vendor:', { vendorId });
 
     try {
-        const customers = await User.aggregate([
-            {
-                $lookup: {
-                    from: 'orders',
-                    localField: '_id',
-                    foreignField: 'user_id',
-                    as: 'orders'
-                }
-            },
+        const customers = await Order.aggregate([
             {
                 $lookup: {
                     from: 'orderitems',
-                    localField: 'orders._id',
+                    localField: '_id',
                     foreignField: 'order_id',
                     as: 'order_items'
                 }
@@ -881,66 +896,73 @@ const getVendorCustomers = async (req, res) => {
                     as: 'products'
                 }
             },
-            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
+            {
+                $match: {
+                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$user',
+                    preserveNullAndEmptyArrays: false
+                }
+            },
             {
                 $group: {
-                    _id: '$_id',
-                    customer_id: { $first: '$_id' },
-                    user_name: { $first: '$user_name' },
-                    email: { $first: '$user_email' },
-                    total_orders: { $addToSet: '$orders._id' },
-                    total_spent: {
-                        $sum: {
-                            $sum: {
-                                $map: {
-                                    input: '$order_items',
-                                    as: 'item',
-                                    in: { $multiply: ['$$item.price', '$$item.quantity'] }
-                                }
-                            }
+                    _id: '$user._id',
+                    customer_id: { $first: '$user._id' },
+                    name: { $first: '$user.user_name' },
+                    email: { $first: '$user.user_email' },
+                    orders: {
+                        $push: {
+                            order_id: '$_id',
+                            order_date: '$order_date',
+                            total_amount: '$total_amount',
+                            status: '$status'
                         }
-                    },
-                    last_order_date: { $max: '$orders.order_date' }
+                    }
                 }
             },
             {
                 $project: {
                     _id: 0,
                     customer_id: 1,
-                    user_name: 1,
+                    name: 1,
                     email: 1,
-                    total_orders: { $size: '$total_orders' },
-                    total_spent: 1,
-                    last_order_date: 1
+                    total_orders: { $size: '$orders' },
+                    total_spent: { $sum: '$orders.total_amount' },
+                    last_order: { $max: '$orders.order_date' }
                 }
             },
-            { $sort: { last_order_date: -1 } }
+            { $sort: { total_spent: -1 } }
         ]);
 
-        console.log('Customers fetched:', customers.length);
-        const formattedCustomers = customers.map((customer, index) => ({
-            customer_id: `C${String(index + 1).padStart(3, '0')}`,
-            user_id: customer.customer_id,
-            name: customer.user_name,
-            email: customer.email,
-            total_orders: customer.total_orders,
-            total_spent: customer.total_spent ? customer.total_spent.toFixed(2) : '0.00',
-            last_order: customer.last_order_date
-                ? new Date(customer.last_order_date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric'
-                  })
-                : 'N/A'
-        }));
+        console.log('Customers fetched:', {
+            vendorId,
+            count: customers.length
+        });
 
         res.render('shop-customers', {
             vendor: req.session.vendor,
-            customers: formattedCustomers
+            customers: customers.map(customer => ({
+                ...customer,
+                customer_id: customer.customer_id.toString(), // Full ObjectId as string
+                display_id: `C${customer.customer_id.toString().slice(-3)}`, // For display
+                last_order: customer.last_order ? new Date(customer.last_order).toLocaleDateString() : 'N/A',
+                total_spent: (customer.total_spent || 0).toFixed(2)
+            }))
         });
     } catch (error) {
         console.error('Error fetching customers:', error);
-        res.status(500).send('Server error');
+        res.redirect('/shop-products?error=Server error while fetching customer data.');
     }
 };
 
@@ -1155,11 +1177,60 @@ const getCustomerDetails = async (req, res) => {
 
     const vendorId = req.session.vendor.id;
     const userId = req.query.customer;
+console.log('Received userId for customer details:', userId);
+if (!mongoose.Types.ObjectId.isValid(userId)) {
+    console.log('Invalid ObjectId:', userId);
+    return res.status(404).render('shop-customer-details', {
+        vendor: req.session.vendor,
+        customer: {
+            id: userId,
+            name: 'Invalid Customer ID',
+            email: 'N/A',
+            phone: 'N/A',
+            address: 'N/A',
+            joined: 'N/A'
+        },
+        summary: {
+            totalOrders: 0,
+            totalRevenue: '0.00',
+            avgOrderValue: '0.00',
+            lastPurchase: 'N/A',
+            mostPurchased: 'N/A',
+            returnRate: '0%'
+        },
+        orders: []
+    });
+}
+
+    console.log('Fetching customer details:', { vendorId, userId });
+    
 
     try {
-        const customer = await User.findById(userId);
+        console.log('Querying User collection for _id:', userId);
+const customer = await User.findById(userId);
+console.log('Customer found:', customer ? customer : 'No customer found');
         if (!customer) {
-            return res.status(404).send('Customer not found');
+            console.log('Customer not found:', { userId });
+            return res.status(404).render('shop-customer-details', {
+                vendor: req.session.vendor,
+                customer: {
+                    id: 'N/A',
+                    name: 'Unknown Customer',
+                    email: 'N/A',
+                    phone: 'N/A',
+                    address: 'N/A',
+                    joined: 'N/A'
+                },
+                summary: {
+                    totalOrders: 0,
+                    totalRevenue: '0.00',
+                    avgOrderValue: '0.00',
+                    lastPurchase: 'N/A',
+                    mostPurchased: 'N/A',
+                    returnRate: '0%'
+                },
+                orders: []
+            });
         }
 
         const orders = await Order.aggregate([
@@ -1207,6 +1278,12 @@ const getCustomerDetails = async (req, res) => {
             { $sort: { count: -1 } },
             { $limit: 1 }
         ]);
+
+        console.log('Customer details fetched:', {
+            customerId: userId,
+            totalOrders,
+            totalRevenue
+        });
 
         res.render('shop-customer-details', {
             vendor: req.session.vendor,
@@ -1640,5 +1717,74 @@ const getVendorAnalytics = async (req, res) => {
     }
 };
 
+const updateVendorProfile = async (req, res) => {
+    if (!req.session.vendor) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
 
-module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout,getVendorAnalytics, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails, getCustomerDetails,deleteSelectedOrders,deleteOrder };
+    const vendorId = req.session.vendor.id;
+    const { storeName, ownerName, email, phone, address, description } = req.body;
+
+    console.log('Updating vendor profile:', { vendorId, storeName, ownerName, email, phone, address, description });
+
+    // Basic validation
+    if (!storeName || !ownerName || !email || !phone || !address) {
+        return res.status(400).json({ success: false, message: 'All required fields must be provided' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ success: false, message: 'Invalid email format' });
+    }
+    if (!/^\d{10}$/.test(phone)) {
+        return res.status(400).json({ success: false, message: 'Phone number must be 10 digits' });
+    }
+    if (storeName.length < 2) {
+        return res.status(400).json({ success: false, message: 'Store name must be at least 2 characters' });
+    }
+    if (ownerName.length < 2) {
+        return res.status(400).json({ success: false, message: 'Owner name must be at least 2 characters' });
+    }
+    if (address.length < 3) {
+        return res.status(400).json({ success: false, message: 'Address must be at least 3 characters' });
+    }
+
+    try {
+        // Check if email is already used by another vendor
+        const existingVendor = await Vendor.findOne({ email, _id: { $ne: vendorId } });
+        if (existingVendor) {
+            return res.status(400).json({ success: false, message: 'Email is already in use' });
+        }
+
+        // Update vendor document
+        const updatedVendor = await Vendor.findByIdAndUpdate(
+            vendorId,
+            {
+                store_name: storeName,
+                name: ownerName,
+                email,
+                contact_number: phone,
+                store_location: address,
+                // Description is not in the schema, so it's ignored unless schema is updated
+            },
+            { new: true }
+        );
+
+        if (!updatedVendor) {
+            return res.status(404).json({ success: false, message: 'Vendor not found' });
+        }
+
+        // Update session
+        req.session.vendor = {
+            ...req.session.vendor,
+            store_name: storeName,
+            email,
+        };
+
+        console.log('Vendor profile updated:', updatedVendor);
+        res.status(200).json({ success: true, message: 'Profile updated successfully' });
+    } catch (error) {
+        console.error('Error updating vendor profile:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout,getVendorAnalytics, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails, getCustomerDetails,deleteSelectedOrders,deleteOrder,updateVendorProfile };

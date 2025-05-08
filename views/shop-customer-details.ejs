@@ -1,116 +1,116 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Customer Details - Happy Tails</title>
-        <link href="/SHOP/shop-customer-details.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="header">
-            <button class="back-btn" onclick="goBack()">← Back to Customers</button>
-            <h1>Customer Details</h1>
-        </div>
-        
-        <div class="customer-container">
-            <div class="customer-info">
-                <h2 id="customerName"><%= customer.name %></h2>
-                <div class="info-row">
-                    <div class="info-label">Customer ID:</div>
-                    <div class="info-value" id="customerId"><%= customer.id %></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Email:</div>
-                    <div class="info-value" id="customerEmail"><%= customer.email %></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Phone:</div>
-                    <div class="info-value" id="customerPhone"><%= customer.phone %></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Joined Date:</div>
-                    <div class="info-value" id="customerJoined"><%= customer.joined %></div>
-                </div>
-                <div class="info-row">
-                    <div class="info-label">Address:</div>
-                    <div class="info-value" id="customerAddress"><%= customer.address %></div>
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details - Happy Tails</title>
+    <link href="/SHOP/shop-customer-details.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="goBack()">← Back to Customers</button>
+        <h1>Customer Details</h1>
+    </div>
+    
+    <div class="customer-container">
+        <div class="customer-info">
+            <h2 id="customerName"><%= customer.name %></h2>
+            <div class="info-row">
+                <div class="info-label">Customer ID:</div>
+                <div class="info-value" id="customerId"><%= customer.id %></div>
             </div>
-            
-            <div class="summary-card">
-                <div class="summary-title">Customer Summary</div>
-                <div class="summary-stats">
-                    <div class="stat-item">
-                        <div class="stat-label">Total Orders</div>
-                        <div class="stat-value" id="totalOrders"><%= summary.totalOrders %></div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Total Revenue</div>
-                        <div class="stat-value" id="totalRevenue">$<%= summary.totalRevenue %></div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Avg. Order Value</div>
-                        <div class="stat-value" id="avgOrderValue">$<%= summary.avgOrderValue %></div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Last Purchase</div>
-                        <div class="stat-value" id="lastPurchase"><%= summary.lastPurchase %></div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Most Purchased</div>
-                        <div class="stat-value" id="mostPurchased"><%= summary.mostPurchased %></div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Return Rate</div>
-                        <div class="stat-value" id="returnRate"><%= summary.returnRate %></div>
-                    </div>
-                </div>
+            <div class="info-row">
+                <div class="info-label">Email:</div>
+                <div class="info-value" id="customerEmail"><%= customer.email %></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Phone:</div>
+                <div class="info-value" id="customerPhone"><%= customer.phone %></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Joined Date:</div>
+                <div class="info-value" id="customerJoined"><%= customer.joined %></div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Address:</div>
+                <div class="info-value" id="customerAddress"><%= customer.address %></div>
             </div>
         </div>
         
-        <div class="customer-container">
-            <div class="order-history">
-                <h2>Order History</h2>
-                <table class="order-table">
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Date</th>
-                            <th>Items</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orderHistoryBody">
-                        <% if (orders && orders.length > 0) { %>
-                            <% orders.forEach(order => { %>
-                                <tr>
-                                    <td><%= order.order_id %></td>
-                                    <td><%= order.date %></td>
-                                    <td><%= order.items %></td>
-                                    <td>$<%= order.total %></td>
-                                    <td><%= order.status %></td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
+        <div class="summary-card">
+            <div class="summary-title">Customer Summary</div>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value" id="totalOrders"><%= summary.totalOrders %></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value" id="totalRevenue">$<%= summary.totalRevenue %></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Avg. Order Value</div>
+                    <div class="stat-value" id="avgOrderValue">$<%= summary.avgOrderValue %></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Last Purchase</div>
+                    <div class="stat-value" id="lastPurchase"><%= summary.lastPurchase %></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Most Purchased</div>
+                    <div class="stat-value" id="mostPurchased"><%= summary.mostPurchased %></div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Return Rate</div>
+                    <div class="stat-value" id="returnRate"><%= summary.returnRate %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="customer-container">
+        <div class="order-history">
+            <h2>Order History</h2>
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="orderHistoryBody">
+                    <% if (orders && orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
                             <tr>
-                                <td colspan="5">No orders found.</td>
+                                <td><%= order.order_id %></td>
+                                <td><%= order.date %></td>
+                                <td><%= order.items %></td>
+                                <td>$<%= order.total %></td>
+                                <td><%= order.status %></td>
                             </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="5">No orders found.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
         </div>
+    </div>
+    
+    <script>
         
-        <script>
-            
-            
         
-            function goBack() {
-                window.location.href = "shop-customers";
-            }
-            
+    
+        function goBack() {
+            window.location.href = "shop-customers";
+        }
         
-        </script>
-    </body>
-    </html>
+    
+    </script>
+</body>
+</html>

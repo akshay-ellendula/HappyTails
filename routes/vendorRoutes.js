@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/database');
-const { storeSignup, serviceProviderLogin, getVendorDashboard,getVendorAnalytics, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders } = require('../controllers/vendorController');
+const { storeSignup, serviceProviderLogin, getVendorDashboard,getVendorAnalytics, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders,updateVendorProfile } = require('../controllers/vendorController');
 
 router.get('/service_provider_login', (req, res) => {
     res.render('service_provider_login');
@@ -14,6 +14,7 @@ router.get('/shop-dashboard/:storeName', (req, res, next) => {
 
 // New route for order details
 router.get('/shop-order-details/:orderId',getOrderDetails);
+
 router.get('/shop-customer-details', getCustomerDetails);
 
 router.delete('/delete-order/:orderId', deleteOrder);
@@ -67,6 +68,7 @@ router.get('/shop-order-details/:orderId', async (req, res) => {
 
 router.get('/shop-analytics', getVendorAnalytics);
 
+router.post('/update-vendor-profile', updateVendorProfile);
 
 router.get('/shop-product-edit/:productId', getProductForEdit);
 router.post('/shop-product-edit/:productId', updateProduct);
