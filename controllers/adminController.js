@@ -667,7 +667,7 @@ const getVendorStats = async (req, res) => {
                 }
             }
         ]);
-        const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].total : 0; // Define totalRevenue
+        const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].total : 0;
 
         const lastMonthRevenueResult = await Order.aggregate([
             { $match: { order_date: { $gte: new Date(monthAgo.getTime() - 30 * 24 * 60 * 60 * 1000), $lt: monthAgo } } },
@@ -700,17 +700,40 @@ const getVendorStats = async (req, res) => {
         const revenueGrowthPercent = lastMonthRevenue > 0 ? 
             Math.round(((totalRevenue - lastMonthRevenue) / lastMonthRevenue) * 100) : 0;
 
-        // Total Orders
+        // Total Orders (Corrected Logic)
         const totalOrdersResult = await Order.aggregate([
             {
                 $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            {
+                $lookup: {
                     from: 'vendors',
-                    localField: 'vendor_id',
+                    localField: 'product.vendor_id',
                     foreignField: '_id',
                     as: 'vendor'
                 }
             },
             { $unwind: '$vendor' },
+            {
+                $group: {
+                    _id: '$_id', // Group by order ID to count unique orders
+                }
+            },
             { $count: 'totalOrders' }
         ]);
         const totalOrders = totalOrdersResult.length > 0 ? totalOrdersResult[0].totalOrders : 0;
@@ -719,31 +742,77 @@ const getVendorStats = async (req, res) => {
             { $match: { order_date: { $gte: new Date(monthAgo.getTime() - 30 * 24 * 60 * 60 * 1000), $lt: monthAgo } } },
             {
                 $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            {
+                $lookup: {
                     from: 'vendors',
-                    localField: 'vendor_id',
+                    localField: 'product.vendor_id',
                     foreignField: '_id',
                     as: 'vendor'
                 }
             },
             { $unwind: '$vendor' },
+            {
+                $group: {
+                    _id: '$_id',
+                }
+            },
             { $count: 'totalOrders' }
         ]);
         const lastMonthOrders = lastMonthOrdersResult.length > 0 ? lastMonthOrdersResult[0].totalOrders : 0;
         const ordersGrowthPercent = lastMonthOrders > 0 ? 
             Math.round(((totalOrders - lastMonthOrders) / lastMonthOrders) * 100) : 0;
 
-        // Today's Orders
+        // Today's Orders (Corrected Logic)
         const todaysOrdersResult = await Order.aggregate([
             { $match: { order_date: { $gte: today } } },
             {
                 $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            {
+                $lookup: {
                     from: 'vendors',
-                    localField: 'vendor_id',
+                    localField: 'product.vendor_id',
                     foreignField: '_id',
                     as: 'vendor'
                 }
             },
             { $unwind: '$vendor' },
+            {
+                $group: {
+                    _id: '$_id',
+                }
+            },
             { $count: 'todaysOrders' }
         ]);
         const todaysOrders = todaysOrdersResult.length > 0 ? todaysOrdersResult[0].todaysOrders : 0;
@@ -752,13 +821,36 @@ const getVendorStats = async (req, res) => {
             { $match: { order_date: { $gte: yesterday, $lt: today } } },
             {
                 $lookup: {
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
+                }
+            },
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            {
+                $lookup: {
                     from: 'vendors',
-                    localField: 'vendor_id',
+                    localField: 'product.vendor_id',
                     foreignField: '_id',
                     as: 'vendor'
                 }
             },
             { $unwind: '$vendor' },
+            {
+                $group: {
+                    _id: '$_id',
+                }
+            },
             { $count: 'yesterdayOrders' }
         ]);
         const yesterdayOrders = yesterdayOrdersResult.length > 0 ? yesterdayOrdersResult[0].yesterdayOrders : 0;

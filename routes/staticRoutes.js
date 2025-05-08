@@ -14,7 +14,7 @@ const pages = [
     'admin-product-details', 'admin-products', 'admin-service-provider', 'admin-shop-manager',
     'admin-sm-details', 'admin-sp-details', 'admin-user-details', 'admin-user', 'admin_login',
     'eventmanager_analytics', 'eventmanager_profile', 'my_events','admin-add-product', 
-    'admin-edit-product'
+    'admin-edit-product','eventmanager_event_edit'
 ];
 
 pages.forEach(page => {

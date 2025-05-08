@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Edit Event</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2ffa8; /* Light yellow/green background matching dashboard */
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .header {
+            background-color: #f2ffa8; /* Yellow/green header color */
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .header-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #f2ffa8; /* Yellow/green sidebar color */
+            padding: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu-item {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu-link {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-menu-link.active {
+            background-color: #e0e89a; /* Slightly darker yellow/green for active menu */
+        }
+
+        .sidebar-menu-link:hover {
+            background-color: #e0e89a;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .content-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .back-btn {
+            background-color: #333; /* Dark button */
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #555;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            box-sizing: border-box;
+            background-color: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #e0e89a; /* Yellow/green focus ring */
+            box-shadow: 0 0 5px rgba(224, 232, 154, 0.5);
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .event-guide {
+            display: flex;
+            gap: 15px;
+        }
+
+        .event-guide input {
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background-color: #333; /* Dark button matching the edit button in dashboard */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #555;
+        }
+
+        .btn-cancel {
+            background-color: #999;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #777;
+        }
+
+        /* Event card styling similar to the dashboard */
+        .event-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .event-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .event-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .event-time-badge {
+            background-color: #f2ffa8;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .event-details {
+            margin-bottom: 15px;
+        }
+
+        .event-detail {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .event-detail strong {
+            font-weight: 500;
+            margin-right: 5px;
+        }
+
+        .section-divider {
+            border-top: 1px solid #eee;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header similar to dashboard -->
+    <div class="header">
+        <h1>Happy Tails</h1>
+        <div class="header-links">
+            <a href="/profile" class="header-link">Profile</a>
+            <a href="/logout" class="header-link">Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Sidebar similar to dashboard -->
+        <div class="sidebar">
+            <h2 class="sidebar-title">Dashboard</h2>
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item">
+                    <a href="/home" class="sidebar-menu-link">Home</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/events" class="sidebar-menu-link active">Events</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/attendees" class="sidebar-menu-link">Attendees</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/profile" class="sidebar-menu-link">Profile</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/analytics" class="sidebar-menu-link">Analytics</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main content area -->
+        <div class="content">
+            <div class="content-header">
+                <h1 class="content-title">Edit Event</h1>
+                <a href="/eventmanager_events" class="back-btn">Back</a>
+            </div>
+
+            <div class="form-container">
+                <h2 class="form-section-title">Edit Event Details</h2>
+                <form id="editEventForm" action="/eventmanager_events/update" method="POST">
+                    <input type="hidden" id="eventId" name="eventId" value="<%= event.id %>">
+                    <div class="form-group">
+                        <label for="eventName">Event Name</label>
+                        <input type="text" id="eventName" name="eventName" value="<%= event.event_name %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="aboutEvent">About the Event</label>
+                        <textarea id="eventDescription" name="eventDescription" required><%= event.about_event %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Guide</label>
+                        <div class="event-guide">
+                            <input type="text" id="language" name="language" value="<%= event.language %>" placeholder="Language" required>
+                            <input type="text" id="duration" name="duration" value="<%= event.duration %>" placeholder="Duration (e.g., 2h)" required>
+                            <input type="number" id="eventTicketPrice" name="eventTicketPrice" value="<%= event.ticket_price %>" placeholder="Ticket Price" step="0.01" required>
+                            <input type="number" id="ageLimit" name="ageLimit" value="<%= event.age_limit %>" placeholder="Age Limit" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="instructions">Instructions</label>
+                        <textarea id="instructions" name="instructions" required><%= event.instructions %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventVenue">Venue</label>
+                        <input type="text" id="eventVenue" name="eventVenue" value="<%= event.venue %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="terms">Terms and Conditions</label>
+                        <textarea id="terms" name="terms" required><%= event.terms %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Pets" <%= event.category === 'Pets' ? 'selected' : '' %>>Pets</option>
+                            <option value="Music" <%= event.category === 'Music' ? 'selected' : '' %>>Music</option>
+                            <option value="Dance" <%= event.category === 'Dance' ? 'selected' : '' %>>Dance</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDate">Date</label>
+                        <input type="date" id="eventDate" name="eventDate" value="<%= event.formattedDate %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventTime">Time</label>
+                        <input type="time" id="eventTime" name="eventTime" value="<%= event.time %>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventCapacity">Capacity</label>
+                        <input type="number" id="eventCapacity" name="eventCapacity" value="<%= event.total_tickets %>" required>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                        <a href="/eventmanager_events" class="btn-cancel">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

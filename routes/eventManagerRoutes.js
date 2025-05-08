@@ -359,10 +359,71 @@ router.get('/eventmanager_events', isAuthenticated, async (req, res) => {
     }
 });
 
+router.get('/eventmanager_event_edit', isAuthenticated, async (req, res) => {
+    try {
+        const eventId = req.query.eventId;
+        if (!eventId) {
+            return res.status(400).send('Event ID is required');
+        }
+
+        const eventManagerId = req.session.eventManager.id;
+        const event = await Event.findOne(
+            { _id: eventId, event_manager_id: new mongoose.Types.ObjectId(eventManagerId) },
+            'id event_name about_event language duration ticket_price age_limit instructions venue terms category date_time total_tickets'
+        ).lean();
+
+        if (!event) {
+            return res.status(404).send('Event not found');
+        }
+
+        // Format the date and time for the form
+        const dateTime = new Date(event.date_time);
+        const formattedDate = dateTime.toISOString().split('T')[0]; // e.g., "2025-05-29"
+        const formattedTime = dateTime.toTimeString().split(' ')[0].slice(0, 5); // e.g., "22:38"
+
+        res.render('eventmanager_event_edit', {
+            event: {
+                id: event._id,
+                event_name: event.event_name,
+                about_event: event.about_event,
+                language: event.language,
+                duration: event.duration,
+                ticket_price: event.ticket_price,
+                age_limit: event.age_limit,
+                instructions: event.instructions,
+                venue: event.venue,
+                terms: event.terms,
+                category: event.category,
+                total_tickets: event.total_tickets,
+                formattedDate: formattedDate,
+                time: formattedTime
+            }
+        });
+    } catch (err) {
+        console.error('Error fetching event for edit:', err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 // Update event
 router.post('/eventmanager_events/update', isAuthenticated, async (req, res) => {
     try {
-        const { eventId, eventName, eventDate, eventTime, eventVenue, eventCapacity, eventTicketPrice, eventDescription } = req.body;
+        const {
+            eventId,
+            eventName,
+            eventDescription,
+            language,
+            duration,
+            eventTicketPrice,
+            ageLimit,
+            instructions,
+            eventVenue,
+            terms,
+            category,
+            eventDate,
+            eventTime,
+            eventCapacity
+        } = req.body;
         const eventManagerId = req.session.eventManager.id;
 
         const eventDateTime = new Date(`${eventDate} ${eventTime}:00`);
@@ -370,11 +431,17 @@ router.post('/eventmanager_events/update', isAuthenticated, async (req, res) => 
             { _id: eventId, event_manager_id: new mongoose.Types.ObjectId(eventManagerId) },
             {
                 event_name: eventName,
-                date_time: eventDateTime,
-                venue: eventVenue,
-                total_tickets: parseInt(eventCapacity),
+                about_event: eventDescription,
+                language: language,
+                duration: duration,
                 ticket_price: parseFloat(eventTicketPrice),
-                about_event: eventDescription
+                age_limit: parseInt(ageLimit),
+                instructions: instructions,
+                venue: eventVenue,
+                terms: terms,
+                category: category,
+                date_time: eventDateTime,
+                total_tickets: parseInt(eventCapacity)
             }
         );
 
