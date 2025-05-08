@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/database');
-const { storeSignup, serviceProviderLogin, getVendorDashboard,getVendorAnalytics, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders,updateVendorProfile } = require('../controllers/vendorController');
+const { storeSignup, serviceProviderLogin, getVendorDashboard,getVendorAnalytics,deleteProduct,logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders,updateVendorProfile } = require('../controllers/vendorController');
 
 router.get('/service_provider_login', (req, res) => {
     res.render('service_provider_login');
@@ -65,6 +65,8 @@ router.get('/shop-order-details/:orderId', async (req, res) => {
         res.status(500).send('Server error');
     }
 });
+
+router.delete('/shop-product-delete/:productId', deleteProduct);
 
 router.get('/shop-analytics', getVendorAnalytics);
 

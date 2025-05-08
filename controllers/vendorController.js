@@ -1787,4 +1787,34 @@ const updateVendorProfile = async (req, res) => {
     }
 };
 
-module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout,getVendorAnalytics, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails, getCustomerDetails,deleteSelectedOrders,deleteOrder,updateVendorProfile };
+const deleteProduct = async (req, res) => {
+    if (!req.session.vendor) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const vendorId = req.session.vendor.id;
+    const productId = req.params.productId;
+    console.log('Attempting to delete product:', { vendorId, productId });
+
+    try {
+        // Check if the product exists and belongs to the vendor
+        const product = await Product.findOne({ _id: productId, vendor_id: new mongoose.Types.ObjectId(vendorId) });
+        if (!product) {
+            console.log('Product not found or unauthorized:', { productId, vendorId });
+            return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to delete it.' });
+        }
+
+        // Delete the product, its variants, and images
+        await Product.deleteOne({ _id: productId });
+        await ProductVariant.deleteMany({ product_id: productId });
+        await ProductImage.deleteMany({ product_id: productId });
+
+        console.log('Product deleted successfully:', { productId });
+        res.status(200).json({ success: true, message: 'Product deleted successfully', redirect: '/shop-products' });
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout,getVendorAnalytics, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails, getCustomerDetails,deleteSelectedOrders,deleteOrder,updateVendorProfile,deleteProduct };
