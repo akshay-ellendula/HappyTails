@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product - Happy Tails Admin</title>
+    <link href="/ADMIN/admin-edit-product.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .edit-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .photo-section {
+            margin-bottom: 20px;
+        }
+        .photo-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .photo-box {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            border-radius: 4px;
+        }
+        .photo-box.has-image {
+            border: none;
+        }
+        .photo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .photo-placeholder {
+            font-size: 24px;
+            color: #007bff;
+        }
+        .photo-text {
+            font-size: 12px;
+            color: #666;
+        }
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff4d4f;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .save-btn,
+        .cancel-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .save-btn {
+            background: #007bff;
+            color: #fff;
+        }
+        .cancel-btn {
+            background: #6c757d;
+            color: #fff;
+        }
+        .variant-entry {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .secondary-button {
+            background: #6c757d;
+            color: #fff;
+        }
+        .danger-button {
+            background: #dc3545;
+            color: #fff;
+        }
+        .error-message {
+            color: #dc3545;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-button" onclick="goBack()">← Back</button>
+        <h1 class="page-title">Edit Product</h1>
+    </div>
+    
+    <div class="edit-container" id="editContainer">
+        <div id="loadingMessage">Loading product data...</div>
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+        <form id="editProductForm" enctype="multipart/form-data" style="display: none;">
+            <h2 class="section-title">Basic Information</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName" name="productName" required>
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Category</label>
+                    <select id="productCategory" name="productCategory" required>
+                        <option value="">Select a category</option>
+                        <option value="beds">Beds</option>
+                        <option value="food">Food</option>
+                        <option value="toys">Toys</option>
+                        <option value="grooming">Grooming</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="productType">Product Type</label>
+                    <input type="text" id="productType" name="productType" required>
+                </div>
+                <div class="form-group">
+                    <label for="stockStatus">Stock Status</label>
+                    <select id="stockStatus" name="stockStatus" required>
+                        <option value="In Stock">In Stock</option>
+                        <option value="Out of Stock">Out of Stock</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="productDescription">Full Description</label>
+                <textarea id="productDescription" name="productDescription" required></textarea>
+            </div>
+            
+            <h2 class="section-title">Variants</h2>
+            <div id="variantsContainer"></div>
+            <button type="button" id="addVariantBtn" class="button secondary-button">Add Variant</button>
+            
+            <h2 class="section-title">Photos</h2>
+            <div class="photo-section">
+                <div class="photo-row" id="photoRow">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="button" class="cancel-btn" onclick="goBack()">Cancel</button>
+                <button type="submit" class="save-btn">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        let productId;
+        let uploadedFiles = [];
+
+        function goBack() {
+            window.location.href = "/admin-products";
+        }
+
+        // Function to add a variant
+        function addVariant(size = '', color = '', regularPrice = '', salePrice = '', stockQuantity = '') {
+            const variantsContainer = document.getElementById('variantsContainer');
+            const variantDiv = document.createElement('div');
+            variantDiv.className = 'variant-entry';
+            variantDiv.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Size*</label>
+                        <input type="text" name="variants[][size]" value="${size}" placeholder="e.g., Small" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="text" name="variants[][color]" value="${color}" placeholder="e.g., Brown">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Regular Price*</label>
+                        <input type="number" name="variants[][regular_price]" value="${regularPrice}" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sale Price</label>
+                        <input type="number" name="variants[][sale_price]" value="${salePrice}" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Stock Quantity*</label>
+                        <input type="number" name="variants[][stock_quantity]" value="${stockQuantity}" min="0" required>
+                    </div>
+                </div>
+                <button type="button" class="button danger-button remove-variant">Remove</button>
+            `;
+            variantsContainer.appendChild(variantDiv);
+            variantDiv.querySelector('.remove-variant').addEventListener('click', () => {
+                if (variantsContainer.children.length > 1) {
+                    variantDiv.remove();
+                } else {
+                    alert('At least one variant is required.');
+                }
+            });
+        }
+
+        // Function to trigger file input click
+        function triggerFileInput(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        // Function to preview uploaded image
+        function previewImage(input, boxId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const box = document.getElementById(boxId);
+                    box.innerHTML = '';
+                    box.classList.add('has-image');
+                    
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.alt = "Product Photo";
+                    
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '×';
+                    removeBtn.onclick = function() {
+                        removeImage(boxId);
+                    };
+                    
+                    box.appendChild(img);
+                    box.appendChild(removeBtn);
+                    uploadedFiles.push(input.files[0]);
+                };
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Function to remove image
+        function removeImage(boxId) {
+            const box = document.getElementById(boxId);
+            box.innerHTML = '';
+            box.classList.remove('has-image');
+            
+            const placeholder = document.createElement('div');
+            placeholder.className = 'photo-placeholder';
+            placeholder.innerHTML = '+';
+            
+            const text = document.createElement('div');
+            text.className = 'photo-text';
+            text.innerHTML = 'Add Photo';
+            
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.className = 'file-input';
+            input.id = boxId + 'Input';
+            input.name = 'productImages';
+            input.accept = 'image/*';
+            input.onchange = function() {
+                previewImage(this, boxId);
+            };
+            
+            box.appendChild(placeholder);
+            box.appendChild(text);
+            box.appendChild(input);
+            
+            box.onclick = function() {
+                triggerFileInput(boxId + 'Input');
+            };
+
+            // Remove the file from uploadedFiles
+            const index = parseInt(boxId.replace('additionalPhotoBox', ''));
+            uploadedFiles.splice(index, 1);
+        }
+
+        // Fetch product data on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Get product ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            productId = urlParams.get('id');
+            if (!productId) {
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('errorMessage').textContent = 'Product ID not provided.';
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+
+            
+            
+            // Add variant button functionality
+            document.getElementById('addVariantBtn').addEventListener('click', () => addVariant());
+
+            // Handle form submission
+            document.getElementById('editProductForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('product_name', document.getElementById('productName').value);
+    formData.append('product_category', document.getElementById('productCategory').value);
+    formData.append('product_type', document.getElementById('productType').value);
+    formData.append('stock_status', document.getElementById('stockStatus').value);
+    formData.append('product_description', document.getElementById('productDescription').value);
+
+    const variants = [];
+    document.querySelectorAll('.variant-entry').forEach((entry) => {
+        const variant = {
+            size: entry.querySelector('input[name="variants[][size]"]').value,
+            color: entry.querySelector('input[name="variants[][color]"]').value || '',
+            regular_price: entry.querySelector('input[name="variants[][regular_price]"]').value,
+            sale_price: entry.querySelector('input[name="variants[][sale_price]"]').value || '',
+            stock_quantity: entry.querySelector('input[name="variants[][stock_quantity]"]').value
+        };
+        variants.push(variant);
+    });
+    formData.append('variants', JSON.stringify(variants));
+
+    uploadedFiles.forEach(file => {
+        formData.append('productImages', file);
+    });
+
+    console.log('Form data being sent:', Object.fromEntries(formData)); // Add this to see the data being sent
+
+    try {
+        const response = await fetch(`/admin/product/${productId}`, {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        console.log('Server response:', result); // Add this to see the server's response
+
+        if (result.success) {
+            alert(result.message);
+            window.location.href = result.redirect;
+        } else {
+            alert(result.message);
+        }
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while updating the product.');
+    }
+});
+        });
+    </script>
+</body>
+</html>

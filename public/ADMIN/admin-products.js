@@ -1,4 +1,3 @@
-// public/ADMIN/admin-products.js
 let allProducts = [];
 let currentPage = 1;
 const productsPerPage = 10;
@@ -77,8 +76,8 @@ function displayProducts(productsToDisplay) {
             <td><span class="stock-indicator ${stockClass}">${product.stock}</span></td>
             <td>${new Date(product.added_date).toLocaleDateString()}</td>
             <td>
-                <button class="action-btn" onclick="editProduct(${product.id})">Edit</button>
-                <button class="action-btn delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+                <button class="action-btn" onclick="editProduct('${product.id}')">Edit</button>
+                <button class="action-btn delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
             </td>
         `;
         productTableBody.appendChild(row);
@@ -206,6 +205,7 @@ function deleteProduct(productId) {
                     );
                     displayProducts(filteredProducts);
                     updatePagination(filteredProducts.length);
+                    fetchProductStats(); // Refresh stats after deletion
                 } else {
                     alert('Failed to delete product: ' + data.message);
                 }

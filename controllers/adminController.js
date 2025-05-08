@@ -1139,13 +1139,20 @@ const getEventManagerStats = async (req, res) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
         const todayEnd = new Date(today.getTime() + 24 * 60 * 60 * 1000);
+        const lastMonthStart = new Date(monthAgo.getTime() - 30 * 24 * 60 * 60 * 1000);
 
+        // Total Event Managers
         const total = await EventManager.countDocuments();
-        const monthly = await EventManager.countDocuments({ created_at: { $gte: monthAgo } });
-        const todayEvents = await Event.countDocuments({
-            date_time: { $gte: today, $lt: todayEnd }
+        const lastMonthManagers = await EventManager.countDocuments({
+            created_at: { $gte: lastMonthStart, $lt: monthAgo }
         });
+        const managerGrowthPercent = lastMonthManagers > 0 
+            ? Math.round(((total - lastMonthManagers) / lastMonthManagers) * 100) 
+            : 0;
+
+        // Total Revenue Generated
         const revenueResult = await Event.aggregate([
             { $match: { status: { $in: ['Past', 'Ongoing'] } } },
             {
@@ -1157,20 +1164,60 @@ const getEventManagerStats = async (req, res) => {
         ]);
         const revenue = revenueResult.length > 0 ? revenueResult[0].revenue : 0;
 
+        const lastMonthRevenueResult = await Event.aggregate([
+            { 
+                $match: { 
+                    date_time: { $gte: lastMonthStart, $lt: monthAgo },
+                    status: { $in: ['Past', 'Ongoing'] }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    revenue: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } }
+                }
+            }
+        ]);
+        const lastMonthRevenue = lastMonthRevenueResult.length > 0 ? lastMonthRevenueResult[0].revenue : 0;
+        const revenueGrowthPercent = lastMonthRevenue > 0 
+            ? Math.round(((revenue - lastMonthRevenue) / lastMonthRevenue) * 100) 
+            : 0;
+
+        // Total Events
+        const totalEvents = await Event.countDocuments();
+        const lastMonthEvents = await Event.countDocuments({
+            created_at: { $gte: lastMonthStart, $lt: monthAgo }
+        });
+        const eventsGrowthPercent = lastMonthEvents > 0 
+            ? Math.round(((totalEvents - lastMonthEvents) / lastMonthEvents) * 100) 
+            : 0;
+
+        // Today's Events
+        const todayEvents = await Event.countDocuments({
+            date_time: { $gte: today, $lt: todayEnd }
+        });
+        const yesterdayEvents = await Event.countDocuments({
+            date_time: { $gte: yesterday, $lt: today }
+        });
+        const todayEventsChange = todayEvents - yesterdayEvents;
+
         res.json({
             success: true,
             stats: {
                 total,
-                monthly,
+                revenue,
+                totalEvents,
                 todayEvents,
-                revenue
+                managerGrowthPercent,
+                revenueGrowthPercent,
+                eventsGrowthPercent,
+                todayEventsChange
             }
         });
     } catch (err) {
-        res.status(500).json({ success: false });
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
-
 const getTotalEvents = async (req, res) => {
     try {
         const total = await Event.countDocuments();
@@ -1377,6 +1424,223 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+const addProduct = async (req, res) => {
+    try {
+        const {
+            product_name,
+            product_category,
+            product_type,
+            stock_status,
+            product_description,
+            variants
+        } = req.body;
+
+        // Validate required fields
+        if (!product_name || !product_category || !product_type || !stock_status || !product_description || !variants) {
+            return res.status(400).json({ success: false, message: 'All required fields must be provided' });
+        }
+
+        // Since this is an admin action, we'll assign a default vendor for now
+        // In a real scenario, you might allow the admin to select a vendor
+        const defaultVendor = await Vendor.findOne(); // Get the first vendor for simplicity
+        if (!defaultVendor) {
+            return res.status(404).json({ success: false, message: 'No vendors available. Please add a vendor first.' });
+        }
+
+        // Create the product
+        const product = new Product({
+            vendor_id: defaultVendor._id,
+            product_name,
+            product_category,
+            product_type,
+            product_description,
+            stock_status,
+            created_at: new Date()
+        });
+
+        const savedProduct = await product.save();
+
+        // Parse and save variants
+        const parsedVariants = Array.isArray(variants) ? variants : JSON.parse(variants);
+        for (const variant of parsedVariants) {
+            const productVariant = new ProductVariant({
+                product_id: savedProduct._id,
+                size: variant.size || null,
+                color: variant.color || null,
+                regular_price: parseFloat(variant.regular_price),
+                sale_price: variant.sale_price ? parseFloat(variant.sale_price) : null,
+                stock_quantity: parseInt(variant.stock_quantity),
+                sku: variant.sku || null
+            });
+            await productVariant.save();
+        }
+
+        // Handle image uploads
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                const productImage = new ProductImage({
+                    product_id: savedProduct._id,
+                    image_path: `/uploads/products/${file.filename}`,
+                    is_primary: req.files.indexOf(file) === 0 // First image is primary
+                });
+                await productImage.save();
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Product added successfully',
+            redirect: '/admin-products'
+        });
+    } catch (err) {
+        console.error('Error adding product:', err);
+        res.status(500).json({ success: false, message: 'Failed to add product' });
+    }
+};
+
+const getProduct = async (req, res) => {
+    try {
+        const productId = req.params.id; // Changed from req.query.id to req.params.id
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({ success: false, message: 'Invalid product ID' });
+        }
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        const variants = await ProductVariant.find({ product_id: productId });
+        const images = await ProductImage.find({ product_id: productId });
+
+        res.json({
+            success: true,
+            product: {
+                id: product._id,
+                product_name: product.product_name,
+                product_category: product.product_category,
+                product_type: product.product_type,
+                stock_status: product.stock_status,
+                product_description: product.product_description,
+                variants: variants.map(v => ({
+                    size: v.size,
+                    color: v.color,
+                    regular_price: v.regular_price,
+                    sale_price: v.sale_price,
+                    stock_quantity: v.stock_quantity,
+                    sku: v.sku
+                })),
+                images: images.map(img => ({
+                    image_path: img.image_path,
+                    is_primary: img.is_primary
+                }))
+            }
+        });
+    } catch (err) {
+        console.error('Error fetching product:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const updateProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        const {
+            product_name,
+            product_category,
+            product_type,
+            stock_status,
+            product_description,
+            variants
+        } = req.body;
+
+        console.log('Received data:', {
+            productId,
+            product_name,
+            product_category,
+            product_type,
+            stock_status,
+            product_description,
+            variants,
+            files: req.files
+        }); // Add this to see the data received by the server
+
+        // Validate required fields
+        if (!product_name || !product_category || !product_type || !stock_status || !product_description || !variants) {
+            console.log('Validation failed: Missing required fields');
+            return res.status(400).json({ success: false, message: 'All required fields must be provided' });
+        }
+
+        const product = await Product.findById(productId);
+        if (!product) {
+            console.log('Product not found:', productId);
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        // Update product details
+        await Product.updateOne(
+            { _id: productId },
+            {
+                product_name,
+                product_category,
+                product_type,
+                stock_status,
+                product_description
+            }
+        );
+
+        // Delete existing variants and images (to replace with new ones)
+        await ProductVariant.deleteMany({ product_id: productId });
+        await ProductImage.deleteMany({ product_id: productId });
+
+        // Parse and save new variants
+        let parsedVariants;
+        try {
+            parsedVariants = Array.isArray(variants) ? variants : JSON.parse(variants);
+            if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
+                console.log('Validation failed: At least one variant is required');
+                return res.status(400).json({ success: false, message: 'At least one variant is required' });
+            }
+        } catch (err) {
+            console.log('Error parsing variants:', err);
+            return res.status(400).json({ success: false, message: 'Invalid variants data' });
+        }
+        console.log('Parsed variants:', parsedVariants);
+        for (const variant of parsedVariants) {
+            const productVariant = new ProductVariant({
+                product_id: productId,
+                size: variant.size || null,
+                color: variant.color || null,
+                regular_price: parseFloat(variant.regular_price),
+                sale_price: variant.sale_price ? parseFloat(variant.sale_price) : null,
+                stock_quantity: parseInt(variant.stock_quantity),
+                sku: variant.sku || null
+            });
+            await productVariant.save();
+        }
+
+        // Handle new image uploads
+        if (req.files && req.files.length > 0) {
+            for (const file of req.files) {
+                const productImage = new ProductImage({
+                    product_id: productId,
+                    image_path: `/uploads/products/${file.filename}`,
+                    is_primary: req.files.indexOf(file) === 0
+                });
+                await productImage.save();
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Product updated successfully',
+            redirect: '/admin-products'
+        });
+    } catch (err) {
+        console.error('Error updating product:', err);
+        res.status(500).json({ success: false, message: 'Failed to update product' });
+    }
+};
 module.exports = {
     adminLogin,
     getUsers,
@@ -1407,5 +1671,8 @@ module.exports = {
     updateEventManager,
     deleteEventManager,
     deleteProduct,
-    getRevenueChartData
+    getRevenueChartData,
+    addProduct,      
+    getProduct,      
+    updateProduct
 };

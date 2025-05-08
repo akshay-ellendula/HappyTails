@@ -30,9 +30,41 @@ const {
     updateEventManager,
     deleteEventManager,
     deleteProduct,
-    getRevenueChartData
+    getRevenueChartData,
+    getProduct,
+    updateProduct,
+    addProduct
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
+
+
+const multer = require('multer');
+const path = require('path');
+
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../public/uploads/products'));
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
+        if (extname && mimetype) {
+            return cb(null, true);
+        }
+        cb(new Error('Only JPEG, JPG, and PNG files are allowed'));
+    }
+});
+
 
 // Existing routes
 router.post('/admin-login', adminLogin);
@@ -65,5 +97,27 @@ router.get('/admin/event-manager/:id/past-events', isAdminAuthenticated, getPast
 router.put('/admin/event-manager/:id', isAdminAuthenticated, updateEventManager);
 router.delete('/admin/event-manager/:id', isAdminAuthenticated, deleteEventManager);
 router.get('/admin/revenue-chart-data', isAdminAuthenticated, getRevenueChartData);
+
+// Render Add Product Page
+router.get('/admin-add-product', isAdminAuthenticated, (req, res) => {
+    res.render('admin-add-product', {
+        categories: ['beds', 'food', 'toys', 'grooming', 'other'],
+        petTypes: ['dog', 'cat', 'bird', 'fish', 'all']
+    });
+});
+
+// Render Edit Product Page
+router.get('/admin-edit-product', isAdminAuthenticated, (req, res) => {
+    res.render('admin-edit-product');
+});
+
+// Fetch Product Data for Editing
+router.get('/admin/product/:id', isAdminAuthenticated, getProduct);
+
+// Handle Add Product Submission
+router.post('/admin/add-product', isAdminAuthenticated, upload.array('productImages', 4), addProduct);
+
+// Handle Update Product Submission
+router.post('/admin/product/:id', isAdminAuthenticated, upload.array('productImages', 4), updateProduct);
 
 module.exports = router;
