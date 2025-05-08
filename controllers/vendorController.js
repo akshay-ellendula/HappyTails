@@ -1240,4 +1240,67 @@ const getCustomerDetails = async (req, res) => {
     }
 };
 
-module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails, getCustomerDetails };
+// Delete a single order
+const deleteOrder = async (req, res) => {
+    if (!req.session.vendor) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    const vendorId = req.session.vendor.id;
+    const orderId = req.params.orderId;
+    try {
+        const order = await Order.findOne({ _id: orderId, status: 'Pending' });
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found or not pending' });
+        }
+        const productMatch = await Order.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(orderId) } },
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'order_items' } },
+            { $lookup: { from: 'products', localField: 'order_items.product_id', foreignField: '_id', as: 'products' } },
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } }
+        ]);
+        if (!productMatch.length) {
+            return res.status(403).json({ success: false, message: 'Unauthorized: This order does not belong to your store' });
+        }
+        await Order.deleteOne({ _id: orderId });
+        await OrderItem.deleteMany({ order_id: orderId });
+        res.status(200).json({ success: true, message: 'Order deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting order:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+// Delete selected orders
+const deleteSelectedOrders = async (req, res) => {
+    if (!req.session.vendor) {
+        return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+    const vendorId = req.session.vendor.id;
+    const { orderIds } = req.body;
+    if (!orderIds || !Array.isArray(orderIds) || orderIds.length === 0) {
+        return res.status(400).json({ success: false, message: 'No orders selected' });
+    }
+    try {
+        const orders = await Order.find({ _id: { $in: orderIds }, status: 'Pending' });
+        if (orders.length === 0) {
+            return res.status(404).json({ success: false, message: 'No pending orders found' });
+        }
+        const productMatch = await Order.aggregate([
+            { $match: { _id: { $in: orderIds.map(id => new mongoose.Types.ObjectId(id)) } } },
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'order_items' } },
+            { $lookup: { from: 'products', localField: 'order_items.product_id', foreignField: '_id', as: 'products' } },
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } }
+        ]);
+        if (productMatch.length !== orders.length) {
+            return res.status(403).json({ success: false, message: 'Unauthorized: Some orders do not belong to your store' });
+        }
+        await Order.deleteMany({ _id: { $in: orderIds } });
+        await OrderItem.deleteMany({ order_id: { $in: orderIds } });
+        res.status(200).json({ success: true, message: 'Selected orders deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting selected orders:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+module.exports = { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct,getOrderDetails, getCustomerDetails,deleteSelectedOrders,deleteOrder };
