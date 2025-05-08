@@ -3,248 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vendor Dashboard - Happy Tails</title>
+    <title>Vendor Analytics - Happy Tails</title>
     <link href="/SHOP/shop-analytics.css" rel="stylesheet">
 </head>
 <body>
     <div class="header">
         <div class="logo">Happy Tails</div>
         <div class="user-info" id="profile-trigger">
-            <span>Welcome, Vendor</span>
-            <div class="user-avatar">V</div>
+            <span>Welcome, <%= vendor.store_name %></span>
+            <div class="user-avatar"><%= vendor.store_name.charAt(0).toUpperCase() %></div>
         </div>
     </div>
     
     <!-- Profile Dropdown -->
     <div class="profile-dropdown" id="profile-dropdown">
         <div class="profile-header">
-            <div class="profile-name">Vendor Name</div>
-            <div class="profile-email">vendor@example.com</div>
+            <div class="profile-name"><%= vendor.store_name %></div>
+            <div class="profile-email"><%= vendor.email || 'vendor@example.com' %></div>
         </div>
         <ul class="profile-menu">
             <li><a href="/shop-profile" id="profile-link">My Profile</a></li>
-            <li><a href="#">Logout</a></li>
+            <li><a href="/logout">Logout</a></li>
         </ul>
     </div>
     
     <div class="container">
         <div class="sidebar">
             <ul class="sidebar-menu">
-                <li><a href="/shop-dashboard" data-page="dashboard">Dashboard</a></li>
-                <li><a href="/shop-products"  data-page="products">Products</a></li>
+                <li><a href="/shop-dashboard/<%= vendor.store_name.toLowerCase().replace(/\s+/g, '-') %>" data-page="dashboard">Dashboard</a></li>
+                <li><a href="/shop-products" data-page="products">Products</a></li>
                 <li><a href="/shop-orders" data-page="orders">Orders</a></li>
                 <li><a href="/shop-customers" data-page="customers">Customers</a></li>
-                <li><a href="/shop-analytics"  class="active" data-page="analytics">Analytics</a></li>
+                <li><a href="/shop-analytics" class="active" data-page="analytics">Analytics</a></li>
             </ul>
         </div>
         
         <div class="main-content" id="main-content">
-           <!-- Analytics Content -->
-<div class="page-container active" id="analytics-page">
-    <div class="title-bar">
-        <h1 class="dashboard-title">Analytics</h1>
-    </div>
-    
-    <div class="time-filter">
-        <button class="active" data-period="all">All Time</button>
-        <button data-period="today">Today</button>
-        <button data-period="week">This Week</button>
-        <button data-period="month">This Month</button>
-        <button data-period="custom">Custom</button>
-    </div>
-    
-    <!-- Revenue Section -->
-    <h2 class="section-header">Revenue</h2>
-    <div class="analytics-grid">
-        <div class="card">
-            <h2>Revenue Overview</h2>
-            <div class="stat">
-                <div class="stat-label">Total Revenue</div>
-                <div class="stat-value">$24,850.00</div>
+            <!-- Analytics Content -->
+            <div class="page-container active" id="analytics-page">
+                <div class="title-bar">
+                    <h1 class="dashboard-title">Analytics</h1>
+                </div>
+                
+                <div class="time-filter">
+                    <button class="<%= period === 'all' ? 'active' : '' %>" data-period="all" onclick="changePeriod('all')">All Time</button>
+                    <button class="<%= period === 'today' ? 'active' : '' %>" data-period="today" onclick="changePeriod('today')">Today</button>
+                    <button class="<%= period === 'week' ? 'active' : '' %>" data-period="week" onclick="changePeriod('week')">This Week</button>
+                    <button class="<%= period === 'month' ? 'active' : '' %>" data-period="month" onclick="changePeriod('month')">This Month</button>
+                    <button data-period="custom" onclick="alert('Custom period selection not implemented yet')">Custom</button>
+                </div>
+                
+                <!-- Revenue Section -->
+                <h2 class="section-header">Revenue</h2>
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h2>Revenue Overview</h2>
+                        <div class="stat">
+                            <div class="stat-label">Total Revenue</div>
+                            <div class="stat-value">$<%= analytics.revenue.total %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Today</div>
+                            <div class="stat-value">$<%= analytics.revenue.today %> <span class="indicator <%= analytics.revenue.today > 0 ? 'up' : '' %>"><%= analytics.revenue.today > 0 ? '+15%' : '0%' %></span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Week</div>
+                            <div class="stat-value">$<%= analytics.revenue.week %> <span class="indicator <%= analytics.revenue.week > 0 ? 'up' : '' %>"><%= analytics.revenue.week > 0 ? '+8%' : '0%' %></span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Month</div>
+                            <div class="stat-value">$<%= analytics.revenue.month %> <span class="indicator <%= analytics.revenue.month > 0 ? 'up' : '' %>"><%= analytics.revenue.month > 0 ? '+12%' : '0%' %></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Revenue by Product Category</h2>
+                        <% analytics.revenueByCategory.forEach((category, index) => { %>
+                            <div class="stat">
+                                <div class="stat-label"><%= category.category %></div>
+                                <div class="stat-value">$<%= category.revenue %></div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" data-progress="<%= category.percentage %>"></div>
+                            </div>
+                        <% }) %>
+                        <% if (analytics.revenueByCategory.length === 0) { %>
+                            <div class="stat">
+                                <div class="stat-label">No Data</div>
+                                <div class="stat-value">$0.00</div>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress" data-progress="0"></div>
+                            </div>
+                        <% } %>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Average Order Value</h2>
+                        <div class="stat">
+                            <div class="stat-label">Overall Average</div>
+                            <div class="stat-value">$<%= analytics.avgOrderValue.total %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Today</div>
+                            <div class="stat-value">$<%= analytics.avgOrderValue.today %> <span class="indicator <%= analytics.avgOrderValue.today > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.today > 0 ? '+7%' : '0%' %></span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Week</div>
+                            <div class="stat-value">$<%= analytics.avgOrderValue.week %> <span class="indicator <%= analytics.avgOrderValue.week > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.week > 0 ? '+3%' : '0%' %></span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Month</div>
+                            <div class="stat-value">$<%= analytics.avgOrderValue.month %> <span class="indicator <%= analytics.avgOrderValue.month > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.month > 0 ? '+1.5%' : '0%' %></span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Orders Section -->
+                <h2 class="section-header">Orders</h2>
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h2>Order Overview</h2>
+                        <div class="stat">
+                            <div class="stat-label">Total Orders</div>
+                            <div class="stat-value"><%= analytics.orders.total %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Today</div>
+                            <div class="stat-value"><%= analytics.orders.today %> <span class="indicator <%= analytics.orders.today > 0 ? 'up' : '' %>"><%= analytics.orders.today > 0 ? '+20%' : '0%' %></span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Week</div>
+                            <div class="stat-value"><%= analytics.orders.week %> <span class="indicator <%= analytics.orders.week > 0 ? 'up' : '' %>"><%= analytics.orders.week > 0 ? '+5%' : '0%' %></span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">This Month</div>
+                            <div class="stat-value"><%= analytics.orders.month %> <span class="indicator <%= analytics.orders.month > 0 ? 'up' : '' %>"><%= analytics.orders.month > 0 ? '+12%' : '0%' %></span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h2>Order Status</h2>
+                        <div class="stat">
+                            <div class="stat-label">Completed</div>
+                            <div class="stat-value"><%= analytics.orders.status.completed %></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.completed / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Processing</div>
+                            <div class="stat-value"><%= analytics.orders.status.processing %></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.processing / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value"><%= analytics.orders.status.pending %></div>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.pending / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Customers Section -->
+                <h2 class="section-header">Customers</h2>
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h2>Customer Overview</h2>
+                        <div class="stat">
+                            <div class="stat-label">Total Customers</div>
+                            <div class="stat-value"><%= analytics.customers.total %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">New Today</div>
+                            <div class="stat-value"><%= analytics.customers.today %> <span class="indicator <%= analytics.customers.today > 0 ? 'up' : '' %>"><%= analytics.customers.today > 0 ? '+16%' : '0%' %></span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">New This Week</div>
+                            <div class="stat-value"><%= analytics.customers.week %> <span class="indicator <%= analytics.customers.week > 0 ? 'up' : '' %>"><%= analytics.customers.week > 0 ? '+10%' : '0%' %></span></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">New This Month</div>
+                            <div class="stat-value"><%= analytics.customers.month %> <span class="indicator <%= analytics.customers.month > 0 ? 'up' : '' %>"><%= analytics.customers.month > 0 ? '+22%' : '0%' %></span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Section -->
+                <h2 class="section-header">Products</h2>
+                <div class="analytics-grid">
+                    <div class="card">
+                        <h2>Product Overview</h2>
+                        <div class="stat">
+                            <div class="stat-label">Total Products</div>
+                            <div class="stat-value"><%= analytics.products.total %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Active Products</div>
+                            <div class="stat-value"><%= analytics.products.active %></div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Out of Stock</div>
+                            <div class="stat-value"><%= analytics.products.outOfStock %></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="stat">
-                <div class="stat-label">Today</div>
-                <div class="stat-value">$1,250.00 <span class="indicator up">+15%</span></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">This Week</div>
-                <div class="stat-value">$5,320.00 <span class="indicator up">+8%</span></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">This Month</div>
-                <div class="stat-value">$18,650.00 <span class="indicator up">+12%</span></div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>Revenue by Product Category</h2>
-            <div class="stat">
-                <div class="stat-label">Pet Food</div>
-                <div class="stat-value">$10,520.00</div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress" style="width: 42%;"></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Toys</div>
-                <div class="stat-value">$6,340.00</div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress" style="width: 25%;"></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Accessories</div>
-                <div class="stat-value">$4,950.00</div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress" style="width: 20%;"></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Other</div>
-                <div class="stat-value">$3,040.00</div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress" style="width: 13%;"></div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>Average Order Value</h2>
-            <div class="stat">
-                <div class="stat-label">Overall Average</div>
-                <div class="stat-value">$48.75</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Today</div>
-                <div class="stat-value">$52.10 <span class="indicator up">+7%</span></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">This Week</div>
-                <div class="stat-value">$50.25 <span class="indicator up">+3%</span></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">This Month</div>
-                <div class="stat-value">$49.50 <span class="indicator up">+1.5%</span></div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Orders Section -->
-    <h2 class="section-header">Orders</h2>
-    <div class="analytics-grid">
-        <div class="card">
-            <h2>Order Overview</h2>
-            <div class="stat">
-                <div class="stat-label">Total Orders</div>
-                <div class="stat-value">512</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Today</div>
-                <div class="stat-value">24 <span class="indicator up">+20%</span></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">This Week</div>
-                <div class="stat-value">106 <span class="indicator up">+5%</span></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">This Month</div>
-                <div class="stat-value">378 <span class="indicator up">+12%</span></div>
-            </div>
-        </div>
-        
-        <div class="card">
-            <h2>Order Status</h2>
-            <div class="stat">
-                <div class="stat-label">Completed</div>
-                <div class="stat-value">428</div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress" style="width: 84%;"></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Processing</div>
-                <div class="stat-value">48</div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress" style="width: 9%;"></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Pending</div>
-                <div class="stat-value">36</div>
-            </div>
-            <div class="progress-bar">
-                <div class="progress" style="width: 7%;"></div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Customer Section -->
-    <h2 class="section-header">Customers</h2>
-    <div class="analytics-grid">
-        <div class="card">
-            <h2>Customer Overview</h2>
-            <div class="stat">
-                <div class="stat-label">Total Customers</div>
-                <div class="stat-value">346</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">New Today</div>
-                <div class="stat-value">14 <span class="indicator up">+16%</span></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">New This Week</div>
-                <div class="stat-value">48 <span class="indicator up">+10%</span></div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">New This Month</div>
-                <div class="stat-value">125 <span class="indicator up">+22%</span></div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Product Section -->
-    <h2 class="section-header">Products</h2>
-    <div class="analytics-grid">
-        <div class="card">
-            <h2>Product Overview</h2>
-            <div class="stat">
-                <div class="stat-label">Total Products</div>
-                <div class="stat-value">68</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Active Products</div>
-                <div class="stat-value">62</div>
-            </div>
-            <div class="stat">
-                <div class="stat-label">Out of Stock</div>
-                <div class="stat-value">6</div>
-            </div>
-        </div>
-    </div>
-</div>
-            
         </div>
     </div>
 
-   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Profile dropdown toggle
-    const profileTrigger = document.getElementById('profile-trigger');
-    const profileDropdown = document.getElementById('profile-dropdown');
-    
-    profileTrigger.addEventListener('click', function() {
-        profileDropdown.classList.toggle('active');
-    });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-            profileDropdown.classList.remove('active');
-        }
-    });
-    
-    
-});
-   </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile dropdown toggle
+            const profileTrigger = document.getElementById('profile-trigger');
+            const profileDropdown = document.getElementById('profile-dropdown');
+            
+            profileTrigger.addEventListener('click', function() {
+                profileDropdown.classList.toggle('active');
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                    profileDropdown.classList.remove('active');
+                }
+            });
+
+            // Period filter change handler
+            window.changePeriod = function(period) {
+                window.location.href = `/shop-analytics?period=${period}`;
+            };
+
+            // Set progress bar widths dynamically
+            document.querySelectorAll('.progress').forEach(progress => {
+                const percentage = progress.dataset.progress;
+                if (percentage !== undefined) {
+                    progress.style.width = `${percentage}%`;
+                }
+            });
+        });
+    </script>
 </body>
 </html>

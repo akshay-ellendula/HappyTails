@@ -55,6 +55,13 @@ body {
     margin-left: 10px;
 }
 
+.delete-btn{
+    border: #333;
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+}
 .status-delivered {
     background-color: #d4f8d4;
     color: #0a6e0a;

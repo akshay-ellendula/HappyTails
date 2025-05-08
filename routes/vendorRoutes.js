@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/database');
-const { storeSignup, serviceProviderLogin, getVendorDashboard, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders } = require('../controllers/vendorController');
+const { storeSignup, serviceProviderLogin, getVendorDashboard,getVendorAnalytics, logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders } = require('../controllers/vendorController');
 
 router.get('/service_provider_login', (req, res) => {
     res.render('service_provider_login');
@@ -65,6 +65,7 @@ router.get('/shop-order-details/:orderId', async (req, res) => {
     }
 });
 
+router.get('/shop-analytics', getVendorAnalytics);
 
 
 router.get('/shop-product-edit/:productId', getProductForEdit);
