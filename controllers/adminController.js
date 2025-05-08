@@ -644,29 +644,57 @@ const getVendorStats = async (req, res) => {
         const totalRevenueResult = await Order.aggregate([
             {
                 $lookup: {
-                    from: 'vendors',
-                    localField: 'vendor_id',
-                    foreignField: '_id',
-                    as: 'vendor'
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
                 }
             },
-            { $unwind: '$vendor' },
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$total_amount' }
+                }
+            }
         ]);
-        const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].total : 0;
+        const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].total : 0; // Define totalRevenue
 
         const lastMonthRevenueResult = await Order.aggregate([
             { $match: { order_date: { $gte: new Date(monthAgo.getTime() - 30 * 24 * 60 * 60 * 1000), $lt: monthAgo } } },
             {
                 $lookup: {
-                    from: 'vendors',
-                    localField: 'vendor_id',
-                    foreignField: '_id',
-                    as: 'vendor'
+                    from: 'orderitems',
+                    localField: '_id',
+                    foreignField: 'order_id',
+                    as: 'items'
                 }
             },
-            { $unwind: '$vendor' },
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
+            { $unwind: '$items' },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'items.product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$total_amount' }
+                }
+            }
         ]);
         const lastMonthRevenue = lastMonthRevenueResult.length > 0 ? lastMonthRevenueResult[0].total : 0;
         const revenueGrowthPercent = lastMonthRevenue > 0 ? 
