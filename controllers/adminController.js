@@ -1761,6 +1761,16 @@ const updateProduct = async (req, res) => {
         res.status(500).json({ success: false, message: 'Failed to update product' });
     }
 };
+
+
+const logout = (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Error logging out' });
+        }
+        res.redirect('/admin-login');
+    });
+};
 module.exports = {
     adminLogin,
     getUsers,
@@ -1794,5 +1804,6 @@ module.exports = {
     getRevenueChartData,
     addProduct,      
     getProduct,      
-    updateProduct
+    updateProduct,
+    logout
 };
