@@ -5,8 +5,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Manager - Attendees</title>
-    <link rel="stylesheet" href="/services/service_dashboard.css">
     <link rel="stylesheet" href="/Events/eventmanager_attendees.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+    </style>
 </head>
 
 <body>
@@ -36,102 +47,82 @@
             <div class="welcome-section">
                 <h1>Attendees</h1>
             </div>
-
             <!-- Past & Ongoing Attendees -->
             <div class="section">
                 <h2 style="margin-bottom: 10px;">All Registered Attendees (Past & Ongoing)</h2>
-                <div class="appointments">
-                    <% if (typeof pastOngoingAttendees !=='undefined' && pastOngoingAttendees.length> 0) { %>
-                        <% pastOngoingAttendees.forEach(attendee=> { %>
-                            <% if (attendee.name) { %>
-                                <div class="appointment-card">
-                                    <div class="time-badge" data-time="<%= attendee.eventTime %>">
-                                        <!-- Time will be set by JavaScript -->
-                                    </div>
-                                    <h3>
-                                        <%= attendee.name %>
-                                    </h3>
-                                    <p><strong>Email:</strong>
-                                        <%= attendee.email %>
-                                    </p>
-                                    <p><strong>Event:</strong>
-                                        <%= attendee.event_name %> (<%= attendee.formattedDate %>)
-                                    </p>
-                                    <p><strong>Registration Date:</strong>
-                                        <%= attendee.formattedRegDate || 'N/A' %>
-                                    </p>
-                                    <div class="card-actions">
-                                        <div class="attendee-count">Total: <%= attendee.totalAttendees || 0 %>
-                                        </div>
-                                    </div>
-                                </div>
+                <% if (typeof pastOngoingAttendees !== 'undefined' && pastOngoingAttendees.length > 0) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Registration Date</th>
+                                <th>Total Attendees</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% pastOngoingAttendees.forEach(attendee => { %>
+                                <% if (attendee.name) { %>
+                                    <tr>
+                                        <td><%= attendee.name %></td>
+                                        <td><%= attendee.email %></td>
+                                        <td><%= attendee.event_name %></td>
+                                        <td><%= attendee.formattedDate %></td>
+                                        <td><%= attendee.formattedRegDate || 'N/A' %></td>
+                                        <td><%= attendee.totalAttendees || 0 %></td>
+                                    </tr>
                                 <% } %>
-                                    <% }) %>
-                                        <% } else { %>
-                                            <p>No past or ongoing attendees found.</p>
-                                            <% } %>
-                </div>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No past or ongoing attendees found.</p>
+                <% } %>
             </div>
 
             <!-- Upcoming Attendees -->
             <div class="section">
                 <h2 style="margin-bottom: 10px;">Upcoming Events Attendees</h2>
-                <div class="appointments">
-                    <% if (typeof upcomingAttendees !=='undefined' && upcomingAttendees.length> 0) { %>
-                        <% upcomingAttendees.forEach(attendee=> { %>
-                            <% if (attendee.name) { %>
-                                <div class="appointment-card">
-                                    <div class="time-badge" data-time="<%= attendee.eventTime %>">
-                                        <!-- Time will be set by JavaScript -->
-                                    </div>
-                                    <h3>
-                                        <%= attendee.name %>
-                                    </h3>
-                                    <p><strong>Email:</strong>
-                                        <%= attendee.email %>
-                                    </p>
-                                    <p><strong>Event:</strong>
-                                        <%= attendee.event_name %> (<%= attendee.formattedDate %>)
-                                    </p>
-                                    <p><strong>Registration Date:</strong>
-                                        <%= attendee.formattedRegDate || 'N/A' %>
-                                    </p>
-                                    <div class="card-actions">
-                                        <div class="attendee-count">Registered: <%= attendee.seats || 0 %>
-                                        </div>
-                                    </div>
-                                </div>
+                <% if (typeof upcomingAttendees !== 'undefined' && upcomingAttendees.length > 0) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Registration Date</th>
+                                <th>Registered Seats</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% upcomingAttendees.forEach(attendee => { %>
+                                <% if (attendee.name) { %>
+                                    <tr>
+                                        <td><%= attendee.name %></td>
+                                        <td><%= attendee.email %></td>
+                                        <td><%= attendee.event_name %></td>
+                                        <td><%= attendee.formattedDate %></td>
+                                        <td><%= attendee.formattedRegDate || 'N/A' %></td>
+                                        <td><%= attendee.seats || 0 %></td>
+                                    </tr>
                                 <% } %>
-                                    <% }) %>
-                                        <% } else { %>
-                                            <p>No upcoming event attendees found.</p>
-                                            <% } %>
-                </div>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No upcoming event attendees found.</p>
+                <% } %>
             </div>
         </div>
     </div>
 
     <script>
-        // Function to convert 24-hour time to 12-hour format
-        function convertTo12Hour(time) {
-            const [hours, minutes] = time.split(':').map(Number);
-            const period = hours >= 12 ? 'PM' : 'AM';
-            const adjustedHours = hours % 12 || 12; // Convert 0 to 12 for midnight
-            return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
-        }
-
-        // Apply the conversion to all time badges
-        document.querySelectorAll('.time-badge').forEach(badge => {
-            const time = badge.getAttribute('data-time');
-            if (time) {
-                badge.textContent = convertTo12Hour(time);
-            }
-        });
-
         document.addEventListener('DOMContentLoaded', () => {
             console.log('Page loaded:', window.location.pathname);
         });
     </script>
 </body>
-
 </html>
