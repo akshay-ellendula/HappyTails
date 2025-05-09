@@ -154,6 +154,48 @@
         </div>
     </div>
 
-    <script src="/SHOP/shop-profile.js"></script>
+    <script>
+    document.getElementById('edit-btn').addEventListener('click', function() {
+    document.getElementById('profile-view').classList.add('hidden');
+    document.getElementById('profile-edit').classList.remove('hidden');
+});
+
+document.getElementById('cancel-btn').addEventListener('click', function() {
+    document.getElementById('profile-edit').classList.add('hidden');
+    document.getElementById('profile-view').classList.remove('hidden');
+});
+
+document.getElementById('save-btn').addEventListener('click', function() {
+    const storeName = document.getElementById('store-name').value;
+    const ownerName = document.getElementById('owner-name').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const address = document.getElementById('address').value;
+    const description = document.getElementById('description').value;
+
+    fetch('/update-vendor-profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ storeName, ownerName, email, phone, address, description })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Profile updated successfully');
+            window.location.reload();
+        } else {
+            alert('Error updating profile: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Server error');
+    });
+});
+
+function goBack() {
+    window.history.back();
+}
+    </script>
 </body>
 </html>

@@ -88,7 +88,7 @@
                                 <td colspan="8">No orders found.</td>
                             </tr>
                         <% } %>
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>
@@ -166,6 +166,43 @@
             printWindow.document.close();
             printWindow.print();
         }
+
+        function toggleSelectAll() {
+           const selectAll = document.getElementById('selectAll');
+           const checkboxes = document.querySelectorAll('.order-checkbox');
+           checkboxes.forEach(checkbox => {
+               if (!checkbox.disabled) checkbox.checked = selectAll.checked;
+           });
+       }
+       function deleteSelectedOrders() {
+           const checkboxes = document.querySelectorAll('.order-checkbox:checked');
+           const orderIds = Array.from(checkboxes).map(cb => cb.value);
+           if (orderIds.length === 0) {
+               alert('No pending orders selected');
+               return;
+           }
+           if (confirm('Are you sure you want to delete the selected orders?')) {
+               fetch('/delete-selected-orders', {
+                   method: 'DELETE',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ orderIds })
+               })
+               .then(response => response.json())
+               .then(data => {
+                   if (data.success) {
+                       alert('Selected orders deleted successfully');
+                       window.location.reload();
+                   } else {
+                       alert('Error deleting orders: ' + data.message);
+                   }
+               })
+               .catch(error => {
+                   console.error('Error:', error);
+                   alert('Server error');
+               });
+           }
+       }
+
     </script>
 </body>
 </html>
