@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Manager - Edit Attendee</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: "Outfit", sans-serif;
+        }
+
+        body {
+            background-color: #effe8b;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: #effe8b;
+            padding: 10px 50px;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            text-decoration: none;
+            color: #1a1a1a;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .menu {
+            display: flex;
+            margin-left: auto;
+            align-items: center;
+        }
+
+        .menu a {
+            margin-left: 20px;
+            font-size: 1rem;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+
+        .menu a:hover {
+            text-decoration: underline;
+        }
+
+        .sidebar {
+            width: 250px;
+            color: #1a1a1a;
+            padding: 20px;
+            position: fixed;
+            top: 60px;
+            height: calc(100% - 60px);
+        }
+
+        .sidebar h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #1a1a1a;
+            font-size: 1.2rem;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: 0.3s ease;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background: #d9d975;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            margin-left: 270px;
+            margin-top: 20px;
+        }
+
+        .welcome-section {
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 1.8rem;
+            color: #1a1a1a;
+        }
+
+        .edit-attendee-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 600px;
+            box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1a1a1a;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: "Outfit", sans-serif;
+        }
+
+        .form-group .readonly-field {
+            background-color: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        .form-group .error {
+            color: #ff6b6b;
+            font-size: 0.8em;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .cancel-btn {
+            background-color: #effe8b;
+            color: #1a1d26;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            text-decoration: none;
+        }
+
+        .cancel-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .save-btn {
+            background-color: #1a1d26;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .save-btn:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 20px;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-height: auto;
+                padding: 20px;
+                top: 50px;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            .edit-attendee-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home">Happy Tails</a>
+            <div class="menu">
+                <a href="/eventmanager_profile">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </header>
+    </div>
+
+    <div class="flex min-h-screen">
+        <aside class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="/eventmanager_dashboard">Home</a></li>
+                <li><a href="/eventmanager_events">Events</a></li>
+                <li><a href="/eventmanager_attendees" class="active">Attendees</a></li>
+                <li><a href="/eventmanager_profile">Profile</a></li>
+                <li><a href="/eventmanager_analytics">Analytics</a></li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="welcome-section">
+                <h1>Edit Attendee</h1>
+            </div>
+
+            <section class="edit-attendee-section">
+                <form id="editAttendeeForm" onsubmit="saveAttendee(event)">
+                    <input type="hidden" id="editAttendeeId" value="<%= attendeeId %>">
+                    <div class="form-group">
+                        <label for="editName">Name</label>
+                        <input type="text" id="editName" required value="<%= name %>">
+                        <span id="editNameError" class="error">Name is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPhone">Phone No</label>
+                        <input type="text" id="editPhone" required value="<%= phone %>">
+                        <span id="editPhoneError" class="error">Phone number is required.</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEvent">Event (Read-only)</label>
+                        <input type="text" id="editEvent" readonly class="readonly-field" value="<%= event %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="editDate">Date (Read-only)</label>
+                        <input type="text" id="editDate" readonly class="readonly-field" value="<%= date %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="editSeats">Seats</label>
+                        <input type="number" id="editSeats" required min="1" value="<%= seats %>">
+                        <span id="editSeatsError" class="error">Seats must be a positive number.</span>
+                    </div>
+                    <div class="form-actions">
+                        <a href="/eventmanager_dashboard" class="cancel-btn">Cancel</a>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function validateForm() {
+            let isValid = true;
+            document.querySelectorAll('#editNameError, #editPhoneError, #editSeatsError').forEach(error => {
+                error.style.display = 'none';
+            });
+
+            if (!document.getElementById('editName').value.trim()) {
+                document.getElementById('editNameError').style.display = 'block';
+                isValid = false;
+            }
+            if (!document.getElementById('editPhone').value.trim()) {
+                document.getElementById('editPhoneError').style.display = 'block';
+                isValid = false;
+            }
+            const seats = parseInt(document.getElementById('editSeats').value);
+            if (isNaN(seats) || seats < 1) {
+                document.getElementById('editSeatsError').style.display = 'block';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        async function saveAttendee(event) {
+            event.preventDefault();
+            if (!validateForm()) return;
+
+            const attendeeId = document.getElementById('editAttendeeId').value;
+            const updatedData = {
+                name: document.getElementById('editName').value,
+                phone_number: document.getElementById('editPhone').value,
+                seats: parseInt(document.getElementById('editSeats').value)
+            };
+
+            try {
+                const response = await fetch(`/eventmanager_dashboard/update-attendee/${attendeeId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updatedData)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Attendee updated successfully!');
+                    window.location.href = '/eventmanager_dashboard';
+                } else {
+                    alert('Error updating attendee: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error updating attendee:', error);
+                alert('Error updating attendee');
+            }
+        }
+    </script>
+</body>
+</html>x`
