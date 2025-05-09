@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Manager - Profile</title>
     <link rel="stylesheet" href="/Events/eventmanager_profile.css">
 </head>
+
 <body>
     <div class="navbar">
         <header>
@@ -37,14 +39,15 @@
             <div class="section">
                 <div class="appointment-card">
                     <div class="profile-header">
-                        <img
-                            src="<%= profile.image || 'images/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg' %>"
-                            alt="User Profile"
-                            class="profile-pic-large"
-                        />
+                        <img src="<%= profile.image ? profile.image : '/images/default-profile.jpg' %>"
+                            alt="User Profile" class="profile-pic-large"
+                            onerror="this.src='/images/default-profile.jpg';" />
                         <div class="profile-info">
-                            <h2><%= profile.name %></h2>
-                            <p class="member-since">Member since: <%= profile.memberSince %></p>
+                            <h2>
+                                <%= profile.name %>
+                            </h2>
+                            <p class="member-since">Member since: <%= profile.memberSince %>
+                            </p>
                         </div>
                     </div>
 
@@ -62,33 +65,33 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" id="email" value="<%= profile.email %>" readonly />
+                            <input type="email" id="email" value="<%= profile.email %>" />
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone Number</label>
-                            <input type="text" id="phone" value="<%= profile.phone %>" readonly />
+                            <input type="text" id="phone" value="<%= profile.phone %>" />
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="role">Role</label>
-                            <input type="text" id="role" value="Event Manager" readonly />
+                            <input type="text" id="role" value="Event Manager" />
                         </div>
                         <div class="form-group">
                             <label for="eventType">Event Specialization</label>
-                            <input type="text" id="eventType" value="<%= profile.eventType %>" readonly />
+                            <input type="text" id="eventType" value="<%= profile.eventType %>" />
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="license">License Number</label>
-                            <input type="text" id="license" value="<%= profile.license %>" readonly />
+                            <input type="text" id="license" value="<%= profile.license %>" />
                         </div>
                         <div class="form-group">
                             <label for="eventsManaged">Events Managed</label>
-                            <input type="text" id="eventsManaged" value="<%= profile.eventsManaged %>" readonly />
+                            <input type="text" id="eventsManaged" value="<%= profile.eventsManaged %>" />
                         </div>
                     </div>
 
@@ -139,7 +142,8 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="editFirstName">First Name</label>
-                        <input type="text" id="editFirstName" name="firstName" value="<%= profile.firstName %>" required />
+                        <input type="text" id="editFirstName" name="firstName" value="<%= profile.firstName %>"
+                            required />
                     </div>
                     <div class="form-group">
                         <label for="editLastName">Last Name</label>
@@ -159,7 +163,8 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="editEventType">Event Specialization</label>
-                        <input type="text" id="editEventType" name="eventType" value="<%= profile.eventType %>" required />
+                        <input type="text" id="editEventType" name="eventType" value="<%= profile.eventType %>"
+                            required />
                     </div>
                     <div class="form-group">
                         <label for="editLicense">License Number</label>
@@ -170,7 +175,8 @@
                     <div class="form-group">
                         <label for="editProfilePic">Profile Picture</label>
                         <div class="file-input-container">
-                            <input type="file" id="editProfilePic" name="profilePic" accept="image/*" class="file-input" />
+                            <input type="file" id="editProfilePic" name="profilePic" accept="image/*"
+                                class="file-input" />
                             <label for="editProfilePic" class="file-input-label">Choose File</label>
                             <span class="file-name">No file chosen</span>
                         </div>
@@ -235,21 +241,21 @@
                     newPassword
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Password updated successfully!");
-                    document.getElementById("currentPassword").value = "";
-                    document.getElementById("newPassword").value = "";
-                    document.getElementById("confirmPassword").value = "";
-                } else {
-                    alert(data.message || "Failed to update password");
-                }
-            })
-            .catch(err => {
-                console.error('Error updating password:', err);
-                alert("An error occurred while updating the password");
-            });
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Password updated successfully!");
+                        document.getElementById("currentPassword").value = "";
+                        document.getElementById("newPassword").value = "";
+                        document.getElementById("confirmPassword").value = "";
+                    } else {
+                        alert(data.message || "Failed to update password");
+                    }
+                })
+                .catch(err => {
+                    console.error('Error updating password:', err);
+                    alert("An error occurred while updating the password");
+                });
         };
 
         function validatePassword(password) {
@@ -261,4 +267,5 @@
         }
     </script>
 </body>
+
 </html>

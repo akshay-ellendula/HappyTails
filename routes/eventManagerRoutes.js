@@ -886,27 +886,6 @@ router.get('/eventmanager_profile', isAuthenticated, async (req, res) => {
         res.status(500).render('error', { message: 'Failed to load profile', error: err.message });
     }
 });
-
-// POST: Update profile
-router.post('/eventmanager_profile', isAuthenticated, upload.single('profilePic'), async (req, res) => {
-    try {
-        const eventManagerId = req.session.eventManager.id;
-        const { firstName, lastName, email, phone } = req.body;
-        const name = `${firstName} ${lastName}`.trim();
-        const contact_number = phone.replace(/\D/g, '').slice(-10);
-
-        await EventManager.updateOne(
-            { _id: eventManagerId },
-            { name, email, contact_number }
-        );
-
-        res.redirect('/eventmanager_profile');
-    } catch (err) {
-        console.error('Error updating profile:', err);
-        res.status(500).json({ success: false, message: 'Failed to update profile' });
-    }
-});
-
 // POST: Update password
 router.post('/eventmanager_profile/password', isAuthenticated, async (req, res) => {
     try {
@@ -1126,12 +1105,110 @@ router.post('/event_booking', async (req, res) => {
             { _id: eventId },
             { $inc: { tickets_sold: seats || 1 } }
         );
-
-        res.json({ success: true, message: 'Ticket booked successfully' });
     } catch (err) {
         console.error('Error booking event:', err);
         res.status(500).json({ success: false, message: 'Registration failed', error: err.message });
     }
 });
+router.get('/eventmanager_profile', isAuthenticated, async (req, res) => {
+    try {
+        const eventManagerId = req.session.eventManager.id;
 
+        const eventManager = await EventManager.findById(eventManagerId).lean();
+        const eventsManaged = await Event.countDocuments({ event_manager_id: eventManagerId });
+
+        if (!eventManager) {
+            return res.status(404).render('error', { message: 'Event manager not found' });
+        }
+
+        const [firstName, ...lastNameParts] = eventManager.name.split(' ');
+        const lastName = lastNameParts.join(' ');
+        const phoneRaw = eventManager.contact_number;
+        const phone = phoneRaw ? `+91 ${phoneRaw.substring(0, 5)} ${phoneRaw.substring(5)}` : 'N/A';
+
+        const profile = {
+            name: eventManager.name,
+            firstName,
+            lastName,
+            email: eventManager.email,
+            phone,
+            phoneRaw: phoneRaw || '',
+            eventType: eventManager.event_type || 'Pet Events',
+            license: eventManager.license || `EVENT-${eventManagerId}-AB`,
+            bio: eventManager.bio || `Experienced event manager specializing in pet events. Based in ${eventManager.location}, working with ${eventManager.company_name}.`,
+            eventsManaged,
+            memberSince: eventManager.member_since || new Date(eventManager.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
+            image: eventManager.image || null
+        };
+
+        res.render('eventmanager_profile', { profile });
+    } catch (err) {
+        console.error('Error fetching profile:', err);
+        res.status(500).render('error', { message: 'Failed to load profile', error: err.message });
+    }
+});
+// POST: Update profile
+router.post('/eventmanager_profile', isAuthenticated, upload.single('profilePic'), async (req, res) => {
+    try {
+        console.log('Request Body:', req.body); // Log form data
+        console.log('Uploaded File:', req.file); // Log file data
+        const eventManagerId = req.session.eventManager.id;
+        const { firstName, lastName, email, phone, eventType, license, bio } = req.body;
+        const name = `${firstName} ${lastName}`.trim();
+        const contact_number = phone ? phone.replace(/\D/g, '').slice(-10) : undefined;
+        const image = req.file ? `/images/${req.file.filename}` : undefined;
+
+        // Validate required fields
+        if (!firstName || !lastName || !email || !phone || !eventType || !license || !bio) {
+            console.error('Missing required fields:', { firstName, lastName, email, phone, eventType, license, bio });
+            return res.render('eventmanager_profile', {
+                profile: req.session.eventManager,
+                error: 'All fields are required.'
+            });
+        }
+
+        // Prepare update object
+        const updateData = {
+            name,
+            email,
+            contact_number,
+            event_type: eventType,
+            license,
+            bio
+        };
+
+        // Only include image if a new file was uploaded
+        if (image) {
+            updateData.image = image;
+        }
+
+        console.log('Update Data:', updateData); // Log data to be saved
+        const updateResult = await EventManager.updateOne(
+            { _id: eventManagerId },
+            { $set: updateData }
+        );
+
+        console.log('Update Result:', updateResult); // Log update result
+
+        // Update session data
+        req.session.eventManager = {
+            ...req.session.eventManager,
+            name,
+            email,
+            contact_number,
+            event_type: eventType,
+            license,
+            bio,
+            image: image || req.session.eventManager.image
+        };
+
+        res.redirect('/eventmanager_profile');
+    } catch (err) {
+        console.error('Error updating profile:', err);
+        res.render('eventmanager_profile', {
+            profile: req.session.eventManager,
+            error: `Failed to update profile: ${err.message}`
+        });
+    }
+});
 module.exports = router;

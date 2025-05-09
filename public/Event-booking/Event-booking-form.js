@@ -24,3 +24,5 @@ document.querySelectorAll('.side-navbar a:not(.close-btn)').forEach(link => {
         document.getElementById('sideNavbar').classList.remove('open');
     });
 });
+
+

@@ -1,4 +1,3 @@
-// serviceProviderController.js
 const bcrypt = require('bcryptjs');
 const { Vendor, EventManager } = require('../models/database');
 
@@ -17,9 +16,21 @@ const serviceProviderLogin = async (req, res) => {
         if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password' });
 
         if (role === 'event-manager') {
-            req.session.eventManagerId = user._id;
+            req.session.eventManager = {
+                id: user._id.toString(),
+                name: user.name,
+                email: user.email,
+                contact_number: user.contact_number,
+                company_name: user.company_name,
+                location: user.location,
+                event_type: user.event_type || 'Pet Events',
+                license: user.license || `EVENT-${user._id}-AB`,
+                bio: user.bio || `Experienced event manager specializing in pet events. Based in ${user.location}, working with ${user.company_name}.`,
+                image: user.image || null,
+                member_since: user.member_since || new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+            };
             redirectUrl = '/eventmanager_dashboard';
-        } else if (role === 'store-manager') { // Changed from 'vendor'
+        } else if (role === 'store-manager') {
             req.session.vendor = {
                 id: user._id.toString(),
                 email: user.email,
