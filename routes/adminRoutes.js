@@ -33,9 +33,12 @@ const {
     getRevenueChartData,
     getProduct,
     updateProduct,
-    addProduct
+    addProduct,
+    logout
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
+
+
 
 
 const multer = require('multer');
@@ -97,6 +100,14 @@ router.get('/admin/event-manager/:id/past-events', isAdminAuthenticated, getPast
 router.put('/admin/event-manager/:id', isAdminAuthenticated, updateEventManager);
 router.delete('/admin/event-manager/:id', isAdminAuthenticated, deleteEventManager);
 router.get('/admin/revenue-chart-data', isAdminAuthenticated, getRevenueChartData);
+
+// Render Admin Login Page
+router.get('/admin-login', (req, res) => {
+    res.render('admin_login');
+});
+
+// Logout route
+router.get('/admin/logout', isAdminAuthenticated, logout);
 
 // Render Add Product Page
 router.get('/admin-add-product', isAdminAuthenticated, (req, res) => {
