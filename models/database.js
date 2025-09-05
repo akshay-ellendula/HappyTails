@@ -154,7 +154,6 @@ const EventAttendee = mongoose.model('EventAttendee', eventAttendeeSchema);
 // Initialize Database (Ensure Connection and Models are Ready)
 async function initializeDatabase(callback) {
     await connectToMongoDB();
-    console.log('MongoDB schemas and models created');
     callback();
 }
 
