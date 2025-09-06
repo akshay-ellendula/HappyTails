@@ -78,7 +78,7 @@ const productVariantSchema = new mongoose.Schema({
 
 const productImageSchema = new mongoose.Schema({
     product_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-    image_path: { type: String, required: true },
+    image_data: { type: String, required: true },
     is_primary: { type: Boolean, default: false },
 });
 

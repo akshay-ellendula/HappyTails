@@ -1,19 +1,14 @@
 const bcrypt = require('bcryptjs');
 const { Vendor, Order, OrderItem, Product, ProductVariant, ProductImage, User, EventManager } = require('../models/database');
 const mongoose = require('mongoose');
-const multer = require('multer');
 const path = require('path');
 
-// Configure Multer for file uploads
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'public/uploads/products/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-});
-const upload = multer({ storage: storage });
+const multer = require('multer');
+
+// store files in memory instead of disk
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 
 // Fetch vendor orders
 const getVendorOrders = async (req, res) => {
@@ -121,6 +116,7 @@ const getVendorOrders = async (req, res) => {
 };
 
 // Fetch vendor products
+// Fetch vendor products (updated to fetch primary image_data correctly)
 const getVendorProducts = async (req, res) => {
     if (!req.session.vendor) {
         console.log('No vendor session in getVendorProducts, redirecting to login');
@@ -151,12 +147,21 @@ const getVendorProducts = async (req, res) => {
                 }
             },
             {
-                $unwind: {
-                    path: '$images',
-                    preserveNullAndEmptyArrays: true
+                $addFields: {
+                    primary_image: {
+                        $arrayElemAt: [
+                            {
+                                $filter: {
+                                    input: '$images',
+                                    as: 'img',
+                                    cond: { $eq: ['$$img.is_primary', true] }
+                                }
+                            },
+                            0
+                        ]
+                    }
                 }
             },
-            { $match: { 'images.is_primary': true } },
             {
                 $lookup: {
                     from: 'orderitems',
@@ -174,7 +179,7 @@ const getVendorProducts = async (req, res) => {
                     sale_price: { $arrayElemAt: ['$variants.sale_price', 0] },
                     regular_price: { $ifNull: [{ $arrayElemAt: ['$variants.regular_price', 0] }, 0] },
                     stock_quantity: { $arrayElemAt: ['$variants.stock_quantity', 0] },
-                    image_path: { $ifNull: ['$images.image_path', '/images/default.jpg'] },
+                    image_data: { $ifNull: ['$primary_image.image_data', '/images/default.jpg'] },
                     sold: { $sum: '$order_items.quantity' },
                     _id: 0
                 }
@@ -191,7 +196,6 @@ const getVendorProducts = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
-
 // Fetch vendor profile
 const getVendorProfile = async (req, res) => {
     if (!req.session.vendor) {
@@ -967,10 +971,12 @@ const getVendorCustomers = async (req, res) => {
 };
 
 // Submit new product
+// Submit new product
 const submitProduct = [
     upload.array('product_images', 4),
     async (req, res) => {
         if (!req.session.vendor) {
+            console.log('Unauthorized: No vendor session found');
             return res.status(401).json({ success: false, message: 'Unauthorized' });
         }
 
@@ -984,11 +990,25 @@ const submitProduct = [
             variants
         } = req.body;
 
+        console.log('Received product data:', {
+            vendorId,
+            product_name,
+            product_category,
+            product_type,
+            stock_status,
+            variants: JSON.stringify(variants),
+            files: req.files ? req.files.map(f => f.originalname) : 'No files'
+        });
+
+        // Validate required fields
         if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
+            console.log('Validation failed: Missing required fields');
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
 
+        // Validate variants
         if (!variants || Object.keys(variants).length === 0) {
+            console.log('Validation failed: No variants provided');
             return res.status(400).json({ success: false, message: 'At least one variant is required' });
         }
 
@@ -1000,29 +1020,36 @@ const submitProduct = [
             stock_quantity: parseInt(variants[index].stock_quantity)
         }));
 
+        // Validate each variant
         for (const variant of variantArray) {
             if (!variant.size || isNaN(variant.regular_price) || isNaN(variant.stock_quantity)) {
+                console.log('Validation failed for variant:', variant);
                 return res.status(400).json({ success: false, message: 'Size, regular price, and stock quantity are required for all variants' });
             }
             if (variant.regular_price <= 0) {
+                console.log('Validation failed: Regular price must be positive');
                 return res.status(400).json({ success: false, message: 'Regular price must be positive' });
             }
             if (variant.stock_quantity < 0) {
+                console.log('Validation failed: Stock quantity must be non-negative');
                 return res.status(400).json({ success: false, message: 'Stock quantity must be non-negative' });
             }
             if (variant.sale_price && variant.sale_price >= variant.regular_price) {
+                console.log('Validation failed: Sale price must be less than regular price');
                 return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
             }
         }
 
+        // Validate stock status
         if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
+            console.log('Validation failed: Invalid stock status:', stock_status);
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
         try {
             // Save product
             const newProduct = new Product({
-                vendor_id: vendorId,
+                vendor_id: new mongoose.Types.ObjectId(vendorId),
                 product_name,
                 product_category,
                 product_type,
@@ -1031,6 +1058,7 @@ const submitProduct = [
             });
 
             const savedProduct = await newProduct.save();
+            console.log('Product saved:', savedProduct._id);
 
             // Save variants
             const variantDocs = variantArray.map(variant => ({
@@ -1039,23 +1067,29 @@ const submitProduct = [
             }));
 
             await ProductVariant.insertMany(variantDocs);
+            console.log('Variants saved:', variantDocs.length);
 
             // Save images
             if (req.files && req.files.length > 0) {
-                const imageDocs = req.files.map((file, index) => ({
+                const images = req.files.map((file, index) => ({
                     product_id: savedProduct._id,
-                    image_path: `/uploads/products/${file.filename}`,
+                    image_data: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
                     is_primary: index === 0
                 }));
-
-                await ProductImage.insertMany(imageDocs);
+                await ProductImage.insertMany(images);
+                console.log('Images saved:', images.length);
+            } else {
+                console.log('No images provided');
             }
 
-            res.status(200).json({ success: true, message: 'Product added successfully', redirect: '/shop-products' });
-
+            res.status(200).json({
+                success: true,
+                message: 'Product added successfully',
+                redirect: '/shop-products'
+            });
         } catch (error) {
-            console.error('Error adding product:', error);
-            res.status(500).json({ success: false, message: 'Server error' });
+            console.error('Error adding product:', error.stack);
+            res.status(500).json({ success: false, message: `Server error: ${error.message}` });
         }
     }
 ];

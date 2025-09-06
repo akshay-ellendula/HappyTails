@@ -16,12 +16,12 @@ const { isVendorAuthenticated, isUserAuthenticated } = require('../middleware/au
 
 // Existing routes
 router.get('/pet_accessory', getPetAccessories);
-router.post('/submit-product', isVendorAuthenticated, submitProduct);
-router.get('/vendor/products', isVendorAuthenticated, getVendorProducts);
+
+
 router.get('/product/:id', getProduct);
-router.put('/product/:id', isVendorAuthenticated, updateProduct);
-router.delete('/product/:id', isVendorAuthenticated, deleteProduct);
-router.delete('/product-image/:id', isVendorAuthenticated, deleteProductImage);
+
+
+
 
 // New routes with user authentication
 router.post('/checkout', isUserAuthenticated, checkout);

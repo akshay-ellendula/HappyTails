@@ -12,25 +12,30 @@ const updateProfile = async (req, res) => {
     }
 
     try {
-        let imageUrl = `/uploads/profile_pics/${req.file.filename}`;
         const updateFields = {};
         if (user_name) updateFields.user_name = user_name;
         if (user_phone) updateFields.user_phone = user_phone;
         if (user_address) updateFields.user_address = user_address;
-        if (imageUrl) updateFields.profile_pic = imageUrl;
+        if (req.file) {
+            // Convert uploaded file to base64
+            const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+            updateFields.profile_pic = base64Image;
+        }
 
         await User.updateOne(
             { user_email },
             { $set: updateFields }
         );
 
+        // Update session with new values
         if (user_name) req.session.user.user_name = user_name;
         if (user_phone) req.session.user.user_phone = user_phone;
         if (user_address) req.session.user.user_address = user_address;
-        if (imageUrl) req.session.user.profile_pic = imageUrl;
+        if (req.file) req.session.user.profile_pic = updateFields.profile_pic;
 
         res.json({ success: true, message: 'Profile updated successfully' });
     } catch (err) {
+        console.error('Error updating profile:', err);
         res.status(500).json({ success: false, message: 'Database update failed' });
     }
 };
@@ -43,4 +48,15 @@ const getUserInfo = (req, res) => {
     }
 };
 
-module.exports = { updateProfile, getUserInfo };
+const userLogout = (req, res) => {
+    console.log('Logging out user', req.session.user?.user_email);
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            return res.status(500).send('Server error');
+        }
+        res.redirect('/my_login');
+    });
+};
+
+module.exports = { updateProfile, getUserInfo, userLogout };

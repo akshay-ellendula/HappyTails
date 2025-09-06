@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/database');
 const { storeSignup, serviceProviderLogin, getVendorDashboard,getVendorAnalytics,deleteProduct,logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders,updateVendorProfile } = require('../controllers/vendorController');
-
+const { isVendorAuthenticated, isUserAuthenticated } = require('../middleware/authMiddleware');
 router.get('/service_provider_login', (req, res) => {
     res.render('service_provider_login');
 });
@@ -13,15 +13,15 @@ router.get('/shop-dashboard/:storeName', (req, res, next) => {
 });
 
 // New route for order details
-router.get('/shop-order-details/:orderId',getOrderDetails);
+router.get('/shop-order-details/:orderId',isVendorAuthenticated,getOrderDetails);
 
-router.get('/shop-customer-details', getCustomerDetails);
+router.get('/shop-customer-details', isVendorAuthenticated,getCustomerDetails);
 
-router.delete('/delete-order/:orderId', deleteOrder);
-router.delete('/delete-selected-orders', deleteSelectedOrders);
+router.delete('/delete-order/:orderId', isVendorAuthenticated,deleteOrder);
+router.delete('/delete-selected-orders', isVendorAuthenticated,deleteSelectedOrders);
 
-router.get('/shop-profile', getVendorProfile);
-router.get('/shop-products', getVendorProducts);
+router.get('/shop-profile', isVendorAuthenticated,getVendorProfile);
+router.get('/shop-products', isVendorAuthenticated,getVendorProducts);
 
 router.get('/shop-product-form', async (req, res) => {
     if (!req.session.vendor) {
@@ -74,7 +74,7 @@ router.post('/update-vendor-profile', updateVendorProfile);
 
 router.get('/shop-product-edit/:productId', getProductForEdit);
 router.post('/shop-product-edit/:productId', updateProduct);
-router.post('/submit-product', submitProduct);
+router.post('/submit-product', isVendorAuthenticated, submitProduct);
 router.get('/shop-orders', getVendorOrders);
 router.get('/shop-customers', getVendorCustomers);
 router.post('/store-signup', storeSignup);
