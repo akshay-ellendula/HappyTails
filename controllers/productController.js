@@ -65,7 +65,7 @@ const getPetAccessories = async (req, res) => {
                             }
                         }
                     },
-                    image_path: '$images.image_path',
+                    image_data: '$images.image_data',
                     _id: 0
                 }
             },
@@ -156,7 +156,7 @@ const getProduct = async (req, res) => {
         const variants = await ProductVariant.find({ product_id: productId })
             .select('id size color regular_price sale_price stock_quantity');
         const image = await ProductImage.findOne({ product_id: productId, is_primary: true })
-            .select('image_path');
+            .select('image_data');
 
         const productData = {
             id: product._id.toString(),
@@ -172,7 +172,7 @@ const getProduct = async (req, res) => {
                 sale_price: v.sale_price,
                 stock_quantity: v.stock_quantity
             })),
-            image_path: image ? image.image_path : '/images/default-product.jpg'
+            image_data: image ? image.image_data : null
         };
 
         res.render('pet_product_details', {
@@ -259,7 +259,7 @@ const getUserOrders = async (req, res) => {
                 const imageDoc = await ProductImage.findOne({ product_id: item.product_id, is_primary: true });
                 return {
                     ...item,
-                    image_path: imageDoc?.image_path || '/images/default-product.jpg'
+                    image_data: imageDoc?.image_data || '/images/default-product.jpg'
                 };
             }));
 
@@ -308,7 +308,7 @@ const reorder = async (req, res) => {
                     price: 1,
                     size: 1,
                     color: 1,
-                    image_path: '$images.image_path'
+                    image_data: '$images.image_data'
                 }
             }
         ]);

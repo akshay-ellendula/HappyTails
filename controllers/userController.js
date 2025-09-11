@@ -17,7 +17,7 @@ const updateProfile = async (req, res) => {
         if (user_phone) updateFields.user_phone = user_phone;
         if (user_address) updateFields.user_address = user_address;
         if (req.file) {
-            // Convert uploaded file to base64
+            
             const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
             updateFields.profile_pic = base64Image;
         }
