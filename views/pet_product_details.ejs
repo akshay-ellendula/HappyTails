@@ -46,7 +46,12 @@
             </div>
             <div class="product_container">
                 <div class="image_container">
-                    <img src="<%= product.image_path || '/images/default-product.jpg' %>" alt="<%= product.product_name %>">
+                    <img src="<%= product.image_data 
+                        ? (product.image_data.startsWith('data:') 
+                            ? product.image_data 
+                            : 'data:image/jpeg;base64,' + product.image_data) 
+                        : '/images/default-product.jpg' %>" 
+                        alt="<%= product.product_name %>">
                 </div>
                 <div class="product_details" data-product-id="<%= product.id %>">
                     <h1><%= product.product_name %></h1>
@@ -242,20 +247,22 @@
                 }
 
                 const cartItem = {
-    product_id: product.id,
-    variant_id: variant.variant_id,
-    product_name: product.product_name,
-    price: variant.sale_price !== null ? variant.sale_price : variant.regular_price,
-    size: variant.size,
-    color: variant.color,
-    quantity: quantity,
-    image_path: product.image_path
-};
+                    product_id: product.id,
+                    variant_id: variant.variant_id,
+                    product_name: product.product_name,
+                    price: variant.sale_price !== null ? variant.sale_price : variant.regular_price,
+                    size: variant.size,
+                    color: variant.color,
+                    quantity: quantity,
+                    image_data: product.image_data && (product.image_data.startsWith('data:') 
+                        ? product.image_data 
+                        : 'data:image/jpeg;base64,' + product.image_data)
+                };
 
-const existingItemIndex = cart.findIndex(item => 
-    item.product_id === cartItem.product_id && 
-    item.variant_id === cartItem.variant_id
-);
+                const existingItemIndex = cart.findIndex(item => 
+                    item.product_id === cartItem.product_id && 
+                    item.variant_id === cartItem.variant_id
+                );
 
                 if (existingItemIndex > -1) {
                     cart[existingItemIndex].quantity += quantity;

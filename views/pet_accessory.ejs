@@ -139,7 +139,12 @@
             <% products.forEach(product => { %>
                 <div class="product_card autoshow" data-product-id="<%= product.id %>">
                     <div class="product_card_img">
-                        <img src="<%= product.image_path || '/images/default-product.jpg' %>" alt="<%= product.product_name %>">
+                        <img src="<%= product.image_data 
+                            ? (product.image_data.startsWith('data:') 
+                                ? product.image_data 
+                                : 'data:image/jpeg;base64,' + product.image_data) 
+                            : '/images/default-product.jpg' %>" 
+                            alt="<%= product.product_name %>">
                     </div>
                     <div class="product_card_details">
                         <h3><%= product.product_name %></h3>
@@ -302,7 +307,12 @@
                     cartProduct.classList.add('cart_product');
                     cartProduct.innerHTML = `
                         <div class="cart_image">
-                            <img src="${item.image_path}" alt="${item.product_name}" />
+                            <img src="${item.image_data 
+                                ? (item.image_data.startsWith('data:') 
+                                    ? item.image_data 
+                                    : 'data:image/jpeg;base64,' + item.image_data) 
+                                : '/images/default-product.jpg'}" 
+                                alt="${item.product_name}" />
                         </div>
                         <div class="cart_product_details">
                             <div class="name_header">

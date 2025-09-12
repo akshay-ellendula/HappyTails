@@ -64,7 +64,7 @@
                         <% products.forEach(product => { %>
                             <div class="product-card">
                                 <button class="edit-button" onclick="editProduct('<%= product.id %>')">✎</button>
-                                <img src="<%= product.image_path %>" alt="<%= product.product_name %>">
+                                <img src="<%= product.image_data %>" alt="<%= product.product_name %>">
                                 <h3><%= product.product_name %></h3>
                                 <p><%= product.product_category %> Accessories</p>
                                 <p class="price">$<%= (product.sale_price != null ? product.sale_price : product.regular_price != null ? product.regular_price : 0).toFixed(2) %></p>
