@@ -960,6 +960,9 @@ const upadatePassword = async (req, res) => {
     }
 }
 
+//@dec data for Events.ejs 
+//@route
+//@access
 const getEventsUser = async (req, res) => {
     try {
         const city = req.query.city || 'none';
@@ -968,7 +971,7 @@ const getEventsUser = async (req, res) => {
             query.city = city;
         }
 
-        const events = await Event.find(query, 'id event_name about_event date_time venue contact_number image').lean();
+        const events = await Event.find(query, 'id event_name about_event date_time venue contact_number image  ticket_price').lean();
 
         const formattedEvents = events.map(row => ({
             id: row._id,
@@ -978,10 +981,12 @@ const getEventsUser = async (req, res) => {
             time: new Date(row.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             location: row.venue,
             contact: row.contact_number,
+            price:row.ticket_price,
             image: row.image || '/images/default_event.jpg'
         }));
 
         res.render('Events', { events: formattedEvents, user: req.session.user });
+
     } catch (err) {
         console.error('Error fetching events:', err);
         res.status(500).send('Internal Server Error');

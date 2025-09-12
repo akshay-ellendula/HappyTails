@@ -56,11 +56,12 @@
                     </div>
                     <div class="details_container">
                         <h3><%= event.name %></h3>
-                        <p class="description"><%= event.description %></p>
+                        <p class="description"><span>Description:</span><%= event.description %></p>
                         <p><span>Date:</span> <%= event.date %></p>
                         <p><span>Time:</span> <%= event.time %></p>
                         <p><span>Location:</span> <%= event.location %></p>
                         <p><span>Contact:</span> <a href="tel:<%= event.contact %>"><%= event.contact %></a></p>
+                        <p><span>Price:</span>₹<%= event.price %></p>
                         <button type="button" class="book_btn" onclick="window.location.href='/event_booking_form?eventId=<%= event.id %>'">Book Now</button>
                     </div>
                 </div>
