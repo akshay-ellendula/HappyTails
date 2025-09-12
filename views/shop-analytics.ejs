@@ -60,19 +60,19 @@
                         <h2>Revenue Overview</h2>
                         <div class="stat">
                             <div class="stat-label">Total Revenue</div>
-                            <div class="stat-value">$<%= analytics.revenue.total %></div>
+                            <div class="stat-value">₹<%= analytics.revenue.total %></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">Today</div>
-                            <div class="stat-value">$<%= analytics.revenue.today %> <span class="indicator <%= analytics.revenue.today > 0 ? 'up' : '' %>"><%= analytics.revenue.today > 0 ? '+15%' : '0%' %></span></div>
+                            <div class="stat-value">₹<%= analytics.revenue.today %> <span class="indicator <%= analytics.revenue.today > 0 ? 'up' : '' %>"><%= analytics.revenue.today > 0 ? '+15%' : '0%' %></span></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">This Week</div>
-                            <div class="stat-value">$<%= analytics.revenue.week %> <span class="indicator <%= analytics.revenue.week > 0 ? 'up' : '' %>"><%= analytics.revenue.week > 0 ? '+8%' : '0%' %></span></div>
+                            <div class="stat-value">₹<%= analytics.revenue.week %> <span class="indicator <%= analytics.revenue.week > 0 ? 'up' : '' %>"><%= analytics.revenue.week > 0 ? '+8%' : '0%' %></span></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">This Month</div>
-                            <div class="stat-value">$<%= analytics.revenue.month %> <span class="indicator <%= analytics.revenue.month > 0 ? 'up' : '' %>"><%= analytics.revenue.month > 0 ? '+12%' : '0%' %></span></div>
+                            <div class="stat-value">₹<%= analytics.revenue.month %> <span class="indicator <%= analytics.revenue.month > 0 ? 'up' : '' %>"><%= analytics.revenue.month > 0 ? '+12%' : '0%' %></span></div>
                         </div>
                     </div>
                     
@@ -81,7 +81,7 @@
                         <% analytics.revenueByCategory.forEach((category, index) => { %>
                             <div class="stat">
                                 <div class="stat-label"><%= category.category %></div>
-                                <div class="stat-value">$<%= category.revenue %></div>
+                                <div class="stat-value">₹<%= category.revenue %></div>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress" data-progress="<%= category.percentage %>"></div>
@@ -90,7 +90,7 @@
                         <% if (analytics.revenueByCategory.length === 0) { %>
                             <div class="stat">
                                 <div class="stat-label">No Data</div>
-                                <div class="stat-value">$0.00</div>
+                                <div class="stat-value">₹0.00</div>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress" data-progress="0"></div>
@@ -102,19 +102,19 @@
                         <h2>Average Order Value</h2>
                         <div class="stat">
                             <div class="stat-label">Overall Average</div>
-                            <div class="stat-value">$<%= analytics.avgOrderValue.total %></div>
+                            <div class="stat-value">₹<%= analytics.avgOrderValue.total %></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">Today</div>
-                            <div class="stat-value">$<%= analytics.avgOrderValue.today %> <span class="indicator <%= analytics.avgOrderValue.today > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.today > 0 ? '+7%' : '0%' %></span></div>
+                            <div class="stat-value">₹<%= analytics.avgOrderValue.today %> <span class="indicator <%= analytics.avgOrderValue.today > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.today > 0 ? '+7%' : '0%' %></span></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">This Week</div>
-                            <div class="stat-value">$<%= analytics.avgOrderValue.week %> <span class="indicator <%= analytics.avgOrderValue.week > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.week > 0 ? '+3%' : '0%' %></span></div>
+                            <div class="stat-value">₹<%= analytics.avgOrderValue.week %> <span class="indicator <%= analytics.avgOrderValue.week > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.week > 0 ? '+3%' : '0%' %></span></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">This Month</div>
-                            <div class="stat-value">$<%= analytics.avgOrderValue.month %> <span class="indicator <%= analytics.avgOrderValue.month > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.month > 0 ? '+1.5%' : '0%' %></span></div>
+                            <div class="stat-value">₹<%= analytics.avgOrderValue.month %> <span class="indicator <%= analytics.avgOrderValue.month > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.month > 0 ? '+1.5%' : '0%' %></span></div>
                         </div>
                     </div>
                 </div>
