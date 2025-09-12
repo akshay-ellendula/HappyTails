@@ -140,6 +140,7 @@ const eventDashbord = async (req, res) => {
             attendees,
             eventManager: req.session.eventManager
         });
+
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
         res.status(500).send('Internal Server Error');
@@ -147,7 +148,7 @@ const eventDashbord = async (req, res) => {
 }
 
 
-// POST /eventmanager_dashboard/create-event - Create a new event
+// POST /eventmanager_dashboard/createEvent - Create a new event
 const createNewEvent = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
@@ -183,7 +184,8 @@ const createNewEvent = async (req, res) => {
         res.status(500).json({ message: 'Error creating event' });
     }
 }
-// PUT /eventmanager_dashboard/update-attendee/:id - Update an attendees
+
+// PUT /eventmanager_dashboard/updateAttendee/:id - Update an attendees
 const updateAttende = async (req, res) => {
     try {
         const attendeeId = req.params.id;
@@ -201,7 +203,7 @@ const updateAttende = async (req, res) => {
     }
 }
 
-// DELETE /eventmanager_dashboard/delete-attendee/:id - Delete an attendee
+// DELETE /eventmanager_dashboard/deleteAttendee/:id - Delete an attendee
 const deleteAttendee = async (req, res) => {
     try {
         const attendeeId = req.params.id;
@@ -217,6 +219,7 @@ const deleteAttendee = async (req, res) => {
 // get-events for dashbord
 const getEvents = async (req, res) => {
     try {
+
         const eventManagerId = req.session.eventManager.id;
         const today = new Date();
 
@@ -392,6 +395,7 @@ const getEvents = async (req, res) => {
             ongoingEvents,
             upcomingEvents
         });
+        
     } catch (err) {
         console.error('Error fetching events:', err);
         res.status(500).send('Internal Server Error');
@@ -443,6 +447,7 @@ const getEvent = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
+//@dec updateing  event 
 //update event 
 const updateEvent = async (req, res) => {
     try {
@@ -482,7 +487,7 @@ const updateEvent = async (req, res) => {
                 total_tickets: parseInt(eventCapacity)
             }
         );
-
+        res.status(200).json({message : "updated sucessufully"})
         res.redirect('/eventmanager_events');
     } catch (err) {
         console.error('Error updating event:', err);
@@ -881,6 +886,7 @@ const eventAnalytics = async (req, res) => {
             attendees,
             avgTicketValue
         });
+
     } catch (err) {
         console.error('Error fetching analytics:', err);
         res.status(500).send('Internal Server Error');
@@ -919,6 +925,7 @@ const getEventManagerProfile = async (req, res) => {
         };
 
         res.render('eventmanager_profile', { profile });
+
     } catch (err) {
         console.error('Error fetching profile:', err);
         res.status(500).render('error', { message: 'Failed to load profile', error: err.message });
@@ -1049,6 +1056,7 @@ const myEvents = async (req, res) => {
         ]);
 
         res.json({ success: true, events });
+        
     } catch (err) {
         console.error('Error fetching user events:', err);
         res.status(500).json({ success: false, message: 'Failed to fetch events', error: err.message });
@@ -1097,9 +1105,11 @@ const deleteTicket = async (req, res) => {
 
 const postTicket = async (req, res) => {
     try {
+
         if (!req.session.user) {
             return res.status(401).json({ success: false, message: 'Please log in to book an event' });
         }
+
 
         const user = req.session.user;
         const {
@@ -1211,8 +1221,17 @@ const updateEventManagerProfile = async (req, res) => {
     }
 }
 
+const isAuthenticated = (req, res, next) => {
+    if (req.session.eventManager) {
+        next();
+    } else {
+        console.log('No eventManager session, redirecting to login');
+        res.redirect('/service_provider_login');
+    }
+};
+
 module.exports = {
     eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee, getEvents, getEvent, updateEvent
     , getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword, getEventsUser, registerEvent, myEvents, deleteTicket,
-    postTicket ,updateEventManagerProfile
+    postTicket, updateEventManagerProfile,isAuthenticated
 };

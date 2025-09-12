@@ -318,7 +318,7 @@
             formData.append('dateTime', document.getElementById('dateTime').value);
 
             try {
-                const response = await fetch('/eventmanager_dashboard/create-event', {
+                const response = await fetch('/eventmanager_dashboard/createEvent', {
                     method: 'POST',
                     body: formData
                 });
@@ -349,7 +349,7 @@
             };
 
             try {
-                const response = await fetch(`/eventmanager_dashboard/update-attendee/${attendeeId}`, {
+                const response = await fetch(`/eventmanager_dashboard/updateAttendee/${attendeeId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -375,7 +375,7 @@
         async function deleteAttendee(attendeeId) {
             if (confirm('Are you sure you want to delete this attendee?')) {
                 try {
-                    const response = await fetch(`/eventmanager_dashboard/delete-attendee/${attendeeId}`, {
+                    const response = await fetch(`/eventmanager_dashboard/deleteAttendee/${attendeeId}`, {
                         method: 'DELETE'
                     });
                     const result = await response.json();
