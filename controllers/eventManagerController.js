@@ -970,9 +970,7 @@ const getEventsUser = async (req, res) => {
         if (city !== 'none') {
             query.city = city;
         }
-
         const events = await Event.find(query, 'id event_name about_event date_time venue contact_number image  ticket_price').lean();
-
         const formattedEvents = events.map(row => ({
             id: row._id,
             name: row.event_name,
@@ -984,7 +982,6 @@ const getEventsUser = async (req, res) => {
             price:row.ticket_price,
             image: row.image || '/images/default_event.jpg'
         }));
-
         res.render('Events', { events: formattedEvents, user: req.session.user });
 
     } catch (err) {
@@ -1235,8 +1232,54 @@ const isAuthenticated = (req, res, next) => {
     }
 };
 
+const getEventDetails = async (req, res) => {
+    try {
+        const eventId = req.query.eventId;
+        console.log("1");
+        console.log("Requested event ID:", eventId);
+
+        if (!eventId) {
+            return res.status(400).send("Event ID is required");
+        }
+
+        const eventData = await Event.findById(eventId).lean();
+        if (!eventData) {
+            return res.status(404).send("Event not found");
+        }
+
+        // Transform to match template expectations
+        const event = {
+            id: eventData._id,
+            name: eventData.event_name,
+            about: eventData.about_event,
+            language: eventData.language,
+            duration: eventData.duration,
+            age_limit: eventData.age_limit,
+            instructions: eventData.instructions,
+            venue: eventData.venue,
+            city: eventData.city,
+            contact: eventData.contact_number,
+            terms: eventData.terms,
+            category: eventData.category,
+            date: new Date(eventData.date_time).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
+            time: new Date(eventData.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+            ticket_price: eventData.ticket_price,
+            image: eventData.image || '/images/default_event.jpg'
+        };
+
+        res.render("eventDetails", {
+            event,
+            user: req.session.user
+        });
+    } catch (err) {
+        console.error("Error fetching event details:", err);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
 module.exports = {
     eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee, getEvents, getEvent, updateEvent
     , getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword, getEventsUser, registerEvent, myEvents, deleteTicket,
-    postTicket, updateEventManagerProfile,isAuthenticated
+    postTicket, updateEventManagerProfile,isAuthenticated,getEventDetails
 };
+
