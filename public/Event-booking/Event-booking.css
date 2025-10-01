@@ -32,6 +32,9 @@ header a {
   gap: 3rem;
 }
 
+img {
+  object-fit: cover;
+}
 .menu a {
   cursor: pointer;
   position: relative;
@@ -66,7 +69,7 @@ header a {
   flex-wrap: wrap; 
   margin: 50px auto;
   padding: 20px;
-  max-width: 1200px;
+  width: 90%;
 }
 
 /* Event Details */

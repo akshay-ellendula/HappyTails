@@ -144,8 +144,8 @@
                                 </div>
                             </div>
                             <div class="event_details">
+                                <h2>${event.ticketId}</h2>
                                 <h2>${event.event_name}</h2>
-                                <h3>Event ID: ${event.event_id}</h3>
                                 <p><span>Date:</span> ${new Date(event.date_time).toLocaleDateString()}</p>
                                 <p><span>Time:</span> ${new Date(event.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
                                 <p><span>Venue:</span> ${event.venue}</p>

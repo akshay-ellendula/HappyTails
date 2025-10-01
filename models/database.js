@@ -125,6 +125,7 @@ const eventSchema = new mongoose.Schema({
 });
 
 const eventAttendeeSchema = new mongoose.Schema({
+    ticketId : {type : String},
     event_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Event', required: true },
     user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     name: { type: String, required: true },

@@ -688,7 +688,7 @@
           </div>
         </div>
 
-        <button type="submit" form="eventBookingForm" class="submit-btn">
+        <button type="submit" form="eventBookingForm" class="submit-btn" onclick="bookFunction()"> 
           Proceed to Payment
         </button>
 
@@ -706,6 +706,7 @@
           Secure booking powered by Happy Tails
         </div>
       </div>
+      
     </div>
     <% } else { %>
     <div class="booking-wrapper">
@@ -773,11 +774,14 @@
       const TICKET_PRICE = <%= ticketPrice %>;
       const avaliableTickets = <%=ticketsAvaliable%>;
       const PLATFORM_FEE_PERCENT = 4;
-
       function togglePetDetails(show) {
         document.getElementById("pet-details").style.display = show
           ? "block"
           : "none";
+      }
+
+      function bookFunction(){
+        alert("Booking Completed");
       }
 
       function changeQuantity(change) {

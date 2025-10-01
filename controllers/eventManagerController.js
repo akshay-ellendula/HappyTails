@@ -395,7 +395,7 @@ const getEvents = async (req, res) => {
             ongoingEvents,
             upcomingEvents
         });
-        
+
     } catch (err) {
         console.error('Error fetching events:', err);
         res.status(500).send('Internal Server Error');
@@ -487,7 +487,7 @@ const updateEvent = async (req, res) => {
                 total_tickets: parseInt(eventCapacity)
             }
         );
-        res.status(200).json({message : "updated sucessufully"})
+        res.status(200).json({ message: "updated sucessufully" })
         res.redirect('/eventmanager_events');
     } catch (err) {
         console.error('Error updating event:', err);
@@ -979,7 +979,7 @@ const getEventsUser = async (req, res) => {
             time: new Date(row.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             location: row.venue,
             contact: row.contact_number,
-            price:row.ticket_price,
+            price: row.ticket_price,
             image: row.image || '/images/default_event.jpg'
         }));
         res.render('Events', { events: formattedEvents, user: req.session.user });
@@ -1002,12 +1002,12 @@ const registerEvent = async (req, res) => {
             return res.status(404).send('Event not found');
         }
 
-        const ticketsAvaliable  = event.total_tickets - event.tickets_sold ; 
+        const ticketsAvaliable = event.total_tickets - event.tickets_sold;
 
         res.render('event_booking_form', {
             eventId,
             eventName: event.event_name,
-            ticketPrice : event.ticket_price,
+            ticketPrice: event.ticket_price,
             ticketsAvaliable,
             user: req.session.user
         });
@@ -1042,7 +1042,7 @@ const myEvents = async (req, res) => {
             {
                 $project: {
                     attendee_id: '$_id',
-                    event_id: '$event._id',
+                    ticketId : '$ticketId',
                     event_name: '$event.event_name',
                     date_time: '$event.date_time',
                     venue: '$event.venue',
@@ -1062,7 +1062,7 @@ const myEvents = async (req, res) => {
         ]);
 
         res.json({ success: true, events });
-        
+
     } catch (err) {
         console.error('Error fetching user events:', err);
         res.status(500).json({ success: false, message: 'Failed to fetch events', error: err.message });
@@ -1139,7 +1139,21 @@ const postTicket = async (req, res) => {
             });
         }
 
+        function generateTicketId() {
+            const prefix = "TKT"; // You can change this
+            const timestamp = Date.now().toString(36).toUpperCase(); // Convert timestamp to base36
+            const randomPart = Math.random().toString(36).substr(2, 5).toUpperCase(); // Random string
+
+            return `${prefix}-${timestamp}-${randomPart}`;
+        }
+
+        // Example usage:
+        console.log(generateTicketId()); // Output: TKT-LS8QHI-9BZ3K
+
+        const ticketId = generateTicketId();
+
         await EventAttendee.create({
+            ticketId,
             event_id: eventId,
             user_id: user.id,
             name,
@@ -1157,6 +1171,9 @@ const postTicket = async (req, res) => {
             { _id: eventId },
             { $inc: { tickets_sold: seats || 1 } }
         );
+
+        return res.redirect('/home');
+
     } catch (err) {
         console.error('Error booking event:', err);
         res.status(500).json({ success: false, message: 'Registration failed', error: err.message });
@@ -1284,6 +1301,6 @@ const getEventDetails = async (req, res) => {
 module.exports = {
     eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee, getEvents, getEvent, updateEvent
     , getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword, getEventsUser, registerEvent, myEvents, deleteTicket,
-    postTicket, updateEventManagerProfile,isAuthenticated,getEventDetails
+    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails
 };
 

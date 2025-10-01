@@ -130,16 +130,19 @@ header a {
     display: flex;
     flex-direction: row;
     gap: 15px;
-    width: 800px; /* Increased width for desktop */
+    width: 75%; /* Increased width for desktop */
     min-width: 800px; /* Ensure consistent size */
-    height: 250px; /* Fixed height for uniformity */
+    height: 400px; /* Fixed height for uniformity */
 }
 
 .image_container {
-    width: 250px; /* Increased width for image to fit wider card */
-    height: 200px; /* Fixed height for image */
+    width: 60%; /* Increased width for image to fit wider card */
+    height: 100%; /* Fixed height for image */
 }
 
+img{
+    object-fit: cover;
+}
 .image_container img {
     width: 100%;
     height: 100%;
@@ -157,6 +160,7 @@ header a {
 }
 
 .details_container h3 {
+    padding-top: 10px;
     font-size: 1.8rem;
     font-weight: 700;
     margin-bottom: 5px;
@@ -166,17 +170,20 @@ header a {
 }
 
 .details_container p {
+    padding-top: 10px;
     font-size: 0.9rem;
     margin-bottom: 5px;
 }
 
 .details_container a {
+    padding-top: 10px;
     color: #effe8b;
     text-decoration: underline;
     transition: all 0.3s ease;
 }
 
 .description {
+    padding-top: 10px;
     font-size: 1rem;
     line-height: 1.4;
     font-weight: 400;
@@ -196,6 +203,8 @@ span {
 
 .book_btn {
     margin-top: auto; /* Push button to bottom */
+    margin-left:auto;
+    margin-right: auto;
     padding: 8px 16px;
     border-radius: 20px;
     background-color: #effe8b;
@@ -203,6 +212,7 @@ span {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 0.9rem;
+    width: 90%;
 }
 
 .book_btn:hover {
