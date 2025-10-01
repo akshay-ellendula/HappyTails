@@ -1,230 +1,234 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;600&display=swap");
 
 * {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: 'Outfit', sans-serif;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", sans-serif;
 }
 
 body {
-    color: #1a1a1a;
-    background-color: #effe8b;
+  color: #1a1a1a;
+  background-color: #effe8b;
 }
 
 /* Navbar */
 .navbar {
-    background: #effe8b;
-    padding: 10px 50px;
+  background: #effe8b;
+  padding: 10px 50px;
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header a {
-    text-decoration: none;
-    color: #1a1a1a;
-    font-size: 1.5rem;
-    font-weight: 600;
+  text-decoration: none;
+  color: #1a1a1a;
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .menu {
-    display: flex;
-    margin-left: auto;
+  display: flex;
+  margin-left: auto;
 }
 
 .menu a {
-    margin-left: 20px;
-    font-size: 1rem;
-    color: #1a1a1a;
-    text-decoration: none;
+  margin-left: 20px;
+  font-size: 1rem;
+  color: #1a1a1a;
+  text-decoration: none;
 }
 
 .menu a:hover {
-    color: #4a4a4a;
+  color: #4a4a4a;
 }
 
 /* Dashboard Layout */
 .dashboard-container {
-    display: flex;
-    padding: 20px;
-    height: calc(100vh - 60px);
+  display: flex;
+  padding: 20px;
+  height: calc(100vh - 60px);
 }
 
 /* Sidebar */
 .sidebar {
-    width: 20%;
-    background-color: #effe8b;
-    color: #1a1a1a;
-    padding: 20px;
-    border-radius: 10px;
+  width: 20%;
+  background-color: #effe8b;
+  color: #1a1a1a;
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .sidebar h2 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
 }
 
 .sidebar ul {
-    list-style: none;
+  list-style: none;
 }
 
 .sidebar ul li {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .sidebar ul li a {
-    text-decoration: none;
-    color: #1a1a1a;
-    font-size: 1.2rem;
-    display: block;
-    padding: 10px;
-    border-radius: 5px;
-    transition: 0.3s ease;
+  text-decoration: none;
+  color: #1a1a1a;
+  font-size: 1.2rem;
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  transition: 0.3s ease;
 }
 
 .sidebar ul li a:hover {
-    background: #effe8b;
-    color: #333;
+  background: #effe8b;
+  color: #333;
 }
 
 /* Main Content */
 .main-content {
-    flex: 1;
-    padding: 20px;
+  flex: 1;
+  padding: 20px;
 }
 
 /* Attendees Table (Appointment Card) */
 .appointments {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .appointment-card {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    width: 100%;
-    box-sizing: border-box;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .appointment-card h3 {
-    margin: 10px 0;
-    font-size: 18px;
-    color: #333;
+  margin: 10px 0;
+  font-size: 18px;
+  color: #333;
 }
 
 .appointment-card p {
-    margin: 5px 0;
-    font-size: 14px;
-    color: #666;
+  margin: 5px 0;
+  font-size: 14px;
+  color: #666;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-th, td {
-    padding: 12px 15px;
+table th {
+    background-color: #1a1d26;
+    color: white;
     text-align: left;
+    padding: 12px 15px;
+}
+
+table td {
+    padding: 12px 15px;
     border-bottom: 1px solid #eee;
 }
 
-th {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    font-weight: 600;
-}
-
-tbody tr:hover {
-    background-color: #f5f5f5;
+table tr:last-child td {
+    border-bottom: none;
 }
 
 /* Edit Event Form */
 .section {
-    margin-bottom: 30px;
+  margin-bottom: 30px;
 }
 
 .section h2 {
-    font-size: 1.5rem;
-    color: #1a1a1a;
-    margin-bottom: 15px;
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin-bottom: 15px;
 }
 
 .section label {
-    display: block;
-    font-size: 1rem;
-    color: #333;
-    margin-bottom: 5px;
+  display: block;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 5px;
 }
 
 .section input,
 .section textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 1rem;
-    background-color: #f9f9f9;
-    color: #333;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  color: #333;
 }
 
 .section input:focus,
 .section textarea:focus {
-    border-color: #4a4a4a;
-    outline: none;
-    background-color: #ffffff;
+  border-color: #4a4a4a;
+  outline: none;
+  background-color: #ffffff;
 }
 
 /* Buttons */
 .btn-primary {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    background-color: #1a1a1a;
-    color: #effe8b;
-    transition: all 0.3s ease;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  background-color: #1a1a1a;
+  color: #effe8b;
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
-    background-color: #333;
-    transform: translateY(-2px);
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  background-color: #333;
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .dashboard-container {
-        flex-direction: column;
-        padding: 15px;
-    }
+  .dashboard-container {
+    flex-direction: column;
+    padding: 15px;
+  }
 
-    .sidebar {
-        width: 100%;
-        margin-bottom: 20px;
-    }
+  .sidebar {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 
-    .main-content {
-        padding: 20px;
-    }
+  .main-content {
+    padding: 20px;
+  }
 }
 
 @media (max-width: 480px) {
-    header a {
-        font-size: 1.2rem;
-    }
+  header a {
+    font-size: 1.2rem;
+  }
 
-    .menu a {
-        font-size: 0.9rem;
-        margin-left: 10px;
-    }
+  .menu a {
+    font-size: 0.9rem;
+    margin-left: 10px;
+  }
 }

@@ -15,7 +15,10 @@ body {
 /* Navbar */
 .navbar {
     background: #effe8b;
-    padding: 10px 50px;
+    padding: 20px 50px;
+    height: 50px;
+    width: 100%;
+    margin: 0;
 }
 
 header {
@@ -27,7 +30,7 @@ header {
 header a {
     text-decoration: none;
     color: #1a1a1a;
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     font-weight: 600;
 }
 
@@ -132,7 +135,7 @@ header a {
 /* Analytics Styles */
 .analytics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill);
     gap: 20px;
     margin-bottom: 30px;
 }
