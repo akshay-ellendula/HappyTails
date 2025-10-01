@@ -149,6 +149,7 @@ const eventDashbord = async (req, res) => {
 
 
 // POST /eventmanager_dashboard/createEvent - Create a new event
+// POST /eventmanager_dashboard/createEvent - Create a new event
 const createNewEvent = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
@@ -157,7 +158,13 @@ const createNewEvent = async (req, res) => {
             eventName, aboutEvent, language, duration, tickets, ageLimit,
             instructions, venue, terms, category, dateTime
         } = req.body;
-        const image = req.file ? `/images/${req.file.filename}` : null;
+        
+        // Change this: Convert to Base64 instead of path (like in vendorController's submitProduct)
+        let image = null;
+        if (req.file) {
+            const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+            image = base64Image;
+        }
 
         await Event.create({
             event_manager_id: eventManagerId,
@@ -175,7 +182,7 @@ const createNewEvent = async (req, res) => {
             status: 'Upcoming',
             city: 'Hyderabad',
             contact_number: '1234567890',
-            image
+            image  // Now stores Base64 string
         });
 
         res.status(200).json({ message: 'Event created successfully' });
@@ -184,7 +191,6 @@ const createNewEvent = async (req, res) => {
         res.status(500).json({ message: 'Error creating event' });
     }
 }
-
 // PUT /eventmanager_dashboard/updateAttendee/:id - Update an attendees
 const updateAttende = async (req, res) => {
     try {
@@ -1188,7 +1194,13 @@ const updateEventManagerProfile = async (req, res) => {
         const { firstName, lastName, email, phone, eventType, license, bio } = req.body;
         const name = `${firstName} ${lastName}`.trim();
         const contact_number = phone ? phone.replace(/\D/g, '').slice(-10) : undefined;
-        const image = req.file ? `/images/${req.file.filename}` : undefined;
+
+        // Convert uploaded image to Base64
+        let image = undefined;
+        if (req.file) {
+            const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+            image = base64Image;
+        }
 
         // Validate required fields
         if (!firstName || !lastName || !email || !phone || !eventType || !license || !bio) {
@@ -1210,7 +1222,7 @@ const updateEventManagerProfile = async (req, res) => {
         };
 
         // Only include image if a new file was uploaded
-        if (image) {
+        if (image !== undefined) {
             updateData.image = image;
         }
 
@@ -1231,7 +1243,7 @@ const updateEventManagerProfile = async (req, res) => {
             event_type: eventType,
             license,
             bio,
-            image: image || req.session.eventManager.image
+            image: image !== undefined ? image : req.session.eventManager.image // Keep old image if no new upload
         };
 
         res.redirect('/eventmanager_profile');
@@ -1242,7 +1254,7 @@ const updateEventManagerProfile = async (req, res) => {
             error: `Failed to update profile: ${err.message}`
         });
     }
-}
+};
 
 const isAuthenticated = (req, res, next) => {
     if (req.session.eventManager) {
