@@ -1,134 +1,809 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Event Booking - <%= eventName || 'Unknown Event' %></title>
-    <link rel="stylesheet" href="/Event-booking/Event-booking-form.css">
-</head>
-<body>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: "Outfit", sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body,
+      html {
+        overflow-x: hidden;
+        width: 100%;
+        background-color: #effe8b;
+      }
+
+      /* Navbar */
+      .navbar {
+        margin: 10px 20px;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+      }
+
+      header a {
+        text-decoration: none;
+        color: #1a1a1a;
+        font-size: 1.2rem;
+        font-weight: 500;
+      }
+
+      .menu {
+        display: flex;
+        gap: 3rem;
+      }
+
+      .menu a {
+        cursor: pointer;
+        position: relative;
+        transition: 0.1s all ease;
+      }
+
+      .menu a:hover::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #1a1a1a;
+      }
+
+      .badge {
+        color: #1a1a1a;
+        font-size: 1.8rem;
+      }
+
+      .badge:hover {
+        color: #007bff;
+      }
+
+      .menu-icon {
+        display: none;
+      }
+
+      /* Main Container */
+      .booking-wrapper {
+        max-width: 1200px;
+        margin: 30px auto;
+        padding: 0 20px;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 30px;
+      }
+
+      /* Form Container */
+      .booking-form-container {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 5px #1a1a1a;
+        padding: 30px;
+      }
+
+      .booking-form-container h1 {
+        font-size: 2rem;
+        font-weight: 500;
+        margin-bottom: 10px;
+        color: #000000;
+      }
+
+      .event-subtitle {
+        color: #666;
+        margin-bottom: 30px;
+        font-size: 1rem;
+      }
+
+      .form-section {
+        margin-bottom: 30px;
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #1a1a1a;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #000000;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="number"],
+      input[type="date"] {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+        border: 2px solid #1a1a1a;
+        border-radius: 8px;
+        background-color: #f5f5f5;
+        color: #000000;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      input:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 5px #007bff;
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+      }
+
+      input::placeholder {
+        color: #666;
+      }
+
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-top: 10px;
+      }
+
+      .qty-btn {
+        width: 45px;
+        height: 45px;
+        border: 2px solid #1a1a1a;
+        background: #ffffff;
+        color: #1a1a1a;
+        border-radius: 8px;
+        font-size: 1.5rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .qty-btn:hover {
+        background: #1a1a1a;
+        color: #effe8b;
+        transform: scale(1.05);
+      }
+
+      .qty-display {
+        font-size: 1.5rem;
+        font-weight: 600;
+        min-width: 40px;
+        text-align: center;
+        color: #1a1a1a;
+      }
+
+      .radio-group {
+        display: flex;
+        gap: 30px;
+        margin-top: 10px;
+      }
+
+      .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #1a1a1a;
+      }
+
+      .pet-details {
+        margin-top: 15px;
+        padding: 20px;
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+      }
+
+      /* Order Summary */
+      .order-summary {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 5px #1a1a1a;
+        padding: 30px;
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+      }
+
+      .summary-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #1a1a1a;
+      }
+
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      .summary-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .item-label {
+        color: #666;
+        font-size: 0.95rem;
+      }
+
+      .item-value {
+        font-weight: 600;
+        color: #1a1a1a;
+      }
+
+      .total-section {
+        background-color: #effe8b;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border: 2px solid #1a1a1a;
+      }
+
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #1a1a1a;
+      }
+
+      .price {
+        color: #1a1a1a;
+        font-size: 1.5rem;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background-color: #1a1a1a;
+        color: #effe8b;
+        border: none;
+        border-radius: 20px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .submit-btn:hover {
+        transform: scale(1.05);
+        background-color: #2a2a2a;
+      }
+
+      .submit-btn:focus {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+      }
+
+      .secure-badge {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px;
+        color: #666;
+        font-size: 0.85rem;
+      }
+
+      /* Login Prompt */
+      .login-prompt {
+        grid-column: 1 / -1;
+        text-align: center;
+        background-color: #ffffff;
+        padding: 60px 40px;
+        border-radius: 10px;
+        box-shadow: 0 0 5px #1a1a1a;
+        color: #000000;
+      }
+
+      .login-prompt h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        color: #1a1a1a;
+      }
+
+      .login-prompt p {
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        color: #666;
+      }
+
+      .login-btn {
+        display: inline-block;
+        padding: 12px 40px;
+        background-color: #1a1a1a;
+        color: #effe8b;
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .login-btn:hover {
+        transform: scale(1.05);
+        background-color: #2a2a2a;
+      }
+
+      /* Footer */
+      .footer {
+        background-color: #1a1d26;
+        color: #ffffff;
+        padding: 30px 20px;
+        margin-top: 50px;
+      }
+
+      .footer-container {
+        margin: 0 20px;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .footer-column {
+        flex: 1;
+        min-width: 150px;
+        margin: 15px 0;
+      }
+
+      .footer-column h3 {
+        margin-bottom: 15px;
+      }
+
+      .footer-column ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .footer-column ul li {
+        margin-bottom: 10px;
+      }
+
+      .footer-column ul li a {
+        color: #ffffff;
+        text-decoration: none;
+      }
+
+      .footer-column ul li a:hover {
+        text-decoration: underline;
+      }
+
+      .footer-social {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+      }
+
+      .footer-social img {
+        width: 28px;
+        height: 28px;
+        transition: transform 0.3s ease;
+      }
+
+      .footer-social img:hover {
+        transform: scale(1.2);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 968px) {
+        .booking-wrapper {
+          grid-template-columns: 1fr;
+        }
+
+        .order-summary {
+          position: static;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .navbar {
+          margin: 5px 20px;
+        }
+
+        .menu-icon {
+          padding: 10px;
+          display: block;
+        }
+
+        .menu a {
+          display: none;
+        }
+
+        .booking-wrapper {
+          margin: 20px auto;
+          padding: 0 10px;
+        }
+
+        .booking-form-container,
+        .order-summary {
+          padding: 20px;
+        }
+
+        .booking-form-container h1 {
+          font-size: 1.8rem;
+        }
+
+        .section-title {
+          font-size: 1.1rem;
+        }
+
+        .footer-container {
+          margin: 0 10px;
+          text-align: center;
+        }
+
+        .footer-column {
+          min-width: 100%;
+        }
+
+        .footer-social {
+          justify-content: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
     <div class="navbar">
-        <header>
-            <a href="/home" class="badge">Happy Tails</a>
-            <div class="menu">
-                <a href="/blog">Blog</a>
-                <a href="/pet_accessory">Pet Essentials</a>
-                <% if (user) { %>
-                    <a href="/profile">Profile</a>
-                <% } else { %>
-                    <a href="/my_login">Login/SignUp</a>
-                <% } %>
-            </div>
-            <div class="menu-icon" id="menuIcon">
-                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
-            </div>
-            <div class="side-navbar" id="sideNavbar">
-                <a href="javascript:void(0)" class="close-btn" id="closeBtn">×</a> 
-                <a href="/pet_accessory">Pet Essentials</a>
-                <a href="/blog">Blog</a>
-                <% if (user) { %>
-                    <a href="/profile">Profile</a>
-                <% } else { %>
-                    <a href="/my_login">Login/SignUp</a>
-                <% } %>
-            </div>
-        </header>
+      <header>
+        <a href="/home" class="badge">Happy Tails</a>
+        <div class="menu">
+          <a href="/blog">Blog</a>
+          <a href="/pet_accessory">Pet Essentials</a>
+          <% if (user) { %>
+          <a href="/profile">Profile</a>
+          <% } else { %>
+          <a href="/my_login">Login/SignUp</a>
+          <% } %>
+        </div>
+        <div class="menu-icon" id="menuIcon">
+          <img
+            src="/icons/hamburger-svgrepo-com.svg"
+            alt="Menu"
+            height="25px"
+          />
+        </div>
+      </header>
     </div>
 
     <% if (user) { %>
+    <div class="booking-wrapper">
+      <div class="booking-form-container">
         <form id="eventBookingForm" method="POST" action="/event_booking">
-            <div class="container">
-                <h1>Entry Per Human - <%= eventName || 'Event Booking' %></h1>
-                <input type="hidden" name="eventId" value="<%= eventId %>">
+          <h1>Book Your Event</h1>
+          <p class="event-subtitle"><%= eventName || 'Event Booking' %></p>
 
-                <label for="name">Full Name *</label>
-                <input type="text" id="name" name="name" placeholder="Enter Full Name" required>
+          <input type="hidden" name="eventId" value="<%= eventId %>" />
 
-                <label for="email">Email ID *</label>
-                <input type="email" id="email" name="email" placeholder="Enter Email ID" required>
+          <div class="form-section">
+            <div class="section-title">Personal Information</div>
 
-                <label for="phone_number">Contact Number *</label>
-                <input type="text" id="phone_number" name="phone_number" placeholder="Enter Contact Number" pattern="\d{10}" required>
-
-                <label for="address">Address *</label>
-                <input type="text" id="address" name="address" placeholder="Enter Address" required>
-
-                <label for="seats">Number of Seats *</label>
-                <input type="number" id="seats" name="seats" min="1" value="1" required>
-
-                <label>Are you coming with a pet? *</label>
-                <div class="radio-group">
-                    <input type="radio" id="yes" name="with_pet" value="yes" onchange="togglePetDetails(true)">
-                    <label for="yes">Yes</label>
-                    <input type="radio" id="no" name="with_pet" value="no" onchange="togglePetDetails(false)" checked>
-                    <label for="no">No</label>
-                </div>
-
-                <div id="pet-details" class="pet-details" style="display: none;">
-                    <label for="pet_name">Pet's Name</label>
-                    <input type="text" id="pet_name" name="pet_name" placeholder="Enter Pet's Name">
-
-                    <label for="pet_breed">Pet's Breed</label>
-                    <input type="text" id="pet_breed" name="pet_breed" placeholder="Enter Pet's Breed">
-
-                    <label for="pet_dob">Pet's Date of Birth</label>
-                    <input type="date" id="pet_dob" name="pet_dob">
-                </div>
-
-                <button type="submit" onclick="s">Register</button>
-
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+                required
+              />
             </div>
+
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="phone_number">Contact Number *</label>
+              <input
+                type="text"
+                id="phone_number"
+                name="phone_number"
+                placeholder="10-digit mobile number"
+                pattern="\d{10}"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="address">Address *</label>
+              <input
+                type="text"
+                id="address"
+                name="address"
+                placeholder="Your complete address"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-section">
+            <div class="section-title">Booking Details</div>
+
+            <div class="form-group">
+              <label>Number of Tickets *</label>
+              <div class="quantity-control">
+                <button
+                  type="button"
+                  class="qty-btn"
+                  onclick="changeQuantity(-1)"
+                >
+                  -
+                </button>
+                <span class="qty-display" id="qtyDisplay">1</span>
+                <button
+                  type="button"
+                  class="qty-btn"
+                  onclick="changeQuantity(1)"
+                >
+                  +
+                </button>
+                <input type="hidden" id="seats" name="seats" value="1" />
+              </div>
+              <label
+                for="tickets"
+                style="
+                  .avaliableTicket {
+                    padding: 15px;
+                    margin: 20px;
+                  }
+                "
+                >Avaliable Tickets :
+                <span name="tickets"><%= ticketsAvaliable %></span>
+              </label>
+            </div>
+
+            <div class="form-group">
+              <label>Bringing a pet? *</label>
+              <div class="radio-group">
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    id="yes"
+                    name="with_pet"
+                    value="yes"
+                    onchange="togglePetDetails(true)"
+                  />
+                  <label for="yes" style="margin: 0">Yes</label>
+                </div>
+                <div class="radio-option">
+                  <input
+                    type="radio"
+                    id="no"
+                    name="with_pet"
+                    value="no"
+                    onchange="togglePetDetails(false)"
+                    checked
+                  />
+                  <label for="no" style="margin: 0">No</label>
+                </div>
+              </div>
+            </div>
+
+            <div id="pet-details" class="pet-details" style="display: none">
+              <div class="form-group">
+                <label for="pet_name">Pet's Name</label>
+                <input
+                  type="text"
+                  id="pet_name"
+                  name="pet_name"
+                  placeholder="Your pet's name"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="pet_breed">Pet's Breed</label>
+                <input
+                  type="text"
+                  id="pet_breed"
+                  name="pet_breed"
+                  placeholder="e.g., Golden Retriever"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="pet_dob">Pet's Date of Birth</label>
+                <input type="date" id="pet_dob" name="pet_dob" />
+              </div>
+            </div>
+          </div>
         </form>
-    <% } else { %>
-        <div class="container login-prompt">
-            <h1>Please Log In</h1>
-            <p>You need to be logged in to book an event.</p>
-            <a href="/my_login" class="login-btn">Go to Login</a>
+      </div>
+
+      <div class="order-summary">
+        <h2 class="summary-title">Order Summary</h2>
+
+        <div class="summary-item">
+          <span class="item-label">Event</span>
+          <span class="item-value"><%= eventName || 'Event' %></span>
         </div>
+
+        <div class="summary-item">
+          <span class="item-label">Ticket Price</span>
+          <span class="item-value"
+            >₹<span id="ticketPrice"><%= ticketPrice%></span></span
+          >
+        </div>
+
+        <div class="summary-item">
+          <span class="item-label">Number of Tickets</span>
+          <span class="item-value"><span id="summaryQty">1</span></span>
+        </div>
+
+        <div class="summary-item">
+          <span class="item-label">Subtotal</span>
+          <span class="item-value">₹<span id="subtotal"></span></span>
+        </div>
+
+        <div class="summary-item">
+          <span class="item-label">Platform Fee (4%)</span>
+          <span class="item-value">₹<span id="platformFee">20</span></span>
+        </div>
+
+        <div class="total-section">
+          <div class="total-row">
+            <span>Total Amount</span>
+            <span class="price">₹<span id="totalAmount">520</span></span>
+          </div>
+        </div>
+
+        <button type="submit" form="eventBookingForm" class="submit-btn">
+          Proceed to Payment
+        </button>
+
+        <div class="secure-badge">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+          Secure booking powered by Happy Tails
+        </div>
+      </div>
+    </div>
+    <% } else { %>
+    <div class="booking-wrapper">
+      <div class="login-prompt">
+        <h1>Please Log In</h1>
+        <p>You need to be logged in to book an event.</p>
+        <a href="/my_login" class="login-btn">Go to Login</a>
+      </div>
+    </div>
     <% } %>
 
     <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-column">
-                <h3>Happy Tails</h3>
-                <ul>
-                    <li><a href="/blog">Blog</a></li>
-                    <li><a href="/pet_adoption">Pet Stores</a></li>
-                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>Services</h3>
-                <ul>
-                    <li><a href="/services">Pet Grooming</a></li>
-                    <li><a href="/services">Dog Training</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>Partner</h3>
-                <ul>
-                    <li><a href="/store_signup">Pet Store Franchise</a></li>
-                    <li><a href="/event_manager_signup">Become an Event Manager</a></li>
-                    <li><a href="/service_provider_login">Login as Provider</a></li>
-                </ul>
-            </div>
-            <div class="footer-column">
-                <h3>Policy</h3>
-                <ul>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Refund Policy</a></li>
-                    <li><a href="#">Cancellation Policy</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
-                </ul>
-                <div class="footer-social">
-                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
-                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
-                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
-                </div>
-            </div>
+      <div class="footer-container">
+        <div class="footer-column">
+          <h3>Happy Tails</h3>
+          <ul>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/pet_adoption">Pet Stores</a></li>
+            <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+          </ul>
         </div>
+        <div class="footer-column">
+          <h3>Services</h3>
+          <ul>
+            <li><a href="/services">Pet Grooming</a></li>
+            <li><a href="/services">Dog Training</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Partner</h3>
+          <ul>
+            <li><a href="/store_signup">Pet Store Franchise</a></li>
+            <li><a href="/event_manager_signup">Become an Event Manager</a></li>
+            <li><a href="/service_provider_login">Login as Provider</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Policy</h3>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Refund Policy</a></li>
+            <li><a href="#">Cancellation Policy</a></li>
+            <li><a href="#">Terms & Conditions</a></li>
+          </ul>
+          <div class="footer-social">
+            <a href="#"
+              ><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"
+            /></a>
+            <a href="#"
+              ><img
+                src="/icons/instagram-2016-logo-svgrepo-com.svg"
+                alt="Instagram"
+            /></a>
+            <a href="#"
+              ><img
+                src="/icons/youtube-icon-logo-svgrepo-com.svg"
+                alt="YouTube"
+            /></a>
+          </div>
+        </div>
+      </div>
     </footer>
 
-    <script src="/Event-booking/Event-booking-form.js"></script>
-</body>
+    <script>
+      const TICKET_PRICE = <%= ticketPrice %>;
+      const avaliableTickets = <%=ticketsAvaliable%>;
+      const PLATFORM_FEE_PERCENT = 4;
+
+      function togglePetDetails(show) {
+        document.getElementById("pet-details").style.display = show
+          ? "block"
+          : "none";
+      }
+
+      function changeQuantity(change) {
+        const currentQty = parseInt(document.getElementById("seats").value);
+        const newQty = Math.max(1, Math.min(avaliableTickets, currentQty + change));
+
+        document.getElementById("seats").value = newQty;
+        document.getElementById("qtyDisplay").textContent = newQty;
+        document.getElementById("summaryQty").textContent = newQty;
+
+        updatePricing(newQty);
+      }
+
+      function updatePricing(quantity) {
+        const subtotal = TICKET_PRICE * quantity;
+        const platformFee = Math.round(subtotal * (PLATFORM_FEE_PERCENT / 100));
+        const total = subtotal + platformFee;
+
+        document.getElementById("subtotal").textContent = subtotal;
+        document.getElementById("platformFee").textContent = platformFee;
+        document.getElementById("totalAmount").textContent = total;
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        updatePricing(1);
+      });
+    </script>
+  </body>
 </html>

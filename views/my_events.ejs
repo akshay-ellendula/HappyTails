@@ -149,7 +149,7 @@
                                 <p><span>Date:</span> ${new Date(event.date_time).toLocaleDateString()}</p>
                                 <p><span>Time:</span> ${new Date(event.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
                                 <p><span>Venue:</span> ${event.venue}</p>
-                                <p><span>Seats Bookয়াed:</span> ${event.seats}</p>
+                                <p><span>Seats Booked:</span> ${event.seats}</p>
                                 <p><span>Status:</span> ${event.status}</p>
                                 <div class="button_container">
                                     ${event.status === 'Upcoming' ? `<button onclick="bookAgain('${event.event_id}')">Book Again</button>` : ''}

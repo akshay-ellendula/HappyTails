@@ -997,14 +997,18 @@ const registerEvent = async (req, res) => {
             return res.status(400).send('Event ID is required');
         }
 
-        const event = await Event.findById(eventId, 'event_name').lean();
+        const event = await Event.findById(eventId);
         if (!event) {
             return res.status(404).send('Event not found');
         }
 
+        const ticketsAvaliable  = event.total_tickets - event.tickets_sold ; 
+
         res.render('event_booking_form', {
             eventId,
             eventName: event.event_name,
+            ticketPrice : event.ticket_price,
+            ticketsAvaliable,
             user: req.session.user
         });
     } catch (err) {
