@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const { eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee,
     getEvents, getEvent, updateEvent, getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword,
-    getEventsUser, registerEvent, myEvents, deleteTicket, postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails
+    getEventsUser, registerEvent, myEvents, deleteTicket, postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,
+    editEvent
 } = require('../controllers/eventManagerController');
 // Remove this line: const {upload} = require("../utils/stroage.js");  // Assuming it's disk storage, we don't need it
 
@@ -33,4 +34,5 @@ router.delete('/api/cancel_event_booking/:attendeeId', deleteTicket);
 router.post('/event_booking', postTicket);
 // For profile update, if you want Base64 here too, change to memoryUpload (see optional changes below)
 router.post('/eventmanager_profile', isAuthenticated, memoryUpload.single('profilePic'), updateEventManagerProfile);
+router.get("/eventmanager_event_edit",editEvent);
 module.exports = router;

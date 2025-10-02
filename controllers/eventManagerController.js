@@ -923,15 +923,13 @@ const getEventManagerProfile = async (req, res) => {
             phone,
             phoneRaw,
             eventType: 'Pet Events',
-            license: `EVENT-${eventManagerId}-AB`,
-            bio: `Experienced event manager specializing in pet events. Based in ${eventManager.location}, working with ${eventManager.company_name}.`,
+            license: eventManager.license,
+            bio: eventManager.bio,
             eventsManaged,
-            memberSince: 'January 15, 2023',
-            image: null
+            memberSince: 'January 15,2023',
+            image: eventManager.image
         };
-
         res.render('eventmanager_profile', { profile });
-
     } catch (err) {
         console.error('Error fetching profile:', err);
         res.status(500).render('error', { message: 'Failed to load profile', error: err.message });
@@ -942,23 +940,19 @@ const upadatePassword = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
         const { currentPassword, newPassword } = req.body;
-
         const eventManager = await EventManager.findById(eventManagerId);
         if (!eventManager) {
             return res.status(404).json({ success: false, message: 'Event manager not found' });
         }
-
         const match = await bcrypt.compare(currentPassword, eventManager.password);
         if (!match) {
             return res.status(400).json({ success: false, message: 'Current password is incorrect' });
         }
-
         const hashedPassword = await bcrypt.hash(newPassword, 10);
         await EventManager.updateOne(
             { _id: eventManagerId },
             { password: hashedPassword }
         );
-
         res.json({ success: true, message: 'Password updated successfully' });
     } catch (err) {
         console.error('Error updating password:', err);
@@ -1047,6 +1041,7 @@ const myEvents = async (req, res) => {
             { $unwind: '$event' },
             {
                 $project: {
+                    event_id: '$event._id',
                     attendee_id: '$_id',
                     ticketId : '$ticketId',
                     event_name: '$event.event_name',
@@ -1268,9 +1263,6 @@ const isAuthenticated = (req, res, next) => {
 const getEventDetails = async (req, res) => {
     try {
         const eventId = req.query.eventId;
-        console.log("1");
-        console.log("Requested event ID:", eventId);
-
         if (!eventId) {
             return res.status(400).send("Event ID is required");
         }
@@ -1310,9 +1302,52 @@ const getEventDetails = async (req, res) => {
     }
 };
 
+const editEvent = async(req,res) =>{
+try {
+        const eventId = req.query.eventId;
+
+        if (!eventId) {
+            return res.status(400).send("Event ID is required");
+        }
+
+        const eventData = await Event.findById(eventId).lean();
+        if (!eventData) {
+            return res.status(404).send("Event not found");
+        }
+
+        // Transform to match template expectations
+        const event = {
+            id: eventData._id,
+            name: eventData.event_name,
+            about: eventData.about_event,
+            language: eventData.language,
+            duration: eventData.duration,
+            age_limit: eventData.age_limit,
+            instructions: eventData.instructions,
+            venue: eventData.venue,
+            city: eventData.city,
+            contact: eventData.contact_number,
+            terms: eventData.terms,
+            category: eventData.category,
+            date: new Date(eventData.date_time).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
+            time: new Date(eventData.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+            ticket_price: eventData.ticket_price,
+            image: eventData.image || '/images/default_event.jpg'
+        };
+
+        res.render("eventmanager_event_edit", {
+            event,
+            user: req.session.user
+        });
+    } catch (err) {
+        console.error("Error fetching event details:", err);
+        res.status(500).send("Internal Server Error");
+    }
+    
+}
 module.exports = {
     eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee, getEvents, getEvent, updateEvent
     , getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword, getEventsUser, registerEvent, myEvents, deleteTicket,
-    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails
+    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,editEvent
 };
 
