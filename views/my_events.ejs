@@ -138,7 +138,7 @@
                     const eventCard = `
                         <div class="event_card">
                             <div class="event_left_container">
-                                <h2>${event.status === 'Past' ? 'Attended on ' + new Date(event.date_time).toLocaleDateString() : 'Upcoming Event'}</h2>
+                                <h2>${event.status === 'Past' ? 'Attended on ' + new Date(event.date_time).toLocaleDateString() : ""}</h2>
                                 <div class="event_image">
                                     <img src="${event.image || '/images/default_event.jpg'}" alt="${event.event_name}">
                                 </div>

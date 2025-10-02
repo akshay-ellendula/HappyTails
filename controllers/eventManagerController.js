@@ -966,11 +966,22 @@ const upadatePassword = async (req, res) => {
 const getEventsUser = async (req, res) => {
     try {
         const city = req.query.city || 'none';
-        let query = { status: 'Upcoming' };
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set time to start of today
+        let query = { 
+            status: 'Upcoming',
+            date_time: { $gte: today } // Only events from today onwards
+        };
+
         if (city !== 'none') {
             query.city = city;
         }
-        const events = await Event.find(query, 'id event_name about_event date_time venue contact_number image  ticket_price').lean();
+
+        const events = await Event.find(
+            query, 
+            'id event_name about_event date_time venue contact_number image ticket_price'
+        ).lean();
+
         const formattedEvents = events.map(row => ({
             id: row._id,
             name: row.event_name,
@@ -982,13 +993,15 @@ const getEventsUser = async (req, res) => {
             price: row.ticket_price,
             image: row.image || '/images/default_event.jpg'
         }));
+
         res.render('Events', { events: formattedEvents, user: req.session.user });
 
     } catch (err) {
         console.error('Error fetching events:', err);
         res.status(500).send('Internal Server Error');
     }
-}
+};
+
 
 const registerEvent = async (req, res) => {
     try {

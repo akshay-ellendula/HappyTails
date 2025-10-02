@@ -49,7 +49,6 @@ const getUserInfo = (req, res) => {
 };
 
 const userLogout = (req, res) => {
-    console.log('Logging out user', req.session.user?.user_email);
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
