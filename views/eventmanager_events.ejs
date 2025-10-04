@@ -55,7 +55,7 @@
                                 <p><strong>Registered:</strong>
                                     <%= event.attendeeCount %> Attendees
                                 </p>
-                                <p><strong>Revenue:</strong> $<%= (event.revenue || 0).toFixed(2) %>
+                                <p><strong>Revenue:</strong> ₹<%= (event.revenue || 0).toFixed(2) %>
                                 </p>
                             </div>
                             <% }) %>
@@ -84,7 +84,7 @@
                                 <p><strong>Registered:</strong>
                                     <%= event.attendeeCount %> Attendees
                                 </p>
-                                <p><strong>Revenue:</strong> $<%= (event.revenue || 0).toFixed(2) %>
+                                <p><strong>Revenue:</strong> ₹<%= (event.revenue || 0).toFixed(2) %>
                                 </p>
                             </div>
                             <% }) %>
@@ -116,7 +116,7 @@
                                 <p><strong>Capacity:</strong>
                                     <%= event.total_tickets %>
                                 </p>
-                                <p><strong>Ticket Price:</strong> $<%= event.ticket_price.toFixed(2) %>
+                                <p><strong>Ticket Price:</strong> ₹<%= event.ticket_price.toFixed(2) %>
                                 </p>
                                 <p><strong>Description:</strong>
                                     <%= event.about_event %>
