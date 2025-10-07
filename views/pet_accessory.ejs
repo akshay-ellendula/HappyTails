@@ -305,14 +305,17 @@
                 cart.forEach((item, index) => {
                     const cartProduct = document.createElement('div');
                     cartProduct.classList.add('cart_product');
+
+                    // Use default image if no image data
+                    const imageSrc = item.image_data 
+                        ? (item.image_data.startsWith('data:') 
+                            ? item.image_data 
+                            : 'data:image/jpeg;base64,' + item.image_data)
+                        : '/images/default-product.jpg';
+
                     cartProduct.innerHTML = `
                         <div class="cart_image">
-                            <img src="${item.image_data 
-                                ? (item.image_data.startsWith('data:') 
-                                    ? item.image_data 
-                                    : 'data:image/jpeg;base64,' + item.image_data) 
-                                : '/images/default-product.jpg'}" 
-                                alt="${item.product_name}" />
+                            <img src="${imageSrc}" alt="${item.product_name}" />
                         </div>
                         <div class="cart_product_details">
                             <div class="name_header">
@@ -330,7 +333,8 @@
                     `;
                     cartContainer.appendChild(cartProduct);
                 });
-
+            
+                // ... rest of your existing renderCart code
                 document.querySelectorAll('.quantity').forEach(input => {
                     input.addEventListener('input', function() {
                         const index = parseInt(this.getAttribute('data-index'));
@@ -339,7 +343,7 @@
                         renderCart();
                     });
                 });
-
+            
                 document.querySelectorAll('.remove-item').forEach(button => {
                     button.addEventListener('click', function() {
                         const index = parseInt(this.getAttribute('data-index'));
@@ -348,36 +352,57 @@
                         renderCart();
                     });
                 });
-
+            
                 const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
                 subtotalElement.textContent = subtotal.toFixed(2);
             }
 
+            
             // Checkout functionality
             document.querySelector('.checkout_button button').addEventListener('click', function() {
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
                 if (cart.length === 0) {
                     alert('Your cart is empty!');
                     return;
                 }
-
+            
+                // Remove image data from cart to reduce payload size (but keep for display)
+                const cartWithoutImages = cart.map(item => {
+                    const { image_data, ...itemWithoutImage } = item;
+                    return itemWithoutImage;
+                });
+            
+                console.log('Cart without images for checkout:', cartWithoutImages);
+            
                 fetch('/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cart })
+                    body: JSON.stringify({ cart: cartWithoutImages })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`HTTP ${response.status}: ${text}`);
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Checkout response:', data);
                     if (data.success) {
-                        alert('Order placed successfully!');
+                        alert('Order placed successfully! Order ID: ' + data.orderId);
                         localStorage.removeItem('cart');
-                        cart.classList.remove('open');
+                        document.getElementById('cart').classList.remove('open');
                         window.location.href = '/my_orders';
                     } else {
                         alert('Error placing order: ' + data.message);
                     }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Checkout error:', error);
+                    alert('Error placing order. Please try again.');
+                });
             });
 
             // Filter application function

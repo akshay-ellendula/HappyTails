@@ -7,6 +7,7 @@ const {
 } = require('../models/database');
 const multer = require('multer');
 const path = require('path');
+const mongoose = require('mongoose');
 
 const productImageStorage = multer.diskStorage({
     destination: 'uploads/products/',
@@ -235,7 +236,12 @@ const checkout = async (req, res) => {
             );
         }
 
-        res.json({ success: true, message: 'Order placed successfully', orderId: order._id });
+        // Return order ID as string
+        res.json({ 
+            success: true, 
+            message: 'Order placed successfully', 
+            orderId: order._id.toString() 
+        });
     } catch (err) {
         console.error('Checkout error:', err.message);
         res.status(err.message.includes('Not enough stock') ? 400 : 500).json({ success: false, message: err.message });
@@ -265,6 +271,7 @@ const getUserOrders = async (req, res) => {
 
             return {
                 ...order,
+                id: order._id.toString(),
                 items: detailedItems
             };
         }));
@@ -281,42 +288,32 @@ const reorder = async (req, res) => {
 
     try {
         const orderId = req.params.orderId;
-        const items = await OrderItem.aggregate([
-            { $match: { order_id: mongoose.Types.ObjectId(orderId) } },
-            {
-                $lookup: {
-                    from: 'productimages',
-                    localField: 'product_id',
-                    foreignField: 'product_id',
-                    as: 'images'
-                }
-            },
-            {
-                $unwind: {
-                    path: '$images',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            { $match: { 'images.is_primary': true } },
-            {
-                $project: {
-                    _id: 0,
-                    product_id: 1,
-                    variant_id: 1,
-                    product_name: 1,
-                    quantity: 1,
-                    price: 1,
-                    size: 1,
-                    color: 1,
-                    image_data: '$images.image_data'
-                }
-            }
-        ]);
+        const items = await OrderItem.find({ order_id: orderId }).lean();
 
         if (items.length === 0) return res.status(404).json({ success: false, message: 'Order not found' });
 
-        res.json({ success: true, cart: items });
+        // Get product images for each item
+        const cartItems = await Promise.all(items.map(async (item) => {
+            const imageDoc = await ProductImage.findOne({ 
+                product_id: item.product_id, 
+                is_primary: true 
+            });
+            
+            return {
+                product_id: item.product_id ? item.product_id.toString() : null,
+                variant_id: item.variant_id ? item.variant_id.toString() : null,
+                product_name: item.product_name,
+                quantity: item.quantity,
+                price: item.price,
+                size: item.size || null,
+                color: item.color || null,
+                image_data: imageDoc ? imageDoc.image_data : null
+            };
+        }));
+
+        res.json({ success: true, cart: cartItems });
     } catch (err) {
+        console.error('Reorder error:', err);
         res.status(500).json({ success: false, message: 'Failed to fetch order items' });
     }
 };

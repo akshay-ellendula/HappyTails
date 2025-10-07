@@ -83,7 +83,7 @@
                     alert('Error fetching orders: ' + data.message);
                     return;
                 }
-
+                console.log('Orders data received:', data.orders);
                 const orders = data.orders;
                 const currentOrdersContainer = document.querySelector('.current_orders');
                 const previousOrdersContainer = document.querySelector('.previous_orders .order_container');
@@ -111,7 +111,7 @@
                             imageHtml = `<img src="data:image/jpeg;base64,${item.image_data}" alt="${item.product_name}" />`;
                         }
                     }
-
+                
                     const orderCard = `
                         <div class="order_card">
                             <div class="order_left_container">
@@ -124,25 +124,25 @@
                             </div>
                             <div class="order_details">
                                 <h2>${item.product_name} ${order.items.length > 1 ? 'and more' : ''}</h2>
-                                <h3>Order ID: ${order.order_id}</h3>
+                                <h3>Order ID: ${order._id}</h3>
                                 <p><span>Order Date:</span> ${new Date(order.order_date).toLocaleDateString()}</p>
                                 <p><span>Delivery Date:</span> ${order.delivery_date ? new Date(order.delivery_date).toLocaleDateString() : 'Pending'}</p>
                                 <p><span>Order Status:</span> ${order.status}</p>
                                 <div class="button_container">
-                                    <button onclick="buyAgain('${order._id}')">Buy Again</button>
-                                    <button onclick="window.location.href='/track_package/${order._id}'">Track Order</button>
+                                    <button onclick="buyAgain('${order.id}')">Buy Again</button>
+                                    <button onclick="window.location.href='/track_package/${order.id}'">Track Order</button>
                                     ${order.status === 'Delivered' ? '<button>Return Product</button>' : ''}
                                 </div>
                             </div>
                         </div>
                     `;
-
+                    
                     if (order.status !== 'Delivered') {
                         currentOrdersContainer.insertAdjacentHTML('beforeend', orderCard);
                     } else {
                         previousOrdersContainer.insertAdjacentHTML('beforeend', orderCard);
                     }
-                });
+                });             
             })
             .catch(error => console.error('Error fetching orders:', error));
         });
@@ -156,15 +156,44 @@
             .then(data => {
                 if (data.success) {
                     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                    cart = cart.concat(data.cart);
+
+                    // Add each item from the reorder to the cart
+                    data.cart.forEach(reorderItem => {
+                        const existingItemIndex = cart.findIndex(cartItem => 
+                            cartItem.product_id === reorderItem.product_id && 
+                            cartItem.variant_id === reorderItem.variant_id &&
+                            cartItem.size === reorderItem.size &&
+                            cartItem.color === reorderItem.color
+                        );
+
+                        if (existingItemIndex > -1) {
+                            cart[existingItemIndex].quantity += reorderItem.quantity;
+                        } else {
+                            // Store item with image data if available
+                            cart.push({
+                                product_id: reorderItem.product_id,
+                                variant_id: reorderItem.variant_id,
+                                product_name: reorderItem.product_name,
+                                quantity: reorderItem.quantity,
+                                price: reorderItem.price,
+                                size: reorderItem.size,
+                                color: reorderItem.color,
+                                image_data: reorderItem.image_data // Include image data for cart display
+                            });
+                        }
+                    });
+
                     localStorage.setItem('cart', JSON.stringify(cart));
-                    alert('Items added to cart!');
+                    alert('Items added to cart successfully!');
                     window.location.href = '/pet_accessory';
                 } else {
                     alert('Error reordering: ' + data.message);
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error adding items to cart. Please try again.');
+            });
         }
     </script>
 </body>
