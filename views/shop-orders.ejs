@@ -47,7 +47,7 @@
                 
                 <div class="order-buttons">
                     <button class="order-btn <%= status === 'all' ? 'active' : '' %>" onclick="filterOrders('all')">All Orders</button>
-                    <button class="order-btn <%= status === 'Pending' ? 'active' : '' %>" onclick="filterOrders('Pending')">Pending</button>
+                    <button class="order-btn <%= status === 'Confirmed' ? 'active' : '' %>" onclick="filterOrders('Confirmed')">Confirmed</button>
                     <button class="order-btn <%= status === 'Shipped' ? 'active' : '' %>" onclick="filterOrders('Shipped')">Shipped</button>
                     <button class="order-btn <%= status === 'Delivered' ? 'active' : '' %>" onclick="filterOrders('Delivered')">Delivered</button>
                     <button class="order-btn <%= status === 'Cancelled' ? 'active' : '' %>" onclick="filterOrders('Cancelled')">Cancelled</button>
@@ -67,28 +67,44 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% if (orders && orders.length > 0) { %>
-                            <% orders.forEach(order => { %>
-                                <tr>
-                                    <td><input type="checkbox" value="<%= order.id %>"></td>
-                                    <td><%= order.order_id %></td>
-                                    <td><%= order.customer %></td>
-                                    <td><%= order.products %></td>
-                                    <td>$<%= order.total %></td>
-                                    <td><%= order.date %></td>
-                                    <td><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
-                                    <td>
-                                        <i class="fa fa-eye" data-order-id="<%= order.id %>" onclick="viewOrder('<%= order.id %>')"></i> 
-                                        <i class="fa fa-print" onclick="printOrder('<%= order.id %>')"></i> 
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="8">No orders found.</td>
-                            </tr>
-                        <% } %>
-                        </tbody>
+    <% if (orders && orders.length > 0) { %>
+        <% orders.forEach(order => { %>
+            <tr>
+                <td><input type="checkbox" class="order-checkbox" value="<%= order.id %>" <%= order.status !== 'Confirmed' ? 'disabled' : '' %>></td>
+                <td><%= order.order_id %></td>
+                <td><%= order.customer %></td>
+                <td><%= order.products %></td>
+                <td>₹<%= order.total %></td>
+                <td><%= order.date %></td>
+                <td><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+                <td>
+                    <i class="fa fa-eye" data-order-id="<%= order.id %>" onclick="viewOrder('<%= order.id %>')"></i> 
+                    <i class="fa fa-print" onclick="printOrder('<%= order.id %>')"></i>
+
+                    <% if (order.status === 'Confirmed' || order.status === 'Shipped') { %>
+    <div class="action-dropdown">
+        <i class="fa fa-ellipsis-v" onclick="toggleDropdown(this)"></i>
+        <div class="dropdown-content">
+            <% if (order.status === 'Confirmed') { %>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Shipped')">Mark as Shipped</a>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Delivered')">Mark as Delivered</a>
+            <% } %>
+            <% if (order.status === 'Shipped') { %>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Delivered')">Mark as Delivered</a>
+            <% } %>
+            <a href="#" onclick="updateStatus('<%= order.id %>', 'Cancelled')">Cancel Order</a>
+        </div>
+    </div>
+<% } %>
+                </td>
+            </tr>
+        <% }); %>
+    <% } else { %>
+        <tr>
+            <td colspan="8">No orders found.</td>
+        </tr>
+    <% } %>
+</tbody>
                 </table>
             </div>
         </div>
@@ -152,7 +168,7 @@
                         <tr><th>Order ID</th><td>${orderIdText}</td></tr>
                         <tr><th>Customer</th><td>${customer}</td></tr>
                         <tr><th>Products</th><td>${products}</td></tr>
-                        <tr><th>Total</th><td>${total}</td></tr>
+                        <tr><th>Total</th><td>₹{total}</td></tr>
                         <tr><th>Date</th><td>${date}</td></tr>
                         <tr><th>Status</th><td>${status}</td></tr>
                     </table>
@@ -202,6 +218,53 @@
                });
            }
        }
+
+       function toggleDropdown(element) {
+    // Close all other dropdowns first
+    document.querySelectorAll('.dropdown-content.show').forEach(openDropdown => {
+        if (openDropdown !== element.nextElementSibling) {
+            openDropdown.classList.remove('show');
+        }
+    });
+    // Toggle the current one
+    element.nextElementSibling.classList.toggle('show');
+}
+
+// Close dropdowns when clicking elsewhere
+window.onclick = function(event) {
+    if (!event.target.matches('.fa-ellipsis-v')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+
+function updateStatus(orderId, status) {
+    if (confirm(`Are you sure you want to change this order status to "${status}"?`)) {
+        fetch(`/update-order-status/${orderId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order status updated successfully');
+                window.location.reload();
+            } else {
+                alert('Error updating status: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Server error while updating status');
+        });
+    }
+}
 
     </script>
 </body>

@@ -101,9 +101,9 @@
                             <tr>
                                 <td><%= item.product_name %></td>
                                 <td><%= item.sku %></td>
-                                <td>$<%= item.price.toFixed(2) %></td>
+                                <td>₹<%= item.price.toFixed(2) %></td>
                                 <td><%= item.quantity %></td>
-                                <td>$<%= (item.price * item.quantity).toFixed(2) %></td>
+                                <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
                             </tr>
                         <% }); %>
                     </tbody>
@@ -112,19 +112,19 @@
                 <div class="order-summary">
                     <div class="summary-row">
                         <div>Subtotal</div>
-                        <div id="subtotal">$<%= order.subtotal.toFixed(2) %></div>
+                        <div id="subtotal">₹<%= order.subtotal.toFixed(2) %></div>
                     </div>
                     <div class="summary-row">
                         <div>Shipping</div>
-                        <div id="shipping">$<%= order.shipping_cost.toFixed(2) %></div>
+                        <div id="shipping">₹<%= order.shipping_cost.toFixed(2) %></div>
                     </div>
                     <div class="summary-row">
                         <div>Tax</div>
-                        <div id="tax">$<%= order.tax.toFixed(2) %></div>
+                        <div id="tax">₹<%= order.tax.toFixed(2) %></div>
                     </div>
                     <div class="summary-total">
                         <div>Total</div>
-                        <div id="total">$<%= order.total.toFixed(2) %></div>
+                        <div id="total">₹<%= order.total.toFixed(2) %></div>
                     </div>
                 </div>
             </div>
@@ -141,6 +141,22 @@
                         <% }); %>
                     </div>
                 </div>
+
+                <% if (order.status === 'Confirmed' || order.status === 'Shipped') { %>
+<div class="order-actions">
+    <h3>Update Order Status</h3>
+    <p>Change the status of this order. The customer will be notified.</p>
+    <div class="status-update-buttons">
+        <% if (order.status === 'Confirmed') { %>
+            <button class="action-btn shipped-btn" onclick="updateOrderStatus('<%= order.order_id %>', 'Shipped')">Mark as Shipped</button>
+        <% } %>
+        <% if (order.status === 'Confirmed' || order.status === 'Shipped') { %>
+            <button class="action-btn delivered-btn" onclick="updateOrderStatus('<%= order.order_id %>', 'Delivered')">Mark as Delivered</button>
+            <button class="action-btn cancelled-btn" onclick="updateOrderStatus('<%= order.order_id %>', 'Cancelled')">Cancel Order</button>
+        <% } %>
+    </div>
+</div>
+<% } %>
                 
                 <div class="action-buttons">
                     <button class="action-btn print-btn" onclick="printOrder()">Print Order</button>
@@ -148,9 +164,7 @@
             </div>
 
             <!-- Delete Button for Pending Orders -->
-            <% if (order.status === 'Pending') { %>
-                <button class="delete-btn" onclick="deleteOrder('<%= order.order_id %>')">Delete Order</button>
-            <% } %>                        
+            <button class="delete-btn" onclick="deleteOrder('<%= order.order_id %>')">Delete Order</button>                       
 
         <% } else { %>
             <div class="order-container">
@@ -189,6 +203,31 @@
                });
            }
        }
+
+       function updateOrderStatus(orderId, status) {
+    const rawOrderId = orderId.replace('#ORD-', '');
+    if (confirm(`Are you sure you want to change the order status to "${status}"?`)) {
+        fetch(`/update-order-status/${rawOrderId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Order status updated successfully.');
+                window.location.reload();
+            } else {
+                alert('Error updating status: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('A server error occurred.');
+        });
+    }
+}
+
     </script>
 </body>
 </html>

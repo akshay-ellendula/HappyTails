@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { Product } = require('../models/database');
-const { storeSignup, serviceProviderLogin, getVendorDashboard,getVendorAnalytics,deleteProduct,logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders,updateVendorProfile } = require('../controllers/vendorController');
+const { storeSignup, serviceProviderLogin, getVendorDashboard,getVendorAnalytics,deleteProduct,logout, getVendorProfile, getVendorProducts, getProductForEdit, updateProduct, getVendorOrders, getVendorCustomers, submitProduct, getOrderDetails,deleteOrder,getCustomerDetails,deleteSelectedOrders,updateVendorProfile,updateOrderStatus} = require('../controllers/vendorController');
 const { isVendorAuthenticated, isUserAuthenticated } = require('../middleware/authMiddleware');
 router.get('/service_provider_login', (req, res) => {
     res.render('service_provider_login');
@@ -71,7 +71,7 @@ router.delete('/shop-product-delete/:productId', deleteProduct);
 router.get('/shop-analytics', getVendorAnalytics);
 
 router.post('/update-vendor-profile', updateVendorProfile);
-
+router.post('/update-order-status/:orderId', isVendorAuthenticated, updateOrderStatus);
 router.get('/shop-product-edit/:productId', getProductForEdit);
 router.post('/shop-product-edit/:productId', updateProduct);
 router.post('/submit-product', isVendorAuthenticated, submitProduct);

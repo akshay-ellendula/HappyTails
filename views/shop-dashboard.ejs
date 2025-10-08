@@ -45,7 +45,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-title">TOTAL REVENUE</div>
-                        <div class="stat-value">$<%= totalRevenue %></div>
+                        <div class="stat-value">₹<%= totalRevenue %></div>
                         <div class="stat-comparison">+12.5% from last month</div>
                     </div>
                     
@@ -87,7 +87,7 @@
                                         <td><%= order.user_name %></td>
                                         <td><%= order.product_name %></td>
                                         <td><%= new Date(order.order_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></td>
-                                        <td>$<%= order.total_amount.toFixed(2) %></td>
+                                        <td>₹<%= order.total_amount.toFixed(2) %></td>
                                         <td><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
                                     </tr>
                                 <% }); %>

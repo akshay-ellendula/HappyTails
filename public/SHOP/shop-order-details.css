@@ -72,7 +72,7 @@ body {
     color: #0a4e6e;
 }
 
-.status-pending {
+.status-confirmed,.status-pending {
     background-color: #f8f4d4;
     color: #6e5a0a;
 }
@@ -265,4 +265,46 @@ body {
 
 .print-btn:hover {
     background-color: #e0e0e0;
+}
+
+/* New styles for order actions */
+.order-actions {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+.order-actions h3 {
+    margin-bottom: 0.5rem;
+}
+.order-actions p {
+    margin-bottom: 1.5rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+.status-update-buttons {
+    display: flex;
+    gap: 1rem;
+}
+.status-update-buttons .action-btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+.status-update-buttons .action-btn:hover {
+    opacity: 0.8;
+}
+.shipped-btn {
+    background-color: #2196F3; /* Blue */
+}
+.delivered-btn {
+    background-color: #4CAF50; /* Green */
+}
+.cancelled-btn {
+    background-color: #f44336; /* Red */
 }
