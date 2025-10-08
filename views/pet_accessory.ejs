@@ -48,7 +48,15 @@
                             <h3>Subtotal</h3>
                             <p>₹<span id="subtotal_amount">0.00</span></p>
                         </div>
-                        <p class="cart_text">Taxes and shipping are calculated at checkout.</p>
+                        <div class="charge_details">
+                            <p>Charge (4%)</p>
+                            <p>₹<span id="charge_amount">0.00</span></p>
+                        </div>
+                        <hr>
+                        <div class="total_details">
+                            <h3>Total</h3>
+                            <p>₹<span id="total_amount">0.00</span></p>
+                        </div>
                         <div class="checkout_button">
                             <button>Checkout</button>
                         </div>
@@ -296,6 +304,8 @@
             function renderCart() {
                 const cartContainer = document.getElementById('cart_product_container');
                 const subtotalElement = document.getElementById('subtotal_amount');
+                const chargeElement = document.getElementById('charge_amount');
+                const totalElement = document.getElementById('total_amount');
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
                 cartContainer.innerHTML = cart.length === 0 ? '<p>Your cart is empty.</p>' : '';
@@ -351,7 +361,12 @@
                 });
             
                 const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const charge = subtotal * 0.04;
+                const total = subtotal + charge;
+                        
                 subtotalElement.textContent = subtotal.toFixed(2);
+                chargeElement.textContent = charge.toFixed(2);
+                totalElement.textContent = total.toFixed(2);
             }
 
             

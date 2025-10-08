@@ -475,6 +475,21 @@ hr {
     font-size: 1.5rem;
 }
 
+.charge_details {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0px;
+    font-size: 1.2rem;
+}
+
+.total_details {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
 .cart_text {
     font-size: 1rem; 
     margin-bottom: 15px;  
