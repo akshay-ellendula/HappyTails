@@ -72,69 +72,88 @@ const eventManagerSignup = async (req, res) => {
 
 const eventDashbord = async (req, res) => {
     try {
+        // Check for a valid session to ensure the user is logged in
+        if (!req.session.eventManager || !req.session.eventManager.id) {
+            return res.redirect('/eventmanager/login'); // Redirect if not logged in
+        }
 
-        const eventManagerId = req.session.eventManager.id;
+        // Prepare the manager's ID as a Mongoose ObjectId
+        const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
 
-        const overview = await Event.aggregate([
-            { $match: { event_manager_id: new mongoose.Types.ObjectId(eventManagerId) } },
-            {
-                $group: {
-                    _id: null,
-                    totalEvents: { $sum: 1 },
-                    totalBookings: { $sum: '$tickets_sold' },
-                    totalEarnings: { $sum: { $multiply: ['$tickets_sold', '$ticket_price'] } }
+        // --- Prepare all database queries to run in parallel ---
+
+        const promises = [
+            // 1. Get the overview stats (total events, bookings, earnings)
+            Event.aggregate([
+                { $match: { event_manager_id: eventManagerId } },
+                {
+                    $group: {
+                        _id: null,
+                        totalEvents: { $sum: 1 },
+                        totalBookings: { $sum: '$tickets_sold' }, // Corrected field
+                        totalEarnings: { $sum: { $multiply: ['$tickets_sold', '$ticket_price'] } } // Corrected field
+                    }
+                },
+                {
+                    $project: { _id: 0 } // Project the final fields, ifNull is handled later
                 }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalEvents: { $ifNull: ['$totalEvents', 0] },
-                    totalBookings: { $ifNull: ['$totalBookings', 0] },
-                    totalEarnings: { $ifNull: ['$totalEarnings', 0] }
-                }
-            }
-        ]);
+            ]),
 
-        // Fetch ongoing events upto 3 events
-        const ongoingEvents = await Event.find(
-            { event_manager_id: new mongoose.Types.ObjectId(eventManagerId), status: 'Ongoing' },
-            'id event_name tickets_sold ticket_price date_time image'
-        ).limit(3).lean();
+            // 2. Get the next 3 ongoing events
+            Event.find(
+                { event_manager_id: eventManagerId, status: 'Ongoing' },
+                'event_name tickets_sold ticket_price date_time image' // Corrected fields
+            ).sort({ date_time: 1 }).limit(3).lean(),
 
-        // Fetch upcoming events (limit to 3)
-        const upcomingEvents = await Event.find(
-            { event_manager_id: new mongoose.Types.ObjectId(eventManagerId), status: 'Upcoming' },
-            'id event_name tickets_sold ticket_price total_tickets date_time image'
-        ).limit(3).lean();
+            // 3. Get the next 3 upcoming events
+            Event.find(
+                { event_manager_id: eventManagerId, status: 'Upcoming' },
+                'event_name tickets_sold ticket_price total_tickets date_time image' // Corrected fields
+            ).sort({ date_time: 1 }).limit(3).lean(),
 
-        // Fetch attendees (limit to 3)
-        const attendees = await EventAttendee.aggregate([
-            {
-                $lookup: {
-                    from: 'events',
-                    localField: 'event_id',
-                    foreignField: '_id',
-                    as: 'event'
-                }
-            },
-            { $unwind: '$event' },
-            { $match: { 'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId) } },
-            {
-                $project: {
-                    id: '$_id',
-                    name: 1,
-                    phone_number: 1,
-                    seats: 1,
-                    event_name: '$event.event_name',
-                    event_date: '$event.date_time',
-                    _id: 0
-                }
-            },
-            { $limit: 3 }
-        ]);
+            // 4. Get the 3 most recent attendees
+            EventAttendee.aggregate([
+                { $sort: { registration_date: -1 } }, // Sort by the correct date field
+                {
+                    $lookup: {
+                        from: 'events', // The collection name for the Event model
+                        localField: 'event_id',
+                        foreignField: '_id', // Joins on the Event's primary key
+                        as: 'event'
+                    }
+                },
+                { $unwind: '$event' },
+                { $match: { 'event.event_manager_id': eventManagerId } },
+                {
+                    $project: {
+                        _id: 0,
+                        name: 1,
+                        phone_number: 1,
+                        seats: 1,
+                        event_name: '$event.event_name', // Corrected field
+                        event_date: '$event.date_time'  // Corrected field
+                    }
+                },
+                { $limit: 3 }
+            ])
+        ];
+
+        // --- Execute all queries at the same time ---
+
+        const [
+            overviewData,
+            ongoingEvents,
+            upcomingEvents,
+            attendees
+        ] = await Promise.all(promises);
+
+        // Provide a default object for the overview if no events are found
+        const overview = overviewData[0] || { totalEvents: 0, totalBookings: 0, totalEarnings: 0 };
+
+        // --- Render the dashboard with all the fetched data ---
 
         res.render('eventmanager_dashboard', {
-            overview: overview[0] || { totalEvents: 0, totalBookings: 0, totalEarnings: 0 },
+            overview,
             ongoingEvents,
             upcomingEvents,
             attendees,
@@ -145,8 +164,7 @@ const eventDashbord = async (req, res) => {
         console.error('Error fetching dashboard data:', error);
         res.status(500).send('Internal Server Error');
     }
-}
-
+};
 
 // POST /eventmanager_dashboard/createEvent - Create a new event
 // POST /eventmanager_dashboard/createEvent - Create a new event
@@ -1196,8 +1214,6 @@ const postTicket = async (req, res) => {
 
 const updateEventManagerProfile = async (req, res) => {
     try {
-        console.log('Request Body:', req.body); // Log form data
-        console.log('Uploaded File:', req.file); // Log file data
         const eventManagerId = req.session.eventManager.id;
         const { firstName, lastName, email, phone, eventType, license, bio } = req.body;
         const name = `${firstName} ${lastName}`.trim();
@@ -1233,15 +1249,10 @@ const updateEventManagerProfile = async (req, res) => {
         if (image !== undefined) {
             updateData.image = image;
         }
-
-        console.log('Update Data:', updateData); // Log data to be saved
         const updateResult = await EventManager.updateOne(
             { _id: eventManagerId },
             { $set: updateData }
         );
-
-        console.log('Update Result:', updateResult); // Log update result
-
         // Update session data
         req.session.eventManager = {
             ...req.session.eventManager,

@@ -10,11 +10,11 @@ const pages = [
     'service_signup', 'services', 'store_signup', 'track_package', 'shop-analytics',
     'shop-customer-details', 'shop-customers', 'shop-order-details',
     'shop-orders', 'shop-product_form', 'shop-product-edit', 'shop-products', 'shop-profile',
-    'admin-appointments', 'admin-dashboard', 'admin-em-details', 'admin-events',
+    'admin-appointments', 'admin-dashboard', 'admin-em-details', 'admin-eventManager',
     'admin-product-details', 'admin-products', 'admin-service-provider', 'admin-shop-manager',
     'admin-sm-details', 'admin-sp-details', 'admin-user-details', 'admin-user', 'admin_login',
     'eventmanager_analytics', 'eventmanager_profile', 'my_events','admin-add-product', 
-    'admin-edit-product','eventmanager_event_edit','eventDetails'
+    'admin-edit-product','eventmanager_event_edit','eventDetails', 'admin-events'
 ];
 
 pages.forEach(page => {
