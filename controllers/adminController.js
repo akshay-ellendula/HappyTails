@@ -1387,20 +1387,23 @@ const getEventManager = async (req, res) => {
     try {
         const managerId = req.params.id;
         const manager = await EventManager.findById(managerId)
-            .select('id name email contact_number company_name location created_at');
+            .select('id name email contact_number company_name location created_at image');
+
         if (!manager) {
-            return res.status(404).json({ success: false, message: 'Event manager not found' });
+            return res.status(404).json({ success: false, message: 'Event Manager not found' });
         }
+
         res.json({
             success: true,
             manager: {
-                id: manager._id,
+                id: manager._id.toString(),
                 name: manager.name,
                 email: manager.email,
-                phone: manager.contact_number,
-                organization: manager.company_name,
-                location: manager.location,
-                joined_date: manager.created_at
+                phone: manager.contact_number || null,
+                organization: manager.company_name || null,
+                location: manager.location || null,
+                joined_date: manager.created_at,
+                image: manager.image || null  // Base64 image string
             }
         });
     } catch (err) {
@@ -1411,53 +1414,42 @@ const getEventManager = async (req, res) => {
 const getEventManagerMetrics = async (req, res) => {
     try {
         const managerId = req.params.id;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-        const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-        const threeMonthsAgo = new Date(today.getTime() - 90 * 24 * 60 * 60 * 1000);
+        const now = new Date();
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        const upcoming = await Event.countDocuments({
-            event_manager_id: managerId,
-            date_time: { $gt: today }
-        });
-        const weekly = await Event.countDocuments({
-            event_manager_id: managerId,
-            date_time: { $gte: weekAgo, $lte: today }
-        });
-        const monthly = await Event.countDocuments({
-            event_manager_id: managerId,
-            date_time: { $gte: monthAgo }
-        });
-        const monthlyBreakdown = await Event.aggregate([
-            { $match: { event_manager_id: new mongoose.Types.ObjectId(managerId), date_time: { $gte: threeMonthsAgo } } },
-            {
-                $group: {
-                    _id: { $dateToString: { format: '%Y-%m', date: '$date_time' } },
-                    total_events: { $sum: 1 },
-                    attendees: { $sum: '$tickets_sold' },
-                    avg_attendance: { $avg: '$tickets_sold' }
-                }
-            },
-            {
-                $project: {
-                    month: '$_id',
-                    total_events: 1,
-                    attendees: 1,
-                    avg_attendance: 1,
-                    _id: 0
-                }
-            },
-            { $sort: { month: -1 } },
-            { $limit: 3 }
+        const [upcoming, weekly, monthly, monthlyBreakdown] = await Promise.all([
+            Event.countDocuments({ event_manager_id: managerId, date_time: { $gte: now } }),
+            Event.countDocuments({ event_manager_id: managerId, date_time: { $gte: weekAgo } }),
+            Event.countDocuments({ event_manager_id: managerId, date_time: { $gte: monthAgo } }),
+            Event.aggregate([
+                { $match: { event_manager_id: new mongoose.Types.ObjectId(managerId) } },
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y-%m", date: "$date_time" } },
+                        total_events: { $sum: 1 },
+                        attendees: { $sum: "$tickets_sold" }
+                    }
+                },
+                {
+                    $project: {
+                        month: "$_id",
+                        total_events: 1,
+                        attendees: 1,
+                        avg_attendance: { $divide: ["$attendees", "$total_events"] }
+                    }
+                },
+                { $sort: { month: -1 } },
+                { $limit: 6 }  // Last 6 months
+            ])
         ]);
 
         res.json({
             success: true,
             metrics: {
-                upcoming: upcoming || 0,
-                weekly: weekly || 0,
-                monthly: monthly || 0,
+                upcoming,
+                weekly,
+                monthly,
                 monthly_breakdown: monthlyBreakdown
             }
         });
@@ -1469,18 +1461,16 @@ const getEventManagerMetrics = async (req, res) => {
 const getUpcomingEvents = async (req, res) => {
     try {
         const managerId = req.params.id;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const events = await Event.find({
-            event_manager_id: managerId,
-            date_time: { $gt: today }
-        })
+        const now = new Date();
+        const events = await Event.find({ event_manager_id: managerId, date_time: { $gte: now } })
             .select('id event_name date_time venue total_tickets tickets_sold status')
-            .sort({ date_time: 1 });
+            .sort({ date_time: 1 })
+            .limit(10);
+
         res.json({
             success: true,
             events: events.map(event => ({
-                event_id: event._id,
+                event_id: event._id.toString(),
                 event_name: event.event_name,
                 date: event.date_time,
                 location: event.venue,
@@ -1497,18 +1487,16 @@ const getUpcomingEvents = async (req, res) => {
 const getPastEvents = async (req, res) => {
     try {
         const managerId = req.params.id;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const events = await Event.find({
-            event_manager_id: managerId,
-            date_time: { $lt: today }
-        })
+        const now = new Date();
+        const events = await Event.find({ event_manager_id: managerId, date_time: { $lt: now } })
             .select('id event_name date_time tickets_sold')
-            .sort({ date_time: -1 });
+            .sort({ date_time: -1 })
+            .limit(10);
+
         res.json({
             success: true,
             events: events.map(event => ({
-                event_id: event._id,
+                event_id: event._id.toString(),
                 event_name: event.event_name,
                 date: event.date_time,
                 attendees: event.tickets_sold
@@ -1524,20 +1512,24 @@ const updateEventManager = async (req, res) => {
         const managerId = req.params.id;
         const { name, email, phone, organization } = req.body;
 
-        if (!name || !email || !organization) return res.status(400).json({ success: false, message: 'Name, email, and organization are required' });
-        if (name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Invalid email format' });
-        if (phone && !/^\+91[6-9][0-9]{9}$/.test(phone)) return res.status(400).json({ success: false, message: 'Phone must be a valid Indian number (+91XXXXXXXXXX)' });
-        if (organization.length < 3) return res.status(400).json({ success: false, message: 'Organization must be at least 3 characters' });
+        if (!name || name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Invalid email' });
+        if (phone && !/^\+91[6-9][0-9]{9}$/.test(phone)) return res.status(400).json({ success: false, message: 'Invalid phone number' });
+        if (organization && organization.length < 3) return res.status(400).json({ success: false, message: 'Organization must be at least 3 characters' });
 
         const manager = await EventManager.findById(managerId);
-        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
+        if (!manager) return res.status(404).json({ success: false, message: 'Event Manager not found' });
 
         await EventManager.updateOne(
             { _id: managerId },
-            { name, email, contact_number: phone || null, company_name: organization }
+            { 
+                name, 
+                email, 
+                contact_number: phone || manager.contact_number,
+                company_name: organization || manager.company_name
+            }
         );
-        res.json({ success: true, message: 'Event manager updated successfully' });
+        res.json({ success: true, message: 'Event Manager updated successfully' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Failed to update event manager' });
     }
@@ -1547,21 +1539,20 @@ const deleteEventManager = async (req, res) => {
     try {
         const managerId = req.params.id;
         const manager = await EventManager.findById(managerId);
-        if (!manager) return res.status(404).json({ success: false, message: 'Event manager not found' });
+        if (!manager) return res.status(404).json({ success: false, message: 'Event Manager not found' });
 
+        // Delete associated events and attendees
         const events = await Event.find({ event_manager_id: managerId });
-        const eventIds = events.map(event => event._id);
-
+        const eventIds = events.map(e => e._id);
         await EventAttendee.deleteMany({ event_id: { $in: eventIds } });
         await Event.deleteMany({ event_manager_id: managerId });
-        await EventManager.deleteOne({ _id: managerId });
 
-        res.json({ success: true, message: 'Event manager deleted successfully' });
+        await EventManager.deleteOne({ _id: managerId });
+        res.json({ success: true, message: 'Event Manager deleted successfully' });
     } catch (err) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: 'Failed to delete event manager' });
     }
 };
-
 const deleteProduct = async (req, res) => {
     try {
         const productId = req.params.id;
@@ -1893,6 +1884,139 @@ const deleteEvent = async (req, res) => {
     }
 };
 
+// In adminController.js, add the following functions:
+
+const getEvent = async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        const event = await Event.findById(eventId)
+            .populate('event_manager_id', 'name email contact_number company_name')
+            .select('_id event_name about_event language duration ticket_price age_limit instructions venue terms category date_time status total_tickets tickets_sold city contact_number image created_at');
+
+        if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
+
+        res.json({
+            success: true,
+            event: {
+                id: event._id.toString(),
+                name: event.event_name,
+                about: event.about_event,
+                language: event.language,
+                duration: event.duration,
+                ticket_price: event.ticket_price,
+                age_limit: event.age_limit,
+                instructions: event.instructions,
+                venue: event.venue,
+                terms: event.terms,
+                category: event.category,
+                date_time: event.date_time,
+                status: event.status,
+                total_tickets: event.total_tickets,
+                tickets_sold: event.tickets_sold,
+                city: event.city,
+                contact_number: event.contact_number,
+                image: event.image || null,  // Base64 string
+                created_at: event.created_at,
+                manager: event.event_manager_id ? {
+                    name: event.event_manager_id.name,
+                    email: event.event_manager_id.email,
+                    phone: event.event_manager_id.contact_number,
+                    organization: event.event_manager_id.company_name
+                } : null
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const getEventAttendees = async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        const attendees = await EventAttendee.find({ event_id: eventId })
+            .populate('user_id', 'user_name user_email user_phone')
+            .select('_id ticketId name phone_number email address seats with_pet pet_name pet_breed pet_dob registration_date');
+
+        res.json({
+            success: true,
+            attendees: attendees.map(att => ({
+                id: att._id.toString(),
+                ticketId: att.ticketId || 'N/A',
+                name: att.name,
+                phone: att.phone_number,
+                email: att.email,
+                address: att.address,
+                seats: att.seats,
+                with_pet: att.with_pet ? 'Yes' : 'No',
+                pet_name: att.pet_name || 'N/A',
+                pet_breed: att.pet_breed || 'N/A',
+                pet_dob: att.pet_dob ? new Date(att.pet_dob).toLocaleDateString() : 'N/A',
+                registration_date: new Date(att.registration_date).toLocaleDateString(),
+                user: att.user_id ? {
+                    name: att.user_id.user_name,
+                    email: att.user_id.user_email,
+                    phone: att.user_id.user_phone
+                } : null
+            }))
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const updateEvent = async (req, res) => {
+    try {
+        const eventId = req.params.id;
+        const {
+            event_name, about_event, language, duration, ticket_price,
+            age_limit, instructions, venue, terms, category, date_time,
+            total_tickets, city, contact_number
+        } = req.body;
+
+        // Validation
+        if (!event_name || event_name.length < 3) return res.status(400).json({ success: false, message: 'Event name must be at least 3 characters' });
+        if (!about_event || about_event.length < 10) return res.status(400).json({ success: false, message: 'About event must be at least 10 characters' });
+        if (!language || language.length < 2) return res.status(400).json({ success: false, message: 'Language must be at least 2 characters' });
+        if (!duration || !/^\d+h\s*\d*m?$/.test(duration)) return res.status(400).json({ success: false, message: 'Invalid duration format (e.g., 2h 30m)' });
+        if (!ticket_price || ticket_price < 0) return res.status(400).json({ success: false, message: 'Ticket price must be a positive number' });
+        if (!age_limit || !/^\d+\+?$/.test(age_limit)) return res.status(400).json({ success: false, message: 'Invalid age limit format (e.g., 18+)' });
+        if (!venue || venue.length < 3) return res.status(400).json({ success: false, message: 'Venue must be at least 3 characters' });
+        if (!category || category.length < 2) return res.status(400).json({ success: false, message: 'Category must be at least 2 characters' });
+        if (!date_time || isNaN(new Date(date_time))) return res.status(400).json({ success: false, message: 'Invalid date and time' });
+        if (!total_tickets || total_tickets < 1) return res.status(400).json({ success: false, message: 'Total tickets must be at least 1' });
+        if (!city || city.length < 2) return res.status(400).json({ success: false, message: 'City must be at least 2 characters' });
+        if (contact_number && !/^\+91[6-9][0-9]{9}$/.test(contact_number)) return res.status(400).json({ success: false, message: 'Invalid phone number' });
+
+        const event = await Event.findById(eventId);
+        if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
+
+        await Event.updateOne(
+            { _id: eventId },
+            {
+                event_name,
+                about_event,
+                language,
+                duration,
+                ticket_price,
+                age_limit,
+                instructions: instructions || event.instructions,
+                venue,
+                terms: terms || event.terms,
+                category,
+                date_time,
+                total_tickets,
+                city,
+                contact_number: contact_number || event.contact_number
+            }
+        );
+        res.json({ success: true, message: 'Event updated successfully' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Failed to update event' });
+    }
+};
+
+
+
 module.exports = {
     adminLogin,
     getUsers,
@@ -1929,5 +2053,8 @@ module.exports = {
     updateProduct,
     logout,
     getEventsData,
-    deleteEvent
+    deleteEvent,
+    getEvent, 
+    getEventAttendees,
+    updateEvent
 };

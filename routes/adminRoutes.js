@@ -36,7 +36,10 @@ const {
     addProduct,
     logout,
     getEventsData,
-    deleteEvent
+    deleteEvent,
+    getEvent, 
+    getEventAttendees,
+    updateEvent
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
 
@@ -104,6 +107,7 @@ router.delete('/admin/event-manager/:id', isAdminAuthenticated, deleteEventManag
 router.get('/admin/revenue-chart-data', isAdminAuthenticated, getRevenueChartData);
 router.get('/admin/events', isAdminAuthenticated, getEventsData);
 router.delete('/admin/events/:id', isAdminAuthenticated, deleteEvent);
+router.put('/admin/event/:id', isAdminAuthenticated, updateEvent);
 
 // Render Admin Login Page
 router.get('/admin-login', (req, res) => {
@@ -134,5 +138,19 @@ router.post('/admin/add-product', isAdminAuthenticated, upload.array('productIma
 
 // Handle Update Product Submission
 router.post('/admin/product/:id', isAdminAuthenticated, upload.array('productImages', 4), updateProduct);
+
+router.get('/admin-em-details', isAdminAuthenticated, (req, res) => {
+    res.render('admin-em-details');
+});
+
+// In adminRoutes.js, add the following routes:
+
+router.get('/admin/event/:id', isAdminAuthenticated, getEvent);
+router.get('/admin/event/:id/attendees', isAdminAuthenticated, getEventAttendees);
+
+// Render Event Details Page
+router.get('/admin-event-details', isAdminAuthenticated, (req, res) => {
+    res.render('admin-event-details');
+});
 
 module.exports = router;
