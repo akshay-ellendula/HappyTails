@@ -120,7 +120,7 @@ input:focus {
 }
 
 .centered-text h1 {
-    font-size: 5rem;
+    font-size: 4rem;
     font-weight: bold;
     color: #1a1a1a;
     font-family: "Outfit", sans-serif;
@@ -128,7 +128,7 @@ input:focus {
 }
 
 .centered-text p {
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     color: #1a1a1a;
     font-family: "Outfit", sans-serif;
     margin-bottom: 30px;

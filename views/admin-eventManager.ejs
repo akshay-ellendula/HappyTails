@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Tails - Shop Manager Management</title>
+    <title>Happy Tails - Event Manager Management</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-    <link href="/ADMIN/admin-shop-manager.css" rel="stylesheet">
+    <link href="/ADMIN/admin-events.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -26,12 +26,12 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/admin-shop-manager" class="nav-link active">
+                    <a href="/admin-shop-manager" class="nav-link">
                         <span>Shop Managers</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/admin-eventManager" class="nav-link">
+                    <a href="/admin-eventManager" class="nav-link active">
                         <span>Event Managers</span>
                     </a>
                 </li>
@@ -57,75 +57,66 @@
         <main class="main-content">
             <!-- Header -->
             <div class="header">
-                <h2>Shop Manager Management</h2>
+                <h2>Event Manager Management</h2>
                 <div class="user-info">
-                    <div class="avatar">
-                        <% if (user && user.email) { %>
-                            <%- user.email.charAt(0).toUpperCase() %>
-                        <% } else { %>
-                            A
-                        <% } %>
-                    </div>
-                    <span>
-                        <% if (user && user.email) { %>
-                            <%- user.email.split('@')[0] %>
-                        <% } else { %>
-                            Admin
-                        <% } %>
-                    </span>
+                    <div class="avatar">A</div>
+                    <span>Admin User</span>
                 </div>
             </div>
 
             <!-- Stats Cards -->
-            <div class="stats-container">
-                <div class="stat-card">
-                    <h3>Total Shop Managers</h3>
-                    <div class="number">Loading...</div>
-                    <div class="change" id="totalGrowthPercent">Loading...</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Total Revenue Generated</h3>
-                    <div class="number">Loading...</div>
-                    <div class="change" id="revenueGrowthPercent">Loading...</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Total Orders</h3>
-                    <div class="number">Loading...</div>
-                    <div class="change" id="ordersGrowthPercent">Loading...</div>
-                </div>
-                <div class="stat-card">
-                    <h3>Today's Orders</h3>
-                    <div class="number">Loading...</div>
-                    <div class="change" id="todaysOrdersChange">Loading...</div>
-                </div>
-            </div>
+            
+                <!-- Stats Cards -->
+<div class="stats-container">
+    <div class="stat-card">
+        <h3>Total Event Managers</h3>
+        <div class="number"></div> <!-- Remove hardcoded 84 -->
+        <div class="change"></div> <!-- Remove hardcoded +7% -->
+    </div>
+    <div class="stat-card">
+        <h3>Total Revenue Generated</h3>
+        <div class="number"></div> <!-- Remove hardcoded $98,750 -->
+        <div class="change"></div> <!-- Remove hardcoded +12% -->
+    </div>
+    <div class="stat-card">
+        <h3>Total Events</h3>
+        <div class="number"></div> <!-- Remove hardcoded 942 -->
+        <div class="change"></div> <!-- Remove hardcoded +8% -->
+    </div>
+    <div class="stat-card">
+        <h3>Today's Events</h3>
+        <div class="number"></div> <!-- Remove hardcoded 23 -->
+        <div class="change"></div> <!-- Remove hardcoded +5 -->
+    </div>
+</div>
+            
 
             <!-- Search Bar -->
             <div class="search-container">
                 <div class="search-bar">
-                    <input type="text" id="managerSearchInput" placeholder="Search managers by name or shop...">
+                    <input type="text" id="eventManagerSearchInput" placeholder="Search event managers by name or event...">
                 </div>
                 <button class="filter-btn" id="filterBtn">Filter Options</button>
             </div>
 
-            <!-- Manager Table -->
+            <!-- Event Manager Table -->
             <div class="manager-table-container">
                 <div class="table-header">
-                    <h3>Shop Manager List</h3>
+                    <h3>Event Manager List</h3>
                 </div>
                 <table class="manager-table">
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Shop Name</th>
+                            <th>Organization</th>
                             <th>Email</th>
                             <th>Joined Date</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="managerTableBody">
-                        <!-- Manager data will be inserted here by JavaScript -->
+                    <tbody id="eventManagerTableBody">
+                        <!-- Event Manager data will be inserted here by JavaScript -->
                     </tbody>
                 </table>
                 
@@ -139,6 +130,6 @@
             </div>
         </main>
     </div>
-    <script src="/ADMIN/admin-shop-manager.js"></script>
+    <script src="/ADMIN/admin-events.js"></script>
 </body>
-</html>   
+</html>
