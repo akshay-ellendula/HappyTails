@@ -447,7 +447,6 @@ const getEvent = async (req, res) => {
         const dateTime = new Date(event.date_time);
         const formattedDate = dateTime.toISOString().split('T')[0]; // e.g., "2025-05-29"
         const formattedTime = dateTime.toTimeString().split(' ')[0].slice(0, 5); // e.g., "22:38"
-
         res.render('eventmanager_event_edit', {
             event: {
                 id: event._id,
@@ -473,52 +472,81 @@ const getEvent = async (req, res) => {
 }
 //@dec updateing  event 
 //update event 
+// You will need to install and set up Multer for image uploads
+// Example: const multer = require('multer');
+
 const updateEvent = async (req, res) => {
     try {
+        // These variable names now EXACTLY match the 'name' attributes in your form
         const {
-            eventId,
-            eventName,
-            eventDescription,
+            id,              // was eventId
+            name,            // was eventName
+            about,           // was eventDescription
             language,
             duration,
-            eventTicketPrice,
-            ageLimit,
+            ticket_price,    // was eventTicketPrice
+            age_limit,       // was ageLimit
             instructions,
-            eventVenue,
+            venue,           // was eventVenue
+            city,            // This was missing
+            contact_number,  // This was missing and name was wrong
             terms,
             category,
-            eventDate,
-            eventTime,
-            eventCapacity
+            date,            // was eventDate
+            time,            // was eventTime
+            capacity,        // was eventCapacity (and was missing)
         } = req.body;
+
         const eventManagerId = req.session.eventManager.id;
 
-        const eventDateTime = new Date(`${eventDate} ${eventTime}:00`);
+        // Combine date and time correctly
+        const eventDateTime = new Date(`${date}T${time}`);
+
+        // Find the event first to get the existing image path if no new one is uploaded
+        const eventToUpdate = await Event.findById(id);
+        if (!eventToUpdate) {
+            return res.status(404).send('Event not found.');
+        }
+
+        // --- IMAGE HANDLING LOGIC (Requires Multer) ---
+        // If a new file is uploaded, req.file will be populated by multer.
+        // You would save the new path and potentially delete the old image.
+        let imagePath = eventToUpdate.image; // Keep the old image by default
+        if (req.file) {
+            imagePath = '/uploads/' + req.file.filename; // Example path, adjust as needed
+            // Add logic here to delete the old image from your server if necessary
+        }
+
         await Event.updateOne(
-            { _id: eventId, event_manager_id: new mongoose.Types.ObjectId(eventManagerId) },
+            { _id: id, event_manager_id: new mongoose.Types.ObjectId(eventManagerId) },
             {
-                event_name: eventName,
-                about_event: eventDescription,
+                event_name: name,
+                about_event: about,
                 language: language,
                 duration: duration,
-                ticket_price: parseFloat(eventTicketPrice),
-                age_limit: parseInt(ageLimit),
+                ticket_price: parseFloat(ticket_price),
+                age_limit: parseInt(age_limit),
                 instructions: instructions,
-                venue: eventVenue,
+                venue: venue,
+                city: city, // Added city
+                contact_number: contact_number, // Added contact_number
                 terms: terms,
                 category: category,
                 date_time: eventDateTime,
-                total_tickets: parseInt(eventCapacity)
+                total_tickets: parseInt(capacity),
+                image: imagePath // Update image path
             }
         );
-        res.status(200).json({ message: "updated sucessufully" })
+
+        // ONLY send one response. A redirect is appropriate after a successful update.
         res.redirect('/eventmanager_events');
+
     } catch (err) {
         console.error('Error updating event:', err);
-        res.status(500).json({ success: false, message: 'Failed to update event' });
+        // It's better to render an error page or send a clear error message
+        res.status(500).send('Failed to update event.');
     }
-}
-
+};
 const getAttendes = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
@@ -1339,6 +1367,7 @@ try {
             return res.status(404).send("Event not found");
         }
 
+        console.log(eventData.total_tickets);
         // Transform to match template expectations
         const event = {
             id: eventData._id,
@@ -1353,6 +1382,7 @@ try {
             contact: eventData.contact_number,
             terms: eventData.terms,
             category: eventData.category,
+            total_tickets:eventData.total_tickets,
             date: new Date(eventData.date_time).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
             time: new Date(eventData.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             ticket_price: eventData.ticket_price,
@@ -1369,9 +1399,49 @@ try {
     }
     
 }
+
+const getEventDetail = async(req,res) =>{
+    try {
+
+        const eventId = req.params.id;
+        console.log(eventId);
+        console.log("11111");
+        // 2. ADD THIS VALIDATION BLOCK
+        if (!mongoose.Types.ObjectId.isValid(eventId)) {
+            // If the ID is not in a valid format, send a 400 error immediately
+            return res.status(400).render('error', { message: 'Invalid event ID format.' });
+        }
+
+        // Fetch the event and its attendees from the database at the same time
+        const [event, attendees] = await Promise.all([
+            Event.findById(eventId),
+            EventAttendee.find({ event_id: eventId }) // Find all attendees for this specific event
+        ]);
+
+        // If the event doesn't exist, show an error
+        if (!event) {
+            return res.status(404).render('error', { message: 'Event not found.' });
+        }
+
+        // Calculate the revenue for this event
+        const revenue = event.tickets_sold * event.ticket_price;
+
+        // Render the new 'event-details.ejs' page and pass all the data to it
+        res.render('event-details', {
+            title: event.event_name,
+            event: event,
+            attendees: attendees,
+            revenue: revenue
+        });
+
+    } catch (error) {
+        console.error('Error fetching event details:', error);
+        res.status(500).render('error', { message: 'A server error occurred.' });
+    }
+}
 module.exports = {
     eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee, getEvents, getEvent, updateEvent
     , getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword, getEventsUser, registerEvent, myEvents, deleteTicket,
-    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,editEvent
+    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,editEvent, getEventDetail
 };
 

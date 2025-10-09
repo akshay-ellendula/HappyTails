@@ -341,8 +341,8 @@
                         <div class="event-location">
                             <input type="text" id="venue" name="venue" value="<%= event.venue %>" placeholder="Venue" required>
                             <input type="text" id="city" name="city" value="<%= event.city %>" placeholder="City" required>
-                            <input type="text" id="contact" name="contact" value="<%= event.contact %>" placeholder="Contact Number" required>
-                        </div>
+                            <input type="text" id="contact" name="contact_number" value="<%= event.contact %>" placeholder="Contact Number" required>
+                    </div>
                     </div>
 
                     <div class="form-group">
@@ -381,8 +381,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="capacity">Capacity</label>
-                        <input type="number" id="capacity" name="capacity" value="<%= event.capacity %>" placeholder="Total Capacity" required>
+                        <label for="total_tickets">Capacity</label>
+                        <input type="number" id="total_tickets" name="capacity" value="<%= event.total_tickets %>" placeholder="Total Capacity" required>
                     </div>
 
                     <div class="form-group">
