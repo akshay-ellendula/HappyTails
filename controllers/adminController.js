@@ -51,16 +51,50 @@ const getUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
+
+        // Fetch purchase history (orders and items)
+        const orders = await Order.find({ user_id: userId });
+        const orderIds = orders.map(o => o._id);
+        const orderItems = await OrderItem.find({ order_id: { $in: orderIds } });
+        const purchaseHistory = orderItems.map(item => {
+            const order = orders.find(o => o._id.equals(item.order_id));
+            return {
+                productId: item.product_id ? item.product_id.toString() : 'Unknown',
+                productName: item.product_name,
+                purchaseDate: order ? order.order_date.toLocaleDateString() : 'Unknown',
+                price: item.price ? `$${item.price.toFixed(2)}` : 'N/A'
+            };
+        });
+
+        // Fetch event history
+        const attendees = await EventAttendee.find({ user_id: userId });
+        const eventHistory = await Promise.all(attendees.map(async (att) => {
+            const ev = await Event.findById(att.event_id);
+            if (!ev) return null;
+            const now = new Date();
+            const status = ev.date_time < now ? 'Attended' : 'Registered';
+            return {
+                eventId: ev._id.toString(),
+                eventName: ev.event_name,
+                date: ev.date_time.toLocaleDateString(),
+                location: ev.venue,
+                status
+            };
+        }));
+        const filteredEventHistory = eventHistory.filter(e => e !== null);
+
         res.json({
             success: true,
             user: {
-                id: user._id,
+                id: user._id.toString(),
                 name: user.user_name,
                 email: user.user_email,
-                phone: user.user_phone,
-                address: user.user_address,
-                joined_date: user.created_at
-            }
+                phone: user.user_phone || null,
+                address: user.user_address || null,
+                joined_date: user.created_at.toLocaleDateString()
+            },
+            purchaseHistory,
+            eventHistory: filteredEventHistory
         });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server error' });
