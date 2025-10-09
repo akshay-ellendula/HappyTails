@@ -352,6 +352,38 @@ body {
         margin-left: 70px;
     }
     
+
+
+/* Existing styles ... */
+
+/* Action buttons */
+.action-btn {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.view-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.view-btn:hover {
+    background-color: #218838;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
     .stats-container {
         grid-template-columns: 1fr;
     }
