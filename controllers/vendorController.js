@@ -625,13 +625,16 @@ const getVendorDashboard = async (req, res) => {
             newOrders: newOrders[0]?.newOrders,
             recentOrders: recentOrders.length
         });
-
-        res.render('shop-dashboard', {
+                const processedRecentOrders = recentOrders.map(order => ({
+            ...order,
+            status: order.status === 'Pending' ? 'Confirmed' : order.status
+        }));
+                res.render('shop-dashboard', {
             vendor: req.session.vendor,
             totalRevenue: (totalRevenue[0]?.totalRevenue || 0).toFixed(2),
             productsSold: productsSold[0]?.productsSold || 0,
             newOrders: newOrders[0]?.newOrders || 0,
-            recentOrders
+            recentOrders: processedRecentOrders // Use the processed orders here
         });
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
@@ -1138,47 +1141,79 @@ const getOrderDetails = async (req, res) => {
         const dbStatus = order.status || 'Pending';
         const displayStatus = dbStatus === 'Pending' ? 'Confirmed' : dbStatus;
 
-        const orderData = {
-            order_id: `#ORD-${order._id.toString()}`,
-            status: displayStatus,
-            order_date: order.order_date || new Date(),
-            payment_method: 'Credit Card (****4242)',
-            payment_status: 'Paid',
-            customer: {
-                name: order.user_id ? order.user_id.user_name : 'Unknown',
-                email: order.user_id ? order.user_id.user_email : 'N/A',
-                phone: order.user_id ? order.user_id.user_phone || 'N/A' : 'N/A',
-            },
-            shipping: {
-                address: order.user_id ? order.user_id.user_address || 'N/A' : 'N/A',
-                method: 'Standard Shipping',
-                tracking_number: null,
-                estimated_delivery: order.delivery_date || null,
-                shipping_cost: 0,
-            },
-            items: orderItems.map(item => ({
-                product_name: item.product_name,
-                sku: item.product_id ? item.product_id.sku || 'N/A' : 'N/A',
-                price: item.price,
-                quantity: item.quantity,
-            })),
-            subtotal: order.subtotal,
-            shipping_cost: 0,
-            tax: 0,
-            total: order.total_amount,
-            timeline: [
-                {
-                    status: dbStatus,
-                    date: order.order_date,
-                    description: `Order ${dbStatus.toLowerCase()}`,
-                },
-                {
-                    status: 'Placed',
-                    date: order.order_date,
-                    description: 'Order placed',
-                },
-            ],
-        };
+        // PART 1: Build the timeline array dynamically *before* creating orderData
+const timeline = [];
+
+// Event for when the order was placed/confirmed
+if (order.order_date) {
+    timeline.push({
+        status: 'Confirmed',
+        date: order.order_date,
+        description: 'Order was placed and confirmed.',
+    });
+}
+
+// Event for when the order was shipped
+if (order.shipped_at) {
+    timeline.push({
+        status: 'Shipped',
+        date: order.shipped_at,
+        description: 'Your order has been shipped.',
+    });
+}
+
+// Event for when the order was delivered
+if (order.delivered_at) {
+    timeline.push({
+        status: 'Delivered',
+        date: order.delivered_at,
+        description: 'Your order has been delivered.',
+    });
+}
+
+// Event for when the order was cancelled
+if (order.cancelled_at) {
+    timeline.push({
+        status: 'Cancelled',
+        date: order.cancelled_at,
+        description: 'The order was cancelled.',
+    });
+}
+
+// Ensure timeline events are in chronological order
+timeline.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+
+// PART 2: Now define the orderData object and assign the timeline to it
+const orderData = {
+    order_id: `#ORD-${order._id.toString()}`,
+    status: displayStatus,
+    order_date: order.order_date || new Date(),
+    payment_method: 'Credit Card (****4242)',
+    payment_status: 'Paid',
+    customer: {
+        name: order.user_id ? order.user_id.user_name : 'Unknown',
+        email: order.user_id ? order.user_id.user_email : 'N/A',
+        phone: order.user_id ? order.user_id.user_phone || 'N/A' : 'N/A',
+    },
+    shipping: {
+        address: order.user_id ? order.user_id.user_address || 'N/A' : 'N/A',
+        method: 'Standard Shipping',
+        tracking_number: null,
+        estimated_delivery: order.delivery_date || null,
+        shipping_cost: 0,
+    },
+    items: orderItems.map(item => ({
+        product_name: item.product_name,
+        price: item.price,
+        quantity: item.quantity,
+    })),
+    subtotal: order.subtotal,
+    shipping_cost: 0,
+    tax: 0,
+    total: order.total_amount,
+    timeline: timeline, // Assign the completed timeline array here
+};
 
         console.log('Order details fetched:', { orderId });
         res.render('shop-order-details', {
@@ -1499,60 +1534,67 @@ const getVendorAnalytics = async (req, res) => {
         // --- Other calculations that are always "all time" ---
         const productStats = await Product.aggregate([{ $match: { vendor_id: new mongoose.Types.ObjectId(vendorId) } }, { $group: { _id: null, total: { $sum: 1 }, active: { $sum: { $cond: [{ $eq: ['$stock_status', 'In Stock'] }, 1, 0] } }, outOfStock: { $sum: { $cond: [{ $eq: ['$stock_status', 'Out of Stock'] }, 1, 0] } } } }]);
 
-        // --- Construct Final Data Object ---
-        const analyticsData = {
-            revenue: {
-                total: totalStats.revenue.toFixed(2),
-                today: todayStats.revenue.toFixed(2),
-                week: weekStats.revenue.toFixed(2),
-                month: monthStats.revenue.toFixed(2),
-                todayChange: calculateChange(todayStats.revenue, yesterdayStats.revenue),
-                weekChange: calculateChange(weekStats.revenue, lastWeekStats.revenue),
-                monthChange: calculateChange(monthStats.revenue, lastMonthStats.revenue)
-            },
-             avgOrderValue: {
-                total: totalStats.avgOrderValue.toFixed(2),
-                today: todayStats.avgOrderValue.toFixed(2),
-                week: weekStats.avgOrderValue.toFixed(2),
-                month: monthStats.avgOrderValue.toFixed(2),
-                todayChange: calculateChange(todayStats.avgOrderValue, yesterdayStats.avgOrderValue),
-                weekChange: calculateChange(weekStats.avgOrderValue, lastWeekStats.avgOrderValue),
-                monthChange: calculateChange(monthStats.avgOrderValue, lastMonthStats.avgOrderValue),
-            },
-            orders: {
-                total: totalStats.orderCount,
-                today: todayStats.orderCount,
-                week: weekStats.orderCount,
-                month: monthStats.orderCount,
-                todayChange: calculateChange(todayStats.orderCount, yesterdayStats.orderCount),
-                weekChange: calculateChange(weekStats.orderCount, lastWeekStats.orderCount),
-                monthChange: calculateChange(monthStats.orderCount, lastMonthStats.orderCount),
-                status: {
-                    completed: orderStatus.find(s => s._id === 'Delivered')?.count || 0,
-                    processing: orderStatus.find(s => s._id === 'Shipped')?.count || 0,
-                    pending: orderStatus.find(s => s._id === 'Pending')?.count || 0,
-                }
-            },
-            customers: {
-                total: totalStats.customerCount,
-                today: todayStats.customerCount,
-                week: weekStats.customerCount,
-                month: monthStats.customerCount,
-                todayChange: calculateChange(todayStats.customerCount, yesterdayStats.customerCount),
-                weekChange: calculateChange(weekStats.customerCount, lastWeekStats.customerCount),
-                monthChange: calculateChange(monthStats.customerCount, lastMonthStats.customerCount),
-            },
-            revenueByCategory: revenueByCategory.map(cat => ({
-                category: cat._id || 'Other',
-                revenue: (cat.revenue || 0).toFixed(2),
-                percentage: totalStats.revenue ? ((cat.revenue / totalStats.revenue) * 100).toFixed(0) : 0
-            })),
-            products: {
-                total: productStats[0]?.total || 0,
-                active: productStats[0]?.active || 0,
-                outOfStock: productStats[0]?.outOfStock || 0,
-            }
-        };
+        // Select the stats for the currently active period
+let currentPeriodStats = totalStats;
+if (period === 'today') currentPeriodStats = todayStats;
+if (period === 'week') currentPeriodStats = weekStats;
+if (period === 'month') currentPeriodStats = monthStats;
+
+// --- NEW analyticsData object ---
+const analyticsData = {
+    revenue: {
+        total: totalStats.revenue.toFixed(2),
+        today: todayStats.revenue.toFixed(2),
+        week: weekStats.revenue.toFixed(2),
+        month: monthStats.revenue.toFixed(2),
+        todayChange: calculateChange(todayStats.revenue, yesterdayStats.revenue),
+        weekChange: calculateChange(weekStats.revenue, lastWeekStats.revenue),
+        monthChange: calculateChange(monthStats.revenue, lastMonthStats.revenue)
+    },
+     avgOrderValue: {
+        total: totalStats.avgOrderValue.toFixed(2),
+        today: todayStats.avgOrderValue.toFixed(2),
+        week: weekStats.avgOrderValue.toFixed(2),
+        month: monthStats.avgOrderValue.toFixed(2),
+        todayChange: calculateChange(todayStats.avgOrderValue, yesterdayStats.avgOrderValue),
+        weekChange: calculateChange(weekStats.avgOrderValue, lastWeekStats.avgOrderValue),
+        monthChange: calculateChange(monthStats.avgOrderValue, lastMonthStats.avgOrderValue),
+    },
+    orders: {
+        total: currentPeriodStats.orderCount, // <-- This now correctly uses the period total
+        today: todayStats.orderCount,
+        week: weekStats.orderCount,
+        month: monthStats.orderCount,
+        todayChange: calculateChange(todayStats.orderCount, yesterdayStats.orderCount),
+        weekChange: calculateChange(weekStats.orderCount, lastWeekStats.orderCount),
+        monthChange: calculateChange(monthStats.orderCount, lastMonthStats.orderCount),
+        status: {
+            processing: orderStatus.find(s => s._id === 'Shipped')?.count || 0,
+            confirmed: orderStatus.find(s => s._id === 'Pending')?.count || 0,
+            delivered: orderStatus.find(s => s._id === 'Delivered')?.count || 0,
+            cancelled: orderStatus.find(s => s._id === 'Cancelled')?.count || 0,
+        }
+    },
+    customers: {
+        total: totalStats.customerCount,
+        today: todayStats.customerCount,
+        week: weekStats.customerCount,
+        month: monthStats.customerCount,
+        todayChange: calculateChange(todayStats.customerCount, yesterdayStats.customerCount),
+        weekChange: calculateChange(weekStats.customerCount, lastWeekStats.customerCount),
+        monthChange: calculateChange(monthStats.customerCount, lastMonthStats.customerCount),
+    },
+    revenueByCategory: revenueByCategory.map(cat => ({
+        category: cat._id || 'Other',
+        revenue: (cat.revenue || 0).toFixed(2),
+        percentage: totalStats.revenue ? ((cat.revenue / totalStats.revenue) * 100).toFixed(0) : 0
+    })),
+    products: {
+        total: productStats[0]?.total || 0,
+        active: productStats[0]?.active || 0,
+        outOfStock: productStats[0]?.outOfStock || 0,
+    }
+};
 
         res.render('shop-analytics', {
             vendor: req.session.vendor,
@@ -1709,7 +1751,20 @@ const updateOrderStatus = async (req, res) => {
              return res.status(400).json({ success: false, message: 'This order is already finalized and its status cannot be changed.' });
         }
 
-        await Order.updateOne({ _id: orderId }, { $set: { status: newStatus } });
+        // Define the update payload
+const updateData = { status: newStatus };
+
+// Set the corresponding timestamp based on the new status
+if (newStatus === 'Shipped') {
+    updateData.shipped_at = new Date();
+} else if (newStatus === 'Delivered') {
+    updateData.delivered_at = new Date();
+} else if (newStatus === 'Cancelled') {
+    updateData.cancelled_at = new Date();
+}
+
+// Update the order in the database
+await Order.updateOne({ _id: orderId }, { $set: updateData });
 
         res.status(200).json({ success: true, message: 'Order status updated successfully.' });
     } catch (error) {

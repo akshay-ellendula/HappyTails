@@ -50,7 +50,6 @@
                     <button class="<%= period === 'today' ? 'active' : '' %>" data-period="today" onclick="changePeriod('today')">Today</button>
                     <button class="<%= period === 'week' ? 'active' : '' %>" data-period="week" onclick="changePeriod('week')">This Week</button>
                     <button class="<%= period === 'month' ? 'active' : '' %>" data-period="month" onclick="changePeriod('month')">This Month</button>
-                    <button data-period="custom" onclick="alert('Custom period selection not implemented yet')">Custom</button>
                 </div>
                 
                 <!-- Revenue Section -->
@@ -220,30 +219,41 @@
 <% } %>
                     </div>
                     
-                    <div class="card">
-                        <h2>Order Status</h2>
-                        <div class="stat">
-                            <div class="stat-label">Completed</div>
-                            <div class="stat-value"><%= analytics.orders.status.completed %></div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.completed / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Processing</div>
-                            <div class="stat-value"><%= analytics.orders.status.processing %></div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.processing / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Pending</div>
-                            <div class="stat-value"><%= analytics.orders.status.pending %></div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.pending / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
-                        </div>
-                    </div>
+<div class="card">
+    <h2>Order Status</h2>
+
+    <div class="stat">
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-value"><%= analytics.orders.status.confirmed %></div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="background-color: #ffc107;" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.confirmed / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-label">Processing</div>
+        <div class="stat-value"><%= analytics.orders.status.processing %></div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="background-color: #17a2b8;" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.processing / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-label">Delivered</div>
+        <div class="stat-value"><%= analytics.orders.status.delivered %></div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="background-color: #28a745;" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.delivered / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-label">Cancelled</div>
+        <div class="stat-value"><%= analytics.orders.status.cancelled %></div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="background-color: #dc3545;" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.cancelled / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+    </div>
+</div>
                 </div>
                 
                 <!-- Customers Section -->

@@ -21,7 +21,7 @@
                     <div>
                         <div class="info-row">
                             <div class="info-label">Order Date:</div>
-                            <div class="info-value" id="orderDate"><%= order.order_date.toDateString() %></div>
+                            <div class="info-value" id="orderDate"><%= new Date(order.order_date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) %></div>
                         </div>
                         
                         <div class="info-row">
@@ -72,11 +72,6 @@
                     
                     <div>
                         <div class="info-row">
-                            <div class="info-label">Tracking Number:</div>
-                            <div class="info-value" id="trackingNumber"><%= order.shipping.tracking_number || 'N/A' %></div>
-                        </div>
-                        
-                        <div class="info-row">
                             <div class="info-label">Estimated Delivery:</div>
                             <div class="info-value" id="estimatedDelivery"><%= order.shipping.estimated_delivery ? order.shipping.estimated_delivery.toDateString() : 'N/A' %></div>
                         </div>
@@ -90,7 +85,6 @@
                     <thead>
                         <tr>
                             <th>Product</th>
-                            <th>SKU</th>
                             <th>Price</th>
                             <th>Quantity</th>
                             <th>Total</th>
@@ -100,7 +94,6 @@
                         <% order.items.forEach(item => { %>
                             <tr>
                                 <td><%= item.product_name %></td>
-                                <td><%= item.sku %></td>
                                 <td>₹<%= item.price.toFixed(2) %></td>
                                 <td><%= item.quantity %></td>
                                 <td>₹<%= (item.price * item.quantity).toFixed(2) %></td>
@@ -135,7 +128,7 @@
                     <div class="tracking-timeline">
                         <% order.timeline.forEach(event => { %>
                             <div class="timeline-item <%= event.status.toLowerCase() %>-item">
-                                <div class="timeline-date"><%= event.date.toLocaleString() %></div>
+                                <div class="timeline-date"><%= new Date(event.date).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) %></div>
                                 <div class="timeline-content"><%= event.description %></div>
                             </div>
                         <% }); %>
