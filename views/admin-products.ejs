@@ -3,97 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Details</title>
-    <link rel="stylesheet" href="/ADMIN/admin-user-details.css"> <!-- Adjust path as needed -->
+    <title>Happy Tails - Product Management</title>
+    <link href="/ADMIN/admin-products.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <a href="/admin-user" class="back-button">← Back to Users</a>
-            <div class="action-buttons">
-                <button id="edit-user-btn" class="edit-btn">Edit User</button>
-                <button id="delete-user-btn" class="delete-btn">Delete User</button>
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Happy Tails</h1>
             </div>
-        </div>
+            <ul class="nav-menu">
+                <li class="nav-item"><a href="/admin-dashboard" class="nav-link"><span>Dashboard</span></a></li>
+                <li class="nav-item"><a href="/admin-user" class="nav-link"><span>Users</span></a></li>
+                <li class="nav-item"><a href="/admin-shop-manager" class="nav-link"><span>Shop Managers</span></a></li>
+                <li class="nav-item"><a href="/admin-eventManager" class="nav-link"><span>Event Managers</span></a></li>
+                <li class="nav-item">
+                    <a href="/admin-events" class="nav-link">
+                        <span>Events</span>
+                    </a>
+                </li>
+                <li class="nav-item"><a href="/admin-products" class="nav-link active"><span>Products</span></a></li>
+                <li class="nav-item">
+                    <a href="/admin/logout" class="nav-link">
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
 
-        <div class="user-profile" id="userView">
-    <div class="user-avatar" id="userAvatar"></div> <!-- Container for avatar -->
-    <div class="details">
-        <h2>Basic Information</h2>
-        <table class="details-table">
-            <tr><td>Name:</td><td><span id="userName"></span></td></tr>
-            <tr><td>User ID:</td><td><span id="userId"></span></td></tr>
-            <tr><td>Joined Date:</td><td><span id="joinedDate"></span></td></tr>
-            <tr><td>Address:</td><td><span id="userAddress"></span></td></tr>
-            <tr><td>Phone:</td><td><span id="userPhone"></span></td></tr>
-        </table>
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <h2>Product Management</h2>
+                <div class="user-info">
+                    <div class="avatar">A</div>
+                    <span>Admin User</span>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-container" id="statsContainer">
+                <div class="stat-card">
+                    <h3>Total Products</h3>
+                    <div class="number" id="totalProducts">Loading...</div>
+                    <div class="change" id="monthlyChange">Loading...</div>
+                </div>
+                <div class="stat-card">
+                    <h3>In Stock</h3>
+                    <div class="number" id="inStock">Loading...</div>
+                    <div class="change" id="inStockChange">Loading...</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Low Stock</h3>
+                    <div class="number" id="lowStock">Loading...</div>
+                    <div class="change" id="lowStockChange">Loading...</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Out of Stock</h3>
+                    <div class="number" id="outOfStock">Loading...</div>
+                    <div class="change" id="outOfStockChange">Loading...</div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="productSearchInput" placeholder="Search products by name or ID...">
+                </div>
+                <button class="filter-btn" id="filterBtn">Filter Options</button>
+            </div>
+
+            <!-- Product Table -->
+            <div class="product-table-container">
+                <div class="table-header">
+                    <h3>Product List</h3>
+                    <button id="addProductBtn" class="add-product-btn" onclick="window.location.href='/admin-add-product'">+ Add Product</button>
+                </div>
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Added Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <tr>
+                            <td colspan="7">Loading products...</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Populated dynamically by JavaScript -->
+                </div>
+            </div>
+        </main>
     </div>
-</div>
-
-        <div class="detail-section">
-            <h2 class="section-title">Shop Purchase History</h2>
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th>Product ID</th>
-                        <th>Product Name</th>
-                        <th>Purchase Date</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody id="purchaseHistoryTable">
-                    <tr><td colspan="4">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="detail-section">
-            <h2 class="section-title">Event Participation</h2>
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th>Event ID</th>
-                        <th>Event Name</th>
-                        <th>Date</th>
-                        <th>Location</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="eventHistoryTable">
-                    <tr><td colspan="5">Loading...</td></tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div class="edit-form" id="editForm" style="display: none;">
-            <h2 class="section-title">Edit User Information</h2>
-            <form id="userEditForm">
-                <div class="form-group">
-                    <label>Name:</label>
-                    <input type="text" id="editName">
-                    <span id="nameError" class="error-message"></span>
-                </div>
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" id="editEmail" readonly>
-                    <span id="emailError" class="error-message"></span>
-                </div>
-                <div class="form-group">
-                    <label>Address:</label>
-                    <input type="text" id="editAddress">
-                    <span id="addressError" class="error-message"></span>
-                </div>
-                <div class="form-group">
-                    <label>Phone:</label>
-                    <input type="text" id="editPhone">
-                    <span id="phoneError" class="error-message"></span>
-                </div>
-                <button type="submit" class="save-btn">Save Changes</button>
-                <button type="button" id="cancel-edit" class="cancel-btn">Cancel</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="/ADMIN/admin-user-details.js"></script> <!-- Adjust path as needed -->
+    <script src="/ADMIN/admin-products.js"></script>
 </body>
 </html>
