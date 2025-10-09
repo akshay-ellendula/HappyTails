@@ -89,6 +89,7 @@ const orderSchema = new mongoose.Schema({
     subtotal: { type: Number, required: true },
     total_amount: { type: Number, required: true },
     delivery_date: { type: Date, default: null },
+    payment_last_four: { type: String, default: null },
 });
 
 const orderItemSchema = new mongoose.Schema({

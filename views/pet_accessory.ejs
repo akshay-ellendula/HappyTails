@@ -369,6 +369,12 @@
                 totalElement.textContent = total.toFixed(2);
             }
 
+            function clearCartAndRedirect(url) {
+                localStorage.removeItem('cart');
+                document.getElementById('cart').classList.remove('open');
+                window.location.href = url;
+            }
+
             
             // Checkout functionality
             document.querySelector('.checkout_button button').addEventListener('click', function() {
@@ -398,18 +404,7 @@
                             throw new Error(`HTTP ${response.status}: ${text}`);
                         });
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Checkout response:', data);
-                    if (data.success) {
-                        alert('Order placed successfully! Order ID: ' + data.orderId);
-                        localStorage.removeItem('cart');
-                        document.getElementById('cart').classList.remove('open');
-                        window.location.href = '/my_orders';
-                    } else {
-                        alert('Error placing order: ' + data.message);
-                    }
+                    clearCartAndRedirect(response.url);
                 })
                 .catch(error => {
                     console.error('Checkout error:', error);

@@ -188,34 +188,50 @@ const getProduct = async (req, res) => {
 
 
 const checkout = async (req, res) => {
-    if (!req.session.user) return res.status(401).json({ success: false, message: 'User not logged in' });
+    if (!req.session.user) return res.status(401).send('User not logged in');
 
     const { cart } = req.body;
-    if (!cart || cart.length === 0) return res.status(400).json({ success: false, message: 'Cart is empty' });
+    if (!cart.length === 0) return res.status(400).send('Cart is empty');
 
-    console.log('Cart data received:', JSON.stringify(cart, null, 2));
-
-    const userId = req.session.user.id;
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const charge = subtotal * 0.04;
+    const total = subtotal + charge;
+
+    // Store cart data in the session to be used on the payment page
+    req.session.cart = cart;
+    req.session.orderTotals = { subtotal, charge, total };
+
+    res.redirect('/payment');
+};
+
+const processPayment = async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/my_login');
+    }
+
+    const { cardNumber } = req.body;
+    const cart = req.session.cart;
+    const { subtotal, total } = req.session.orderTotals;
+
+    if (!cart || !subtotal || !total || !cardNumber) {
+        return res.status(400).send('Session data or card number missing.');
+    }
 
     try {
-        // Validate stock quantity for each item
-        for (const item of cart) {
-            const variant = await ProductVariant.findOne({ product_id: item.product_id, _id: item.variant_id });
-            if (!variant || variant.stock_quantity < item.quantity) {
-                throw new Error(`Not enough stock for ${item.product_name} (Size: ${item.size || 'N/A'}, Color: ${item.color || 'N/A'})`);
-            }
-        }
+        const paymentLastFour = cardNumber.slice(-4);
+        
 
-        // Insert the order
+        // Create a new order in the database
         const order = await Order.create({
-            user_id: userId,
+            user_id: req.session.user.id,
             order_date: new Date(),
             status: 'Pending',
-            subtotal,
-            total_amount: subtotal
+            subtotal: subtotal,
+            total_amount: total,
+            payment_last_four: paymentLastFour
         });
 
+        // Add each cart item to the OrderItem collection
         const orderItems = cart.map(item => ({
             order_id: order._id,
             product_id: item.product_id || null,
@@ -226,25 +242,19 @@ const checkout = async (req, res) => {
             size: item.size || null,
             color: item.color || null
         }));
+
         await OrderItem.insertMany(orderItems);
+        
+        // Clear the session cart
+        req.session.cart = null;
+        req.session.orderTotals = null;
 
-        // Update stock quantities
-        for (const item of cart) {
-            await ProductVariant.updateOne(
-                { product_id: item.product_id, _id: item.variant_id },
-                { $inc: { stock_quantity: -item.quantity } }
-            );
-        }
+        // Redirect to a confirmation page or user orders page
+        res.redirect('/my_orders');
 
-        // Return order ID as string
-        res.json({ 
-            success: true, 
-            message: 'Order placed successfully', 
-            orderId: order._id.toString() 
-        });
     } catch (err) {
-        console.error('Checkout error:', err.message);
-        res.status(err.message.includes('Not enough stock') ? 400 : 500).json({ success: false, message: err.message });
+        console.error('Payment processing error:', err);
+        res.status(500).send('Error processing payment.');
     }
 };
 
@@ -318,10 +328,27 @@ const reorder = async (req, res) => {
     }
 };
 
+const getPaymentPage = (req, res) => {
+    const { orderTotals } = req.session;
+    if (orderTotals) {
+        res.render('payment', {
+            user: req.session.user || null,
+            subtotal: orderTotals.subtotal.toFixed(2),
+            charge: orderTotals.charge.toFixed(2),
+            total: orderTotals.total.toFixed(2)
+        });
+    } else {
+        // Redirect to the cart page if no order data is found in the session
+        res.redirect('/pet_accessory'); 
+    }
+};
+
 module.exports = {
     getPetAccessories,
     getProduct,
     checkout,
+    processPayment,
     getUserOrders,
-    reorder
+    reorder,
+    getPaymentPage,
 };
