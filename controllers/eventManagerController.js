@@ -77,80 +77,81 @@ const eventDashbord = async (req, res) => {
             return res.redirect('/eventmanager/login'); // Redirect if not logged in
         }
 
-        // Prepare the manager's ID as a Mongoose ObjectId
         const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
+        const managedEventIds = await Event.find({ event_manager_id: eventManagerId }).distinct('_id');
 
         // --- Prepare all database queries to run in parallel ---
-
         const promises = [
-            // 1. Get the overview stats (total events, bookings, earnings)
+            // #################### CHANGED SECTION START ####################
+            // 1. Get ACCURATE overview stats by recalculating from attendees
             Event.aggregate([
-                { $match: { event_manager_id: eventManagerId } },
+                { $match: { _id: { $in: managedEventIds } } },
                 {
-                    $group: {
-                        _id: null,
-                        totalEvents: { $sum: 1 },
-                        totalBookings: { $sum: '$tickets_sold' }, // Corrected field
-                        totalEarnings: { $sum: { $multiply: ['$tickets_sold', '$ticket_price'] } } // Corrected field
+                    // Join with the attendees collection to get real booking data
+                    $lookup: {
+                        from: 'eventattendees', // The collection name for EventAttendee model
+                        localField: '_id',
+                        foreignField: 'event_id',
+                        as: 'attendees'
                     }
                 },
                 {
-                    $project: { _id: 0 } // Project the final fields, ifNull is handled later
+                    // Create new fields for actual bookings and earnings per event
+                    $addFields: {
+                        actualBookings: { $sum: '$attendees.seats' },
+                        actualEarnings: { $multiply: [{ $sum: '$attendees.seats' }, '$ticket_price'] }
+                    }
+                },
+                {
+                    // Group all events to get the grand totals for the dashboard
+                    $group: {
+                        _id: null,
+                        totalEvents: { $sum: 1 },
+                        totalBookings: { $sum: '$actualBookings' },
+                        totalEarnings: { $sum: '$actualEarnings' }
+                    }
                 }
             ]),
+            // #################### CHANGED SECTION END ####################
 
             // 2. Get the next 3 ongoing events
             Event.find(
-                { event_manager_id: eventManagerId, status: 'Ongoing' },
-                'event_name tickets_sold ticket_price date_time image' // Corrected fields
+                { _id: { $in: managedEventIds }, status: 'Ongoing' },
+                'event_name tickets_sold ticket_price date_time image'
             ).sort({ date_time: 1 }).limit(3).lean(),
 
             // 3. Get the next 3 upcoming events
             Event.find(
-                { event_manager_id: eventManagerId, status: 'Upcoming' },
-                'event_name tickets_sold ticket_price total_tickets date_time image' // Corrected fields
+                { _id: { $in: managedEventIds }, status: 'Upcoming' },
+                'event_name tickets_sold ticket_price total_tickets date_time image'
             ).sort({ date_time: 1 }).limit(3).lean(),
 
-            // 4. Get the 3 most recent attendees
-            EventAttendee.aggregate([
-                { $sort: { registration_date: -1 } }, // Sort by the correct date field
-                {
-                    $lookup: {
-                        from: 'events', // The collection name for the Event model
-                        localField: 'event_id',
-                        foreignField: '_id', // Joins on the Event's primary key
-                        as: 'event'
-                    }
-                },
-                { $unwind: '$event' },
-                { $match: { 'event.event_manager_id': eventManagerId } },
-                {
-                    $project: {
-                        _id: 0,
-                        name: 1,
-                        phone_number: 1,
-                        seats: 1,
-                        event_name: '$event.event_name', // Corrected field
-                        event_date: '$event.date_time'  // Corrected field
-                    }
-                },
-                { $limit: 3 }
-            ])
+            // 4. Get the 3 most recent attendees for the manager's events
+            EventAttendee.find({ event_id: { $in: managedEventIds } })
+                .sort({ registration_date: -1 })
+                .limit(3)
+                .populate('event_id', 'event_name date_time')
+                .lean()
         ];
 
         // --- Execute all queries at the same time ---
-
         const [
             overviewData,
             ongoingEvents,
             upcomingEvents,
-            attendees
+            attendeesFromDB
         ] = await Promise.all(promises);
-
-        // Provide a default object for the overview if no events are found
+        
         const overview = overviewData[0] || { totalEvents: 0, totalBookings: 0, totalEarnings: 0 };
 
-        // --- Render the dashboard with all the fetched data ---
+        const attendees = attendeesFromDB.map(att => ({
+            _id: att._id.toString(),
+            name: att.name,
+            phone_number: att.phone_number,
+            seats: att.seats,
+            event_name: att.event_id ? att.event_id.event_name : 'N/A',
+            event_date: att.event_id ? att.event_id.date_time : 'N/A'
+        }));
 
         res.render('eventmanager_dashboard', {
             overview,
@@ -165,7 +166,6 @@ const eventDashbord = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-
 // POST /eventmanager_dashboard/createEvent - Create a new event
 // POST /eventmanager_dashboard/createEvent - Create a new event
 const createNewEvent = async (req, res) => {
@@ -231,6 +231,7 @@ const updateAttende = async (req, res) => {
 const deleteAttendee = async (req, res) => {
     try {
         const attendeeId = req.params.id;
+        console.log(attendeeId)
 
         await EventAttendee.deleteOne({ _id: attendeeId });
 
@@ -240,6 +241,7 @@ const deleteAttendee = async (req, res) => {
         res.status(500).json({ message: 'Error deleting attendee' });
     }
 }
+
 // get-events for dashbord
 const getEvents = async (req, res) => {
     try {
@@ -447,7 +449,6 @@ const getEvent = async (req, res) => {
         const dateTime = new Date(event.date_time);
         const formattedDate = dateTime.toISOString().split('T')[0]; // e.g., "2025-05-29"
         const formattedTime = dateTime.toTimeString().split(' ')[0].slice(0, 5); // e.g., "22:38"
-
         res.render('eventmanager_event_edit', {
             event: {
                 id: event._id,
@@ -473,52 +474,81 @@ const getEvent = async (req, res) => {
 }
 //@dec updateing  event 
 //update event 
+// You will need to install and set up Multer for image uploads
+// Example: const multer = require('multer');
+
 const updateEvent = async (req, res) => {
     try {
+        // These variable names now EXACTLY match the 'name' attributes in your form
         const {
-            eventId,
-            eventName,
-            eventDescription,
+            id,              // was eventId
+            name,            // was eventName
+            about,           // was eventDescription
             language,
             duration,
-            eventTicketPrice,
-            ageLimit,
+            ticket_price,    // was eventTicketPrice
+            age_limit,       // was ageLimit
             instructions,
-            eventVenue,
+            venue,           // was eventVenue
+            city,            // This was missing
+            contact_number,  // This was missing and name was wrong
             terms,
             category,
-            eventDate,
-            eventTime,
-            eventCapacity
+            date,            // was eventDate
+            time,            // was eventTime
+            capacity,        // was eventCapacity (and was missing)
         } = req.body;
+
         const eventManagerId = req.session.eventManager.id;
 
-        const eventDateTime = new Date(`${eventDate} ${eventTime}:00`);
+        // Combine date and time correctly
+        const eventDateTime = new Date(`${date}T${time}`);
+
+        // Find the event first to get the existing image path if no new one is uploaded
+        const eventToUpdate = await Event.findById(id);
+        if (!eventToUpdate) {
+            return res.status(404).send('Event not found.');
+        }
+
+        // --- IMAGE HANDLING LOGIC (Requires Multer) ---
+        // If a new file is uploaded, req.file will be populated by multer.
+        // You would save the new path and potentially delete the old image.
+        let imagePath = eventToUpdate.image; // Keep the old image by default
+        if (req.file) {
+            imagePath = '/uploads/' + req.file.filename; // Example path, adjust as needed
+            // Add logic here to delete the old image from your server if necessary
+        }
+
         await Event.updateOne(
-            { _id: eventId, event_manager_id: new mongoose.Types.ObjectId(eventManagerId) },
+            { _id: id, event_manager_id: new mongoose.Types.ObjectId(eventManagerId) },
             {
-                event_name: eventName,
-                about_event: eventDescription,
+                event_name: name,
+                about_event: about,
                 language: language,
                 duration: duration,
-                ticket_price: parseFloat(eventTicketPrice),
-                age_limit: parseInt(ageLimit),
+                ticket_price: parseFloat(ticket_price),
+                age_limit: parseInt(age_limit),
                 instructions: instructions,
-                venue: eventVenue,
+                venue: venue,
+                city: city, // Added city
+                contact_number: contact_number, // Added contact_number
                 terms: terms,
                 category: category,
                 date_time: eventDateTime,
-                total_tickets: parseInt(eventCapacity)
+                total_tickets: parseInt(capacity),
+                image: imagePath // Update image path
             }
         );
-        res.status(200).json({ message: "updated sucessufully" })
+
+        // ONLY send one response. A redirect is appropriate after a successful update.
         res.redirect('/eventmanager_events');
+
     } catch (err) {
         console.error('Error updating event:', err);
-        res.status(500).json({ success: false, message: 'Failed to update event' });
+        // It's better to render an error page or send a clear error message
+        res.status(500).send('Failed to update event.');
     }
-}
-
+};
 const getAttendes = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
@@ -665,19 +695,24 @@ const getAttendes = async (req, res) => {
 
 const eventAnalytics = async (req, res) => {
     try {
-        const eventManagerId = req.session.eventManager.id;
+        if (!req.session?.eventManager?.id) {
+            return res.status(401).send('Unauthorized: Please log in.');
+        }
+        const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
+
         const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         const startOfWeek = new Date(today);
-        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-        const startOfMonth = new Date(today);
-        startOfMonth.setDate(1);
+        startOfWeek.setDate(today.getDate() - today.getDay());
 
-        const revenueData = await Event.aggregate([
-            {
-                $match: {
-                    event_manager_id: new mongoose.Types.ObjectId(eventManagerId)
-                }
-            },
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        // The server's timezone (ensure this matches your server's environment)
+        const serverTimezone = "Asia/Kolkata";
+
+        const [analyticsData] = await Event.aggregate([
+            { $match: { event_manager_id: eventManagerId } },
             {
                 $lookup: {
                     from: 'eventattendees',
@@ -686,237 +721,86 @@ const eventAnalytics = async (req, res) => {
                     as: 'attendees'
                 }
             },
+            // Unwind attendees *before* the facet to analyze each booking
+            { $unwind: { path: '$attendees', preserveNullAndEmptyArrays: true } },
             {
-                $project: {
-                    ticket_price: 1,
-                    date_time: 1,
-                    totalSeats: { $sum: '$attendees.seats' }, // Sum seats for the event
-                    totalRevenue: {
-                        $multiply: [
-                            { $sum: '$attendees.seats' },
-                            '$ticket_price'
-                        ]
-                    },
-                    todayRevenue: {
-                        $cond: [
-                            {
-                                $eq: [
-                                    { $dateToString: { format: '%Y-%m-%d', date: '$date_time' } },
-                                    { $dateToString: { format: '%Y-%m-%d', date: today } }
-                                ]
-                            },
-                            { $multiply: [{ $sum: '$attendees.seats' }, '$ticket_price'] },
-                            0
-                        ]
-                    },
-                    thisWeekRevenue: {
-                        $cond: [
-                            { $gte: ['$date_time', startOfWeek] },
-                            { $multiply: [{ $sum: '$attendees.seats' }, '$ticket_price'] },
-                            0
-                        ]
-                    },
-                    thisMonthRevenue: {
-                        $cond: [
-                            { $gte: ['$date_time', startOfMonth] },
-                            { $multiply: [{ $sum: '$attendees.seats' }, '$ticket_price'] },
-                            0
-                        ]
-                    }
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    totalRevenue: { $sum: '$totalRevenue' },
-                    todayRevenue: { $sum: '$todayRevenue' },
-                    thisWeekRevenue: { $sum: '$thisWeekRevenue' },
-                    thisMonthRevenue: { $sum: '$thisMonthRevenue' }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalRevenue: { $ifNull: ['$totalRevenue', 0] },
-                    todayRevenue: { $ifNull: ['$todayRevenue', 0] },
-                    thisWeekRevenue: { $ifNull: ['$thisWeekRevenue', 0] },
-                    thisMonthRevenue: { $ifNull: ['$thisMonthRevenue', 0] }
-                }
-            }
-        ]);
+                $facet: {
+                    // This single facet now calculates everything based on individual bookings
+                    mainAnalytics: [
+                        {
+                            $group: {
+                                _id: null,
+                                // --- REVENUE (based on registration_date) ---
+                                totalRevenue: { $sum: { $multiply: ['$attendees.seats', '$ticket_price'] } },
+                                todayRevenue: { $sum: { $cond: [{ $eq: [{ $dateToString: { format: '%Y-%m-%d', date: '$attendees.registration_date', timezone: serverTimezone } }, { $dateToString: { format: '%Y-%m-%d', date: today, timezone: serverTimezone } }] }, { $multiply: ['$attendees.seats', '$ticket_price'] }, 0] } },
+                                thisWeekRevenue: { $sum: { $cond: [{ $gte: ['$attendees.registration_date', startOfWeek] }, { $multiply: ['$attendees.seats', '$ticket_price'] }, 0] } },
+                                thisMonthRevenue: { $sum: { $cond: [{ $gte: ['$attendees.registration_date', startOfMonth] }, { $multiply: ['$attendees.seats', '$ticket_price'] }, 0] } },
+                                
+                                // --- AVG TICKET PRICE (based on registration_date) ---
+                                // Note: This is now the average price per booking/sale
+                                avgTotal: { $avg: '$ticket_price' },
+                                avgToday: { $avg: { $cond: [{ $eq: [{ $dateToString: { format: '%Y-%m-%d', date: '$attendees.registration_date', timezone: serverTimezone } }, { $dateToString: { format: '%Y-%m-%d', date: today, timezone: serverTimezone } }] }, '$ticket_price', null] } },
+                                avgThisWeek: { $avg: { $cond: [{ $gte: ['$attendees.registration_date', startOfWeek] }, '$ticket_price', null] } },
+                                avgThisMonth: { $avg: { $cond: [{ $gte: ['$attendees.registration_date', startOfMonth] }, '$ticket_price', null] } },
 
-        const attendeesData = await EventAttendee.aggregate([
-            {
-                $lookup: {
-                    from: 'events',
-                    localField: 'event_id',
-                    foreignField: '_id',
-                    as: 'event'
+                                // --- ATTENDEES/SEATS (based on registration_date) ---
+                                totalSeatsSold: { $sum: '$attendees.seats' },
+                                todaySeatsSold: { $sum: { $cond: [{ $eq: [{ $dateToString: { format: '%Y-%m-%d', date: '$attendees.registration_date', timezone: serverTimezone } }, { $dateToString: { format: '%Y-%m-%d', date: today, timezone: serverTimezone } }] }, '$attendees.seats', 0] } },
+                                thisWeekSeatsSold: { $sum: { $cond: [{ $gte: ['$attendees.registration_date', startOfWeek] }, '$attendees.seats', 0] } },
+                                thisMonthSeatsSold: { $sum: { $cond: [{ $gte: ['$attendees.registration_date', startOfMonth] }, '$attendees.seats', 0] } }
+                            }
+                        }
+                    ]
                 }
             },
-            { $unwind: '$event' },
-            {
-                $match: {
-                    'event.event_manager_id': new mongoose.Types.ObjectId(eventManagerId)
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    totalAttendees: { $addToSet: '$_id' },
-                    todayAttendees: {
-                        $addToSet: {
-                            $cond: [
-                                {
-                                    $eq: [
-                                        { $dateToString: { format: '%Y-%m-%d', date: '$registration_date' } },
-                                        { $dateToString: { format: '%Y-%m-%d', date: today } }
-                                    ]
-                                },
-                                '$_id',
-                                null
-                            ]
-                        }
-                    },
-                    thisWeekAttendees: {
-                        $addToSet: {
-                            $cond: [
-                                { $gte: ['$registration_date', startOfWeek] },
-                                '$_id',
-                                null
-                            ]
-                        }
-                    },
-                    thisMonthAttendees: {
-                        $addToSet: {
-                            $cond: [
-                                { $gte: ['$registration_date', startOfMonth] },
-                                '$_id',
-                                null
-                            ]
-                        }
-                    }
-                }
-            },
+            // Project the final, combined results
             {
                 $project: {
-                    _id: 0,
-                    totalAttendees: { $size: '$totalAttendees' },
-                    todayAttendees: { $size: { $setDifference: ['$todayAttendees', [null]] } },
-                    thisWeekAttendees: { $size: { $setDifference: ['$thisWeekAttendees', [null]] } },
-                    thisMonthAttendees: { $size: { $setDifference: ['$thisMonthAttendees', [null]] } }
+                    data: { $arrayElemAt: ['$mainAnalytics', 0] },
                 }
             }
         ]);
-
-        const avgTicketData = await Event.aggregate([
-            {
-                $match: {
-                    event_manager_id: new mongoose.Types.ObjectId(eventManagerId),
-                    ticket_price: { $gt: 0 }
-                }
-            },
-            {
-                $lookup: {
-                    from: 'eventattendees',
-                    localField: '_id',
-                    foreignField: 'event_id',
-                    as: 'attendees'
-                }
-            },
-            {
-                $project: {
-                    avgTotal: '$ticket_price',
-                    avgToday: {
-                        $cond: [
-                            {
-                                $eq: [
-                                    { $dateToString: { format: '%Y-%m-%d', date: '$date_time' } },
-                                    { $dateToString: { format: '%Y-%m-%d', date: today } }
-                                ]
-                            },
-                            '$ticket_price',
-                            null
-                        ]
-                    },
-                    avgThisWeek: {
-                        $cond: [
-                            { $gte: ['$date_time', startOfWeek] },
-                            '$ticket_price',
-                            null
-                        ]
-                    },
-                    avgThisMonth: {
-                        $cond: [
-                            { $gte: ['$date_time', startOfMonth] },
-                            '$ticket_price',
-                            null
-                        ]
-                    }
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    avgTotal: { $avg: '$avgTotal' },
-                    avgToday: { $avg: '$avgToday' },
-                    avgThisWeek: { $avg: '$avgThisWeek' },
-                    avgThisMonth: { $avg: '$avgThisMonth' }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    avgTotal: { $ifNull: ['$avgTotal', 0] },
-                    avgToday: { $ifNull: ['$avgToday', 0] },
-                    avgThisWeek: { $ifNull: ['$avgThisWeek', 0] },
-                    avgThisMonth: { $ifNull: ['$avgThisMonth', 0] }
-                }
-            }
-        ]);
+        
+        // Destructure from the single analytics object
+        const data = analyticsData?.data || {};
 
         const revenue = {
-            total: revenueData[0]?.totalRevenue || 0,
-            today: revenueData[0]?.todayRevenue || 0,
-            thisWeek: revenueData[0]?.thisWeekRevenue || 0,
-            thisMonth: revenueData[0]?.thisMonthRevenue || 0,
-            todayChange: revenueData[0]?.todayRevenue ? 15 : 0,
-            thisWeekChange: revenueData[0]?.thisWeekRevenue ? 8 : 0,
-            thisMonthChange: revenueData[0]?.thisMonthRevenue ? 12 : 0
+            total: data.totalRevenue || 0,
+            today: data.todayRevenue || 0,
+            thisWeek: data.thisWeekRevenue || 0,
+            thisMonth: data.thisMonthRevenue || 0,
+            todayChange: data.todayRevenue ? 15 : 0,
+            thisWeekChange: data.thisWeekRevenue ? 8 : 0,
+            thisMonthChange: data.thisMonthRevenue ? 12 : 0
         };
 
         const attendees = {
-            total: attendeesData[0]?.totalAttendees || 0,
-            today: attendeesData[0]?.todayAttendees || 0,
-            thisWeek: attendeesData[0]?.thisWeekAttendees || 0,
-            thisMonth: attendeesData[0]?.thisMonthAttendees || 0,
-            todayChange: attendeesData[0]?.todayAttendees ? 16 : 0,
-            thisWeekChange: attendeesData[0]?.thisWeekAttendees ? 10 : 0,
-            thisMonthChange: attendeesData[0]?.thisMonthAttendees ? 22 : 0
+            total: data.totalSeatsSold || 0,
+            today: data.todaySeatsSold || 0,
+            thisWeek: data.thisWeekSeatsSold || 0,
+            thisMonth: data.thisMonthSeatsSold || 0,
+            todayChange: data.todaySeatsSold ? 16 : 0,
+            thisWeekChange: data.thisWeekSeatsSold ? 10 : 0,
+            thisMonthChange: data.thisMonthSeatsSold ? 22 : 0
         };
 
         const avgTicketValue = {
-            total: avgTicketData[0]?.avgTotal || 0,
-            today: avgTicketData[0]?.avgToday || 0,
-            thisWeek: avgTicketData[0]?.avgThisWeek || 0,
-            thisMonth: avgTicketData[0]?.avgThisMonth || 0,
-            todayChange: avgTicketData[0]?.avgToday ? 7 : 0,
-            thisWeekChange: avgTicketData[0]?.avgThisWeek ? 3 : 0,
-            thisMonthChange: avgTicketData[0]?.avgThisMonth ? 1.5 : 0
+            total: data.avgTotal || 0,
+            today: data.avgToday || 0,
+            thisWeek: data.avgThisWeek || 0,
+            thisMonth: data.avgThisMonth || 0,
+            todayChange: data.avgToday ? 7 : 0,
+            thisWeekChange: data.avgThisWeek ? 3 : 0,
+            thisMonthChange: data.avgThisMonth ? 1.5 : 0
         };
 
-        res.render('eventmanager_analytics', {
-            revenue,
-            attendees,
-            avgTicketValue
-        });
+        res.render('eventmanager_analytics', { revenue, attendees, avgTicketValue });
 
     } catch (err) {
         console.error('Error fetching analytics:', err);
         res.status(500).send('Internal Server Error');
     }
 };
-
 const getEventManagerProfile = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
@@ -1339,6 +1223,7 @@ try {
             return res.status(404).send("Event not found");
         }
 
+        console.log(eventData.total_tickets);
         // Transform to match template expectations
         const event = {
             id: eventData._id,
@@ -1353,6 +1238,7 @@ try {
             contact: eventData.contact_number,
             terms: eventData.terms,
             category: eventData.category,
+            total_tickets:eventData.total_tickets,
             date: new Date(eventData.date_time).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
             time: new Date(eventData.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             ticket_price: eventData.ticket_price,
@@ -1369,9 +1255,49 @@ try {
     }
     
 }
+
+const getEventDetail = async(req,res) =>{
+    try {
+
+        const eventId = req.params.id;
+        console.log(eventId);
+        console.log("11111");
+        // 2. ADD THIS VALIDATION BLOCK
+        if (!mongoose.Types.ObjectId.isValid(eventId)) {
+            // If the ID is not in a valid format, send a 400 error immediately
+            return res.status(400).render('error', { message: 'Invalid event ID format.' });
+        }
+
+        // Fetch the event and its attendees from the database at the same time
+        const [event, attendees] = await Promise.all([
+            Event.findById(eventId),
+            EventAttendee.find({ event_id: eventId }) // Find all attendees for this specific event
+        ]);
+
+        // If the event doesn't exist, show an error
+        if (!event) {
+            return res.status(404).render('error', { message: 'Event not found.' });
+        }
+
+        // Calculate the revenue for this event
+        const revenue = event.tickets_sold * event.ticket_price;
+
+        // Render the new 'event-details.ejs' page and pass all the data to it
+        res.render('event-details', {
+            title: event.event_name,
+            event: event,
+            attendees: attendees,
+            revenue: revenue
+        });
+
+    } catch (error) {
+        console.error('Error fetching event details:', error);
+        res.status(500).render('error', { message: 'A server error occurred.' });
+    }
+}
 module.exports = {
     eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee, getEvents, getEvent, updateEvent
     , getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword, getEventsUser, registerEvent, myEvents, deleteTicket,
-    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,editEvent
+    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,editEvent, getEventDetail
 };
 
