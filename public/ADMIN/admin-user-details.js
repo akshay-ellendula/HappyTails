@@ -20,9 +20,8 @@ async function fetchUserDetails() {
 
         if (data.success) {
             const user = data.user;
-            const avatar = document.getElementById('userAvatar');
-            const name = document.getElementById('userName');
-            const email = document.getElementById('userEmail');
+            const userAvatar = document.getElementById('userAvatar');
+            const userNameSpan = document.getElementById('userName');
             const userIdSpan = document.getElementById('userId');
             const joinedDate = document.getElementById('joinedDate');
             const address = document.getElementById('userAddress');
@@ -30,7 +29,26 @@ async function fetchUserDetails() {
             const purchaseTable = document.getElementById('purchaseHistoryTable');
             const eventTable = document.getElementById('eventHistoryTable');
 
-            if (avatar) avatar.textContent = user.name.charAt(0);
+            // Update avatar
+            if (userAvatar) {
+                userAvatar.innerHTML = ''; // Clear existing content
+                if (user.profile_pic) {
+                    userAvatar.classList.remove('no-image');
+                    const avatarBox = document.createElement('div');
+                    avatarBox.classList.add('avatar-box');
+                    const img = document.createElement('img');
+                    img.src = user.profile_pic; // Use full data URL
+                    img.alt = 'User Avatar';
+                    avatarBox.appendChild(img);
+                    userAvatar.appendChild(avatarBox);
+                } else {
+                    userAvatar.classList.add('no-image');
+                    userAvatar.textContent = user.name ? user.name.charAt(0).toUpperCase() : '?';
+                }
+            }
+
+            // Update other fields
+            if (userNameSpan) userNameSpan.textContent = user.name || 'Not provided';
             if (userIdSpan) userIdSpan.textContent = `#USR${String(user.id).padStart(3, '0')}`;
             if (joinedDate) joinedDate.textContent = user.joined_date;
             if (address) address.textContent = user.address || 'Not provided';
@@ -171,9 +189,9 @@ async function saveUserChanges(event) {
             document.getElementById('userName').textContent = name;
             document.getElementById('userAddress').textContent = address || 'Not provided';
             document.getElementById('userPhone').textContent = phone || 'Not provided';
-            document.getElementById('userAvatar').textContent = name.charAt(0);
             cancelEdit();
             alert('User information updated successfully!');
+            fetchUserDetails(); // Refresh avatar with new name
         } else {
             alert('Failed to update user: ' + data.message);
         }

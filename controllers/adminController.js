@@ -46,11 +46,10 @@ const getUsers = async (req, res) => {
 const getUser = async (req, res) => {
     try {
         const userId = req.params.id;
-        const user = await User.findById(userId)
-            .select('id user_name user_email user_phone user_address created_at');
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
+        // Update the select clause (add 'profile_pic')
+    const user = await User.findById(userId)
+        .select('id user_name user_email user_phone user_address created_at profile_pic');
+
 
         // Fetch purchase history (orders and items)
         const orders = await Order.find({ user_id: userId });
@@ -83,19 +82,21 @@ const getUser = async (req, res) => {
         }));
         const filteredEventHistory = eventHistory.filter(e => e !== null);
 
-        res.json({
-            success: true,
-            user: {
-                id: user._id.toString(),
-                name: user.user_name,
-                email: user.user_email,
-                phone: user.user_phone || null,
-                address: user.user_address || null,
-                joined_date: user.created_at.toLocaleDateString()
-            },
-            purchaseHistory,
-            eventHistory: filteredEventHistory
-        });
+        // Update the user object in res.json (add profile_pic)
+            res.json({
+                success: true,
+                user: {
+                    id: user._id.toString(),
+                    name: user.user_name,
+                    email: user.user_email,
+                    phone: user.user_phone || null,
+                    address: user.user_address || null,
+                    joined_date: user.created_at.toLocaleDateString(),
+                    profile_pic: user.profile_pic || null  // Add this line
+                },
+                purchaseHistory,
+                eventHistory: filteredEventHistory
+            });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
