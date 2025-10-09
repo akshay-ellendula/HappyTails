@@ -32,12 +32,10 @@
             </ul>
         </div>
 
-        <!-- Right Side Content -->
         <div class="main-content">
             <div class="welcome-section">
                 <h1>Event Manager Dashboard</h1>
             </div>
-            <!-- Overview Metrics -->
             <div class="overview">
                 <div class="card">
                     <h3>Total Bookings</h3>
@@ -54,9 +52,7 @@
                 <button class="new-event-btn" onclick="openEventForm()">New Event</button>
             </div>
 
-            <!-- Ongoing and Upcoming Events -->
             <div class="events-section">
-                <!-- Ongoing Events -->
                 <div class="ongoing-events">
                     <h2>Ongoing Events <a href="/eventmanager_events?status=Ongoing" class="view-all" data-section="ongoing">View all</a></h2>
                     <% if (ongoingEvents.length > 0) { %>
@@ -75,8 +71,7 @@
                     <% } %>
                 </div>
 
-                <!-- Upcoming Events -->
-               <div class="upcoming-events">
+                <div class="upcoming-events">
                     <h2>Upcoming Events <a href="/eventmanager_events?status=Upcoming" class="view-all">View all</a></h2>
                     <% if (upcomingEvents.length > 0) { %>
                         <% upcomingEvents.forEach(event => { %>
@@ -97,7 +92,6 @@
                 </div>
             </div>
 
-            <!-- Attendee List -->
             <div class="attendee-list">
                 <h2>All Attendee List <a href="/eventmanager_attendees" class="view-all" data-section="attendees">View all</a></h2>
                 <table>
@@ -114,7 +108,7 @@
                     <tbody id="attendeeTable">
                         <% if (attendees.length > 0) { %>
                             <% attendees.forEach(attendee => { %>
-                                <tr data-attendee-id="<%= attendee.id %>">
+                                <tr data-attendee-id="<%= attendee._id %>">
                                     <td><%= attendee.name %></td>
                                     <td><%= attendee.phone_number %></td>
                                     <td><%= attendee.event_name %></td>
@@ -122,13 +116,13 @@
                                     <td><%= attendee.seats %></td>
                                     <td>
                                         <button class="edit-btn" 
-                                            data-id="<%= attendee.id %>"
-                                            data-name="<%= attendee.name %>"
-                                            data-phone="<%= attendee.phone_number %>"
-                                            data-event="<%= attendee.event_name %>"
-                                            data-date="<%= new Date(attendee.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>"
-                                            data-seats="<%= attendee.seats %>">Edit</button>
-                                        <button class="delete-btn" data-id="<%= attendee.id %>">Delete</button>
+                                                data-id="<%= attendee._id %>"
+                                                data-name="<%= attendee.name %>"
+                                                data-phone="<%= attendee.phone_number %>"
+                                                data-event="<%= attendee.event_name %>"
+                                                data-date="<%= new Date(attendee.event_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %>"
+                                                data-seats="<%= attendee.seats %>">Edit</button>
+                                        <button class="delete-btn" data-id="<%= attendee._id %>">Delete</button>
                                     </td>
                                 </tr>
                             <% }) %>
@@ -140,10 +134,10 @@
                     </tbody>
                 </table>
             </div>
+            
         </div>
     </div>
 
-    <!-- Event Form Modal -->
     <div class="modal" id="eventFormModal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeEventForm()">×</span>
@@ -200,7 +194,6 @@
         </div>
     </div>
 
-    <!-- Event Details Modal -->
     <div class="modal" id="eventDetailsModal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeEventDetails()">×</span>
@@ -210,7 +203,6 @@
         </div>
     </div>
 
-    <!-- Edit Attendee Modal -->
     <div class="modal" id="editAttendeeModal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeEditAttendeeModal()">×</span>
@@ -226,16 +218,16 @@
                     <input type="text" id="editPhone" required>
                 </div>
                 <div class="form-group">
-                    <label for="editEvent">Event</label>
+                    <label for="editEvent">Event<span>(Read only)</span></label>
                     <input type="text" id="editEvent" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="editDate">Date</label>
+                    <label for="editDate">Date<span>(Read only)</span></label>
                     <input type="text" id="editDate" readonly>
                 </div>
                 <div class="form-group">
-                    <label for="editSeats">Seats</label>
-                    <input type="number" id="editSeats" required>
+                    <label for="editSeats">Seats<span>(Read only)</span></label>
+                    <input type="number" id="editSeats" required readonly>
                 </div>
                 <button type="submit" class="book_btn">Save Changes</button>
             </form>
@@ -243,51 +235,22 @@
     </div>
 
     <script>
-        // Add this at the beginning of your script section
-        document.addEventListener('DOMContentLoaded', function() {
-            // Edit button handler
-            document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const data = this.dataset;
-                    openEditAttendeeModal(
-                        data.id,
-                        data.name,
-                        data.phone,
-                        data.event,
-                        data.date,
-                        data.seats
-                    );
-                });
-            });
-
-            // Delete button handler
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    deleteAttendee(this.dataset.id);
-                });
-            });
-        });
-
-        // Modal Functions
+             // MODAL FUNCTIONS (no changes needed here)
         function openEventForm() {
             document.getElementById('eventFormModal').style.display = 'block';
         }
-
         function closeEventForm() {
             document.getElementById('eventFormModal').style.display = 'none';
         }
-
         function showEventDetails(eventName, ticketsSold, revenue) {
             document.getElementById('eventDetailsTitle').textContent = eventName;
             document.getElementById('ticketsSold').textContent = ticketsSold;
             document.getElementById('revenueGenerated').textContent = revenue;
             document.getElementById('eventDetailsModal').style.display = 'block';
         }
-
         function closeEventDetails() {
             document.getElementById('eventDetailsModal').style.display = 'none';
         }
-
         function openEditAttendeeModal(attendeeId, name, phone, eventName, date, seats) {
             document.getElementById('editAttendeeId').value = attendeeId;
             document.getElementById('editName').value = name;
@@ -297,53 +260,21 @@
             document.getElementById('editSeats').value = seats;
             document.getElementById('editAttendeeModal').style.display = 'block';
         }
-
         function closeEditAttendeeModal() {
             document.getElementById('editAttendeeModal').style.display = 'none';
         }
 
-        // Form Submission for Creating a New Event
-        async function submitEvent(event) {
-            event.preventDefault();
-            const formData = new FormData();
-            formData.append('eventPhoto', document.getElementById('eventPhoto').files[0]);
-            formData.append('eventName', document.getElementById('eventName').value);
-            formData.append('aboutEvent', document.getElementById('aboutEvent').value);
-            formData.append('language', document.getElementById('language').value);
-            formData.append('duration', document.getElementById('duration').value);
-            formData.append('tickets', document.getElementById('tickets').value);
-            formData.append('ageLimit', document.getElementById('ageLimit').value);
-            formData.append('instructions', document.getElementById('instructions').value);
-            formData.append('venue', document.getElementById('venue').value);
-            formData.append('terms', document.getElementById('terms').value);
-            formData.append('category', document.getElementById('category').value);
-            formData.append('dateTime', document.getElementById('dateTime').value);
-
-            try {
-                const response = await fetch('/eventmanager_dashboard/createEvent', {
-                    method: 'POST',
-                    body: formData
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Event created successfully!');
-                    window.location.reload(); // Refresh to show the new event
-                } else {
-                    alert('Error creating event: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error creating event:', error);
-                alert('Error creating event');
-            }
-
-            closeEventForm();
-            document.getElementById('eventForm').reset();
-        }
-
-        // Form Submission for Editing an Attendee
+        // API CALLS / ASYNC FUNCTIONS
         async function saveAttendee(event) {
             event.preventDefault();
             const attendeeId = document.getElementById('editAttendeeId').value;
+
+            // Debugging: Check if the ID is present before fetching
+            if (!attendeeId) {
+                alert('Error: Attendee ID is missing. Cannot save.');
+                return;
+            }
+
             const updatedData = {
                 name: document.getElementById('editName').value,
                 phone_number: document.getElementById('editPhone').value,
@@ -353,15 +284,13 @@
             try {
                 const response = await fetch(`/eventmanager_dashboard/updateAttendee/${attendeeId}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(updatedData)
                 });
                 const result = await response.json();
                 if (response.ok) {
                     alert('Attendee updated successfully!');
-                    window.location.reload(); // Refresh to show updated data
+                    window.location.reload();
                 } else {
                     alert('Error updating attendee: ' + result.message);
                 }
@@ -369,12 +298,15 @@
                 console.error('Error updating attendee:', error);
                 alert('Error updating attendee');
             }
-
             closeEditAttendeeModal();
         }
 
-        // Delete an Attendee
         async function deleteAttendee(attendeeId) {
+            // Debugging: Check if the ID is present before fetching
+            if (!attendeeId) {
+                alert('Error: Attendee ID is missing. Cannot delete.');
+                return;
+            }
             if (confirm('Are you sure you want to delete this attendee?')) {
                 try {
                     const response = await fetch(`/eventmanager_dashboard/deleteAttendee/${attendeeId}`, {
@@ -383,7 +315,7 @@
                     const result = await response.json();
                     if (response.ok) {
                         alert('Attendee deleted successfully!');
-                        window.location.reload(); // Refresh to update the list
+                        window.location.reload();
                     } else {
                         alert('Error deleting attendee: ' + result.message);
                     }
@@ -393,6 +325,46 @@
                 }
             }
         }
+
+        // NEW: MAIN EVENT LISTENER USING EVENT DELEGATION
+        document.addEventListener('DOMContentLoaded', function() {
+            const attendeeTable = document.getElementById('attendeeTable');
+
+            if (attendeeTable) {
+                attendeeTable.addEventListener('click', function(event) {
+                    const button = event.target;
+
+                    // Check if an EDIT button was clicked
+                    if (button.classList.contains('edit-btn')) {
+                        const data = button.dataset;
+                        console.log('Edit button clicked. Data ID:', data.id); // DEBUGGING LINE
+                        if (data.id) {
+                            openEditAttendeeModal(
+                                data.id,
+                                data.name,
+                                data.phone,
+                                data.event,
+                                data.date,
+                                data.seats
+                            );
+                        } else {
+                            console.error('ID is missing from the edit button!');
+                        }
+                    }
+
+                    // Check if a DELETE button was clicked
+                    if (button.classList.contains('delete-btn')) {
+                        const attendeeId = button.dataset.id;
+                        console.log('Delete button clicked. Data ID:', attendeeId); // DEBUGGING LINE
+                        if (attendeeId) {
+                            deleteAttendee(attendeeId);
+                        } else {
+                            console.error('ID is missing from the delete button!');
+                        }
+                    }
+                });
+            }
+        });
     </script>
 </body>
 
