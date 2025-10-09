@@ -204,193 +204,105 @@ const getVendorProducts = async (req, res) => {
 };
 const getVendorProfile = async (req, res) => {
     if (!req.session.vendor) {
-        console.log('No vendor session in getVendorProfile, redirecting to login');
         return res.redirect('/service_provider_login');
     }
 
-    const vendor = req.session.vendor;
-    const vendorId = vendor.id;
-    console.log('Fetching profile for vendor:', { vendorId });
+    const vendorId = req.session.vendor.id;
 
     try {
         const vendorDetails = await Vendor.findById(vendorId);
         if (!vendorDetails) {
-            console.error('Vendor not found:', vendorId);
             return res.status(404).send('Vendor not found');
         }
 
+        // --- NEW: Time Period Definitions ---
+        const now = new Date();
+        const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = currentMonthStart;
+
+        // --- NEW: Helper function for calculations ---
+        const getStatsForPeriod = async (startDate, endDate) => {
+            const revenueResult = await Order.aggregate([
+                { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' } },
+                { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' } },
+                { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId), 'order_date': { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, total: { $sum: '$subtotal' } } }
+            ]);
+
+            const salesResult = await OrderItem.aggregate([
+                { $lookup: { from: 'products', localField: 'product_id', foreignField: '_id', as: 'product' } },
+                { $unwind: '$product' },
+                { $lookup: { from: 'orders', localField: 'order_id', foreignField: '_id', as: 'order' } },
+                { $unwind: '$order' },
+                { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId), 'order.order_date': { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, count: { $sum: '$quantity' } } }
+            ]);
+            
+            return {
+                revenue: revenueResult[0]?.total || 0,
+                productsSold: salesResult[0]?.count || 0
+            };
+        };
+        
+        const currentMonthStats = await getStatsForPeriod(currentMonthStart, now);
+        const lastMonthStats = await getStatsForPeriod(lastMonthStart, lastMonthEnd);
+
+        const calculatePercentageChange = (current, previous) => {
+            if (previous === 0) return current > 0 ? 100 : 0;
+            return ((current - previous) / previous) * 100;
+        };
+
+        const revenueChange = calculatePercentageChange(currentMonthStats.revenue, lastMonthStats.revenue);
+        const productsSoldChange = calculatePercentageChange(currentMonthStats.productsSold, lastMonthStats.productsSold);
+        
+        // --- Original aggregations for all-time stats ---
         const totalRevenue = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' } },
+            { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' } },
             { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
-            {
-                $unwind: '$order_items'
-            },
-            {
-                $group: {
-                    _id: null,
-                    totalRevenue: { $sum: { $multiply: ['$order_items.price', '$order_items.quantity'] } }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalRevenue: { $ifNull: ['$totalRevenue', 0] }
-                }
-            }
+            { $group: { _id: null, totalRevenue: { $sum: '$subtotal' } } }
         ]);
 
         const productsSold = await OrderItem.aggregate([
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'product_id',
-                    foreignField: '_id',
-                    as: 'product'
-                }
-            },
+            { $lookup: { from: 'products', localField: 'product_id', foreignField: '_id', as: 'product' } },
             { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
-            {
-                $group: {
-                    _id: null,
-                    productsSold: { $sum: '$quantity' }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    productsSold: { $ifNull: ['$productsSold', 0] }
-                }
-            }
+            { $group: { _id: null, productsSold: { $sum: '$quantity' } } }
         ]);
 
         const newOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            {
-                $match: {
-                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId),
-                    status: 'Pending'
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    newOrders: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    newOrders: { $ifNull: ['$newOrders', 0] }
-                }
-            }
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' } },
+            { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' } },
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId), status: 'Pending' } },
+            { $group: { _id: null, newOrders: { $sum: 1 } } }
         ]);
 
         const recentOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            {
-                $match: {
-                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId)
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'user_id',
-                    foreignField: '_id',
-                    as: 'user'
-                }
-            },
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'order_items' } },
+            { $lookup: { from: 'products', localField: 'order_items.product_id', foreignField: '_id', as: 'products' } },
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
+            { $lookup: { from: 'users', localField: 'user_id', foreignField: '_id', as: 'user' } },
             { $unwind: '$user' },
             { $unwind: '$order_items' },
-            {
-                $project: {
-                    id: '$_id',
-                    order_date: 1,
-                    status: 1,
-                    total_amount: 1,
-                    user_name: '$user.user_name',
-                    product_name: '$order_items.product_name',
-                    _id: 0
-                }
-            },
+            { $project: { id: '$_id', order_date: 1, status: 1, total_amount: 1, user_name: '$user.user_name', product_name: '$order_items.product_name', _id: 0 } },
             { $sort: { order_date: -1 } },
             { $limit: 4 }
         ]);
 
-        console.log('Profile data fetched:', {
-            totalRevenue: totalRevenue[0]?.totalRevenue,
-            productsSold: productsSold[0]?.productsSold,
-            newOrders: newOrders[0]?.newOrders,
-            recentOrders: recentOrders.length
-        });
-
         res.render('shop-profile', {
-            vendor: {
-                store_name: vendorDetails.store_name,
-                owner_name: vendorDetails.name,
-                email: vendorDetails.email,
-                phone: vendorDetails.contact_number,
-                address: vendorDetails.store_location,
-                description: 'Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs. All our products are designed with pet comfort and safety in mind, using sustainable materials whenever possible.'
-            },
-            // UPDATED: Calculate revenue minus 6% (multiply by 0.94)
+            vendor: vendorDetails,
             totalRevenue: ((totalRevenue[0]?.totalRevenue || 0) * 0.94).toFixed(2),
             productsSold: productsSold[0]?.productsSold || 0,
             newOrders: newOrders[0]?.newOrders || 0,
             recentOrders,
-            customerRatings: '4.8/5'
+            revenueChange,
+            productsSoldChange
         });
     } catch (error) {
         console.error('Error fetching profile data:', error);
         res.status(500).send('Server error');
     }
 };
-
 // Service provider login
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;
@@ -455,183 +367,95 @@ const serviceProviderLogin = async (req, res) => {
 };
 
 const getVendorDashboard = async (req, res) => {
-    console.log('Accessing dashboard:', { storeName: req.params.storeName, session: req.session.vendor });
     if (!req.session.vendor) {
-        console.log('No vendor session, redirecting to login');
         return res.redirect('/service_provider_login');
     }
 
-    const vendor = req.session.vendor;
-    const storeNameSlug = req.params.storeName;
-
-    const expectedStoreNameSlug = vendor.store_name.toLowerCase().replace(/\s+/g, '-');
-    console.log('Store name comparison:', { storeNameSlug, expectedStoreNameSlug });
-    if (storeNameSlug !== expectedStoreNameSlug) {
-        console.log('Store name mismatch, rejecting request');
-        return res.status(403).send('Unauthorized: You can only access your own dashboard.');
-    }
-
-    const vendorId = vendor.id;
-    console.log('Fetching dashboard data for vendor:', { vendorId });
+    const vendorId = req.session.vendor.id;
 
     try {
+        // --- NEW: Time Period Definitions ---
+        const now = new Date();
+        const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = currentMonthStart;
+
+        // --- NEW: Helper function for calculations ---
+        const getStatsForPeriod = async (startDate, endDate) => {
+            const revenueResult = await Order.aggregate([
+                { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' } },
+                { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' } },
+                { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId), 'order_date': { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, total: { $sum: '$subtotal' } } }
+            ]);
+
+            const salesResult = await OrderItem.aggregate([
+                { $lookup: { from: 'products', localField: 'product_id', foreignField: '_id', as: 'product' } },
+                { $unwind: '$product' },
+                { $lookup: { from: 'orders', localField: 'order_id', foreignField: '_id', as: 'order' } },
+                { $unwind: '$order' },
+                { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId), 'order.order_date': { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, count: { $sum: '$quantity' } } }
+            ]);
+            
+            return {
+                revenue: revenueResult[0]?.total || 0,
+                productsSold: salesResult[0]?.count || 0
+            };
+        };
+        
+        const currentMonthStats = await getStatsForPeriod(currentMonthStart, now);
+        const lastMonthStats = await getStatsForPeriod(lastMonthStart, lastMonthEnd);
+
+        const calculatePercentageChange = (current, previous) => {
+            if (previous === 0) return current > 0 ? 100 : 0;
+            return ((current - previous) / previous) * 100;
+        };
+
+        const revenueChange = calculatePercentageChange(currentMonthStats.revenue, lastMonthStats.revenue);
+        const productsSoldChange = calculatePercentageChange(currentMonthStats.productsSold, lastMonthStats.productsSold);
+        
+        // --- Original aggregations for all-time stats ---
         const totalRevenue = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
-            {
-                $group: {
-                    _id: null,
-                    totalRevenue: { $sum: '$subtotal' }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalRevenue: { $ifNull: ['$totalRevenue', 0] }
-                }
-            }
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' }},
+            { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' }},
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) }},
+            { $group: { _id: null, total: { $sum: '$subtotal' }}}
         ]);
 
         const productsSold = await OrderItem.aggregate([
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'product_id',
-                    foreignField: '_id',
-                    as: 'product',
-                }
-            },
-            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
-            {
-                $group: {
-                    _id: null,
-                    productsSold: { $sum: '$quantity' }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    productsSold: { $ifNull: ['$productsSold', 0] }
-                }
-            }
+            { $lookup: { from: 'products', localField: 'product_id', foreignField: '_id', as: 'product' }},
+            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) }},
+            { $group: { _id: null, count: { $sum: '$quantity' }}}
         ]);
 
         const newOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            {
-                $match: {
-                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId),
-                    status: 'Pending'
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    newOrders: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    newOrders: { $ifNull: ['$newOrders', 0] }
-                }
-            }
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' }},
+            { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' }},
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId), status: 'Pending' }},
+            { $group: { _id: null, count: { $sum: 1 }}}
         ]);
 
         const recentOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            {
-                $match: {
-                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId)
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'user_id',
-                    foreignField: '_id',
-                    as: 'user'
-                }
-            },
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'order_items' }},
+            { $lookup: { from: 'products', localField: 'order_items.product_id', foreignField: '_id', as: 'products' }},
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) }},
+            { $lookup: { from: 'users', localField: 'user_id', foreignField: '_id', as: 'user' }},
             { $unwind: '$user' },
             { $unwind: '$order_items' },
-            {
-                $project: {
-                    id: '$_id',
-                    order_date: 1,
-                    status: 1,
-                    total_amount: 1,
-                    user_name: '$user.user_name',
-                    product_name: '$order_items.product_name',
-                    _id: 0
-                }
-            },
+            { $project: { id: '$_id', order_date: 1, status: 1, total_amount: 1, user_name: '$user.user_name', product_name: '$order_items.product_name', _id: 0 }},
             { $sort: { order_date: -1 } },
             { $limit: 4 }
         ]);
 
-        console.log('Dashboard data fetched:', {
-            totalRevenue: totalRevenue[0]?.totalRevenue,
-            productsSold: productsSold[0]?.productsSold,
-            newOrders: newOrders[0]?.newOrders,
-            recentOrders: recentOrders.length
-        });
-                const processedRecentOrders = recentOrders.map(order => ({
-            ...order,
-            status: order.status === 'Pending' ? 'Confirmed' : order.status
-        }));
-                res.render('shop-dashboard', {
+        res.render('shop-dashboard', {
             vendor: req.session.vendor,
-            // UPDATED: Calculate revenue minus 6% (multiply by 0.94)
-            totalRevenue: ((totalRevenue[0]?.totalRevenue || 0) * 0.94).toFixed(2),
-            productsSold: productsSold[0]?.productsSold || 0,
-            newOrders: newOrders[0]?.newOrders || 0,
-            recentOrders: processedRecentOrders
+            totalRevenue: ((totalRevenue[0]?.total || 0) * 0.94).toFixed(2),
+            productsSold: productsSold[0]?.count || 0,
+            newOrders: newOrders[0]?.count || 0,
+            recentOrders: recentOrders.map(o => ({...o, status: o.status === 'Pending' ? 'Confirmed' : o.status })),
+            revenueChange: revenueChange,
+            productsSoldChange: productsSoldChange
         });
     } catch (error) {
         console.error('Error fetching dashboard data:', error);

@@ -20,12 +20,16 @@
                 <div class="stat-card">
                     <h3>TOTAL REVENUE</h3>
                     <div class="value">₹<%= totalRevenue %></div>
-                    <div class="trend">+12.5% from last month</div>
+                    <div class="trend <%= revenueChange >= 0 ? 'positive' : 'negative' %>">
+                        <span><%= revenueChange >= 0 ? '+' : '' %><%= revenueChange.toFixed(1) %>%</span> from last month
+                    </div>
                 </div>
                 <div class="stat-card">
                     <h3>PRODUCTS SOLD</h3>
                     <div class="value"><%= productsSold %></div>
-                    <div class="trend">+5.2% from last month</div>
+                    <div class="trend <%= productsSoldChange >= 0 ? 'positive' : 'negative' %>">
+                        <span><%= productsSoldChange >= 0 ? '+' : '' %><%= productsSoldChange.toFixed(1) %>%</span> from last month
+                    </div>
                 </div>
                 <div class="stat-card">
                     <h3>NEW ORDERS</h3>
