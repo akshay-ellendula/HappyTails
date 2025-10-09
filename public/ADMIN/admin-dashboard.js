@@ -3,81 +3,94 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchDashboardStats();
     fetchRecentUsers();
 
-    // Initialize Revenue Chart
-    const revenueChartCtx = document.getElementById('revenueChart').getContext('2d');
-    const revenueChart = new Chart(revenueChartCtx, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            datasets: [
-                {
-                    label: 'Pet Sales',
-                    data: [18500, 22000, 19500, 24000, 25500, 27000, 28500, 31000, 29500, 32000, 35000, 38000],
-                    borderColor: '#8fbc8f',
-                    backgroundColor: 'rgba(143, 188, 143, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                },
-                {
-                    label: 'Products',
-                    data: [12000, 13500, 14700, 15200, 16800, 18000, 19500, 21000, 22500, 24000, 25500, 27000],
-                    borderColor: '#f3ef56',
-                    backgroundColor: 'rgba(243, 239, 86, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                },
-                {
-                    label: 'Services',
-                    data: [8500, 9200, 10500, 11800, 13000, 14200, 15800, 17000, 18500, 20000, 21500, 23000],
-                    borderColor: '#6495ed',
-                    backgroundColor: 'rgba(100, 149, 237, 0.1)',
-                    borderWidth: 2,
-                    fill: true,
-                    tension: 0.4
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false,
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
-                            if (label) {
-                                label += ': ';
+    // Fetch revenue chart data dynamically
+    fetch('/admin/revenue-chart-data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const chartData = data.chartData;
+                // Initialize Revenue Chart with dynamic data
+                const revenueChartCtx = document.getElementById('revenueChart').getContext('2d');
+                const revenueChart = new Chart(revenueChartCtx, {
+                    type: 'line',
+                    data: {
+                        labels: chartData.labels, // Dynamic months
+                        datasets: [
+                            {
+                                label: 'Pet Sales',
+                                data: chartData.petSales, // Dynamic data
+                                borderColor: '#8fbc8f',
+                                backgroundColor: 'rgba(143, 188, 143, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Products',
+                                data: chartData.products, // Dynamic data
+                                borderColor: '#f3ef56',
+                                backgroundColor: 'rgba(243, 239, 86, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Services',
+                                data: chartData.services, // Dynamic data
+                                borderColor: '#6495ed',
+                                backgroundColor: 'rgba(100, 149, 237, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.4
                             }
-                            if (context.parsed.y !== null) {
-                                label += new Intl.NumberFormat('en-US', {
-                                    style: 'currency',
-                                    currency: 'USD'
-                                }).format(context.parsed.y);
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('en-US', {
+                                                style: 'currency',
+                                                currency: 'USD'
+                                            }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
                             }
-                            return label;
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '$' + value.toLocaleString();
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return '$' + value.toLocaleString();
-                        }
-                    }
-                }
+                });
+            } else {
+                console.error('Failed to fetch revenue chart data:', data.message);
             }
-        }
-    });
+        })
+        .catch(error => {
+            console.error('Error fetching revenue chart data:', error);
+        });
 });
 
 function fetchDashboardStats() {
@@ -89,8 +102,39 @@ function fetchDashboardStats() {
                 // Update stats cards
                 document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
                 document.getElementById('totalVendors').textContent = stats.totalVendors || 0;
-                // Event Managers is hardcoded
-                document.getElementById('totalEventManagers').textContent = 43;
+                document.getElementById('totalEventManagers').textContent = stats.totalEventManagers || 0;
+
+                // Update revenue stats
+                document.getElementById('totalRevenue').textContent = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(stats.totalRevenue || 0);
+                document.getElementById('monthlyRevenue').textContent = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(stats.monthlyRevenue || 0);
+                document.getElementById('weeklyRevenue').textContent = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(stats.weeklyRevenue || 0);
+                document.getElementById('dailyRevenue').textContent = new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                }).format(stats.dailyRevenue || 0);
+
+                // Update percentage labels
+                document.getElementById('userGrowthPercent').textContent = 
+                    (stats.userGrowthPercent >= 0 ? '+' : '') + stats.userGrowthPercent + '% from last month';
+                document.getElementById('vendorGrowthPercent').textContent = 
+                    (stats.vendorGrowthPercent >= 0 ? '+' : '') + stats.vendorGrowthPercent + '% from last month';
+                document.getElementById('eventManagerGrowthPercent').textContent = 
+                    (stats.eventManagerGrowthPercent >= 0 ? '+' : '') + stats.eventManagerGrowthPercent + '% from last month';
+                document.getElementById('monthlyRevenueGrowthPercent').textContent = 
+                    (stats.monthlyRevenueGrowthPercent >= 0 ? '+' : '') + stats.monthlyRevenueGrowthPercent + '% from last month';
+                document.getElementById('weeklyRevenueGrowthPercent').textContent = 
+                    (stats.weeklyRevenueGrowthPercent >= 0 ? '+' : '') + stats.weeklyRevenueGrowthPercent + '% from last week';
+                document.getElementById('dailyRevenueGrowthPercent').textContent = 
+                    (stats.dailyRevenueGrowthPercent >= 0 ? '+' : '') + stats.dailyRevenueGrowthPercent + '% from yesterday';
 
                 // Initialize User Distribution Chart with dynamic data
                 const userDistributionCtx = document.getElementById('userDistributionChart').getContext('2d');
@@ -99,7 +143,7 @@ function fetchDashboardStats() {
                     data: {
                         labels: ['Users', 'Service Providers', 'Shop Vendors', 'Event Managers'],
                         datasets: [{
-                            data: [stats.totalUsers || 0, 0, stats.totalVendors || 0, 0],
+                            data: [stats.totalUsers || 0, 0, stats.totalVendors || 0, stats.totalEventManagers || 0],
                             backgroundColor: [
                                 '#f3ef56',
                                 '#8fbc8f',
@@ -147,7 +191,11 @@ function fetchDashboardStats() {
                 // Fallback values in case of error
                 document.getElementById('totalUsers').textContent = 'Error';
                 document.getElementById('totalVendors').textContent = 'Error';
-                document.getElementById('totalEventManagers').textContent = 43;
+                document.getElementById('totalEventManagers').textContent = 'Error';
+                document.getElementById('totalRevenue').textContent = 'Error';
+                document.getElementById('monthlyRevenue').textContent = 'Error';
+                document.getElementById('weeklyRevenue').textContent = 'Error';
+                document.getElementById('dailyRevenue').textContent = 'Error';
             }
         })
         .catch(error => {
@@ -155,44 +203,38 @@ function fetchDashboardStats() {
             // Fallback values in case of error
             document.getElementById('totalUsers').textContent = 'Error';
             document.getElementById('totalVendors').textContent = 'Error';
-            document.getElementById('totalEventManagers').textContent = 43;
+            document.getElementById('totalEventManagers').textContent = 'Error';
+            document.getElementById('totalRevenue').textContent = 'Error';
+            document.getElementById('monthlyRevenue').textContent = 'Error';
+            document.getElementById('weeklyRevenue').textContent = 'Error';
+            document.getElementById('dailyRevenue').textContent = 'Error';
         });
 }
-
 
 function fetchRecentUsers() {
     fetch('/admin/get-users')
         .then(response => response.json())
         .then(data => {
-            const tbody = document.getElementById('recentUsersTableBody');
-            tbody.innerHTML = ''; // Clear the "Loading..." placeholder
-
-            if (data.success && data.users.length > 0) {
+            if (data.success) {
+                const tbody = document.getElementById('recentUsersTableBody');
+                tbody.innerHTML = ''; // Clear existing rows
                 data.users.forEach(user => {
-                    // Format the joined_date to a readable format (e.g., "Mar 10, 2025")
-                    const joinedDate = new Date(user.joined_date).toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: '2-digit',
-                        year: 'numeric'
-                    });
-
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${user.name}</td>
                         <td>${user.email}</td>
                         <td>User</td>
-                        <td>${joinedDate}</td>
+                        <td>${new Date(user.joined_date).toLocaleDateString()}</td>
                     `;
                     tbody.appendChild(row);
                 });
             } else {
-                // If no users are found or the request fails, show a message
-                tbody.innerHTML = '<tr><td colspan="4">No recent users found</td></tr>';
+                console.error('Failed to fetch recent users:', data.message);
+                document.getElementById('recentUsersTableBody').innerHTML = '<tr><td colspan="4">Error loading users</td></tr>';
             }
         })
         .catch(error => {
             console.error('Error fetching recent users:', error);
-            const tbody = document.getElementById('recentUsersTableBody');
-            tbody.innerHTML = '<tr><td colspan="4">Error loading users</td></tr>';
+            document.getElementById('recentUsersTableBody').innerHTML = '<tr><td colspan="4">Error loading users</td></tr>';
         });
 }

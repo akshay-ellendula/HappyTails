@@ -3,66 +3,50 @@ const { Vendor, EventManager } = require('../models/database');
 
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;
-
-    // Input validation
-    if (!email || !password || !role) {
-        return res.status(400).json({ success: false, message: 'All fields are required' });
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'email', message: 'Please enter a valid email address' }]
-        });
-    }
-    if (!['event-manager', 'vendor'].includes(role)) {
-        return res.status(400).json({
-            success: false,
-            message: 'Validation failed',
-            errors: [{ field: 'role', message: 'Invalid role selected' }]
-        });
-    }
-
-    const Model = role === 'event-manager' ? EventManager : Vendor;
-    const redirectUrl = role === 'event-manager' ? '/eventmanager_dashboard' : '/shop-dashboard';
+    if (!email || !password || !role) return res.status(400).json({ success: false, message: 'All fields required' });
 
     try {
+        const Model = role === 'event-manager' ? EventManager : Vendor;
+        let redirectUrl;
+
         const user = await Model.findOne({ email });
-        if (!user) {
-            return res.status(401).json({ success: false, message: 'Invalid email or password' });
-        }
+        if (!user) return res.status(401).json({ success: false, message: 'Invalid email or password' });
 
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ success: false, message: 'Invalid email or password' });
-        }
+        if (!isMatch) return res.status(401).json({ success: false, message: 'Invalid email or password' });
 
-        // Store user data in session with consistent keys and stringified IDs
         if (role === 'event-manager') {
             req.session.eventManager = {
                 id: user._id.toString(),
                 name: user.name,
                 email: user.email,
-                role: 'event-manager',
                 contact_number: user.contact_number,
                 company_name: user.company_name,
-                location: user.location
+                location: user.location,
+                event_type: user.event_type || 'Pet Events',
+                license: user.license || `EVENT-${user._id}-AB`,
+                bio: user.bio || `Experienced event manager specializing in pet events. Based in ${user.location}, working with ${user.company_name}.`,
+                image: user.image || null,
+                member_since: user.member_since || new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
             };
-        } else {
+            redirectUrl = '/eventmanager_dashboard';
+        } else if (role === 'store-manager') {
             req.session.vendor = {
                 id: user._id.toString(),
-                name: user.name,
                 email: user.email,
-                role: 'vendor',
                 store_name: user.store_name,
-                store_location: user.store_location
+                role: 'store-manager'
             };
+            const storeNameSlug = user.store_name.toLowerCase().replace(/\s+/g, '-');
+            redirectUrl = `/shop-dashboard/${storeNameSlug}`;
+        } else {
+            return res.status(400).json({ success: false, message: 'Invalid role. Use "store-manager" or "event-manager"' });
         }
 
         res.status(200).json({ success: true, redirect: redirectUrl, message: 'Login successful' });
-    } catch (error) {
-        console.error('Error during service provider login:', error);
-        res.status(500).json({ success: false, message: 'Server error during login' });
+    } catch (err) {
+        console.error('Login error:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 

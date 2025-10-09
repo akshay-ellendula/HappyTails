@@ -51,13 +51,34 @@ function fetchEventManagerStats() {
         .then(data => {
             if (data.success) {
                 const stats = data.stats;
-                document.getElementById('totalEventManagers').textContent = stats.total || 0;
-                document.getElementById('monthlyChange').textContent = `+${stats.monthly || 0} from last month`;
-                document.getElementById('totalRevenue').textContent = `$${stats.revenue.toLocaleString() || 0}`;
-                document.getElementById('todayEvents').textContent = stats.todayEvents || 0;
+                // Update Total Event Managers
+                document.querySelector('.stat-card:nth-child(1) .number').textContent = stats.total || 0;
+                document.querySelector('.stat-card:nth-child(1) .change').textContent = 
+                    stats.managerGrowthPercent !== 0 
+                        ? `${stats.managerGrowthPercent > 0 ? '+' : ''}${stats.managerGrowthPercent}% from last month`
+                        : 'No change';
 
-                // Fetch total events separately
-                fetchTotalEvents();
+                // Update Total Revenue Generated
+                document.querySelector('.stat-card:nth-child(2) .number').textContent = 
+                    `$${stats.revenue.toLocaleString() || 0}`;
+                document.querySelector('.stat-card:nth-child(2) .change').textContent = 
+                    stats.revenueGrowthPercent !== 0 
+                        ? `${stats.revenueGrowthPercent > 0 ? '+' : ''}${stats.revenueGrowthPercent}% from previous month`
+                        : 'No change';
+
+                // Update Total Events
+                document.querySelector('.stat-card:nth-child(3) .number').textContent = stats.totalEvents || 0;
+                document.querySelector('.stat-card:nth-child(3) .change').textContent = 
+                    stats.eventsGrowthPercent !== 0 
+                        ? `${stats.eventsGrowthPercent > 0 ? '+' : ''}${stats.eventsGrowthPercent}% from last month`
+                        : 'No change';
+
+                // Update Today's Events
+                document.querySelector('.stat-card:nth-child(4) .number').textContent = stats.todayEvents || 0;
+                document.querySelector('.stat-card:nth-child(4) .change').textContent = 
+                    stats.todayEventsChange !== 0 
+                        ? `${stats.todayEventsChange > 0 ? '+' : ''}${stats.todayEventsChange} from yesterday`
+                        : 'No change';
             } else {
                 console.error('Failed to fetch event manager stats:', data.message);
                 updateStatsWithError();
@@ -67,6 +88,19 @@ function fetchEventManagerStats() {
             console.error('Error fetching event manager stats:', error);
             updateStatsWithError();
         });
+}
+
+// Remove fetchTotalEvents since it's now part of getEventManagerStats
+// Also update updateStatsWithError to match the new DOM selectors
+function updateStatsWithError() {
+    document.querySelector('.stat-card:nth-child(1) .number').textContent = 'N/A';
+    document.querySelector('.stat-card:nth-child(1) .change').textContent = 'N/A';
+    document.querySelector('.stat-card:nth-child(2) .number').textContent = 'N/A';
+    document.querySelector('.stat-card:nth-child(2) .change').textContent = 'N/A';
+    document.querySelector('.stat-card:nth-child(3) .number').textContent = 'N/A';
+    document.querySelector('.stat-card:nth-child(3) .change').textContent = 'N/A';
+    document.querySelector('.stat-card:nth-child(4) .number').textContent = 'N/A';
+    document.querySelector('.stat-card:nth-child(4) .change').textContent = 'N/A';
 }
 
 function fetchTotalEvents() {

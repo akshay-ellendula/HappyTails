@@ -16,7 +16,6 @@
         </div>
     </div>
     
-    <!-- Profile Dropdown -->
     <div class="profile-dropdown" id="profile-dropdown">
         <div class="profile-header">
             <div class="profile-name"><%= vendor.store_name %></div>
@@ -45,12 +44,10 @@
                     <h1 class="dashboard-title">Customers</h1>
                 </div>
                 
-                <!-- Search Bar -->
                 <div class="search-container">
                     <input type="text" class="search-bar" id="customerSearch" placeholder="Search customers by name, email or customer ID...">
                 </div>
                 
-                <!-- Customers Table -->
                 <table class="customers-table">
                     <thead>
                         <tr>
@@ -74,7 +71,7 @@
                                     <td>$<%= customer.total_spent %></td>
                                     <td><%= customer.last_order %></td>
                                     <td>
-                                        <button class="view-btn" onclick="viewCustomer('<%= customer.user_id %>')">
+                                        <button class="view-btn" onclick="viewCustomer('<%= customer.customer_id %>')">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </td>
@@ -93,7 +90,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Profile dropdown toggle
             const profileTrigger = document.getElementById('profile-trigger');
             const profileDropdown = document.getElementById('profile-dropdown');
             
@@ -101,14 +97,12 @@
                 profileDropdown.classList.toggle('active');
             });
             
-            // Close dropdown when clicking outside
             document.addEventListener('click', function(event) {
                 if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
                     profileDropdown.classList.remove('active');
                 }
             });
 
-            // Search functionality
             const searchInput = document.getElementById('customerSearch');
             const tableBody = document.getElementById('customersTableBody');
             const rows = tableBody.getElementsByTagName('tr');
@@ -133,11 +127,9 @@
                 }
             });
         });
-
-        // View customer details (placeholder for now)
-        function viewCustomer(userId) {
-            window.location.href = `/shop-customer-details?customer=${userId}`;
-        }
+        function viewCustomer(customerId) {
+    window.location.href = `/shop-customer-details?customer=${customerId}`;
+}
     </script>
 </body>
 </html>

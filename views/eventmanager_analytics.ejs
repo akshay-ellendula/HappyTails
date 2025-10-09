@@ -35,52 +35,44 @@
                     <h1 class="dashboard-title">Analytics</h1>
                 </div>
 
-                <div class="time-filter">
-                    <button class="active">All Time</button>
-                    <button>Today</button>
-                    <button>This Week</button>
-                    <button>This Month</button>
-                    <button>Custom</button>
-                </div>
-
                 <h2 class="section-header">Revenue</h2>
                 <div class="analytics-grid">
                     <div class="card">
                         <h2>Revenue Overview</h2>
                         <div class="stat">
                             <div class="stat-label">Total Revenue</div>
-                            <div class="stat-value">$<%= revenue.total.toFixed(2) %></div>
+                            <div class="stat-value">₹<%= revenue.total.toFixed(2) %></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">Today</div>
-                            <div class="stat-value">$<%= revenue.today.toFixed(2) %> <span class="indicator <%= revenue.todayChange >= 0 ? 'up' : 'down' %>"><%= revenue.todayChange >= 0 ? '+' : '' %><%= revenue.todayChange %>%</span></div>
+                            <div class="stat-value">₹<%= revenue.today.toFixed(2) %> <span class="indicator <%= revenue.todayChange >= 0 ? 'up' : 'down' %>"><%= revenue.todayChange >= 0 ? '+' : '' %><%= revenue.todayChange %>%</span></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">This Week</div>
-                            <div class="stat-value">$<%= revenue.thisWeek.toFixed(2) %> <span class="indicator <%= revenue.thisWeekChange >= 0 ? 'up' : 'down' %>"><%= revenue.thisWeekChange >= 0 ? '+' : '' %><%= revenue.thisWeekChange %>%</span></div>
+                            <div class="stat-value">₹<%= revenue.thisWeek.toFixed(2) %> <span class="indicator <%= revenue.thisWeekChange >= 0 ? 'up' : 'down' %>"><%= revenue.thisWeekChange >= 0 ? '+' : '' %><%= revenue.thisWeekChange %>%</span></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">This Month</div>
-                            <div class="stat-value">$<%= revenue.thisMonth.toFixed(2) %> <span class="indicator <%= revenue.thisMonthChange >= 0 ? 'up' : 'down' %>"><%= revenue.thisMonthChange >= 0 ? '+' : '' %><%= revenue.thisMonthChange %>%</span></div>
+                            <div class="stat-value">₹<%= revenue.thisMonth.toFixed(2) %> <span class="indicator <%= revenue.thisMonthChange >= 0 ? 'up' : 'down' %>"><%= revenue.thisMonthChange >= 0 ? '+' : '' %><%= revenue.thisMonthChange %>%</span></div>
                         </div>
                     </div>
                     <div class="card">
                         <h2>Average Ticket Value</h2>
                         <div class="stat">
                             <div class="stat-label">Overall Average</div>
-                            <div class="stat-value">$<%= avgTicketValue.total.toFixed(2) %></div>
+                            <div class="stat-value">₹<%= avgTicketValue.total.toFixed(2) %></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">Today</div>
-                            <div class="stat-value">$<%= avgTicketValue.today.toFixed(2) %> <span class="indicator <%= avgTicketValue.todayChange >= 0 ? 'up' : 'down' %>"><%= avgTicketValue.todayChange >= 0 ? '+' : '' %><%= avgTicketValue.todayChange %>%</span></div>
+                            <div class="stat-value">₹<%= avgTicketValue.today.toFixed(2) %> <span class="indicator <%= avgTicketValue.todayChange >= 0 ? 'up' : 'down' %>"><%= avgTicketValue.todayChange >= 0 ? '+' : '' %><%= avgTicketValue.todayChange %>%</span></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">This Week</div>
-                            <div class="stat-value">$<%= avgTicketValue.thisWeek.toFixed(2) %> <span class="indicator <%= avgTicketValue.thisWeekChange >= 0 ? 'up' : 'down' %>"><%= avgTicketValue.thisWeekChange >= 0 ? '+' : '' %><%= avgTicketValue.thisWeekChange %>%</span></div>
+                            <div class="stat-value">₹<%= avgTicketValue.thisWeek.toFixed(2) %> <span class="indicator <%= avgTicketValue.thisWeekChange >= 0 ? 'up' : 'down' %>"><%= avgTicketValue.thisWeekChange >= 0 ? '+' : '' %><%= avgTicketValue.thisWeekChange %>%</span></div>
                         </div>
                         <div class="stat">
                             <div class="stat-label">This Month</div>
-                            <div class="stat-value">$<%= avgTicketValue.thisMonth.toFixed(2) %> <span class="indicator <%= avgTicketValue.thisMonthChange >= 0 ? 'up' : 'down' %>"><%= avgTicketValue.thisMonthChange >= 0 ? '+' : '' %><%= avgTicketValue.thisMonthChange %>%</span></div>
+                            <div class="stat-value">₹<%= avgTicketValue.thisMonth.toFixed(2) %> <span class="indicator <%= avgTicketValue.thisMonthChange >= 0 ? 'up' : 'down' %>"><%= avgTicketValue.thisMonthChange >= 0 ? '+' : '' %><%= avgTicketValue.thisMonthChange %>%</span></div>
                         </div>
                     </div>
                 </div>

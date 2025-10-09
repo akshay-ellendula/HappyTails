@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Edit Event</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2ffa8;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .header {
+            background-color: #f2ffa8;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .header-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .main-content {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #f2ffa8;
+            padding: 20px;
+        }
+
+        .sidebar-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-menu-item {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu-link {
+            display: block;
+            padding: 10px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-menu-link.active {
+            background-color: #e0e89a;
+        }
+
+        .sidebar-menu-link:hover {
+            background-color: #e0e89a;
+        }
+
+        .content {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .content-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .back-btn {
+            background-color: #333;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #555;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-section-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #333;
+            box-sizing: border-box;
+            background-color: #fafafa;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #e0e89a;
+            box-shadow: 0 0 5px rgba(224, 232, 154, 0.5);
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .event-guide,
+        .event-location {
+            display: flex;
+            gap: 15px;
+        }
+
+        .event-guide input,
+        .event-location input {
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primary:hover {
+            background-color: #555;
+        }
+
+        .btn-cancel {
+            background-color: #999;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background-color: #777;
+        }
+
+        /* Styles for image display and upload */
+        .image-upload-preview {
+            max-width: 200px; /* Adjust as needed */
+            height: auto;
+            display: block;
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .image-placeholder {
+            width: 200px;
+            height: 120px;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            border: 1px dashed #ccc;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>Happy Tails</h1>
+        <div class="header-links">
+            <a href="/profile" class="header-link">Profile</a>
+            <a href="/logout" class="header-link">Logout</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <h2 class="sidebar-title">Dashboard</h2>
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item">
+                    <a href="/eventmanager_dashboard" class="sidebar-menu-link">Home</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/eventmanager_events" class="sidebar-menu-link active">Events</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/eventmanager_attendees" class="sidebar-menu-link">Attendees</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/eventmanager_profile" class="sidebar-menu-link">Profile</a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/eventmanager_analytics" class="sidebar-menu-link">Analytics</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="content">
+            <div class="content-header">
+                <h1 class="content-title">Edit Event</h1>
+                <a href="/eventmanager_events" class="back-btn">Back</a>
+            </div>
+
+            <div class="form-container">
+                <h2 class="form-section-title">Edit Event Details</h2>
+                
+                <%
+                    // Helper function to format date string 'Month Day, Year' to 'YYYY-MM-DD'
+                    const formatDate = (dateString) => {
+                        if (!dateString) return '';
+                        const date = new Date(dateString);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    };
+
+                    // Helper function to format time string 'HH:MM AM/PM' to 'HH:MM' (24-hour)
+                    const formatTime = (timeString) => {
+                        if (!timeString) return '';
+                        let [time, modifier] = timeString.split(' ');
+                        let [hours, minutes] = time.split(':');
+                        if (hours === '12') { // Handle 12 AM/PM
+                            hours = modifier === 'AM' ? '00' : '12';
+                        } else if (modifier === 'PM') {
+                            hours = parseInt(hours, 10) + 12;
+                        }
+                        return `${String(hours).padStart(2, '0')}:${minutes}`;
+                    };
+                %>
+
+                <form id="editEventForm" action="/eventmanager_events/update" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" id="eventId" name="id" value="<%= event.id %>">
+                    
+                    <div class="form-group">
+                        <label for="name">Event Name</label>
+                        <input type="text" id="name" name="name" value="<%= event.name %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="about">About the Event</label>
+                        <textarea id="about" name="about" required><%= event.about %></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Event Guide</label>
+                        <div class="event-guide">
+                            <input type="text" id="language" name="language" value="<%= event.language %>" placeholder="Language" required>
+                            <input type="text" id="duration" name="duration" value="<%= event.duration %>" placeholder="Duration (e.g., 2h)" required>
+                            <input type="number" id="ticket_price" name="ticket_price" value="<%= event.ticket_price %>" placeholder="Ticket Price" step="0.01" required>
+                            <input type="number" id="age_limit" name="age_limit" value="<%= event.age_limit %>" placeholder="Age Limit" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location & Contact</label>
+                        <div class="event-location">
+                            <input type="text" id="venue" name="venue" value="<%= event.venue %>" placeholder="Venue" required>
+                            <input type="text" id="city" name="city" value="<%= event.city %>" placeholder="City" required>
+                            <input type="text" id="contact" name="contact_number" value="<%= event.contact %>" placeholder="Contact Number" required>
+                    </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="instructions">Instructions</label>
+                        <textarea id="instructions" name="instructions" required><%= event.instructions %></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="terms">Terms and Conditions</label>
+                        <textarea id="terms" name="terms" required><%= event.terms %></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select Category</option>
+                            <option value="Pets" <%= event.category === 'Pets' ? 'selected' : '' %>>Pets</option>
+                            <option value="Music" <%= event.category === 'Music' ? 'selected' : '' %>>Music</option>
+                            <option value="Dance" <%= event.category === 'Dance' ? 'selected' : '' %>>Dance</option>
+                            <option value="Arts" <%= event.category === 'Arts' ? 'selected' : '' %>>Arts</option>
+                            <option value="Sports" <%= event.category === 'Sports' ? 'selected' : '' %>>Sports</option>
+                            <option value="Technology" <%= event.category === 'Technology' ? 'selected' : '' %>>Technology</option>
+                            <option value="Education" <%= event.category === 'Education' ? 'selected' : '' %>>Education</option>
+                            <option value="Other" <%= event.category === 'Other' ? 'selected' : '' %>>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="date">Date</label>
+                        <input type="date" id="date" name="date" value="<%= formatDate(event.date) %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="time">Time</label>
+                        <input type="time" id="time" name="time" value="<%= formatTime(event.time) %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="total_tickets">Capacity</label>
+                        <input type="number" id="total_tickets" name="capacity" value="<%= event.total_tickets %>" placeholder="Total Capacity" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="eventImageUpload">Event Image</label>
+                        
+                        <% if (event.image && event.image !== 'default_event_image.jpg') { %>
+                            <img id="currentImage" class="image-upload-preview" src="<%= event.image %>" alt="Current Event Image">
+                        <% } else { %>
+                            <div id="currentImage" class="image-placeholder">No current image.<br>Upload new one.</div>
+                        <% } %>
+                        
+                        <input type="file" id="eventImageUpload" name="image" accept="image/*" style="margin-top: 10px;">
+                        
+                        <img id="imagePreview" class="image-upload-preview" src="#" alt="New Image Preview" style="display: none;">
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn-primary">Save Changes</button>
+                        <a href="/eventmanager_events" class="btn-cancel">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const eventImageUpload = document.getElementById('eventImageUpload');
+            const imagePreview = document.getElementById('imagePreview');
+            const currentImage = document.getElementById('currentImage');
+
+            if (eventImageUpload) {
+                eventImageUpload.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.src = e.target.result;
+                            imagePreview.style.display = 'block'; // Show the preview
+                            if (currentImage && currentImage.tagName === 'IMG') {
+                                currentImage.style.display = 'none'; // Hide current image if a new one is selected
+                            } else if (currentImage && currentImage.classList.contains('image-placeholder')) {
+                                currentImage.style.display = 'none'; // Hide placeholder
+                            }
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        imagePreview.style.display = 'none'; // Hide preview if no file selected
+                        if (currentImage) {
+                            currentImage.style.display = ''; // Show original image/placeholder
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

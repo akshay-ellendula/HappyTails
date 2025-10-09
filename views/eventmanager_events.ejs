@@ -43,8 +43,8 @@
                     <% if (typeof previousEvents !=='undefined' && previousEvents.length> 0) { %>
                         <% previousEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge">
-                                    <%= event.time %>
+                                <div class="time-badge" data-time="<%= event.time %>">
+                                    <!-- Time will be set by JavaScript -->
                                 </div>
                                 <h3>
                                     <%= event.event_name %>
@@ -55,7 +55,7 @@
                                 <p><strong>Registered:</strong>
                                     <%= event.attendeeCount %> Attendees
                                 </p>
-                                <p><strong>Revenue:</strong> $<%= (event.revenue || 0).toFixed(2) %>
+                                <p><strong>Revenue:</strong> ₹<%= (event.revenue || 0).toFixed(2) %>
                                 </p>
                             </div>
                             <% }) %>
@@ -72,8 +72,8 @@
                     <% if (ongoingEvents.length> 0) { %>
                         <% ongoingEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge">
-                                    <%= event.time %>
+                                <div class="time-badge" data-time="<%= event.time %>">
+                                    <!-- Time will be set by JavaScript -->
                                 </div>
                                 <h3>
                                     <%= event.event_name %>
@@ -84,7 +84,7 @@
                                 <p><strong>Registered:</strong>
                                     <%= event.attendeeCount %> Attendees
                                 </p>
-                                <p><strong>Revenue:</strong> $<%= event.revenue%>
+                                <p><strong>Revenue:</strong> ₹<%= (event.revenue || 0).toFixed(2) %>
                                 </p>
                             </div>
                             <% }) %>
@@ -101,8 +101,8 @@
                     <% if (typeof upcomingEvents !=='undefined' && upcomingEvents.length> 0) { %>
                         <% upcomingEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge">
-                                    <%= event.time %>
+                                <div class="time-badge" data-time="<%= event.time %>">
+                                    <!-- Time will be set by JavaScript -->
                                 </div>
                                 <h3>
                                     <%= event.event_name %>
@@ -116,13 +116,13 @@
                                 <p><strong>Capacity:</strong>
                                     <%= event.total_tickets %>
                                 </p>
-                                <p><strong>Ticket Price:</strong> $<%= event.ticket_price.toFixed(2) %>
+                                <p><strong>Ticket Price:</strong> ₹<%= event.ticket_price.toFixed(2) %>
                                 </p>
                                 <p><strong>Description:</strong>
                                     <%= event.about_event %>
                                 </p>
                                 <div class="card-actions">
-                                    <button class="btn-primary" onclick="openEditEvent('<%= event.id %>')">Edit</button>
+                                    <a href="/eventmanager_event_edit?eventId=<%= event.id %>" class="btn-primary">Edit</a>
                                 </div>
                             </div>
                             <% }) %>
@@ -132,77 +132,22 @@
                 </div>
             </div>
 
-            <!-- Edit Event Modal -->
-            <div class="modal" id="editEventModal">
-                <div class="modal-content">
-                    <span class="close-btn" onclick="closeEditEvent()">×</span>
-                    <h2>Edit Event</h2>
-                    <form id="editEventForm" action="/eventmanager_events/update" method="POST">
-                        <input type="hidden" id="eventId" name="eventId">
-                        <div class="form-group">
-                            <label for="eventName">Event Name</label>
-                            <input type="text" id="eventName" name="eventName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventDate">Date</label>
-                            <input type="date" id="eventDate" name="eventDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventTime">Time</label>
-                            <input type="time" id="eventTime" name="eventTime" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventVenue">Venue</label>
-                            <input type="text" id="eventVenue" name="eventVenue" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventCapacity">Capacity</label>
-                            <input type="number" id="eventCapacity" name="eventCapacity" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventTicketPrice">Ticket Price ($)</label>
-                            <input type="number" id="eventTicketPrice" name="eventTicketPrice" step="0.01" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="eventDescription">Description</label>
-                            <textarea id="eventDescription" name="eventDescription" required></textarea>
-                        </div>
-                        <button type="submit" class="btn-primary">Save Changes</button>
-                    </form>
-                </div>
-            </div>
-
             <script>
-                // Open edit event modal and populate form
-                window.openEditEvent = (eventId) => {
-                    const eventCard = document.getElementById(`event-${eventId}`);
-                    document.getElementById('eventId').value = eventId;
-                    document.getElementById('eventName').value = eventCard.querySelector('h3').textContent;
-                    const dateTime = eventCard.querySelector('p:nth-child(2)').textContent.split('Date: ')[1].split(', ');
-                    const [month, day, year] = dateTime[0].split(' ');
-                    const formattedDate = `${year}-${monthToNumber(month)}-${day.padStart(2, '0')}`;
-                    document.getElementById('eventDate').value = formattedDate;
-                    document.getElementById('eventTime').value = eventCard.querySelector('.time-badge').textContent.replace(' ', '').toLowerCase();
-                    document.getElementById('eventVenue').value = eventCard.querySelector('p:nth-child(3)').textContent.split('Venue: ')[1];
-                    document.getElementById('eventCapacity').value = eventCard.querySelector('p:nth-child(4)').textContent.split('Capacity: ')[1];
-                    document.getElementById('eventTicketPrice').value = eventCard.querySelector('p:nth-child(5)').textContent.split('Ticket Price: $')[1];
-                    document.getElementById('eventDescription').value = eventCard.querySelector('p:nth-child(6)').textContent.split('Description: ')[1];
-                    document.getElementById('editEventModal').style.display = 'block';
-                };
-
-                // Close edit event modal
-                window.closeEditEvent = () => {
-                    document.getElementById('editEventModal').style.display = 'none';
-                };
-
-                // Helper function to convert month name to number
-                function monthToNumber(month) {
-                    const months = {
-                        'January': '01', 'February': '02', 'March': '03', 'April': '04', 'May': '05', 'June': '06',
-                        'July': '07', 'August': '08', 'September': '09', 'October': '10', 'November': '11', 'December': '12'
-                    };
-                    return months[month];
+                // Function to convert 24-hour time to 12-hour format
+                function convertTo12Hour(time) {
+                    const [hours, minutes] = time.split(':').map(Number);
+                    const period = hours >= 12 ? 'PM' : 'AM';
+                    const adjustedHours = hours % 12 || 12; // Convert 0 to 12 for midnight
+                    return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
                 }
+
+                // Apply the conversion to all time badges
+                document.querySelectorAll('.time-badge').forEach(badge => {
+                    const time = badge.getAttribute('data-time');
+                    if (time) {
+                        badge.textContent = convertTo12Hour(time);
+                    }
+                });
             </script>
 </body>
 

@@ -256,6 +256,43 @@ hr {
     cursor: pointer;
 }
 
+#clear-filters {
+    margin-bottom: 20px;
+    margin-left: 1px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    background-color: #1a1a1a;
+    color: #effe8b;
+    cursor: pointer;
+}
+
+
+.price_filter_div {
+    margin-top: 10px;
+}
+
+.price_filter_div label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.price_filter_div input[type="range"] {
+    width: 100%;
+}
+
+.no-products-message {
+    text-align: center;
+    color: #888;
+    font-size: 1.2em;
+    margin: 20px 0;
+}
+
+
+
+.filter_container button[type="button"] {
+    background-color: #6c757d;
+    margin-left: 10px;
+}
 
 
 

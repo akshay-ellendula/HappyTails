@@ -5,8 +5,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Manager - Attendees</title>
-    <link rel="stylesheet" href="/services/service_dashboard.css">
     <link rel="stylesheet" href="/Events/eventmanager_attendees.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px; /* Added more space between filters and table */
+        }
+
+        th,
+        td {
+            padding: 12px 15px; /* Increased padding for better readability */
+            border: 1px solid #e0e0e0; /* Softer border color */
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa; /* Light grey header for contrast */
+            font-weight: 600;
+        }
+
+        /*
+        ========================================
+        NEW & IMPROVED FILTER STYLES 🎨
+        ========================================
+        */
+
+        /* Main container for the filter controls */
+        .filter-controls {
+            display: flex;
+            align-items: center; /* Vertically aligns the dropdown and input */
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        /* Shared styles for both the dropdown and the text input */
+        .filter-controls select,
+        .filter-controls input {
+            font-family: inherit; /* Use the same font as the rest of the page */
+            font-size: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px; /* Nicer rounded corners */
+            outline: none; /* Removes the default browser outline */
+            background-color: #fff;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions */
+        }
+
+        /* Specific styling for the dropdown */
+        .filter-controls select {
+            cursor: pointer; /* Changes cursor to a pointer on hover */
+            -webkit-appearance: none; /* Removes default dropdown arrow on some browsers */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px; /* Make space for the new arrow */
+        }
+
+        /* Specific styling for the text input to add a search icon */
+        .filter-controls input {
+            flex-grow: 1; /* Allows input to take up the remaining space */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23888' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            padding-left: 40px; /* Make space for the icon */
+            margin: 10px;
+        }
+        
+        /* --- Interactive Hover & Focus Effects --- */
+
+        .filter-controls select:hover,
+        .filter-controls input:hover {
+            border-color: #999;
+        }
+
+        .filter-controls select:focus,
+        .filter-controls input:focus {
+            border-color: #007bff; /* A nice blue color */
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2); /* A soft blue "glow" */
+        }
+
+    </style>
 </head>
 
 <body>
@@ -36,84 +117,155 @@
             <div class="welcome-section">
                 <h1>Attendees</h1>
             </div>
-
-            <!-- Past & Ongoing Attendees -->
             <div class="section">
                 <h2 style="margin-bottom: 10px;">All Registered Attendees (Past & Ongoing)</h2>
-                <div class="appointments">
-                    <% if (typeof pastOngoingAttendees !=='undefined' && pastOngoingAttendees.length> 0) { %>
-                        <% pastOngoingAttendees.forEach(attendee=> { %>
-                            <% if (attendee.name) { %>
-                                <div class="appointment-card">
-                                    <div class="time-badge">
-                                        <%= attendee.eventTime %>
-                                    </div>
-                                    <h3>
-                                        <%= attendee.name %>
-                                    </h3>
-                                    <p><strong>Email:</strong>
-                                        <%= attendee.email %>
-                                    </p>
-                                    <p><strong>Event:</strong>
-                                        <%= attendee.event_name %> (<%= attendee.formattedDate %>)
-                                    </p>
-                                    <p><strong>Registration Date:</strong>
-                                        <%= attendee.formattedRegDate || 'N/A' %>
-                                    </p>
-                                    <div class="card-actions">
-                                        <div class="attendee-count">Total: <%= attendee.totalAttendees || 0 %>
-                                        </div>
-                                    </div>
-                                </div>
+                <% if (typeof pastOngoingAttendees !== 'undefined' && pastOngoingAttendees.length > 0) { %>
+                    <div class="filter-controls">
+                        <select id="pastOngoingColumn">
+                            <option value="all">All Columns</option>
+                            <option value="0">Name</option>
+                            <option value="1">Email</option>
+                            <option value="2">Event</option>
+                            <option value="3">Date</option>
+                        </select>
+                        <input type="text" id="pastOngoingFilter" placeholder="Search attendees...">
+                    </div>
+
+                    <table id="pastOngoingTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Registration Date</th>
+                                <th>Total Attendees</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% pastOngoingAttendees.forEach(attendee => { %>
+                                <% if (attendee.name) { %>
+                                    <tr>
+                                        <td><%= attendee.name %></td>
+                                        <td><%= attendee.email %></td>
+                                        <td><%= attendee.event_name %></td>
+                                        <td><%= attendee.formattedDate %></td>
+                                        <td><%= attendee.formattedRegDate || 'N/A' %></td>
+                                        <td><%= attendee.totalAttendees || 0 %></td>
+                                    </tr>
                                 <% } %>
-                                    <% }) %>
-                                        <% } else { %>
-                                            <p>No past or ongoing attendees found.</p>
-                                            <% } %>
-                </div>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No past or ongoing attendees found.</p>
+                <% } %>
             </div>
 
-            <!-- Upcoming Attendees -->
             <div class="section">
                 <h2 style="margin-bottom: 10px;">Upcoming Events Attendees</h2>
-                <div class="appointments">
-                    <% if (typeof upcomingAttendees !=='undefined' && upcomingAttendees.length> 0) { %>
-                        <% upcomingAttendees.forEach(attendee=> { %>
-                            <% if (attendee.name) { %>
-                                <div class="appointment-card">
-                                    <div class="time-badge">
-                                        <%= attendee.eventTime %>
-                                    </div>
-                                    <h3>
-                                        <%= attendee.name %>
-                                    </h3>
-                                    <p><strong>Email:</strong>
-                                        <%= attendee.email %>
-                                    </p>
-                                    <p><strong>Event:</strong>
-                                        <%= attendee.event_name %> (<%= attendee.formattedDate %>)
-                                    </p>
-                                    <p><strong>Registration Date:</strong>
-                                        <%= attendee.formattedRegDate || 'N/A' %>
-                                    </p>
-                                    <div class="card-actions">
-                                        <div class="attendee-count">Registered: <%= attendee.seats || 0 %>
-                                        </div>
-                                    </div>
-                                </div>
-                                <% } %>
-                                    <% }) %>
-                                        <% } else { %>
-                                            <p>No upcoming event attendees found.</p>
-                                            <% } %>
-                </div>
-            </div>
-            <script>
-                document.addEventListener('DOMContentLoaded', () => {
-                    // Simplified active link highlighting (already handled by 'active' class in EJS)
-                    console.log('Page loaded:', window.location.pathname);
-                });
-            </script>
-</body>
+                <% if (typeof upcomingAttendees !== 'undefined' && upcomingAttendees.length > 0) { %>
+                    <div class="filter-controls">
+                        <select id="upcomingColumn">
+                            <option value="all">All Columns</option>
+                            <option value="0">Name</option>
+                            <option value="1">Email</option>
+                            <option value="2">Event</option>
+                            <option value="3">Date</option>
+                        </select>
+                        <input type="text" id="upcomingFilter" placeholder="Search attendees...">
+                    </div>
 
+                    <table id="upcomingTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Event</th>
+                                <th>Date</th>
+                                <th>Registration Date</th>
+                                <th>Registered Seats</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% upcomingAttendees.forEach(attendee => { %>
+                                <% if (attendee.name) { %>
+                                    <tr>
+                                        <td><%= attendee.name %></td>
+                                        <td><%= attendee.email %></td>
+                                        <td><%= attendee.event_name %></td>
+                                        <td><%= attendee.formattedDate %></td>
+                                        <td><%= attendee.formattedRegDate || 'N/A' %></td>
+                                        <td><%= attendee.seats || 0 %></td>
+                                    </tr>
+                                <% } %>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <p>No upcoming event attendees found.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            /**
+             * Sets up a real-time, column-specific filter for a table.
+             * @param {string} inputId The ID of the input field.
+             * @param {string} selectId The ID of the column selector dropdown.
+             * @param {string} tableId The ID of the table to filter.
+             */
+            const setupFilter = (inputId, selectId, tableId) => {
+                const filterInput = document.getElementById(inputId);
+                const columnSelect = document.getElementById(selectId);
+                const table = document.getElementById(tableId);
+
+                if (!filterInput || !columnSelect || !table) {
+                    console.warn(`Filter setup failed for table '${tableId}'. One or more elements not found.`);
+                    return;
+                }
+
+                const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+                const applyFilter = () => {
+                    const filterText = filterInput.value.toUpperCase();
+                    const columnIndex = columnSelect.value;
+
+                    for (const row of rows) {
+                        let match = false;
+                        if (columnIndex === "all") {
+                            // Search all cells in the row if "All Columns" is selected
+                            const rowText = row.textContent || row.innerText;
+                            if (rowText.toUpperCase().indexOf(filterText) > -1) {
+                                match = true;
+                            }
+                        } else {
+                            // Search only the selected column's cell
+                            const cell = row.getElementsByTagName('td')[columnIndex];
+                            if (cell) {
+                                const cellText = cell.textContent || cell.innerText;
+                                if (cellText.toUpperCase().indexOf(filterText) > -1) {
+                                    match = true;
+                                }
+                            }
+                        }
+                        
+                        // Show or hide the row based on whether a match was found
+                        row.style.display = match ? '' : 'none';
+                    }
+                };
+
+                // Apply the filter whenever the user types or changes the column
+                filterInput.addEventListener('keyup', applyFilter);
+                columnSelect.addEventListener('change', applyFilter);
+            };
+
+            // Initialize the filters for both tables
+            setupFilter('pastOngoingFilter', 'pastOngoingColumn', 'pastOngoingTable');
+            setupFilter('upcomingFilter', 'upcomingColumn', 'upcomingTable');
+        });
+    </script>
+</body>
 </html>

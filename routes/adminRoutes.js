@@ -1,4 +1,3 @@
-// routes/adminRoutes.js
 const express = require('express');
 const router = express.Router();
 const { 
@@ -30,9 +29,47 @@ const {
     getPastEvents,
     updateEventManager,
     deleteEventManager,
-    deleteProduct // Add this
+    deleteProduct,
+    getRevenueChartData,
+    getProduct,
+    updateProduct,
+    addProduct,
+    logout,
+    getEventsData,
+    deleteEvent
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
+
+
+
+
+const multer = require('multer');
+const path = require('path');
+
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, path.join(__dirname, '../public/uploads/products'));
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    fileFilter: (req, file, cb) => {
+        const filetypes = /jpeg|jpg|png/;
+        const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = filetypes.test(file.mimetype);
+        if (extname && mimetype) {
+            return cb(null, true);
+        }
+        cb(new Error('Only JPEG, JPG, and PNG files are allowed'));
+    }
+});
+
 
 // Existing routes
 router.post('/admin-login', adminLogin);
@@ -41,7 +78,7 @@ router.get('/admin/user/:id', isAdminAuthenticated, getUser);
 router.put('/admin/user/:id', isAdminAuthenticated, updateUser);
 router.delete('/admin/user/:id', isAdminAuthenticated, deleteUser);
 router.get('/admin/products', isAdminAuthenticated, getProducts);
-router.delete('/admin/product/:id', isAdminAuthenticated, deleteProduct); // Add this
+router.delete('/admin/product/:id', isAdminAuthenticated, deleteProduct);
 router.get('/admin/user-stats', isAdminAuthenticated, getUserStats);
 router.get('/admin/product-stats', isAdminAuthenticated, getProductStats);
 router.get('/admin/dashboard-stats', isAdminAuthenticated, dashBoardStats);
@@ -64,5 +101,38 @@ router.get('/admin/event-manager/:id/upcoming-events', isAdminAuthenticated, get
 router.get('/admin/event-manager/:id/past-events', isAdminAuthenticated, getPastEvents);
 router.put('/admin/event-manager/:id', isAdminAuthenticated, updateEventManager);
 router.delete('/admin/event-manager/:id', isAdminAuthenticated, deleteEventManager);
+router.get('/admin/revenue-chart-data', isAdminAuthenticated, getRevenueChartData);
+router.get('/admin/events', isAdminAuthenticated, getEventsData);
+router.delete('/admin/events/:id', isAdminAuthenticated, deleteEvent);
+
+// Render Admin Login Page
+router.get('/admin-login', (req, res) => {
+    res.render('admin_login');
+});
+
+// Logout route
+router.get('/admin/logout', isAdminAuthenticated, logout);
+
+// Render Add Product Page
+router.get('/admin-add-product', isAdminAuthenticated, (req, res) => {
+    res.render('admin-add-product', {
+        categories: ['beds', 'food', 'toys', 'grooming', 'other'],
+        petTypes: ['dog', 'cat', 'bird', 'fish', 'all']
+    });
+});
+
+// Render Edit Product Page
+router.get('/admin-edit-product', isAdminAuthenticated, (req, res) => {
+    res.render('admin-edit-product');
+});
+
+// Fetch Product Data for Editing
+router.get('/admin/product/:id', isAdminAuthenticated, getProduct);
+
+// Handle Add Product Submission
+router.post('/admin/add-product', isAdminAuthenticated, upload.array('productImages', 4), addProduct);
+
+// Handle Update Product Submission
+router.post('/admin/product/:id', isAdminAuthenticated, upload.array('productImages', 4), updateProduct);
 
 module.exports = router;

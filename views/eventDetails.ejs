@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> <%=event.name%> - Happy Tails</title>
+    <link rel="stylesheet" href="/Event-booking/Event-booking.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <a href="/home" class="badge">Happy Tails</a>
+        <div class="menu">
+            <a href="/Events">Events</a>
+            <a href="/pet_accessory">Shop</a>
+            <a href="/blog">Blog</a>
+            <% if (user) { %>
+                <a href="/profile">Profile</a>
+            <% } else { %>
+                <a href="/my_login">Login/SignUp</a>
+            <% } %>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="event-details">
+            <div class="event-header">
+                <img src="<%=event.image%>" alt="event image" />
+                <h1><%= event.name %></h1>
+            </div>
+
+            <section class="info-section">
+                <h2><i class="material-icons">info_outline</i> About the Event</h2>
+                <p><%= event.about %></p>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="material-icons">menu_book</i> Event Guide</h2>
+                <div class="guide-grid">
+                    <div class="guide-item">
+                        <i class="material-icons">translate</i>
+                        <span>Language: <%= event.language %></span>
+                    </div>
+                    <div class="guide-item">
+                        <i class="material-icons">timer</i>
+                        <span>Duration: <%= event.duration %></span>
+                    </div>
+                    <div class="guide-item">
+                        <i class="material-icons">escalator_warning</i>
+                        <span>Age Limit: <%= event.age_limit %>+ yrs</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="material-icons">integration_instructions</i> Instructions</h2>
+                <p><%= event.instructions %></p>
+            </section>
+
+            <section class="info-section">
+                <h2><i class="material-icons">gavel</i> Terms & Conditions</h2>
+                <p><%= event.terms %></p>
+            </section>
+        </div>
+
+        <div class="booking-column">
+            <div class="booking-section">
+                <h2><i class="material-icons">event_available</i> Ready to Join?</h2>
+                <div class="booking-info">
+                    <p><strong>Category:</strong> <%= event.category %></p>
+                    <p><strong>Date & Time:</strong> <%= event.date %> | <%= event.time %></p>
+                </div>
+                <div class="price-tag">
+                    <span>Starts From</span>
+                    <strong>₹<%= event.ticket_price %></strong>
+                </div>
+                <button
+                    id="bookNowBtn"
+                    onclick="window.location.href='/event_booking_form?eventId=<%= event.id %>'">
+                    Book Tickets
+                </button>
+            </div>
+
+            <div class="venue-box">
+                <div class="venue-details">
+                    <h3><i class="material-icons">location_on</i> Venue</h3>
+                    <strong><%= event.venue %></strong>
+                    <p><%= event.city %></p>
+                    <p>📞 <a href="tel:<%= event.contact %>"><%= event.contact %></a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event manager</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                    <li><a href="#">Cancellation Policy</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img
+                            src="/icons/facebook-3-logo-svgrepo-com.svg"
+                            alt="Facebook"></a>
+                    <a href="#"><img
+                            src="/icons/instagram-2016-logo-svgrepo-com.svg"
+                            alt="Instagram"></a>
+                    <a href="#"><img
+                            src="/icons/youtube-icon-logo-svgrepo-com.svg"
+                            alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
