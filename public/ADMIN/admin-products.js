@@ -76,6 +76,7 @@ function displayProducts(productsToDisplay) {
             <td><span class="stock-indicator ${stockClass}">${product.stock}</span></td>
             <td>${new Date(product.added_date).toLocaleDateString()}</td>
             <td>
+                <button class="action-btn view-btn" onclick="window.location.href='/admin-product-details/${product.id}'">View</button>
                 <button class="action-btn delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
             </td>
         `;
@@ -180,8 +181,6 @@ function changePage(page) {
         }
     });
 }
-
-// Edit product (redirect to edit page)
 
 // Delete product
 function deleteProduct(productId) {
