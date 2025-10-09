@@ -92,6 +92,7 @@ const orderSchema = new mongoose.Schema({
     shipped_at: { type: Date, default: null },
     delivered_at: { type: Date, default: null },
     cancelled_at: { type: Date, default: null },
+    payment_last_four: { type: String, default: null },
 });
 
 const orderItemSchema = new mongoose.Schema({

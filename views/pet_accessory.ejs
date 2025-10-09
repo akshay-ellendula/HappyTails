@@ -12,7 +12,6 @@
             <a href="/home" class="badge">Happy Tails</a>
             <div class="menu">
                 <a href="/Events">Events</a>
-                <a href="/blog">Blog</a>
                 <a href="#" id="cart_btn">Cart</a>
                 <% if (user) { %>
                     <a href="/profile">Profile</a>
@@ -26,7 +25,6 @@
             <div class="side-navbar" id="sideNavbar">
                 <a href="javascript:void(0)" class="close-btn" id="closeBtn">×</a>       
                 <a href="/Events">Events</a>
-                <a href="/blog">Blog</a>
                 <a href="#" id="mobile_cart_btn">Cart</a>
                 <% if (user) { %>
                     <a href="/profile">Profile</a>
@@ -50,7 +48,15 @@
                             <h3>Subtotal</h3>
                             <p>₹<span id="subtotal_amount">0.00</span></p>
                         </div>
-                        <p class="cart_text">Taxes and shipping are calculated at checkout.</p>
+                        <div class="charge_details">
+                            <p>Charge (4%)</p>
+                            <p>₹<span id="charge_amount">0.00</span></p>
+                        </div>
+                        <hr>
+                        <div class="total_details">
+                            <h3>Total</h3>
+                            <p>₹<span id="total_amount">0.00</span></p>
+                        </div>
                         <div class="checkout_button">
                             <button>Checkout</button>
                         </div>
@@ -174,7 +180,6 @@
             <div class="footer-column">
                 <h3>Happy Tails</h3>
                 <ul>
-                    <li><a href="/blog">Blog</a></li>
                     <li><a href="/pet_accessory">Online Pet Accessories</a></li>
                 </ul>
             </div>
@@ -299,20 +304,25 @@
             function renderCart() {
                 const cartContainer = document.getElementById('cart_product_container');
                 const subtotalElement = document.getElementById('subtotal_amount');
+                const chargeElement = document.getElementById('charge_amount');
+                const totalElement = document.getElementById('total_amount');
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
                 cartContainer.innerHTML = cart.length === 0 ? '<p>Your cart is empty.</p>' : '';
                 cart.forEach((item, index) => {
                     const cartProduct = document.createElement('div');
                     cartProduct.classList.add('cart_product');
+
+                    // Use default image if no image data
+                    const imageSrc = item.image_data 
+                        ? (item.image_data.startsWith('data:') 
+                            ? item.image_data 
+                            : 'data:image/jpeg;base64,' + item.image_data)
+                        : '/images/default-product.jpg';
+
                     cartProduct.innerHTML = `
                         <div class="cart_image">
-                            <img src="${item.image_data 
-                                ? (item.image_data.startsWith('data:') 
-                                    ? item.image_data 
-                                    : 'data:image/jpeg;base64,' + item.image_data) 
-                                : '/images/default-product.jpg'}" 
-                                alt="${item.product_name}" />
+                            <img src="${imageSrc}" alt="${item.product_name}" />
                         </div>
                         <div class="cart_product_details">
                             <div class="name_header">
@@ -330,7 +340,8 @@
                     `;
                     cartContainer.appendChild(cartProduct);
                 });
-
+            
+                // ... rest of your existing renderCart code
                 document.querySelectorAll('.quantity').forEach(input => {
                     input.addEventListener('input', function() {
                         const index = parseInt(this.getAttribute('data-index'));
@@ -339,7 +350,7 @@
                         renderCart();
                     });
                 });
-
+            
                 document.querySelectorAll('.remove-item').forEach(button => {
                     button.addEventListener('click', function() {
                         const index = parseInt(this.getAttribute('data-index'));
@@ -348,36 +359,57 @@
                         renderCart();
                     });
                 });
-
+            
                 const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                const charge = subtotal * 0.04;
+                const total = subtotal + charge;
+                        
                 subtotalElement.textContent = subtotal.toFixed(2);
+                chargeElement.textContent = charge.toFixed(2);
+                totalElement.textContent = total.toFixed(2);
             }
 
+            function clearCartAndRedirect(url) {
+                localStorage.removeItem('cart');
+                document.getElementById('cart').classList.remove('open');
+                window.location.href = url;
+            }
+
+            
             // Checkout functionality
             document.querySelector('.checkout_button button').addEventListener('click', function() {
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
                 if (cart.length === 0) {
                     alert('Your cart is empty!');
                     return;
                 }
-
+            
+                // Remove image data from cart to reduce payload size (but keep for display)
+                const cartWithoutImages = cart.map(item => {
+                    const { image_data, ...itemWithoutImage } = item;
+                    return itemWithoutImage;
+                });
+            
+                console.log('Cart without images for checkout:', cartWithoutImages);
+            
                 fetch('/checkout', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cart })
+                    body: JSON.stringify({ cart: cartWithoutImages })
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Order placed successfully!');
-                        localStorage.removeItem('cart');
-                        cart.classList.remove('open');
-                        window.location.href = '/my_orders';
-                    } else {
-                        alert('Error placing order: ' + data.message);
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`HTTP ${response.status}: ${text}`);
+                        });
                     }
+                    clearCartAndRedirect(response.url);
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Checkout error:', error);
+                    alert('Error placing order. Please try again.');
+                });
             });
 
             // Filter application function

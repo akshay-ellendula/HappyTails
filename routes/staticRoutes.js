@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const pages = [
-    'blog', 'event_booking_form', 'event_booking', 'event_manager_signup', 'events',
-    'home', 'index', 'more_details', 'my_blogs', 'my_login',
+    'event_booking_form', 'event_booking', 'event_manager_signup', 'events',
+    'home', 'index', 'more_details', 'my_login',
     'my_orders', 'my_pets', 'pet_adoption', 'pet_product_details',
     'profile', 'service_analytics', 'service_animal_details', 'service_dashbord',
     'service_details', 'service_history', 'service_profile', 'service_provider_login',

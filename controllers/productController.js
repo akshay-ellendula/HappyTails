@@ -7,6 +7,7 @@ const {
 } = require('../models/database');
 const multer = require('multer');
 const path = require('path');
+const mongoose = require('mongoose');
 
 const productImageStorage = multer.diskStorage({
     destination: 'uploads/products/',
@@ -187,34 +188,50 @@ const getProduct = async (req, res) => {
 
 
 const checkout = async (req, res) => {
-    if (!req.session.user) return res.status(401).json({ success: false, message: 'User not logged in' });
+    if (!req.session.user) return res.status(401).send('User not logged in');
 
     const { cart } = req.body;
-    if (!cart || cart.length === 0) return res.status(400).json({ success: false, message: 'Cart is empty' });
+    if (!cart.length === 0) return res.status(400).send('Cart is empty');
 
-    console.log('Cart data received:', JSON.stringify(cart, null, 2));
-
-    const userId = req.session.user.id;
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const charge = subtotal * 0.04;
+    const total = subtotal + charge;
+
+    // Store cart data in the session to be used on the payment page
+    req.session.cart = cart;
+    req.session.orderTotals = { subtotal, charge, total };
+
+    res.redirect('/payment');
+};
+
+const processPayment = async (req, res) => {
+    if (!req.session.user) {
+        return res.redirect('/my_login');
+    }
+
+    const { cardNumber } = req.body;
+    const cart = req.session.cart;
+    const { subtotal, total } = req.session.orderTotals;
+
+    if (!cart || !subtotal || !total || !cardNumber) {
+        return res.status(400).send('Session data or card number missing.');
+    }
 
     try {
-        // Validate stock quantity for each item
-        for (const item of cart) {
-            const variant = await ProductVariant.findOne({ product_id: item.product_id, _id: item.variant_id });
-            if (!variant || variant.stock_quantity < item.quantity) {
-                throw new Error(`Not enough stock for ${item.product_name} (Size: ${item.size || 'N/A'}, Color: ${item.color || 'N/A'})`);
-            }
-        }
+        const paymentLastFour = cardNumber.slice(-4);
+        
 
-        // Insert the order
+        // Create a new order in the database
         const order = await Order.create({
-            user_id: userId,
+            user_id: req.session.user.id,
             order_date: new Date(),
             status: 'Pending',
-            subtotal,
-            total_amount: subtotal
+            subtotal: subtotal,
+            total_amount: total,
+            payment_last_four: paymentLastFour
         });
 
+        // Add each cart item to the OrderItem collection
         const orderItems = cart.map(item => ({
             order_id: order._id,
             product_id: item.product_id || null,
@@ -225,20 +242,19 @@ const checkout = async (req, res) => {
             size: item.size || null,
             color: item.color || null
         }));
+
         await OrderItem.insertMany(orderItems);
+        
+        // Clear the session cart
+        req.session.cart = null;
+        req.session.orderTotals = null;
 
-        // Update stock quantities
-        for (const item of cart) {
-            await ProductVariant.updateOne(
-                { product_id: item.product_id, _id: item.variant_id },
-                { $inc: { stock_quantity: -item.quantity } }
-            );
-        }
+        // Redirect to a confirmation page or user orders page
+        res.redirect('/my_orders');
 
-        res.json({ success: true, message: 'Order placed successfully', orderId: order._id });
     } catch (err) {
-        console.error('Checkout error:', err.message);
-        res.status(err.message.includes('Not enough stock') ? 400 : 500).json({ success: false, message: err.message });
+        console.error('Payment processing error:', err);
+        res.status(500).send('Error processing payment.');
     }
 };
 
@@ -265,6 +281,7 @@ const getUserOrders = async (req, res) => {
 
             return {
                 ...order,
+                id: order._id.toString(),
                 items: detailedItems
             };
         }));
@@ -281,43 +298,48 @@ const reorder = async (req, res) => {
 
     try {
         const orderId = req.params.orderId;
-        const items = await OrderItem.aggregate([
-            { $match: { order_id: mongoose.Types.ObjectId(orderId) } },
-            {
-                $lookup: {
-                    from: 'productimages',
-                    localField: 'product_id',
-                    foreignField: 'product_id',
-                    as: 'images'
-                }
-            },
-            {
-                $unwind: {
-                    path: '$images',
-                    preserveNullAndEmptyArrays: true
-                }
-            },
-            { $match: { 'images.is_primary': true } },
-            {
-                $project: {
-                    _id: 0,
-                    product_id: 1,
-                    variant_id: 1,
-                    product_name: 1,
-                    quantity: 1,
-                    price: 1,
-                    size: 1,
-                    color: 1,
-                    image_data: '$images.image_data'
-                }
-            }
-        ]);
+        const items = await OrderItem.find({ order_id: orderId }).lean();
 
         if (items.length === 0) return res.status(404).json({ success: false, message: 'Order not found' });
 
-        res.json({ success: true, cart: items });
+        // Get product images for each item
+        const cartItems = await Promise.all(items.map(async (item) => {
+            const imageDoc = await ProductImage.findOne({ 
+                product_id: item.product_id, 
+                is_primary: true 
+            });
+            
+            return {
+                product_id: item.product_id ? item.product_id.toString() : null,
+                variant_id: item.variant_id ? item.variant_id.toString() : null,
+                product_name: item.product_name,
+                quantity: item.quantity,
+                price: item.price,
+                size: item.size || null,
+                color: item.color || null,
+                image_data: imageDoc ? imageDoc.image_data : null
+            };
+        }));
+
+        res.json({ success: true, cart: cartItems });
     } catch (err) {
+        console.error('Reorder error:', err);
         res.status(500).json({ success: false, message: 'Failed to fetch order items' });
+    }
+};
+
+const getPaymentPage = (req, res) => {
+    const { orderTotals } = req.session;
+    if (orderTotals) {
+        res.render('payment', {
+            user: req.session.user || null,
+            subtotal: orderTotals.subtotal.toFixed(2),
+            charge: orderTotals.charge.toFixed(2),
+            total: orderTotals.total.toFixed(2)
+        });
+    } else {
+        // Redirect to the cart page if no order data is found in the session
+        res.redirect('/pet_accessory'); 
     }
 };
 
@@ -325,6 +347,8 @@ module.exports = {
     getPetAccessories,
     getProduct,
     checkout,
+    processPayment,
     getUserOrders,
-    reorder
+    reorder,
+    getPaymentPage,
 };

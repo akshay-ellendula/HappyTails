@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment | Happy Tails</title>
+    <link rel="stylesheet" href="/pet accessory/pet-accessory.css">
+    <style>
+        /* General page layout and colors from the theme */
+        body {
+            background-color: #effe8b;
+            font-family: "Outfit", sans-serif;
+            color: #1a1a1a;
+        }
+
+        /* Payment container and form styling */
+        .payment-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-container h2 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .payment-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+            box-shadow: 0 0 5px rgba(26, 26, 26, 0.2);
+        }
+
+        .card-details-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .card-details-row .form-group {
+            flex: 1;
+        }
+
+        /* Order summary styling */
+        .order-summary {
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .order-summary h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .order-summary-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-top: 1px solid #ccc;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        /* Button styling */
+        .pay-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #1a1a1a;
+            color: #effe8b;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .pay-button:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+        }
+
+        .pay-button:active {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+        </header>
+    </div>
+
+    <div class="payment-container">
+        <h2>Complete Your Purchase</h2>
+        
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div class="order-summary-item">
+                <span>Subtotal:</span>
+                <span>₹<%= subtotal %></span>
+            </div>
+            <div class="order-summary-item">
+                <span>Charge (4%):</span>
+                <span>₹<%= charge %></span>
+            </div>
+            <div class="order-total">
+                <span>Total:</span>
+                <span>₹<%= total %></span>
+            </div>
+        </div>
+
+        <form class="payment-form" action="/process-payment" method="POST">
+            <h3>Payment Information</h3>
+            <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" name="cardNumber" required>
+            </div>
+            <div class="card-details-row">
+                <div class="form-group">
+                    <label for="expiry-date">Expiry Date (MM/YY)</label>
+                    <input type="text" id="expiry-date" name="expiryDate" placeholder="MM/YY" required>
+                </div>
+                <div class="form-group">
+                    <label for="cvc">CVC</label>
+                    <input type="text" id="cvc" name="cvc" required>
+                </div>
+            </div>
+            <button type="submit" class="pay-button">Pay Now</button>
+        </form>
+    </div>
+</body>
+</html>
