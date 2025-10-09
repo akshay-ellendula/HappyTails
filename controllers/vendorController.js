@@ -202,7 +202,6 @@ const getVendorProducts = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
-// Fetch vendor profile
 const getVendorProfile = async (req, res) => {
     if (!req.session.vendor) {
         console.log('No vendor session in getVendorProfile, redirecting to login');
@@ -379,7 +378,8 @@ const getVendorProfile = async (req, res) => {
                 address: vendorDetails.store_location,
                 description: 'Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs. All our products are designed with pet comfort and safety in mind, using sustainable materials whenever possible.'
             },
-            totalRevenue: (totalRevenue[0]?.totalRevenue || 0).toFixed(2),
+            // UPDATED: Calculate revenue minus 6% (multiply by 0.94)
+            totalRevenue: ((totalRevenue[0]?.totalRevenue || 0) * 0.94).toFixed(2),
             productsSold: productsSold[0]?.productsSold || 0,
             newOrders: newOrders[0]?.newOrders || 0,
             recentOrders,
@@ -454,7 +454,6 @@ const serviceProviderLogin = async (req, res) => {
     }
 };
 
-// Get vendor dashboard
 const getVendorDashboard = async (req, res) => {
     console.log('Accessing dashboard:', { storeName: req.params.storeName, session: req.session.vendor });
     if (!req.session.vendor) {
@@ -495,12 +494,9 @@ const getVendorDashboard = async (req, res) => {
             },
             { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
             {
-                $unwind: '$order_items'
-            },
-            {
                 $group: {
                     _id: null,
-                    totalRevenue: { $sum: { $multiply: ['$order_items.price', '$order_items.quantity'] } }
+                    totalRevenue: { $sum: '$subtotal' }
                 }
             },
             {
@@ -517,7 +513,7 @@ const getVendorDashboard = async (req, res) => {
                     from: 'products',
                     localField: 'product_id',
                     foreignField: '_id',
-                    as: 'product'
+                    as: 'product',
                 }
             },
             { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
@@ -631,17 +627,17 @@ const getVendorDashboard = async (req, res) => {
         }));
                 res.render('shop-dashboard', {
             vendor: req.session.vendor,
-            totalRevenue: (totalRevenue[0]?.totalRevenue || 0).toFixed(2),
+            // UPDATED: Calculate revenue minus 6% (multiply by 0.94)
+            totalRevenue: ((totalRevenue[0]?.totalRevenue || 0) * 0.94).toFixed(2),
             productsSold: productsSold[0]?.productsSold || 0,
             newOrders: newOrders[0]?.newOrders || 0,
-            recentOrders: processedRecentOrders // Use the processed orders here
+            recentOrders: processedRecentOrders
         });
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
         res.status(500).send('Server error');
     }
 };
-
 // Store signup
 const storeSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, storename, storelocation } = req.body;
@@ -1103,7 +1099,6 @@ const submitProduct = [
     }
 ];
 
-// Fetch order details for a specific order
 const getOrderDetails = async (req, res) => {
     if (!req.session.vendor) {
         console.log('No vendor session in getOrderDetails, redirecting to login');
@@ -1141,79 +1136,67 @@ const getOrderDetails = async (req, res) => {
         const dbStatus = order.status || 'Pending';
         const displayStatus = dbStatus === 'Pending' ? 'Confirmed' : dbStatus;
 
-        // PART 1: Build the timeline array dynamically *before* creating orderData
-const timeline = [];
+        const timeline = [];
+        if (order.order_date) {
+            timeline.push({
+                status: 'Confirmed',
+                date: order.order_date,
+                description: 'Order was placed and confirmed.',
+            });
+        }
+        if (order.shipped_at) {
+            timeline.push({
+                status: 'Shipped',
+                date: order.shipped_at,
+                description: 'Your order has been shipped.',
+            });
+        }
+        if (order.delivered_at) {
+            timeline.push({
+                status: 'Delivered',
+                date: order.delivered_at,
+                description: 'Your order has been delivered.',
+            });
+        }
+        if (order.cancelled_at) {
+            timeline.push({
+                status: 'Cancelled',
+                date: order.cancelled_at,
+                description: 'The order was cancelled.',
+            });
+        }
+        timeline.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-// Event for when the order was placed/confirmed
-if (order.order_date) {
-    timeline.push({
-        status: 'Confirmed',
-        date: order.order_date,
-        description: 'Order was placed and confirmed.',
-    });
-}
-
-// Event for when the order was shipped
-if (order.shipped_at) {
-    timeline.push({
-        status: 'Shipped',
-        date: order.shipped_at,
-        description: 'Your order has been shipped.',
-    });
-}
-
-// Event for when the order was delivered
-if (order.delivered_at) {
-    timeline.push({
-        status: 'Delivered',
-        date: order.delivered_at,
-        description: 'Your order has been delivered.',
-    });
-}
-
-// Event for when the order was cancelled
-if (order.cancelled_at) {
-    timeline.push({
-        status: 'Cancelled',
-        date: order.cancelled_at,
-        description: 'The order was cancelled.',
-    });
-}
-
-// Ensure timeline events are in chronological order
-timeline.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-
-// PART 2: Now define the orderData object and assign the timeline to it
-const orderData = {
-    order_id: `#ORD-${order._id.toString()}`,
-    status: displayStatus,
-    order_date: order.order_date || new Date(),
-    payment_method: 'Credit Card (****4242)',
-    payment_status: 'Paid',
-    customer: {
-        name: order.user_id ? order.user_id.user_name : 'Unknown',
-        email: order.user_id ? order.user_id.user_email : 'N/A',
-        phone: order.user_id ? order.user_id.user_phone || 'N/A' : 'N/A',
-    },
-    shipping: {
-        address: order.user_id ? order.user_id.user_address || 'N/A' : 'N/A',
-        method: 'Standard Shipping',
-        tracking_number: null,
-        estimated_delivery: order.delivery_date || null,
-        shipping_cost: 0,
-    },
-    items: orderItems.map(item => ({
-        product_name: item.product_name,
-        price: item.price,
-        quantity: item.quantity,
-    })),
-    subtotal: order.subtotal,
-    shipping_cost: 0,
-    tax: 0,
-    total: order.total_amount,
-    timeline: timeline, // Assign the completed timeline array here
-};
+        const orderData = {
+            order_id: `#ORD-${order._id.toString()}`,
+            status: displayStatus,
+            order_date: order.order_date || new Date(),
+            payment_method: `Credit Card (**** ${order.payment_last_four || 'XXXX'})`,
+            payment_status: 'Paid',
+            customer: {
+                name: order.user_id ? order.user_id.user_name : 'Unknown',
+                email: order.user_id ? order.user_id.user_email : 'N/A',
+                phone: order.user_id ? order.user_id.user_phone || 'N/A' : 'N/A',
+            },
+            shipping: {
+                address: order.user_id ? order.user_id.user_address || 'N/A' : 'N/A',
+                method: 'Standard Shipping',
+                tracking_number: null,
+                estimated_delivery: order.delivery_date || null,
+                shipping_cost: 0,
+            },
+            items: orderItems.map(item => ({
+                product_name: item.product_name,
+                price: item.price,
+                quantity: item.quantity,
+            })),
+            subtotal: order.subtotal,
+            platform_charge: order.subtotal * 0.04,
+            shipping_cost: 0,
+            tax: 0,
+            total: order.total_amount,
+            timeline: timeline,
+        };
 
         console.log('Order details fetched:', { orderId });
         res.render('shop-order-details', {
@@ -1444,9 +1427,8 @@ const getVendorAnalytics = async (req, res) => {
     }
 
     const vendorId = req.session.vendor.id;
-    const period = req.query.period || 'all'; // Read the period from the URL
+    const period = req.query.period || 'all';
 
-    // Helper function to calculate percentage change
     const calculateChange = (current, previous) => {
         if (previous === 0) {
             return current > 0 ? 100 : 0;
@@ -1455,13 +1437,12 @@ const getVendorAnalytics = async (req, res) => {
     };
 
     try {
-        // --- Time Range Definitions ---
         const now = new Date();
         const todayStart = new Date(new Date().setHours(0, 0, 0, 0));
         const yesterdayStart = new Date(new Date().setDate(todayStart.getDate() - 1));
         yesterdayStart.setHours(0, 0, 0, 0);
 
-        const weekStart = new Date(new Date().setDate(now.getDate() - (now.getDay() === 0 ? 6 : now.getDay() - 1) )); // Monday as start of week
+        const weekStart = new Date(new Date().setDate(now.getDate() - (now.getDay() === 0 ? 6 : now.getDay() - 1) ));
         weekStart.setHours(0, 0, 0, 0);
         const lastWeekStart = new Date(new Date().setDate(weekStart.getDate() - 7));
         lastWeekStart.setHours(0, 0, 0, 0);
@@ -1470,13 +1451,11 @@ const getVendorAnalytics = async (req, res) => {
         const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const lastMonthEnd = monthStart;
 
-        // --- Date Filter based on selected period ---
         let dateFilter = {};
         if (period === 'today') dateFilter = { order_date: { $gte: todayStart } };
         if (period === 'week') dateFilter = { order_date: { $gte: weekStart } };
         if (period === 'month') dateFilter = { order_date: { $gte: monthStart } };
 
-        // --- Reusable Aggregation Functions ---
         const createOrderPipeline = (filter = {}) => {
             const match = { 
                 'products.vendor_id': new mongoose.Types.ObjectId(vendorId),
@@ -1488,8 +1467,7 @@ const getVendorAnalytics = async (req, res) => {
                 { $match: match }
             ];
         };
-
-        // CORRECTED getStats function
+        
         const getStats = async (filter = {}) => {
             const pipeline = createOrderPipeline(filter);
             const result = await Order.aggregate([
@@ -1497,8 +1475,8 @@ const getVendorAnalytics = async (req, res) => {
                 {
                     $group: {
                         _id: null,
-                        revenue: { $sum: '$total_amount' }, // FIX: Correctly sum the total_amount of each order
-                        orderCount: { $sum: 1 },             // FIX: Efficiently count orders
+                        revenue: { $sum: '$subtotal' },
+                        orderCount: { $sum: 1 },
                         customers: { $addToSet: '$user_id' }
                     }
                 },
@@ -1512,11 +1490,10 @@ const getVendorAnalytics = async (req, res) => {
                 }
             ]);
             const stats = result[0] || { revenue: 0, orderCount: 0, customerCount: 0 };
-            stats.avgOrderValue = stats.orderCount > 0 ? stats.revenue / stats.orderCount : 0; // This is now correct
+            stats.avgOrderValue = stats.orderCount > 0 ? stats.revenue / stats.orderCount : 0;
             return stats;
         };
 
-        // --- Fetch All Data in Parallel ---
         const [
             totalStats, todayStats, weekStats, monthStats,
             yesterdayStats, lastWeekStats, lastMonthStats
@@ -1527,74 +1504,70 @@ const getVendorAnalytics = async (req, res) => {
             getStats({ order_date: { $gte: lastMonthStart, $lt: lastMonthEnd } })
         ]);
 
-        // --- Calculations that respect the period filter ---
         const revenueByCategory = await Order.aggregate([...createOrderPipeline(dateFilter), { $unwind: '$order_items' }, { $unwind: '$products' }, { $group: { _id: '$products.product_category', revenue: { $sum: { $multiply: ['$order_items.price', '$order_items.quantity'] } } } }, { $sort: { revenue: -1 } }]);
         const orderStatus = await Order.aggregate([...createOrderPipeline(dateFilter), { $group: { _id: '$status', count: { $sum: 1 } } }]);
-
-        // --- Other calculations that are always "all time" ---
         const productStats = await Product.aggregate([{ $match: { vendor_id: new mongoose.Types.ObjectId(vendorId) } }, { $group: { _id: null, total: { $sum: 1 }, active: { $sum: { $cond: [{ $eq: ['$stock_status', 'In Stock'] }, 1, 0] } }, outOfStock: { $sum: { $cond: [{ $eq: ['$stock_status', 'Out of Stock'] }, 1, 0] } } } }]);
 
-        // Select the stats for the currently active period
-let currentPeriodStats = totalStats;
-if (period === 'today') currentPeriodStats = todayStats;
-if (period === 'week') currentPeriodStats = weekStats;
-if (period === 'month') currentPeriodStats = monthStats;
+        let currentPeriodStats = totalStats;
+        if (period === 'today') currentPeriodStats = todayStats;
+        if (period === 'week') currentPeriodStats = weekStats;
+        if (period === 'month') currentPeriodStats = monthStats;
 
-// --- NEW analyticsData object ---
-const analyticsData = {
-    revenue: {
-        total: totalStats.revenue.toFixed(2),
-        today: todayStats.revenue.toFixed(2),
-        week: weekStats.revenue.toFixed(2),
-        month: monthStats.revenue.toFixed(2),
-        todayChange: calculateChange(todayStats.revenue, yesterdayStats.revenue),
-        weekChange: calculateChange(weekStats.revenue, lastWeekStats.revenue),
-        monthChange: calculateChange(monthStats.revenue, lastMonthStats.revenue)
-    },
-     avgOrderValue: {
-        total: totalStats.avgOrderValue.toFixed(2),
-        today: todayStats.avgOrderValue.toFixed(2),
-        week: weekStats.avgOrderValue.toFixed(2),
-        month: monthStats.avgOrderValue.toFixed(2),
-        todayChange: calculateChange(todayStats.avgOrderValue, yesterdayStats.avgOrderValue),
-        weekChange: calculateChange(weekStats.avgOrderValue, lastWeekStats.avgOrderValue),
-        monthChange: calculateChange(monthStats.avgOrderValue, lastMonthStats.avgOrderValue),
-    },
-    orders: {
-        total: currentPeriodStats.orderCount, // <-- This now correctly uses the period total
-        today: todayStats.orderCount,
-        week: weekStats.orderCount,
-        month: monthStats.orderCount,
-        todayChange: calculateChange(todayStats.orderCount, yesterdayStats.orderCount),
-        weekChange: calculateChange(weekStats.orderCount, lastWeekStats.orderCount),
-        monthChange: calculateChange(monthStats.orderCount, lastMonthStats.orderCount),
-        status: {
-            processing: orderStatus.find(s => s._id === 'Shipped')?.count || 0,
-            confirmed: orderStatus.find(s => s._id === 'Pending')?.count || 0,
-            delivered: orderStatus.find(s => s._id === 'Delivered')?.count || 0,
-            cancelled: orderStatus.find(s => s._id === 'Cancelled')?.count || 0,
-        }
-    },
-    customers: {
-        total: totalStats.customerCount,
-        today: todayStats.customerCount,
-        week: weekStats.customerCount,
-        month: monthStats.customerCount,
-        todayChange: calculateChange(todayStats.customerCount, yesterdayStats.customerCount),
-        weekChange: calculateChange(weekStats.customerCount, lastWeekStats.customerCount),
-        monthChange: calculateChange(monthStats.customerCount, lastMonthStats.customerCount),
-    },
-    revenueByCategory: revenueByCategory.map(cat => ({
-        category: cat._id || 'Other',
-        revenue: (cat.revenue || 0).toFixed(2),
-        percentage: totalStats.revenue ? ((cat.revenue / totalStats.revenue) * 100).toFixed(0) : 0
-    })),
-    products: {
-        total: productStats[0]?.total || 0,
-        active: productStats[0]?.active || 0,
-        outOfStock: productStats[0]?.outOfStock || 0,
-    }
-};
+        const analyticsData = {
+            revenue: {
+                // UPDATED: Calculate all revenue fields minus 6% (multiply by 0.94)
+                total: (totalStats.revenue * 0.94).toFixed(2),
+                today: (todayStats.revenue * 0.94).toFixed(2),
+                week: (weekStats.revenue * 0.94).toFixed(2),
+                month: (monthStats.revenue * 0.94).toFixed(2),
+                todayChange: calculateChange(todayStats.revenue, yesterdayStats.revenue),
+                weekChange: calculateChange(weekStats.revenue, lastWeekStats.revenue),
+                monthChange: calculateChange(monthStats.revenue, lastMonthStats.revenue)
+            },
+            avgOrderValue: {
+                total: totalStats.avgOrderValue.toFixed(2),
+                today: todayStats.avgOrderValue.toFixed(2),
+                week: weekStats.avgOrderValue.toFixed(2),
+                month: monthStats.avgOrderValue.toFixed(2),
+                todayChange: calculateChange(todayStats.avgOrderValue, yesterdayStats.avgOrderValue),
+                weekChange: calculateChange(weekStats.avgOrderValue, lastWeekStats.avgOrderValue),
+                monthChange: calculateChange(monthStats.avgOrderValue, lastMonthStats.avgOrderValue),
+            },
+            orders: {
+                total: currentPeriodStats.orderCount,
+                today: todayStats.orderCount,
+                week: weekStats.orderCount,
+                month: monthStats.orderCount,
+                todayChange: calculateChange(todayStats.orderCount, yesterdayStats.orderCount),
+                weekChange: calculateChange(weekStats.orderCount, lastWeekStats.orderCount),
+                monthChange: calculateChange(monthStats.orderCount, lastMonthStats.orderCount),
+                status: {
+                    processing: orderStatus.find(s => s._id === 'Shipped')?.count || 0,
+                    confirmed: orderStatus.find(s => s._id === 'Pending')?.count || 0,
+                    delivered: orderStatus.find(s => s._id === 'Delivered')?.count || 0,
+                    cancelled: orderStatus.find(s => s._id === 'Cancelled')?.count || 0,
+                }
+            },
+            customers: {
+                total: totalStats.customerCount,
+                today: todayStats.customerCount,
+                week: weekStats.customerCount,
+                month: monthStats.customerCount,
+                todayChange: calculateChange(todayStats.customerCount, yesterdayStats.customerCount),
+                weekChange: calculateChange(weekStats.customerCount, lastWeekStats.customerCount),
+                monthChange: calculateChange(monthStats.customerCount, lastMonthStats.customerCount),
+            },
+            revenueByCategory: revenueByCategory.map(cat => ({
+                category: cat._id || 'Other',
+                revenue: (cat.revenue || 0).toFixed(2),
+                percentage: totalStats.revenue ? ((cat.revenue / totalStats.revenue) * 100).toFixed(0) : 0
+            })),
+            products: {
+                total: productStats[0]?.total || 0,
+                active: productStats[0]?.active || 0,
+                outOfStock: productStats[0]?.outOfStock || 0,
+            }
+        };
 
         res.render('shop-analytics', {
             vendor: req.session.vendor,
@@ -1607,7 +1580,6 @@ const analyticsData = {
         res.status(500).send('Server error');
     }
 };
-
 const updateVendorProfile = async (req, res) => {
     if (!req.session.vendor) {
         return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -1618,12 +1590,17 @@ const updateVendorProfile = async (req, res) => {
 
     console.log('Updating vendor profile:', { vendorId, storeName, ownerName, email, phone, address, description });
 
-    // Basic validation
-    if (!storeName || !ownerName || !email || !phone || !address) {
-        return res.status(400).json({ success: false, message: 'All required fields must be provided' });
+    // --- UPDATED EMAIL DOMAIN VALIDATION ---
+    const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
+    const emailDomain = email.split('@')[1];
+
+    if (!email.includes('@') || !allowedDomains.includes(emailDomain)) {
+        return res.status(400).json({ success: false, message: 'Please use an email from a valid provider (e.g., Gmail, Yahoo, Outlook).' });
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return res.status(400).json({ success: false, message: 'Invalid email format' });
+    // ------------------------------------
+
+    if (!storeName || !ownerName || !phone || !address) {
+        return res.status(400).json({ success: false, message: 'All required fields must be provided' });
     }
     if (!/^\d{10}$/.test(phone)) {
         return res.status(400).json({ success: false, message: 'Phone number must be 10 digits' });
@@ -1654,7 +1631,6 @@ const updateVendorProfile = async (req, res) => {
                 email,
                 contact_number: phone,
                 store_location: address,
-                // Description is not in the schema, so it's ignored unless schema is updated
             },
             { new: true }
         );

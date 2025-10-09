@@ -32,11 +32,6 @@
                     <div class="value"><%= newOrders %></div>
                     <div class="status">Awaiting processing</div>
                 </div>
-                <div class="stat-card">
-                    <h3>CUSTOMER RATINGS</h3>
-                    <div class="value"><%= customerRatings %></div>
-                    <div class="trend">+0.3 from last month</div>
-                </div>
             </div>
 
             <!-- Profile Content -->
@@ -154,48 +149,59 @@
         </div>
     </div>
 
-    <script>
+<script>
     document.getElementById('edit-btn').addEventListener('click', function() {
-    document.getElementById('profile-view').classList.add('hidden');
-    document.getElementById('profile-edit').classList.remove('hidden');
-});
-
-document.getElementById('cancel-btn').addEventListener('click', function() {
-    document.getElementById('profile-edit').classList.add('hidden');
-    document.getElementById('profile-view').classList.remove('hidden');
-});
-
-document.getElementById('save-btn').addEventListener('click', function() {
-    const storeName = document.getElementById('store-name').value;
-    const ownerName = document.getElementById('owner-name').value;
-    const email = document.getElementById('email').value;
-    const phone = document.getElementById('phone').value;
-    const address = document.getElementById('address').value;
-    const description = document.getElementById('description').value;
-
-    fetch('/update-vendor-profile', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ storeName, ownerName, email, phone, address, description })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Profile updated successfully');
-            window.location.reload();
-        } else {
-            alert('Error updating profile: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Server error');
+        document.getElementById('profile-view').classList.add('hidden');
+        document.getElementById('profile-edit').classList.remove('hidden');
     });
-});
 
-function goBack() {
-    window.history.back();
-}
-    </script>
+    document.getElementById('cancel-btn').addEventListener('click', function() {
+        document.getElementById('profile-edit').classList.add('hidden');
+        document.getElementById('profile-view').classList.remove('hidden');
+    });
+
+    document.getElementById('save-btn').addEventListener('click', function() {
+        const storeName = document.getElementById('store-name').value;
+        const ownerName = document.getElementById('owner-name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const address = document.getElementById('address').value;
+        const description = document.getElementById('description').value;
+
+        // --- UPDATED DOMAIN VALIDATION LOGIC ---
+        // You can add or remove domains from this list
+        const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
+        const emailDomain = email.split('@')[1];
+
+        if (!allowedDomains.includes(emailDomain)) {
+            alert('Please use an email from a valid provider (e.g., Gmail, Yahoo, Outlook).');
+            return; // Stop the function if the domain is not allowed
+        }
+        // ------------------------------------
+
+        fetch('/update-vendor-profile', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ storeName, ownerName, email, phone, address, description })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Profile updated successfully');
+                window.location.reload();
+            } else {
+                alert('Error updating profile: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Server error');
+        });
+    });
+
+    function goBack() {
+        window.history.back();
+    }
+</script>
 </body>
 </html>

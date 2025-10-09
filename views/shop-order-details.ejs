@@ -103,23 +103,19 @@
                 </table>
                 
                 <div class="order-summary">
-                    <div class="summary-row">
-                        <div>Subtotal</div>
-                        <div id="subtotal">₹<%= order.subtotal.toFixed(2) %></div>
-                    </div>
-                    <div class="summary-row">
-                        <div>Shipping</div>
-                        <div id="shipping">₹<%= order.shipping_cost.toFixed(2) %></div>
-                    </div>
-                    <div class="summary-row">
-                        <div>Tax</div>
-                        <div id="tax">₹<%= order.tax.toFixed(2) %></div>
-                    </div>
-                    <div class="summary-total">
-                        <div>Total</div>
-                        <div id="total">₹<%= order.total.toFixed(2) %></div>
-                    </div>
+                <div class="summary-row">
+                    <div>Subtotal</div>
+                    <div id="subtotal">₹<%= order.subtotal.toFixed(2) %></div>
                 </div>
+                <div class="summary-row">
+                    <div>Platform Charges</div>
+                    <div>₹<%= order.platform_charge.toFixed(2) %></div>
+                </div>
+                <div class="summary-total">
+                    <div>Total</div>
+                    <div id="total">₹<%= order.total.toFixed(2) %></div>
+                </div>
+            </div>
             </div>
             
             <div class="order-container">
