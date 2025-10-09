@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= event.event_name %> - Event Details</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #effe8b;
+            margin: 0;
+            color: #333;
+        }
+        .navbar {
+            background: #effe8b;
+            padding: 10px 5%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .badge {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+        .menu a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+        }
+        .details-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .event-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .event-header img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .event-header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        .event-content {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .left-column {
+            flex: 2;
+            min-width: 300px;
+        }
+        .right-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        .left-column h2 {
+            border-bottom: 2px solid black;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .left-column p {
+            line-height: 1.6;
+            color: #555;
+        }
+        .info-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .info-card h3 {
+            margin-top: 0;
+            border-bottom: 1px solid black;
+            padding-bottom: 10px;
+        }
+        .info-card p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        .info-card strong {
+            color: #333;
+        }
+        .back-link {
+            display: inline-block;
+            margin: 10px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .attendees-section {
+            margin-top: 40px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .attendees-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .attendees-header h2 {
+            margin: 0;
+        }
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 250px;
+            font-size: 1rem;
+        }
+        .attendees-section table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .attendees-section th, .attendees-section td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid black;
+        }
+        .attendees-section th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <a href="/home" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="/eventmanager_profile">Profile</a>
+                <a href="/logout">Logout</a>
+            </div>
+        </header>
+    </div>
+    <div class="details-container">
+        <a href="/eventmanager_dashboard" class="back-link">← Back to Dashboard</a>
+        <div class="event-header">
+            <img src="<%= event.image || '/images/default_event.jpg' %>" alt="<%= event.event_name %>">
+            <h1><%= event.event_name %></h1>
+        </div>
+        <div class="event-content">
+            <div class="left-column">
+                <h2>About this Event</h2>
+                <p><%= event.about_event %></p>
+                <h2>Instructions</h2>
+                <p><%= event.instructions %></p>
+                <h2>Terms & Conditions</h2>
+                <p><%= event.terms %></p>
+            </div>
+            <div class="right-column">
+                <div class="info-card">
+                    <h3>Details</h3>
+                    <p><strong>Date & Time:</strong> <%= new Date(event.date_time).toLocaleString('en-IN', { dateStyle: 'full', timeStyle: 'short' }) %></p>
+                    <p><strong>Duration:</strong> <%= event.duration %></p>
+                    <p><strong>Venue:</strong> <%= event.venue %>, <%= event.city %></p>
+                    <p><strong>Category:</strong> <%= event.category %></p>
+                    <p><strong>Language:</strong> <%= event.language %></p>
+                    <p><strong>Age Limit:</strong> <%= event.age_limit === 0 ? 'All ages' : event.age_limit + '+' %></p>
+                </div>
+                <div class="info-card">
+                    <h3>Tickets & Revenue</h3>
+                    <p><strong>Price:</strong> ₹<%= event.ticket_price.toFixed(2) %></p>
+                    <p><strong>Tickets Sold:</strong> <%= event.tickets_sold %> / <%= event.total_tickets %></p>
+                    <p><strong>Revenue Generated:</strong> ₹<%= revenue.toFixed(2) %></p>
+                    <p><strong>Status:</strong> <%= event.status %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="attendees-section">
+            <div class="attendees-header">
+                <h2>Attendee List (<%= attendees.length %> Bookings)</h2>
+                <input type="text" id="attendeeSearch" onkeyup="filterAttendees()" placeholder="Search by name, email, or ticket ID..." class="search-input">
+            </div>
+
+            <% if (attendees.length > 0) { %>
+                <table id="attendeeTable">
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Name</th>
+                            <th>Phone Number</th>
+                            <th>Email</th>
+                            <th>Seats</th>
+                            <th>Pet Guest</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendeeTableBody">
+                        <% attendees.forEach(attendee => { %>
+                            <tr>
+                                <td><%= attendee.ticketId %></td>
+                                <td><%= attendee.name %></td>
+                                <td><%= attendee.phone_number %></td>
+                                <td><%= attendee.email %></td>
+                                <td><%= attendee.seats %></td>
+                                <td><%= attendee.with_pet ? 'Yes' : 'No' %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No attendees have booked this event yet.</p>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        function filterAttendees() {
+            // Get the search input value and convert to lower case
+            const filter = document.getElementById('attendeeSearch').value.toLowerCase();
+            
+            // Get the table body and all its rows
+            const tableBody = document.getElementById('attendeeTableBody');
+            const rows = tableBody.getElementsByTagName('tr');
+            
+            // Loop through all table rows
+            for (let i = 0; i < rows.length; i++) {
+                const ticketIdCell = rows[i].getElementsByTagName('td')[0];
+                const nameCell = rows[i].getElementsByTagName('td')[1];
+                const emailCell = rows[i].getElementsByTagName('td')[3];
+                
+                // If the cells exist
+                if (ticketIdCell && nameCell && emailCell) {
+                    const ticketIdText = ticketIdCell.textContent || ticketIdCell.innerText;
+                    const nameText = nameCell.textContent || nameCell.innerText;
+                    const emailText = emailCell.textContent || emailCell.innerText;
+                    
+                    // Check if the search query is found in the ticket ID, name, or email
+                    if (
+                        ticketIdText.toLowerCase().indexOf(filter) > -1 ||
+                        nameText.toLowerCase().indexOf(filter) > -1 ||
+                        emailText.toLowerCase().indexOf(filter) > -1
+                    ) {
+                        // If it's a match, show the row
+                        rows[i].style.display = "";
+                    } else {
+                        // Otherwise, hide the row
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

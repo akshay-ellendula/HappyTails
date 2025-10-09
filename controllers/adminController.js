@@ -1771,6 +1771,93 @@ const logout = (req, res) => {
         res.redirect('/admin-login');
     });
 };
+
+/**
+ * @desc    Get event management stats and event list as JSON data
+ * @route   GET /api/admin/events
+ * @access  Private (Admin)
+ */
+const getEventsData = async (req, res) => {
+    try {
+        // Run all database queries concurrently for better performance
+        const [
+            totalEvents,
+            upcomingEvents,
+            completedEvents,
+            ticketAggregation,
+            events // Also fetch the full event list
+        ] = await Promise.all([
+            Event.countDocuments(),
+            Event.countDocuments({ status: 'Upcoming' }),
+            Event.countDocuments({ status: 'Completed' }),
+            EventAttendee.aggregate([
+                { $group: { _id: null, totalSeats: { $sum: '$seats' } } }
+            ]),
+            Event.find({})
+                 .populate({
+                     path: 'event_manager_id',
+                     model: 'EventManager',
+                     select: 'name'
+                 })
+                 .sort({ date_time: -1 })
+        ]);
+
+        const ticketsSold = ticketAggregation.length > 0 ? ticketAggregation[0].totalSeats : 0;
+
+        // Structure the data and send it as a JSON response
+        res.status(200).json({
+            success: true,
+            data: {
+                stats: {
+                    totalEvents,
+                    upcomingEvents,
+                    completedEvents,
+                    ticketsSold
+                },
+                events: events // The full list of event objects
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching event management data:', error);
+        // Send a JSON error response
+        res.status(500).json({ 
+            success: false, 
+            message: 'Internal Server Error' 
+        });
+    }
+};
+const deleteEvent = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // 2. Find the event to ensure it exists before proceeding
+        const event = await Event.findById(id);
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found.' });
+        }
+
+        // 3. Delete all attendees associated with this event to maintain data integrity
+        await EventAttendee.deleteMany({ event_id: id });
+
+        // 4. Delete the event itself
+        await Event.findByIdAndDelete(id);
+
+        // 5. Send a success response
+        res.status(200).json({ 
+            success: true, 
+            message: 'Event and all associated attendees deleted successfully.' 
+        });
+
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Internal Server Error' 
+        });
+    }
+};
+
 module.exports = {
     adminLogin,
     getUsers,
@@ -1805,5 +1892,7 @@ module.exports = {
     addProduct,      
     getProduct,      
     updateProduct,
-    logout
+    logout,
+    getEventsData,
+    deleteEvent
 };
