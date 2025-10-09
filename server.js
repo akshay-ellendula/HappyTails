@@ -53,7 +53,7 @@ const startServer = () => {
         console.log('http://localhost:3000/pet_accessory');
         console.log('http://localhost:3000/home');
         console.log('http://localhost:3000/service_provider_login');
-        console.log('http://localhost:3000/event_manager_signup');
+        console.log('http://localhost:3000/admin_login');
     });
 };
 
