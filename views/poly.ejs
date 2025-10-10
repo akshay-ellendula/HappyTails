@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Our Policies</h1>
+        <nav>
+            <ul>
+                <li><a href="/privacy">Privacy Policy</a></li>
+                <li><a href="/refund">Refund Policy</a></li>
+                <li><a href="/cancellation">Cancellation Policy</a></li>
+                <li><a href="/terms">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <%- body %>
+    </main>
+    <footer>
+        <p>&copy; <%= new Date().getFullYear() %> Your Company Name. All rights reserved.</p>
+    </footer>
+</body>
+</html>

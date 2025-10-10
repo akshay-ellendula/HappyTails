@@ -11,6 +11,7 @@ const productRoutes = require('./routes/productRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const eventManagerRoutes = require('./routes/eventManagerRoutes');
 const staticRoutes = require('./routes/staticRoutes');
+const policiesRoutes = require('./routes/policies'); // ensure this exists
 
 const app = express();
 
@@ -44,6 +45,7 @@ app.use('/', authRoutes);
 app.use('/', userRoutes);
 app.use('/', productRoutes);
 app.use('/', adminRoutes);
+app.use('/', policiesRoutes); // <-- add this if missing
 app.use('/', staticRoutes);
 
 // Start server after database initialization
