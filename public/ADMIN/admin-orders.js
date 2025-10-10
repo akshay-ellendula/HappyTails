@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
+    fetchOrderStats();
     fetchOrders();
 
     const searchInput = document.getElementById('orderSearchInput');
@@ -11,6 +12,27 @@ function debounce(func, delay) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), delay);
     };
+}
+
+async function fetchOrderStats() {
+    try {
+        const response = await fetch('/api/admin/order-stats');
+        const data = await response.json();
+        if (data.success) {
+            renderOrderStats(data.stats);
+        } else {
+            console.error('Failed to fetch order stats.');
+        }
+    } catch (error) {
+        console.error('Error fetching order stats:', error);
+    }
+}
+
+function renderOrderStats(stats) {
+    document.getElementById('totalOrdersCount').textContent = stats.totalOrders.toLocaleString();
+    document.getElementById('monthlyOrdersCount').textContent = stats.monthlyOrders.toLocaleString();
+    document.getElementById('weeklyOrdersCount').textContent = stats.weeklyOrders.toLocaleString();
+    document.getElementById('dailyOrdersCount').textContent = stats.dailyOrders.toLocaleString();
 }
 
 async function fetchOrders() {
@@ -49,7 +71,7 @@ function renderOrders(orders) {
 
     orders.forEach(order => {
         const row = document.createElement('tr');
-        const statusClass = order.status.toLowerCase();
+        const statusClass = order.status.toLowerCase().replace(/\s+/g, '-');
         
         row.innerHTML = `
             <td>#ORD-${order.orderId}</td>

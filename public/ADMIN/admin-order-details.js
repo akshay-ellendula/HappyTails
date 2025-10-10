@@ -1,68 +1,61 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetchOrders();
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = window.location.pathname.split('/').pop();
+    if (orderId) {
+        fetchOrderDetails(orderId);
+    }
 
-    const searchInput = document.getElementById('orderSearchInput');
-    searchInput.addEventListener('input', debounce(fetchOrders, 300));
+    document.getElementById('print-order-btn').addEventListener('click', () => {
+        window.print();
+    });
 });
 
-function debounce(func, delay) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), delay);
-    };
-}
-
-async function fetchOrders() {
-    const tableBody = document.getElementById('orderTableBody');
-    tableBody.innerHTML = '<tr><td colspan="6">Loading orders...</td></tr>';
-
-    const searchTerm = document.getElementById('orderSearchInput').value.toLowerCase();
-
+async function fetchOrderDetails(orderId) {
+    console.log('Fetching order details for ID:', orderId);
     try {
-        const response = await fetch('/api/admin/orders');
+        const response = await fetch(`/api/admin/order/${orderId}`);
         const data = await response.json();
-
+        console.log('API Response:', data);
         if (data.success) {
-            const orders = data.orders.filter(order =>
-                order.orderId.toLowerCase().includes(searchTerm) ||
-                order.customerName.toLowerCase().includes(searchTerm)
-            );
-            renderOrders(orders);
+            renderOrderDetails(data.order);
         } else {
-            tableBody.innerHTML = '<tr><td colspan="6">Error loading orders.</td></tr>';
+            document.getElementById('orderView').innerHTML = '<p>Order not found.</p>';
+            document.getElementById('orderItemsTable').innerHTML = '<tr><td colspan="6">No items found.</td></tr>';
         }
     } catch (error) {
-        console.error('Error fetching orders:', error);
-        tableBody.innerHTML = '<tr><td colspan="6">Server error. Please try again later.</td></tr>';
+        console.error('Error fetching order details:', error);
+        document.getElementById('orderView').innerHTML = '<p>Server error. Please try again.</p>';
+        document.getElementById('orderItemsTable').innerHTML = '<tr><td colspan="6">Server error.</td></tr>';
     }
 }
+function renderOrderDetails(order) {
+    document.getElementById('orderId').textContent = `#ORD-${order.orderId}`;
+    const statusSpan = document.getElementById('orderStatus');
+    statusSpan.textContent = order.status;
+    statusSpan.className = `status-badge ${order.status}`;
+    document.getElementById('orderDate').textContent = new Date(order.orderDate).toLocaleString();
+    document.getElementById('orderTotal').textContent = `₹${order.totalAmount.toFixed(2)}`;
+    document.getElementById('paymentMethod').textContent = `Credit Card (****${order.paymentLastFour})`;
+    document.getElementById('transactionId').textContent = order.paymentLastFour || 'N/A';
 
-function renderOrders(orders) {
-    const tableBody = document.getElementById('orderTableBody');
-    tableBody.innerHTML = '';
+    document.getElementById('customerName').textContent = order.customer.name || 'N/A';
+    document.getElementById('customerEmail').textContent = order.customer.email || 'N/A';
+    document.getElementById('customerPhone').textContent = order.customer.phone || 'N/A';
+    document.getElementById('customerAddress').textContent = order.customer.address || 'N/A';
 
-    if (orders.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6">No orders found.</td></tr>';
-        return;
-    }
-
-    orders.forEach(order => {
+    const itemsTableBody = document.getElementById('orderItemsTable');
+    itemsTableBody.innerHTML = '';
+    
+    order.items.forEach(item => {
         const row = document.createElement('tr');
-        const statusClass = order.status.toLowerCase();
-        
         row.innerHTML = `
-            <td>#ORD-${order.orderId}</td>
-            <td>${order.customerName}</td>
-            <td>${new Date(order.orderDate).toLocaleDateString()}</td>
-            <td>₹${order.totalAmount.toFixed(2)}</td>
-            <td><span class="status-badge ${statusClass}">${order.status}</span></td>
-            <td class="actions-cell">
-                <a href="/admin-order-details/${order.orderId}">
-                    <i class="fa fa-eye" title="View Details"></i>
-                </a>
-            </td>
+            <td>${item.productId}</td>
+            <td>${item.productName}</td>
+            <td>${item.vendorName}</td>
+            <td>₹${item.price.toFixed(2)}</td>
+            <td>${item.quantity}</td>
+            <td>₹${(item.price * item.quantity).toFixed(2)}</td>
         `;
-        tableBody.appendChild(row);
+        itemsTableBody.appendChild(row);
     });
 }

@@ -100,10 +100,10 @@ function fetchDashboardStats() {
             if (data.success) {
                 const stats = data.stats;
                 // Update stats cards
-                document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
+                 document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
                 document.getElementById('totalVendors').textContent = stats.totalVendors || 0;
                 document.getElementById('totalEventManagers').textContent = stats.totalEventManagers || 0;
-
+                document.getElementById('totalEvents').textContent = stats.totalEvents || 0; // Add this line
                 // Update revenue stats
                 document.getElementById('totalRevenue').textContent = new Intl.NumberFormat('en-US', {
                     style: 'currency',

@@ -497,6 +497,7 @@ const dashBoardStats = async (req, res) => {
         const totalVendorsLastMonth = await Vendor.countDocuments({ created_at: { $lt: monthAgo } });
         const totalEventManagers = await EventManager.countDocuments();
         const totalEventManagersLastMonth = await EventManager.countDocuments({ created_at: { $lt: monthAgo } });
+        const totalEvents = await Event.countDocuments();
 
         // Calculate percentage changes
         const userGrowthPercent = totalUsersLastMonth > 0 ? 
@@ -617,6 +618,7 @@ const dashBoardStats = async (req, res) => {
                 totalVendors,
                 totalEventManagers,
                 totalRevenue,
+                 totalEvents,
                 monthlyRevenue,
                 weeklyRevenue,
                 dailyRevenue,
@@ -2177,70 +2179,84 @@ const getOrders = async (req, res) => {
 
 const getOrderDetails = async (req, res) => {
     try {
-        const { id } = req.params;
-        const order = await Order.findById(id).populate('user_id');
+        const orderId = req.params.id;
+        // Fetch the Order document and populate the User details
+        const order = await Order.findById(orderId).populate('user_id');
 
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
-        const orderItems = await OrderItem.aggregate([
-            { $match: { order_id: order._id } },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'product_id',
-                    foreignField: '_id',
-                    as: 'product'
+        // Fetch the associated OrderItems and populate Product and Vendor details
+        const orderItems = await OrderItem.find({ order_id: orderId })
+            .populate({
+                path: 'product_id',
+                model: 'Product',
+                populate: {
+                    path: 'vendor_id',
+                    model: 'Vendor'
                 }
-            },
-            { $unwind: '$product' },
-            {
-                $lookup: {
-                    from: 'vendors',
-                    localField: 'product.vendor_id',
-                    foreignField: '_id',
-                    as: 'vendor'
-                }
-            },
-            { $unwind: '$vendor' },
-            {
-                $project: {
-                    _id: 0,
-                    productId: '$product._id',
-                    productName: '$product.product_name',
-                    vendorName: '$vendor.store_name',
-                    price: '$price',
-                    quantity: '$quantity'
-                }
-            }
-        ]);
+            });
 
-        res.status(200).json({
+        res.json({
             success: true,
             order: {
                 orderId: order._id,
-                orderDate: order.order_date,
                 status: order.status,
+                orderDate: order.order_date,
                 totalAmount: order.total_amount,
-                paymentMethod: order.payment_last_four ? `Card ending in ****${order.payment_last_four}` : 'N/A',
-                paymentLastFour: order.payment_last_four,
+                paymentMethod: 'Credit Card', // Hardcoded as per the client-side code
+                paymentLastFour: order.payment_last_four || 'N/A',
                 customer: {
-                    name: order.user_id?.user_name || 'Guest',
-                    email: order.user_id?.user_email || 'N/A',
-                    phone: order.user_id?.user_phone || 'N/A',
-                    address: order.user_id?.user_address || 'N/A',
+                    name: order.user_id ? order.user_id.user_name : 'N/A',
+                    email: order.user_id ? order.user_id.user_email : 'N/A',
+                    phone: order.user_id ? order.user_id.user_phone || 'N/A' : 'N/A',
+                    address: order.user_id ? order.user_id.user_address || 'N/A' : 'N/A'
                 },
-                items: orderItems,
+                items: orderItems.map(item => ({
+                    productId: item.product_id ? item.product_id._id : 'N/A',
+                    productName: item.product_id ? item.product_id.product_name : item.product_name,
+                    vendorName: item.product_id && item.product_id.vendor_id ? item.product_id.vendor_id.store_name : 'N/A',
+                    price: item.price,
+                    quantity: item.quantity
+                }))
             }
         });
     } catch (error) {
-        console.error('Error fetching order details:', error);
+        console.error('Error in getOrderDetails:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
 
+const getOrderStats = async (req, res) => {
+    try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
+        const weekStart = new Date(today);
+        weekStart.setDate(today.getDate() - today.getDay());
+
+        const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        const totalOrders = await Order.countDocuments();
+        const monthlyOrders = await Order.countDocuments({ order_date: { $gte: monthStart } });
+        const weeklyOrders = await Order.countDocuments({ order_date: { $gte: weekStart } });
+        const dailyOrders = await Order.countDocuments({ order_date: { $gte: today } });
+
+        res.json({
+            success: true,
+            stats: {
+                totalOrders,
+                monthlyOrders,
+                weeklyOrders,
+                dailyOrders,
+            }
+        });
+    } catch (err) {
+        console.error('Error fetching order stats:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
 
 module.exports = {
     adminLogin,
@@ -2285,5 +2301,6 @@ module.exports = {
       getProductData,
     getProductCustomers,
     getOrders,
-    getOrderDetails
+    getOrderDetails,
+    getOrderStats
 };
