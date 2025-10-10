@@ -1,0 +1,218 @@
+/* admin-orders.css */
+
+/* General Body and Container Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7f6;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Navigation */
+.sidebar {
+    width: 250px;
+    background-color: #385038;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar-header h1 {
+    font-size: 24px;
+    margin: 0;
+    color: #e0f2e0;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.nav-item {
+    margin-bottom: 10px;
+}
+
+.nav-link {
+    display: block;
+    padding: 12px 15px;
+    color: #e0f2e0;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link:hover, .nav-link.active {
+    background-color: #4a6c4a;
+    color: white;
+}
+
+.nav-link span {
+    margin-left: 10px;
+}
+
+/* Main Content Area */
+.main-content {
+    flex-grow: 1;
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    font-size: 28px;
+    color: #385038;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #385038;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Search and Filter */
+.search-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.search-bar {
+    position: relative;
+    flex-grow: 1;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 12px 20px;
+    padding-left: 45px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white;
+    transition: border-color 0.3s;
+}
+
+.search-bar input:focus {
+    outline: none;
+    border-color: #4a6c4a;
+}
+
+.search-bar::before {
+    content: "\f002"; /* Magnifying glass icon */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+/* Order Table */
+.order-table-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    flex-grow: 1;
+}
+
+.table-header {
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.table-header h3 {
+    margin: 0;
+    color: #385038;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.order-table thead tr {
+    background-color: #f8f8f8;
+    color: #555;
+    font-size: 14px;
+    text-align: left;
+}
+
+.order-table th, .order-table td {
+    padding: 15px 20px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.order-table tbody tr:hover {
+    background-color: #fbfbfb;
+}
+
+.order-table td {
+    color: #666;
+}
+
+.order-table .actions-cell {
+    white-space: nowrap;
+}
+
+.order-table .actions-cell .fa-eye {
+    color: #385038;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+.order-table .actions-cell .fa-eye:hover {
+    color: #5d8f5d;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.status-badge.pending { background-color: #f1c40f; }
+.status-badge.confirmed { background-color: #3498db; }
+.status-badge.shipped { background-color: #385038; }
+.status-badge.delivered { background-color: #27ae60; }
+.status-badge.cancelled { background-color: #e74c3c; }
