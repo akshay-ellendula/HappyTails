@@ -64,6 +64,7 @@ const productSchema = new mongoose.Schema({
     sku: { type: String, default: null },
     stock_status: { type: String, required: true },
     created_at: { type: Date, default: Date.now },
+    is_deleted: { type: Boolean, default: false }
 });
 
 const productVariantSchema = new mongoose.Schema({

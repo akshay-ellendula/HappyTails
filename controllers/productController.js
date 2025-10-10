@@ -244,6 +244,16 @@ const processPayment = async (req, res) => {
         }));
 
         await OrderItem.insertMany(orderItems);
+        for (const item of cart) {
+            // Ensure we have a specific variant ID to update
+            if (item.variant_id) {
+                // Find the specific variant by its unique ID and decrease its stock
+                await ProductVariant.updateOne(
+                    { _id: item.variant_id },
+                    { $inc: { stock_quantity: -item.quantity } }
+                );
+            }
+        }
         
         // Clear the session cart
         req.session.cart = null;

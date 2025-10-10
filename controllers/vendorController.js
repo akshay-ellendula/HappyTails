@@ -131,11 +131,33 @@ const getVendorProducts = async (req, res) => {
 
     const vendor = req.session.vendor;
     const vendorId = vendor.id;
+    const { category, sort } = req.query;
+
+    // --- FILTER AND SORT LOGIC ---
+    const matchStage = {
+        vendor_id: new mongoose.Types.ObjectId(vendorId),
+        is_deleted: { $ne: true }
+    };
+    if (category && category !== 'All Categories') {
+        matchStage.product_category = category;
+    }
+
+    const sortStage = {};
+    if (sort === 'oldest') {
+        sortStage.created_at = 1;
+    } else if (sort === 'price_asc') {
+        sortStage.price_for_sort = 1;
+    } else if (sort === 'price_desc') {
+        sortStage.price_for_sort = -1;
+    } else {
+        sortStage.created_at = -1; // Default to newest
+    }
+    // -----------------------------
     console.log('Fetching products for vendor:', { vendorId });
 
     try {
         const products = await Product.aggregate([
-            { $match: { vendor_id: new mongoose.Types.ObjectId(vendorId) } },
+            { $match: matchStage },
             {
                 $lookup: {
                     from: 'productvariants',
@@ -155,25 +177,43 @@ const getVendorProducts = async (req, res) => {
             {
                 $addFields: {
                     primary_image: {
-                        $arrayElemAt: [
+                        $ifNull: [
                             {
-                                $filter: {
-                                    input: '$images',
-                                    as: 'img',
-                                    cond: { $eq: ['$$img.is_primary', true] }
-                                }
+                                $arrayElemAt: [
+                                    {
+                                        $filter: {
+                                            input: '$images',
+                                            as: 'img',
+                                            cond: { $eq: ['$$img.is_primary', true] }
+                                        }
+                                    },
+                                    0
+                                ]
                             },
-                            0
+                            {
+                                $arrayElemAt: ['$images', 0]
+                            }
                         ]
                     }
                 }
             },
+            {
+                $addFields: {
+                    price_for_sort: { $ifNull: [{ $arrayElemAt: ['$variants.regular_price', 0] }, 0] }
+                }
+            },
+            { $sort: sortStage },
             {
                 $lookup: {
                     from: 'orderitems',
                     localField: '_id',
                     foreignField: 'product_id',
                     as: 'order_items'
+                }
+            },
+           {
+                $addFields: {
+                    total_stock: { $sum: '$variants.stock_quantity' }
                 }
             },
             {
@@ -184,7 +224,7 @@ const getVendorProducts = async (req, res) => {
                     product_type: 1,
                     sale_price: { $arrayElemAt: ['$variants.sale_price', 0] },
                     regular_price: { $ifNull: [{ $arrayElemAt: ['$variants.regular_price', 0] }, 0] },
-                    stock_quantity: { $arrayElemAt: ['$variants.stock_quantity', 0] },
+                    stock_quantity: '$total_stock', // Use the new total stock
                     image_data: { $ifNull: ['$primary_image.image_data', '/images/default.jpg'] },
                     sold: { $sum: '$order_items.quantity' },
                     _id: 0
@@ -647,6 +687,13 @@ const updateProduct = [
                 return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to edit it.' });
             }
 
+            const deletedImages = req.body.deletedImages || [];
+            if (deletedImages.length > 0) {
+                await ProductImage.deleteMany({ 
+                    product_id: productId 
+                });
+            }
+
             await Product.updateOne(
                 { _id: productId },
                 {
@@ -686,11 +733,13 @@ const updateProduct = [
 
             if (req.files && req.files.length > 0) {
                 await ProductImage.deleteMany({ product_id: productId });
+
                 const images = req.files.map((file, index) => ({
                     product_id: productId,
-                    image_path: `/uploads/products/${file.filename}`,
+                    image_data: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
                     is_primary: index === 0
                 }));
+
                 await ProductImage.insertMany(images);
             }
 
@@ -1171,7 +1220,7 @@ console.log('Customer found:', customer ? customer : 'No customer found');
                 date: new Date(order.order_date).toLocaleDateString('en-US'),
                 items: order.items.map(item => `${item.product_name} (${item.quantity})`).join(', '),
                 total: order.total_amount.toFixed(2),
-                status: order.status
+                status: order.status === 'Pending' ? 'Confirmed' : order.status
             }))
         });
     } catch (error) {
@@ -1496,7 +1545,12 @@ const deleteProduct = async (req, res) => {
         }
 
         // Delete the product, its variants, and images
-        await Product.deleteOne({ _id: productId });
+        // Soft delete by flagging the product as deleted, which will hide it from the product list
+        // while preserving it for historical order records.
+        await Product.updateOne(
+            { _id: productId },
+            { $set: { is_deleted: true } }
+        );
         await ProductVariant.deleteMany({ product_id: productId });
         await ProductImage.deleteMany({ product_id: productId });
 
