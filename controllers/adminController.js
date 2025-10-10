@@ -138,6 +138,135 @@ const deleteUser = async (req, res) => {
     }
 };
 
+
+const getProductData = async (productId) => {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return null;
+    }
+    
+    try {
+        const product = await Product.aggregate([
+            { $match: { _id: new mongoose.Types.ObjectId(productId) } },
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
+                }
+            },
+            { $unwind: '$vendor' },
+            {
+                $lookup: {
+                    from: 'productvariants',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'variants'
+                }
+            },
+            { $unwind: '$variants' },
+            {
+                $lookup: {
+                    from: 'productimages',
+                    localField: '_id',
+                    foreignField: 'product_id',
+                    as: 'images'
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    id: '$_id',
+                    product_name: 1,
+                    product_category: 1,
+                    product_type: 1,
+                    product_description: 1,
+                    stock_status: 1,
+                    created_at: 1,
+                    sku: '$variants.sku',
+                    regular_price: '$variants.regular_price',
+                    sale_price: '$variants.sale_price',
+                    stock_quantity: '$variants.stock_quantity',
+                    vendor: {
+                        store_name: '$vendor.store_name',
+                        email: '$vendor.email'
+                    },
+                    image: {
+                        $ifNull: [
+                            { $arrayElemAt: [{ $filter: { input: '$images', as: 'img', cond: { $eq: ['$$img.is_primary', true] } } }, 0] },
+                            { $arrayElemAt: ['$images', 0] }
+                        ]
+                    }
+                }
+            },
+            {
+                $project: {
+                    id: 1,
+                    product_name: 1,
+                    product_category: 1,
+                    product_type: 1,
+                    product_description: 1,
+                    stock_status: 1,
+                    created_at: 1,
+                    sku: 1,
+                    regular_price: 1,
+                    sale_price: 1,
+                    stock_quantity: 1,
+                    vendor: 1,
+                    image: '$image.image_data'
+                }
+            }
+        ]);
+
+        return product.length > 0 ? product[0] : null;
+    } catch (err) {
+        console.error('Error in getProductData:', err);
+        throw err;
+    }
+};
+
+const getProductCustomers = async (productId) => {
+    try {
+        const customers = await OrderItem.aggregate([
+            { $match: { product_id: new mongoose.Types.ObjectId(productId) } },
+            {
+                $lookup: {
+                    from: 'orders',
+                    localField: 'order_id',
+                    foreignField: '_id',
+                    as: 'order'
+                }
+            },
+            { $unwind: '$order' },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'order.user_id',
+                    foreignField: '_id',
+                    as: 'user'
+                }
+            },
+            { $unwind: '$user' },
+            {
+                $project: {
+                    _id: 0,
+                    user_name: '$user.user_name',
+                    user_email: '$user.user_email',
+                    order_date: '$order.order_date',
+                    quantity: '$quantity'
+                }
+            },
+            { $sort: { order_date: -1 } }
+        ]);
+
+        return customers;
+    } catch (err) {
+        console.error('Error in getProductCustomers:', err);
+        throw err;
+    }
+};
+
+
 const getProducts = async (req, res) => {
     try {
         const products = await Product.aggregate([
@@ -1646,7 +1775,7 @@ const addProduct = async (req, res) => {
 
 const getProduct = async (req, res) => {
     try {
-        const productId = req.params.id; // Changed from req.query.id to req.params.id
+        const productId = req.params.id;
         if (!mongoose.Types.ObjectId.isValid(productId)) {
             return res.status(400).json({ success: false, message: 'Invalid product ID' });
         }
@@ -1678,7 +1807,8 @@ const getProduct = async (req, res) => {
                 })),
                 images: images.map(img => ({
                     image_path: img.image_path,
-                    is_primary: img.is_primary
+                    is_primary: img.is_primary,
+                    image_data: img.image_data  // This line is added to include Base64 data
                 }))
             }
         });
@@ -1687,7 +1817,6 @@ const getProduct = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
-
 const updateProduct = async (req, res) => {
     try {
         const productId = req.params.id;
@@ -2056,5 +2185,7 @@ module.exports = {
     deleteEvent,
     getEvent, 
     getEventAttendees,
-    updateEvent
+    updateEvent,
+      getProductData,
+    getProductCustomers
 };
