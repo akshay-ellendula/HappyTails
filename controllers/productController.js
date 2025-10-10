@@ -188,7 +188,12 @@ const getProduct = async (req, res) => {
 
 
 const checkout = async (req, res) => {
-    if (!req.session.user) return res.status(401).send('User not logged in');
+    // Check for required user profile fields
+    const user = req.session.user;
+    if (!user.user_name || !user.user_email || !user.user_phone || !user.user_address) {
+        // Return a 400 Bad Request status with a message
+        return res.status(400).send('Please complete your profile information before proceeding to checkout.');
+    }
 
     const { cart } = req.body;
     if (!cart.length === 0) return res.status(400).send('Cart is empty');
@@ -197,7 +202,6 @@ const checkout = async (req, res) => {
     const charge = subtotal * 0.04;
     const total = subtotal + charge;
 
-    // Store cart data in the session to be used on the payment page
     req.session.cart = cart;
     req.session.orderTotals = { subtotal, charge, total };
 
