@@ -42,7 +42,9 @@ const {
     updateEvent,
     // Add the missing functions here
     getProductData,
-    getProductCustomers
+    getProductCustomers,
+    getOrders,
+    getOrderDetails
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
 
@@ -161,6 +163,19 @@ router.get('/admin-product-details/:id', isAdminAuthenticated, async (req, res) 
         console.error('Error fetching data for product details page:', err);
         res.status(500).render('admin-product-details', { product: null, customers: null });
     }
+});
+
+// --- New Order Management Routes ---
+router.get('/api/admin/orders', isAdminAuthenticated, getOrders);
+router.get('/api/admin/order/:id', isAdminAuthenticated, getOrderDetails);
+
+// --- New Page Rendering Routes ---
+router.get('/admin-orders', isAdminAuthenticated, (req, res) => {
+    res.render('admin-orders');
+});
+
+router.get('/admin-order-details/:id', isAdminAuthenticated, (req, res) => {
+    res.render('admin-order-details');
 });
 
 module.exports = router;

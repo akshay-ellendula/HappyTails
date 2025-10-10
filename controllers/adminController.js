@@ -2144,6 +2144,102 @@ const updateEvent = async (req, res) => {
     }
 };
 
+const getOrders = async (req, res) => {
+    try {
+        const orders = await Order.aggregate([
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'user_id',
+                    foreignField: '_id',
+                    as: 'user_details'
+                }
+            },
+            { $unwind: '$user_details' },
+            {
+                $project: {
+                    _id: 0,
+                    orderId: '$_id',
+                    customerName: '$user_details.user_name',
+                    orderDate: '$order_date',
+                    totalAmount: '$total_amount',
+                    status: '$status'
+                }
+            },
+            { $sort: { orderDate: -1 } }
+        ]);
+        res.status(200).json({ success: true, orders });
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const getOrderDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const order = await Order.findById(id).populate('user_id');
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
+        }
+
+        const orderItems = await OrderItem.aggregate([
+            { $match: { order_id: order._id } },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'product_id',
+                    foreignField: '_id',
+                    as: 'product'
+                }
+            },
+            { $unwind: '$product' },
+            {
+                $lookup: {
+                    from: 'vendors',
+                    localField: 'product.vendor_id',
+                    foreignField: '_id',
+                    as: 'vendor'
+                }
+            },
+            { $unwind: '$vendor' },
+            {
+                $project: {
+                    _id: 0,
+                    productId: '$product._id',
+                    productName: '$product.product_name',
+                    vendorName: '$vendor.store_name',
+                    price: '$price',
+                    quantity: '$quantity'
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            success: true,
+            order: {
+                orderId: order._id,
+                orderDate: order.order_date,
+                status: order.status,
+                totalAmount: order.total_amount,
+                paymentMethod: order.payment_last_four ? `Card ending in ****${order.payment_last_four}` : 'N/A',
+                paymentLastFour: order.payment_last_four,
+                customer: {
+                    name: order.user_id?.user_name || 'Guest',
+                    email: order.user_id?.user_email || 'N/A',
+                    phone: order.user_id?.user_phone || 'N/A',
+                    address: order.user_id?.user_address || 'N/A',
+                },
+                items: orderItems,
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
 
 
 module.exports = {
@@ -2187,5 +2283,7 @@ module.exports = {
     getEventAttendees,
     updateEvent,
       getProductData,
-    getProductCustomers
+    getProductCustomers,
+    getOrders,
+    getOrderDetails
 };
