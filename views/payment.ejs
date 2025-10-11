@@ -126,6 +126,12 @@
         .pay-button:active {
             transform: translateY(0);
         }
+
+        .pay-button:disabled {
+            background-color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
     </style>
 </head>
 <body>
@@ -154,7 +160,7 @@
             </div>
         </div>
 
-        <form class="payment-form" action="/process-payment" method="POST">
+        <form class="payment-form" id="paymentForm">
             <h3>Payment Information</h3>
             <div class="form-group">
                 <label for="card-number">Card Number</label>
@@ -170,7 +176,7 @@
                     <input type="text" id="cvc" name="cvc" required>
                 </div>
             </div>
-            <button type="submit" class="pay-button">Pay Now</button>
+            <button type="submit" class="pay-button" id="payButton">Pay Now</button>
         </form>
     </div>
 
@@ -179,7 +185,8 @@
         const cardNumberInput = document.getElementById('card-number');
         const cvvInput = document.getElementById('cvc');
         const expiryDateInput = document.getElementById('expiry-date');
-        const form = document.querySelector('.payment-form');
+        const form = document.getElementById('paymentForm');
+        const payButton = document.getElementById('payButton');
 
         // Card Number Formatting
         cardNumberInput.addEventListener('input', (event) => {
@@ -205,7 +212,13 @@
         });
 
         // Form Submission Validation
-        form.addEventListener('submit', (event) => {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const originalText = payButton.textContent;
+            payButton.textContent = 'Processing...';
+            payButton.disabled = true;
+
             let isValid = true;
             let errorMessage = '';
 
@@ -247,11 +260,42 @@
             }
 
             if (!isValid) {
-                event.preventDefault();
+                payButton.textContent = originalText;
+                payButton.disabled = false;
                 alert(errorMessage);
+                return;
+            }
+
+            try {
+                const response = await fetch('/process-payment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        cardNumber: cardNumberValue,
+                        expiryDate: expiryDateValue,
+                        cvc: cvvValue
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    window.location.href = result.redirectUrl;
+                } else {
+                    alert(result.message || 'Payment failed. Please try again.');
+                    payButton.textContent = originalText;
+                    payButton.disabled = false;
+                }
+            } catch (error) {
+                console.error('Payment submission error:', error);
+                alert('Network error. Please try again.');
+                payButton.textContent = originalText;
+                payButton.disabled = false;
             }
         });
     });
-</script>
+    </script>
 </body>
 </html>

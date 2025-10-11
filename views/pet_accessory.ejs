@@ -377,7 +377,7 @@
 
             
             // Checkout functionality
-            document.querySelector('.checkout_button button').addEventListener('click', function() {
+            document.querySelector('.checkout_button button').addEventListener('click', async function() {
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
             
                 if (cart.length === 0) {
@@ -385,36 +385,52 @@
                     return;
                 }
             
+                // Clean cart data before sending
                 const cartWithoutImages = cart.map(item => {
                     const { image_data, ...itemWithoutImage } = item;
-                    return itemWithoutImage;
+                    return {
+                        ...itemWithoutImage,
+                        quantity: parseInt(item.quantity) || 1,
+                        price: parseFloat(item.price) || 0
+                    };
                 });
             
-                fetch('/checkout', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ cart: cartWithoutImages })
-                })
-                .then(response => {
+                try {
+                    const response = await fetch('/checkout', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Cache-Control': 'no-cache'
+                        },
+                        body: JSON.stringify({ cart: cartWithoutImages })
+                    });
+                
+                    const result = await response.json();
+                
                     if (!response.ok) {
-                        return response.text().then(text => {
-                            // If the status is 400 (Bad Request), show the alert and redirect
-                            if (response.status === 400) {
-                                alert(text);
-                                window.location.href = '/profile'; // Redirect to profile page [cite: 164]
-                                throw new Error('Redirecting to profile');
+                        if (result.message) {
+                            alert(result.message);
+                            if (response.status === 400 && result.message.includes('profile')) {
+                                window.location.href = '/profile';
                             }
-                            throw new Error(`HTTP ${response.status}: ${text}`);
-                        });
+                        } else {
+                            alert('Checkout failed. Please try again.');
+                        }
+                        return;
                     }
-                    clearCartAndRedirect(response.url);
-                })
-                .catch(error => {
+                
+                    if (result.success && result.redirectUrl) {
+                        // Clear cart and redirect
+                        localStorage.removeItem('cart');
+                        window.location.href = result.redirectUrl;
+                    } else {
+                        alert('Unexpected response from server');
+                    }
+                
+                } catch (error) {
                     console.error('Checkout error:', error);
-                    if (error.message !== 'Redirecting to profile') {
-                        alert('Error placing order. Please try again.');
-                    }
-                });
+                    alert('Network error. Please check your connection and try again.');
+                }
             });
 
             // Filter application function

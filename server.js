@@ -30,6 +30,20 @@ app.use(session({
     cookie: { secure: false }
 }));
 
+// Middleware to validate checkout session
+const validateCheckoutSession = (req, res, next) => {
+    if (req.path === '/payment') {
+        if (!req.session.cart || !req.session.orderTotals) {
+            console.log('Invalid session - redirecting to pet accessories');
+            return res.redirect('/pet_accessory');
+        }
+    }
+    next();
+};
+
+// Use this middleware in your app (add this line after your session middleware)
+app.use(validateCheckoutSession);
+
 // Create product upload directory
 const productUploadDir = path.join(__dirname, 'public', 'uploads', 'products');
 if (!fs.existsSync(productUploadDir)) {
