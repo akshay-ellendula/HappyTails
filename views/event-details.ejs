@@ -139,6 +139,81 @@
             background-color: #f8f8f8;
             font-weight: 600;
         }
+        /* Add this inside the <style> tag */
+.edit-btn, .delete-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.edit-btn {
+    background-color: #007bff; /* Blue */
+}
+
+.delete-btn {
+    background-color: #dc3545; /* Red */
+}
+
+/* Basic styling for the modal (can be improved) */
+.modal {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fefefe; margin: 10% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 500px;
+}
+.close-btn {
+    color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;
+}
+/* Add this to your existing <style> tag */
+.attendees-section .edit-btn,
+.attendees-section .delete-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-right: 5px;
+}
+
+.attendees-section .edit-btn { background-color: #007bff; }
+.attendees-section .delete-btn { background-color: #dc3545; }
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    margin:auto;
+    margin-top: 50px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-content h2 { margin-top: 0; }
+.modal-content .form-group { margin-bottom: 15px; }
+.modal-content label { display: block; margin-bottom: 5px; font-weight: 500; }
+.modal-content input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+.modal-content .book_btn { width: 100%; padding: 12px; background-color: #333; color: white; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; }
+.close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -193,72 +268,196 @@
             </div>
 
             <% if (attendees.length > 0) { %>
-                <table id="attendeeTable">
-                    <thead>
+            <table id="attendeeTable">
+                <thead>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Seats</th>
+                        <th>Pet Guest</th>
+                        <th>Actions</th> </tr>
+                </thead>
+                <tbody id="attendeeTableBody">
+                    <% attendees.forEach(attendee => { %>
                         <tr>
-                            <th>Ticket ID</th>
-                            <th>Name</th>
-                            <th>Phone Number</th>
-                            <th>Email</th>
-                            <th>Seats</th>
-                            <th>Pet Guest</th>
+                            <td><%= attendee.ticketId %></td>
+                            <td><%= attendee.name %></td>
+                            <td><%= attendee.phone_number %></td>
+                            <td><%= attendee.email %></td>
+                            <td><%= attendee.seats %></td>
+                            <td><%= attendee.with_pet ? 'Yes' : 'No' %></td>
+                            <td>
+                                <button class="edit-btn"
+                                        data-id="<%= attendee._id %>"
+                                        data-name="<%= attendee.name %>"
+                                        data-phone="<%= attendee.phone_number %>"
+                                        data-event="<%= event.event_name %>"
+                                        data-date="<%= new Date(event.date_time).toLocaleDateString() %>"
+                                        data-seats="<%= attendee.seats %>">
+                                    Edit
+                                </button>
+                                <button class="delete-btn" data-id="<%= attendee._id %>">
+                                    Delete
+                                </button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody id="attendeeTableBody">
-                        <% attendees.forEach(attendee => { %>
-                            <tr>
-                                <td><%= attendee.ticketId %></td>
-                                <td><%= attendee.name %></td>
-                                <td><%= attendee.phone_number %></td>
-                                <td><%= attendee.email %></td>
-                                <td><%= attendee.seats %></td>
-                                <td><%= attendee.with_pet ? 'Yes' : 'No' %></td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+                    <% }) %>
+                </tbody>
+            </table>
             <% } else { %>
                 <p>No attendees have booked this event yet.</p>
             <% } %>
         </div>
     </div>
+                <div class="modal" id="editAttendeeModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeEditAttendeeModal()">×</span>
+        <h2>Edit Attendee</h2>
+        <form id="editAttendeeForm" onsubmit="saveAttendee(event)">
+            <input type="hidden" id="editAttendeeId">
+            <div class="form-group">
+                <label for="editName">Name</label>
+                <input type="text" id="editName" required>
+            </div>
+            <div class="form-group">
+                <label for="editPhone">Phone No</label>
+                <input type="number" id="editPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="editEvent">Event<span>(Read only)</span></label>
+                <input type="text" id="editEvent" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editDate">Date<span>(Read only)</span></label>
+                <input type="text" id="editDate" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editSeats">Seats<span>(Read only)</span></label>
+                <input type="number" id="editSeats" required readonly>
+            </div>
+            <button type="submit" class="book_btn">Save Changes</button>
+        </form>
+    </div>
+</div>
 
-    <script>
-        function filterAttendees() {
-            // Get the search input value and convert to lower case
-            const filter = document.getElementById('attendeeSearch').value.toLowerCase();
-            
-            // Get the table body and all its rows
-            const tableBody = document.getElementById('attendeeTableBody');
-            const rows = tableBody.getElementsByTagName('tr');
-            
-            // Loop through all table rows
-            for (let i = 0; i < rows.length; i++) {
-                const ticketIdCell = rows[i].getElementsByTagName('td')[0];
-                const nameCell = rows[i].getElementsByTagName('td')[1];
-                const emailCell = rows[i].getElementsByTagName('td')[3];
-                
-                // If the cells exist
-                if (ticketIdCell && nameCell && emailCell) {
-                    const ticketIdText = ticketIdCell.textContent || ticketIdCell.innerText;
-                    const nameText = nameCell.textContent || nameCell.innerText;
-                    const emailText = emailCell.textContent || emailCell.innerText;
-                    
-                    // Check if the search query is found in the ticket ID, name, or email
-                    if (
-                        ticketIdText.toLowerCase().indexOf(filter) > -1 ||
-                        nameText.toLowerCase().indexOf(filter) > -1 ||
-                        emailText.toLowerCase().indexOf(filter) > -1
-                    ) {
-                        // If it's a match, show the row
-                        rows[i].style.display = "";
-                    } else {
-                        // Otherwise, hide the row
-                        rows[i].style.display = "none";
-                    }
+        <script>
+    // --- MODAL FUNCTIONS ---
+    function openEditAttendeeModal(attendeeId, name, phone, eventName, date, seats) {
+        document.getElementById('editAttendeeId').value = attendeeId;
+        document.getElementById('editName').value = name;
+        document.getElementById('editPhone').value = phone;
+        document.getElementById('editEvent').value = eventName;
+        document.getElementById('editDate').value = date;
+        document.getElementById('editSeats').value = seats;
+        document.getElementById('editAttendeeModal').style.display = 'block';
+    }
+
+    function closeEditAttendeeModal() {
+        document.getElementById('editAttendeeModal').style.display = 'none';
+    }
+    async function saveAttendee(event) {
+    event.preventDefault();
+    const attendeeId = document.getElementById('editAttendeeId').value;
+    if (!attendeeId) return alert('Error: Attendee ID is missing.');
+
+    // Get values from the form
+    const name = document.getElementById("editName").value.trim();
+    const phone = document.getElementById("editPhone").value.trim(); // Frontend uses 'phone'
+    const seats = document.getElementById("editSeats").value; // Get the read-only seats value
+
+    // Validate inputs
+    const phonePattern = /^[0-9]{10}$/;
+    if (!name) return alert("⚠️ Name cannot be empty.");
+    if (!phonePattern.test(phone)) return alert("⚠️ Please enter a valid 10-digit phone number.");
+
+    try {
+        // Correctly call the PUT endpoint with the ID in the URL
+        const response = await fetch(`/eventmanager_dashboard/updateAttendee/${attendeeId}`, {
+            method: 'PUT', // ✅ Changed to PUT
+            headers: { 'Content-Type': 'application/json' },
+            // ✅ Body matches the controller's expected fields
+            body: JSON.stringify({
+                name: name,
+                phone_number: phone, // Map frontend 'phone' to backend 'phone_number'
+                seats: seats
+            })
+        });
+        const result = await response.json();
+        if (response.ok) {
+            alert("Attendee updated successfully!");
+            window.location.reload(); // Reload to see changes
+        } else {
+            alert("Error updating attendee: " + (result.message || "Update failed"));
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("A network error occurred. Please try again.");
+    }
+}
+   async function deleteAttendee(attendeeId) {
+        if (!attendeeId) return alert('Error: Attendee ID is missing.');
+        
+        if (confirm('Are you sure you want to delete this attendee booking?')) {
+            try {
+                const response = await fetch(`/eventmanager_dashboard/deleteAttendee/${attendeeId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('Attendee deleted successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + (result.message || 'Deletion failed'));
                 }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
             }
         }
-    </script>
+    }
+
+    // --- MAIN EVENT LISTENER & FILTER ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const tableBody = document.getElementById('attendeeTableBody');
+        if (tableBody) {
+            tableBody.addEventListener('click', function(event) {
+                const button = event.target.closest('button'); // More robust way to get the button
+                if (!button) return;
+
+                if (button.classList.contains('edit-btn')) {
+                    const data = button.dataset;
+                    if (data.id) {
+                        openEditAttendeeModal(data.id, data.name, data.phone, data.event, data.date, data.seats);
+                    }
+                }
+
+                if (button.classList.contains('delete-btn')) {
+                    const attendeeId = button.dataset.id;
+                    if (attendeeId) {
+                        deleteAttendee(attendeeId);
+                    }
+                }
+            });
+        }
+    });
+
+    function filterAttendees() {
+        const filter = document.getElementById('attendeeSearch').value.toLowerCase();
+        const rows = document.getElementById('attendeeTableBody').getElementsByTagName('tr');
+        
+        for (let row of rows) {
+            const ticketIdCell = row.cells[0].textContent.toLowerCase();
+            const nameCell = row.cells[1].textContent.toLowerCase();
+            const emailCell = row.cells[3].textContent.toLowerCase();
+            
+            if (ticketIdCell.includes(filter) || nameCell.includes(filter) || emailCell.includes(filter)) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
+</script>
 </body>
 </html>

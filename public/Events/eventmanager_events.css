@@ -17,7 +17,10 @@ body {
     background: #effe8b;
     padding: 10px 50px;
 }
-
+a{
+    text-decoration: none;
+    color: black;
+}
 header {
     display: flex;
     justify-content: space-between;
@@ -346,4 +349,33 @@ header a {
     .card-actions {
         flex-direction: column;
     }
+}
+.card-actions {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px; /* Adds space between buttons */
+    justify-content: flex-end; /* Aligns buttons to the right */
+}
+
+.btn-danger {
+    background-color: #d9534f;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.btn-danger:hover {
+    background-color: #c9302c;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    /* Add other styles similar to btn-danger */
 }

@@ -1,336 +1,404 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Event Booking - <%= eventName || 'Unknown Event' %></title>
-    <link rel="stylesheet" href="/Event-booking/Event-booking-form.css">
-    <script src="/Event-booking/Event-booking-form.js"></script>
-  </head>
-  <body>
-    <div class="navbar">
-      <header>
-        <a href="/home" class="badge">Happy Tails</a>
-        <div class="menu">
-          
-          <a href="/pet_accessory">Pet Essentials</a>
-          <% if (user) { %>
-          <a href="/profile">Profile</a>
-          <% } else { %>
-          <a href="/my_login">Login/SignUp</a>
-          <% } %>
-        </div>
-        <div class="menu-icon" id="menuIcon">
-          <img
-            src="/icons/hamburger-svgrepo-com.svg"
-            alt="Menu"
-            height="25px"
-          />
-        </div>
-      </header>
-    </div>
-
-    <% if (user) { %>
-    <div class="booking-wrapper">
-      <div class="booking-form-container">
-        <form id="eventBookingForm" method="POST" action="/event_booking">
-          <h1>Book Your Event</h1>
-          <p class="event-subtitle"><%= eventName || 'Event Booking' %></p>
-
-          <input type="hidden" name="eventId" value="<%= eventId %>" />
-
-          <div class="form-section">
-            <div class="section-title">Personal Information</div>
-
-            <div class="form-group">
-              <label for="name">Full Name *</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                placeholder="Enter your full name"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="email">Email Address *</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="phone_number">Contact Number *</label>
-              <input
-                type="text"
-                id="phone_number"
-                name="phone_number"
-                placeholder="10-digit mobile number"
-                pattern="\d{10}"
-                required
-              />
-            </div>
-
-            <div class="form-group">
-              <label for="address">Address *</label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                placeholder="Your complete address"
-                required
-              />
-            </div>
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Event Booking - <%= eventName || 'Unknown Event' %></title>
+      <link rel="stylesheet" href="/Event-booking/Event-booking-form.css">
+    </head>
+    <body>
+      <div class="navbar">
+        <header>
+          <a href="/home" class="badge">Happy Tails</a>
+          <div class="menu">
+            
+            <a href="/pet_accessory">Pet Essentials</a>
+            <% if (user) { %>
+            <a href="/profile">Profile</a>
+            <% } else { %>
+            <a href="/my_login">Login/SignUp</a>
+            <% } %>
           </div>
-
-          <div class="form-section">
-            <div class="section-title">Booking Details</div>
-
-            <div class="form-group">
-              <label>Number of Tickets *</label>
-              <div class="quantity-control">
-                <button
-                  type="button"
-                  class="qty-btn"
-                  onclick="changeQuantity(-1)"
-                >
-                  -
-                </button>
-                <span class="qty-display" id="qtyDisplay">1</span>
-                <button
-                  type="button"
-                  class="qty-btn"
-                  onclick="changeQuantity(1)"
-                >
-                  +
-                </button>
-                <input type="hidden" id="seats" name="seats" value="1" />
-              </div>
-              <label
-                for="tickets"
-                style="
-                  .avaliableTicket {
-                    padding: 15px;
-                    margin: 20px;
-                  }
-                "
-                >Avaliable Tickets :
-                <span name="tickets"><%= ticketsAvaliable %></span>
-              </label>
-            </div>
-
-            <div class="form-group">
-              <label>Bringing a pet? *</label>
-              <div class="radio-group">
-                <div class="radio-option">
-                  <input
-                    type="radio"
-                    id="yes"
-                    name="with_pet"
-                    value="yes"
-                    onchange="togglePetDetails(true)"
-                  />
-                  <label for="yes" style="margin: 0">Yes</label>
-                </div>
-                <div class="radio-option">
-                  <input
-                    type="radio"
-                    id="no"
-                    name="with_pet"
-                    value="no"
-                    onchange="togglePetDetails(false)"
-                    checked
-                  />
-                  <label for="no" style="margin: 0">No</label>
-                </div>
-              </div>
-            </div>
-
-            <div id="pet-details" class="pet-details" style="display: none">
-              <div class="form-group">
-                <label for="pet_name">Pet's Name</label>
-                <input
-                  type="text"
-                  id="pet_name"
-                  name="pet_name"
-                  placeholder="Your pet's name"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="pet_breed">Pet's Breed</label>
-                <input
-                  type="text"
-                  id="pet_breed"
-                  name="pet_breed"
-                  placeholder="e.g., Golden Retriever"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="pet_dob">Pet's Date of Birth</label>
-                <input type="date" id="pet_dob" name="pet_dob" />
-              </div>
-            </div>
+          <div class="menu-icon" id="menuIcon">
+            <img
+              src="/icons/hamburger-svgrepo-com.svg"
+              alt="Menu"
+              height="25px"
+            />
           </div>
-        </form>
+        </header>
       </div>
 
-      <div class="order-summary">
-        <h2 class="summary-title">Order Summary</h2>
+      <% if (user) { %>
+      <div class="booking-wrapper">
+        <div class="booking-form-container">
+          <form id="eventBookingForm" method="POST" action="/event_booking">
+            <h1>Book Your Event</h1>
+            <p class="event-subtitle"><%= eventName || 'Event Booking' %></p>
 
-        <div class="summary-item">
-          <span class="item-label">Event</span>
-          <span class="item-value"><%= eventName || 'Event' %></span>
+            <input type="hidden" name="eventId" value="<%= eventId %>" />
+
+            <div class="form-section">
+              <div class="section-title">Personal Information</div>
+
+              <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Enter your full name"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="you@gmail.com"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="phone_number">Contact Number *</label>
+                <input
+                  type="number"
+                  id="phone_number"
+                  name="phone_number"
+                  placeholder="10-digit mobile number"
+                  pattern="\d{10}"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="address">Address *</label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  placeholder="Your complete address"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="form-section">
+              <div class="section-title">Booking Details</div>
+
+              <div class="form-group">
+                <label>Number of Tickets *</label>
+                <div class="quantity-control">
+                  <button
+                    type="button"
+                    class="qty-btn"
+                    onclick="changeQuantity(-1)"
+                  >
+                    -
+                  </button>
+                  <span class="qty-display" id="qtyDisplay">1</span>
+                  <button
+                    type="button"
+                    class="qty-btn"
+                    onclick="changeQuantity(1)"
+                  >
+                    +
+                  </button>
+                  <input type="hidden" id="seats" name="seats" value="1" />
+                </div>
+                <label
+                  for="tickets"
+                  style="
+                    .avaliableTicket {
+                      padding: 15px;
+                      margin: 20px;
+                    }
+                  "
+                  >Avaliable Tickets :
+                  <span name="tickets"><%= ticketsAvaliable %></span>
+                </label>
+              </div>
+
+              <div class="form-group">
+                <label>Bringing a pet? *</label>
+                <div class="radio-group">
+                  <div class="radio-option">
+                    <input
+                      type="radio"
+                      id="yes"
+                      name="with_pet"
+                      value="yes"
+                      onchange="togglePetDetails(true)"
+                    />
+                    <label for="yes" style="margin: 0">Yes</label>
+                  </div>
+                  <div class="radio-option">
+                    <input
+                      type="radio"
+                      id="no"
+                      name="with_pet"
+                      value="no"
+                      onchange="togglePetDetails(false)"
+                      checked
+                    />
+                    <label for="no" style="margin: 0">No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div id="pet-details" class="pet-details" style="display: none">
+                <div class="form-group">
+                  <label for="pet_name">Pet's Name</label>
+                  <input
+                    type="text"
+                    id="pet_name"
+                    name="pet_name"
+                    placeholder="Your pet's name"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="pet_breed">Pet's Breed</label>
+                  <input
+                    type="text"
+                    id="pet_breed"
+                    name="pet_breed"
+                    placeholder="e.g., Golden Retriever"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="pet_dob">Pet's Date of Birth</label>
+                  <input type="date" id="pet_dob" name="pet_dob" />
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
 
-        <div class="summary-item">
-          <span class="item-label">Ticket Price</span>
-          <span class="item-value"
-            >₹<span id="ticketPrice"><%= ticketPrice%></span></span
-          >
-        </div>
+        <div class="order-summary">
+          <h2 class="summary-title">Order Summary</h2>
 
-        <div class="summary-item">
-          <span class="item-label">Number of Tickets</span>
-          <span class="item-value"><span id="summaryQty">1</span></span>
-        </div>
-
-        <div class="summary-item">
-          <span class="item-label">Subtotal</span>
-          <span class="item-value">₹<span id="subtotal"></span></span>
-        </div>
-
-        <div class="summary-item">
-          <span class="item-label">Platform Fee (4%)</span>
-          <span class="item-value">₹<span id="platformFee">20</span></span>
-        </div>
-
-        <div class="total-section">
-          <div class="total-row">
-            <span>Total Amount</span>
-            <span class="price">₹<span id="totalAmount">520</span></span>
+          <div class="summary-item">
+            <span class="item-label">Event</span>
+            <span class="item-value"><%= eventName || 'Event' %></span>
           </div>
-        </div>
 
-        <button type="submit" form="eventBookingForm" class="submit-btn" onclick="bookFunction()"> 
-          Proceed to Payment
+          <div class="summary-item">
+            <span class="item-label">Ticket Price</span>
+            <span class="item-value"
+              >₹<span id="ticketPrice"><%= ticketPrice%></span></span
+            >
+          </div>
+
+          <div class="summary-item">
+            <span class="item-label">Number of Tickets</span>
+            <span class="item-value"><span id="summaryQty">1</span></span>
+          </div>
+
+          <div class="summary-item">
+            <span class="item-label">Subtotal</span>
+            <span class="item-value">₹<span id="subtotal"></span></span>
+          </div>
+
+          <div class="summary-item">
+            <span class="item-label">Platform Fee (4%)</span>
+            <span class="item-value">₹<span id="platformFee">20</span></span>
+          </div>
+
+          <div class="total-section">
+            <div class="total-row">
+              <span>Total Amount</span>
+              <span class="price">₹<span id="totalAmount">520</span></span>
+            </div>
+          </div>
+
+        <button type="submit" form="eventBookingForm" class="submit-btn">
+            Proceed to Payment
         </button>
 
-        <div class="secure-badge">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-          Secure booking powered by Happy Tails
-        </div>
-      </div>
-      
-    </div>
-    <% } else { %>
-    <div class="booking-wrapper">
-      <div class="login-prompt">
-        <h1>Please Log In</h1>
-        <p>You need to be logged in to book an event.</p>
-        <a href="/my_login" class="login-btn">Go to Login</a>
-      </div>
-    </div>
-    <% } %>
-
-    <footer class="footer">
-      <div class="footer-container">
-        <div class="footer-column">
-          <h3>Happy Tails</h3>
-          <ul>
-            
-            <li><a href="/pet_adoption">Pet Stores</a></li>
-            <li><a href="/pet_accessory">Online Pet Accessories</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Partner</h3>
-          <ul>
-            <li><a href="/store_signup">Pet Store Franchise</a></li>
-            <li><a href="/event_manager_signup">Become an Event Manager</a></li>
-            <li><a href="/service_provider_login">Login as Provider</a></li>
-          </ul>
-        </div>
-        <div class="footer-column">
-          <h3>Policy</h3>
-          <ul>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Refund Policy</a></li>
-            <li><a href="#">Cancellation Policy</a></li>
-            <li><a href="#">Terms & Conditions</a></li>
-          </ul>
-          <div class="footer-social">
-            <a href="#"
-              ><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"
-            /></a>
-            <a href="#"
-              ><img
-                src="/icons/instagram-2016-logo-svgrepo-com.svg"
-                alt="Instagram"
-            /></a>
-            <a href="#"
-              ><img
-                src="/icons/youtube-icon-logo-svgrepo-com.svg"
-                alt="YouTube"
-            /></a>
+          <div class="secure-badge">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            Secure booking powered by Happy Tails
           </div>
         </div>
+        
       </div>
-    </footer>
+      <% } else { %>
+      <div class="booking-wrapper">
+        <div class="login-prompt">
+          <h1>Please Log In</h1>
+          <p>You need to be logged in to book an event.</p>
+          <a href="/my_login" class="login-btn">Go to Login</a>
+        </div>
+      </div>
+      <% } %>
 
-    <script>
-      const TICKET_PRICE = <%= ticketPrice %>;
-      const avaliableTickets = <%=ticketsAvaliable%>;
-      const PLATFORM_FEE_PERCENT = 4;
-      function togglePetDetails(show) {
-        document.getElementById("pet-details").style.display = show
-          ? "block"
-          : "none";
-      }
+      <footer class="footer">
+        <div class="footer-container">
+          <div class="footer-column">
+            <h3>Happy Tails</h3>
+            <ul>
+              
+              <li><a href="/pet_adoption">Pet Stores</a></li>
+              <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Partner</h3>
+            <ul>
+              <li><a href="/store_signup">Pet Store Franchise</a></li>
+              <li><a href="/event_manager_signup">Become an Event Manager</a></li>
+              <li><a href="/service_provider_login">Login as Provider</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Policy</h3>
+            <ul>
+              <li><a href="#">Privacy Policy</a></li>
+              <li><a href="#">Refund Policy</a></li>
+              <li><a href="#">Cancellation Policy</a></li>
+              <li><a href="#">Terms & Conditions</a></li>
+            </ul>
+            <div class="footer-social">
+              <a href="#"
+                ><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"
+              /></a>
+              <a href="#"
+                ><img
+                  src="/icons/instagram-2016-logo-svgrepo-com.svg"
+                  alt="Instagram"
+              /></a>
+              <a href="#"
+                ><img
+                  src="/icons/youtube-icon-logo-svgrepo-com.svg"
+                  alt="YouTube"
+              /></a>
+            </div>
+          </div>
+        </div>
+      </footer>
+      <script>
+          // Wait for the entire HTML document to be loaded before running the script
+          document.addEventListener("DOMContentLoaded", function () {
+              // --- 1. SETUP ---
+              const bookingForm = document.getElementById("eventBookingForm");
+              
+              // This is a safety check in case the form isn't on the page (e.g., user not logged in)
+              if (!bookingForm) {
+                  return;
+              }
 
-      function bookFunction(){
-        alert("Booking Completed");
-      }
+              // Get initial values from the server-rendered EJS
+              const TICKET_PRICE = parseFloat('<%= ticketPrice %>') || 0;
+              const availableTickets = parseInt('<%= ticketsAvaliable %>') || 10;
+              const PLATFORM_FEE_PERCENT = 4;
 
-      function changeQuantity(change) {
-        const currentQty = parseInt(document.getElementById("seats").value);
-        const newQty = Math.max(1, Math.min(avaliableTickets, currentQty + change));
+              // --- 2. FORM SUBMISSION HANDLER ---
+              bookingForm.addEventListener("submit", function (event) {
+                  // Prevent the form from submitting immediately to run validation
+                  event.preventDefault();
 
-        document.getElementById("seats").value = newQty;
-        document.getElementById("qtyDisplay").textContent = newQty;
-        document.getElementById("summaryQty").textContent = newQty;
+                  // --- VALIDATION LOGIC ---
+                  const name = document.getElementById("name").value.trim();
+                  const email = document.getElementById("email").value.trim();
+                  const phoneNumber = document.getElementById("phone_number").value.trim();
+                  const address = document.getElementById("address").value.trim();
+                  const isBringingPet = document.querySelector('input[name="with_pet"]:checked').value === 'yes';
+                  const petName = document.getElementById("pet_name").value.trim();
+                  const petBreed = document.getElementById("pet_breed").value.trim();
+                  const petDob = document.getElementById("pet_dob").value;
 
-        updatePricing(newQty);
-      }
+                  // Validate Name
+                  if (!name) return alert("⚠️ Please enter your full name.");
+                  if (name.length < 3) return alert("⚠️ Name must be at least 3 characters long.");
+                  
+                  // Validate Email (must be a valid format)
+                  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  if (!emailPattern.test(email)) return alert("⚠️ Please enter a valid email address.");
+                  
+                  // Validate Phone Number
+                  const phonePattern = /^\d{10}$/;
+                  if (!phonePattern.test(phoneNumber)) return alert("⚠️ Please enter a valid 10-digit contact number.");
 
-      function updatePricing(quantity) {
-        const subtotal = TICKET_PRICE * quantity;
-        const platformFee = Math.round(subtotal * (PLATFORM_FEE_PERCENT / 100));
-        const total = subtotal + platformFee;
+                  // Validate Address
+                  if (!address) return alert("⚠️ Please enter your address.");
+                  if (address.length < 4) return alert("⚠️ Please enter a more detailed address.");
 
-        document.getElementById("subtotal").textContent = subtotal;
-        document.getElementById("platformFee").textContent = platformFee;
-        document.getElementById("totalAmount").textContent = total;
-      }
+                  // Conditional Validation for Pet Details (only if 'yes' is checked)
+                  if (isBringingPet) {
+                    if (!petName) 
+                        return alert("⚠️ Please enter your pet's name.");
 
-      document.addEventListener("DOMContentLoaded", function () {
-        updatePricing(1);
-      });
-    </script>
-  </body>
-</html>
+                    if (petName.length < 3) 
+                        return alert("⚠️ Pet name must be at least 3 characters long.");
+
+                    if (!petBreed) 
+                        return alert("⚠️ Please enter your pet's breed.");
+
+                    if (petBreed.length < 3) 
+                        return alert("⚠️ Pet breed must be at least 3 characters long.");
+
+                    if (!petDob) 
+                        return alert("⚠️ Please select your pet's date of birth.");
+
+                                          
+                      const today = new Date();
+                      const petBirthDate = new Date(petDob);
+                      today.setHours(0, 0, 0, 0); // Compare dates only, not time
+                      if (petBirthDate > today) return alert("⚠️ Your pet's date of birth cannot be in the future.");
+                  }
+
+                  // --- ✅ SUCCESS: SUBMIT THE FORM ---
+                  // If all checks above have passed, manually submit the form.
+                  // This will send the data to your controller and trigger the page redirect.
+                  console.log("Validation successful! Submitting form for page redirect...");
+                  bookingForm.submit();
+              });
+
+              // --- 3. UI HELPER FUNCTIONS ---
+              window.togglePetDetails = function(show) {
+                  document.getElementById("pet-details").style.display = show ? "block" : "none";
+              };
+
+              window.changeQuantity = function(change) {
+                  const qtyInput = document.getElementById("seats");
+                  const currentQty = parseInt(qtyInput.value);
+                  const newQty = Math.max(1, Math.min(availableTickets, currentQty + change));
+
+                  qtyInput.value = newQty;
+                  document.getElementById("qtyDisplay").textContent = newQty;
+                  document.getElementById("summaryQty").textContent = newQty;
+
+                  updatePricing(newQty);
+              };
+
+              function updatePricing(quantity) {
+                  const subtotal = TICKET_PRICE * quantity;
+                  const platformFee = Math.ceil(subtotal * (PLATFORM_FEE_PERCENT / 100));
+                  const total = subtotal + platformFee;
+
+                  document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+                  document.getElementById("platformFee").textContent = platformFee.toFixed(2);
+                  document.getElementById("totalAmount").textContent = total.toFixed(2);
+              }
+
+              // Initialize pricing on page load
+              updatePricing(1);
+          });
+      </script>
+    </body>
+  </html>
