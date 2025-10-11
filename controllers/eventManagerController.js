@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const { Event, EventAttendee, EventManager } = require('../models/database');
 const mongoose = require("mongoose");
 
-const eventManagerSignup = async (req, res) => {
+const signup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, companyname, location, termsandconditions } = req.body;
 
     if (!name || !contactnumber || !email || !password || !confirmpassword || !companyname || !location || termsandconditions === undefined) {
@@ -70,7 +70,7 @@ const eventManagerSignup = async (req, res) => {
     }
 };
 
-const eventDashbord = async (req, res) => {
+const getDashboard = async (req, res) => {
     try {
         // Check for a valid session to ensure the user is logged in
         if (!req.session.eventManager || !req.session.eventManager.id) {
@@ -168,7 +168,7 @@ const eventDashbord = async (req, res) => {
 };
 // POST /eventmanager_dashboard/createEvent - Create a new event
 // POST /eventmanager_dashboard/createEvent - Create a new event
-const createNewEvent = async (req, res) => {
+const createEvent = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
 
@@ -210,7 +210,7 @@ const createNewEvent = async (req, res) => {
     }
 }
 // PUT /eventmanager_dashboard/updateAttendee/:id - Update an attendees
-const updateAttende = async (req, res) => {
+const updateAttendee = async (req, res) => {
     try {
         const attendeeId = req.params.id;
         const { name, phone_number, seats } = req.body;
@@ -243,7 +243,7 @@ const deleteAttendee = async (req, res) => {
 }
 
 // get-events for dashbord
-const getEvents = async (req, res) => {
+const getManagerEvents = async (req, res) => {
     try {
 
         const eventManagerId = req.session.eventManager.id;
@@ -428,7 +428,7 @@ const getEvents = async (req, res) => {
     }
 }
 //get-event
-const getEvent = async (req, res) => {
+const getEventForEdit = async (req, res) => {
     try {
         const eventId = req.query.eventId;
         if (!eventId) {
@@ -549,7 +549,7 @@ const updateEvent = async (req, res) => {
         res.status(500).send('Failed to update event.');
     }
 };
-const getAttendes = async (req, res) => {
+const getAttendees = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
         const today = new Date();
@@ -693,7 +693,7 @@ const getAttendes = async (req, res) => {
     }
 }
 
-const eventAnalytics = async (req, res) => {
+const getAnalytics = async (req, res) => {
     try {
         if (!req.session?.eventManager?.id) {
             return res.status(401).send('Unauthorized: Please log in.');
@@ -801,7 +801,7 @@ const eventAnalytics = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-const getEventManagerProfile = async (req, res) => {
+const getProfile = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
 
@@ -838,7 +838,7 @@ const getEventManagerProfile = async (req, res) => {
     }
 }
 
-const upadatePassword = async (req, res) => {
+const updatePassword = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
         const { currentPassword, newPassword } = req.body;
@@ -865,7 +865,7 @@ const upadatePassword = async (req, res) => {
 //@dec data for Events.ejs 
 //@route
 //@access
-const getEventsUser = async (req, res) => {
+const getPublicEvents = async (req, res) => {
     try {
         const city = req.query.city || 'none';
         const today = new Date();
@@ -905,7 +905,7 @@ const getEventsUser = async (req, res) => {
 };
 
 
-const registerEvent = async (req, res) => {
+const showBookingForm = async (req, res) => {
     try {
         const eventId = req.query.eventId;
         if (!eventId) {
@@ -932,7 +932,7 @@ const registerEvent = async (req, res) => {
     }
 }
 
-const myEvents = async (req, res) => {
+const getUserEvents = async (req, res) => {
     try {
         if (!req.session.user) {
             return res.status(401).json({ success: false, message: 'Please log in to view your events' });
@@ -1096,7 +1096,7 @@ const postTicket = async (req, res) => {
     }
 }
 
-const updateEventManagerProfile = async (req, res) => {
+const updateProfile = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
         const { firstName, lastName, email, phone, eventType, license, bio } = req.body;
@@ -1204,13 +1204,14 @@ const getEventDetails = async (req, res) => {
             event,
             user: req.session.user
         });
+        
     } catch (err) {
         console.error("Error fetching event details:", err);
         res.status(500).send("Internal Server Error");
     }
 };
 
-const editEvent = async(req,res) =>{
+const showEditForm = async(req,res) =>{
 try {
         const eventId = req.query.eventId;
 
@@ -1296,8 +1297,8 @@ const getEventDetail = async(req,res) =>{
     }
 }
 module.exports = {
-    eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee, getEvents, getEvent, updateEvent
-    , getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword, getEventsUser, registerEvent, myEvents, deleteTicket,
-    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,editEvent, getEventDetail
+    signup, getDashboard, createEvent, updateAttendee, deleteAttendee, getManagerEvents, getEventForEdit, updateEvent
+    , getAttendees, getAnalytics, getProfile, updatePassword, getPublicEvents, showBookingForm, getUserEvents, deleteTicket,
+    postTicket, updateProfile, isAuthenticated, getEventDetails,showEditForm, getEventDetail
 };
 

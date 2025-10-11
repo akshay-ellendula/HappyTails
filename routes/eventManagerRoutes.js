@@ -1,40 +1,70 @@
 const express = require("express");
 const router = express.Router();
-const { eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee,
-    getEvents, getEvent, updateEvent, getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword,
-    getEventsUser, registerEvent, myEvents, deleteTicket, postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,
-    editEvent, getEventDetail
-} = require('../controllers/eventManagerController');
-// Remove this line: const {upload} = require("../utils/stroage.js");  // Assuming it's disk storage, we don't need it
-
-// Add these lines: Import multer and define memory storage (like in vendorController.js)
 const multer = require('multer');
-const memoryStorage = multer.memoryStorage();  // Store in memory for Base64 conversion
+
+const {
+    signup,
+    getDashboard,
+    createEvent,
+    updateAttendee,
+    deleteAttendee,
+    getManagerEvents,
+    updateEvent,
+    getAttendees,
+    getAnalytics,
+    getProfile,
+    updatePassword,
+    getPublicEvents,
+    showBookingForm,
+    getUserEvents,
+    deleteTicket,
+    postTicket,
+    updateProfile,
+    isAuthenticated,
+    getEventDetails,
+    showEditForm,
+    getEventDetail
+} = require('../controllers/eventManagerController');
+
+// Configure multer for memory storage (Base64 conversion)
+const memoryStorage = multer.memoryStorage();
 const memoryUpload = multer({ storage: memoryStorage });
 
+// ==================== PUBLIC ROUTES ====================//
 router.get('/event-details/:id', getEventDetail);
-router.post('/eventManagerSignup', eventManagerSignup);
-router.get('/eventmanager_dashboard', isAuthenticated, eventDashbord);
-// Change to memoryUpload here (instead of upload)
-router.post('/eventmanager_dashboard/createEvent', isAuthenticated, memoryUpload.single('eventPhoto'), createNewEvent);
-router.put('/eventmanager_dashboard/updateAttendee/:id', isAuthenticated, updateAttende);
-router.delete('/eventmanager_dashboard/deleteAttendee/:id', isAuthenticated, deleteAttendee);
-router.get('/eventmanager_events', isAuthenticated, getEvents);
-// router.get('/eventmanager_event_get',getEvent);
-// If updateEvent handles image uploads, change its middleware similarly (assuming it uses post and upload.single)
-router.post('/eventmanager_events/update', isAuthenticated, memoryUpload.single('eventPhoto'), updateEvent);  // Add memoryUpload if it has file upload
-router.get('/eventmanager_attendees', isAuthenticated, getAttendes);
-router.get('/eventmanager_analytics', isAuthenticated, eventAnalytics);
-router.get('/eventmanager_profile', isAuthenticated, getEventManagerProfile);
-router.post('/eventmanager_profile/password', isAuthenticated, upadatePassword);
-router.get('/Events', getEventsUser);
-router.get('/eventDetails', getEventDetails); 
-router.get('/event_booking_form', registerEvent);
-router.get('/api/my_events', myEvents);
-router.delete('/api/cancel_event_booking/:attendeeId', deleteTicket);
+router.post('/eventManagerSignup', signup);
+router.get('/Events', getPublicEvents);
+router.get('/eventDetails', getEventDetails);
+router.get('/event_booking_form', showBookingForm);
 router.post('/event_booking', postTicket);
-// For profile update, if you want Base64 here too, change to memoryUpload (see optional changes below)
-router.post('/eventmanager_profile', isAuthenticated, memoryUpload.single('profilePic'), updateEventManagerProfile);
-router.get("/eventmanager_event_edit", isAuthenticated,editEvent);
+
+// ==================== AUTHENTICATED ROUTES ====================//
+// Dashboard routes
+router.get('/eventmanager_dashboard', isAuthenticated, getDashboard);
+router.post('/eventmanager_dashboard/createEvent', isAuthenticated, memoryUpload.single('eventPhoto'), createEvent);
+
+// Attendee management routes
+router.put('/eventmanager_dashboard/updateAttendee/:id', isAuthenticated, updateAttendee);
+router.delete('/eventmanager_dashboard/deleteAttendee/:id', isAuthenticated, deleteAttendee);
+
+// Event management routes
+router.get('/eventmanager_events', isAuthenticated, getManagerEvents);
+router.post('/eventmanager_events/update', isAuthenticated, memoryUpload.single('eventPhoto'), updateEvent);
+router.get("/eventmanager_event_edit", isAuthenticated, showEditForm);
+
+// Analytics routes
+router.get('/eventmanager_analytics', isAuthenticated, getAnalytics);
+
+// Attendee routes
+router.get('/eventmanager_attendees', isAuthenticated, getAttendees);
+
+// Profile routes
+router.get('/eventmanager_profile', isAuthenticated, getProfile);
+router.post('/eventmanager_profile', isAuthenticated, memoryUpload.single('profilePic'), updateProfile);
+router.post('/eventmanager_profile/password', isAuthenticated, updatePassword);
+
+// User event routes
+router.get('/api/my_events', getUserEvents);
+router.delete('/api/cancel_event_booking/:attendeeId', deleteTicket);
 
 module.exports = router;
