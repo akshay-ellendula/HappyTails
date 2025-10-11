@@ -488,131 +488,75 @@ const getProductStats = async (req, res) => {
 
 const dashBoardStats = async (req, res) => {
     try {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+        const now = new Date();
+        now.setUTCHours(0, 0, 0, 0); // Use UTC-aligned now
+        const today = new Date(now);
         const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
         const totalUsers = await User.countDocuments();
-        const totalUsersLastMonth = await User.countDocuments({ created_at: { $lt: monthAgo } });
         const totalVendors = await Vendor.countDocuments();
-        const totalVendorsLastMonth = await Vendor.countDocuments({ created_at: { $lt: monthAgo } });
         const totalEventManagers = await EventManager.countDocuments();
-        const totalEventManagersLastMonth = await EventManager.countDocuments({ created_at: { $lt: monthAgo } });
         const totalEvents = await Event.countDocuments();
 
-        // Calculate percentage changes
-        const userGrowthPercent = totalUsersLastMonth > 0 ? 
-            Math.round(((totalUsers - totalUsersLastMonth) / totalUsersLastMonth) * 100) : 0;
-        const vendorGrowthPercent = totalVendorsLastMonth > 0 ? 
-            Math.round(((totalVendors - totalVendorsLastMonth) / totalVendorsLastMonth) * 100) : 0;
-        const eventManagerGrowthPercent = totalEventManagersLastMonth > 0 ? 
-            Math.round(((totalEventManagers - totalEventManagersLastMonth) / totalEventManagersLastMonth) * 100) : 0;
-
-        // Calculate revenue from orders (products) and events
+        // Calculate revenue from orders (using subtotal)
         const totalRevenueOrders = await Order.aggregate([
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
+            { $group: { _id: null, total: { $sum: '$subtotal' } } }
         ]);
         const totalRevenueOrdersValue = totalRevenueOrders.length > 0 ? totalRevenueOrders[0].total : 0;
 
+        // Calculate revenue from events (using ticket_price * tickets_sold, no status filter)
         const totalRevenueEvents = await Event.aggregate([
-            { $match: { status: { $in: ['Past', 'Ongoing'] } } },
+            { $match: { date_time: { $lte: now }, tickets_sold: { $gt: 0 }, ticket_price: { $gt: 0 } } },
             { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
         ]);
         const totalRevenueEventsValue = totalRevenueEvents.length > 0 ? totalRevenueEvents[0].total : 0;
+        console.log('Total Revenue Events Raw:', totalRevenueEvents);
 
-        const totalRevenue = totalRevenueOrdersValue + totalRevenueEventsValue;
+        const totalRevenue = (totalRevenueOrdersValue + totalRevenueEventsValue) * 0.1;
 
         const monthlyRevenueOrders = await Order.aggregate([
             { $match: { order_date: { $gte: monthAgo } } },
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
+            { $group: { _id: null, total: { $sum: '$subtotal' } } }
         ]);
         const monthlyRevenueOrdersValue = monthlyRevenueOrders.length > 0 ? monthlyRevenueOrders[0].total : 0;
 
         const monthlyRevenueEvents = await Event.aggregate([
-            { $match: { date_time: { $gte: monthAgo }, status: { $in: ['Past', 'Ongoing'] } } },
+            { $match: { date_time: { $gte: monthAgo, $lte: now }, tickets_sold: { $gt: 0 }, ticket_price: { $gt: 0 } } },
             { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
         ]);
         const monthlyRevenueEventsValue = monthlyRevenueEvents.length > 0 ? monthlyRevenueEvents[0].total : 0;
 
-        const monthlyRevenue = monthlyRevenueOrdersValue + monthlyRevenueEventsValue;
-
-        const lastMonthRevenueOrders = await Order.aggregate([
-            { $match: { order_date: { $gte: new Date(monthAgo.getTime() - 30 * 24 * 60 * 60 * 1000), $lt: monthAgo } } },
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
-        ]);
-        const lastMonthRevenueOrdersValue = lastMonthRevenueOrders.length > 0 ? lastMonthRevenueOrders[0].total : 0;
-
-        const lastMonthRevenueEvents = await Event.aggregate([
-            { $match: { date_time: { $gte: new Date(monthAgo.getTime() - 30 * 24 * 60 * 60 * 1000), $lt: monthAgo }, status: { $in: ['Past', 'Ongoing'] } } },
-            { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
-        ]);
-        const lastMonthRevenueEventsValue = lastMonthRevenueEvents.length > 0 ? lastMonthRevenueEvents[0].total : 0;
-
-        const lastMonthRevenue = lastMonthRevenueOrdersValue + lastMonthRevenueEventsValue;
-        const monthlyRevenueGrowthPercent = lastMonthRevenue > 0 ? 
-            Math.round(((monthlyRevenue - lastMonthRevenue) / lastMonthRevenue) * 100) : 0;
+        const monthlyRevenue = (monthlyRevenueOrdersValue + monthlyRevenueEventsValue) * 0.1;
 
         const weeklyRevenueOrders = await Order.aggregate([
             { $match: { order_date: { $gte: weekAgo } } },
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
+            { $group: { _id: null, total: { $sum: '$subtotal' } } }
         ]);
         const weeklyRevenueOrdersValue = weeklyRevenueOrders.length > 0 ? weeklyRevenueOrders[0].total : 0;
 
         const weeklyRevenueEvents = await Event.aggregate([
-            { $match: { date_time: { $gte: weekAgo }, status: { $in: ['Past', 'Ongoing'] } } },
+            { $match: { date_time: { $gte: weekAgo, $lte: now }, tickets_sold: { $gt: 0 }, ticket_price: { $gt: 0 } } },
             { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
         ]);
         const weeklyRevenueEventsValue = weeklyRevenueEvents.length > 0 ? weeklyRevenueEvents[0].total : 0;
 
-        const weeklyRevenue = weeklyRevenueOrdersValue + weeklyRevenueEventsValue;
-
-        const lastWeekRevenueOrders = await Order.aggregate([
-            { $match: { order_date: { $gte: new Date(weekAgo.getTime() - 7 * 24 * 60 * 60 * 1000), $lt: weekAgo } } },
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
-        ]);
-        const lastWeekRevenueOrdersValue = lastWeekRevenueOrders.length > 0 ? lastWeekRevenueOrders[0].total : 0;
-
-        const lastWeekRevenueEvents = await Event.aggregate([
-            { $match: { date_time: { $gte: new Date(weekAgo.getTime() - 7 * 24 * 60 * 60 * 1000), $lt: weekAgo }, status: { $in: ['Past', 'Ongoing'] } } },
-            { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
-        ]);
-        const lastWeekRevenueEventsValue = lastWeekRevenueEvents.length > 0 ? lastWeekRevenueEvents[0].total : 0;
-
-        const lastWeekRevenue = lastWeekRevenueOrdersValue + lastWeekRevenueEventsValue;
-        const weeklyRevenueGrowthPercent = lastWeekRevenue > 0 ? 
-            Math.round(((weeklyRevenue - lastWeekRevenue) / lastWeekRevenue) * 100) : 0;
+        const weeklyRevenue = (weeklyRevenueOrdersValue + weeklyRevenueEventsValue) * 0.1;
 
         const dailyRevenueOrders = await Order.aggregate([
             { $match: { order_date: { $gte: today } } },
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
+            { $group: { _id: null, total: { $sum: '$subtotal' } } }
         ]);
         const dailyRevenueOrdersValue = dailyRevenueOrders.length > 0 ? dailyRevenueOrders[0].total : 0;
 
         const dailyRevenueEvents = await Event.aggregate([
-            { $match: { date_time: { $gte: today }, status: { $in: ['Past', 'Ongoing'] } } },
+            { $match: { date_time: { $gte: today, $lte: now }, tickets_sold: { $gt: 0 }, ticket_price: { $gt: 0 } } },
             { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
         ]);
         const dailyRevenueEventsValue = dailyRevenueEvents.length > 0 ? dailyRevenueEvents[0].total : 0;
+        console.log('Daily Revenue Events Raw:', dailyRevenueEvents);
 
-        const dailyRevenue = dailyRevenueOrdersValue + dailyRevenueEventsValue;
-
-        const yesterdayRevenueOrders = await Order.aggregate([
-            { $match: { order_date: { $gte: yesterday, $lt: today } } },
-            { $group: { _id: null, total: { $sum: '$total_amount' } } }
-        ]);
-        const yesterdayRevenueOrdersValue = yesterdayRevenueOrders.length > 0 ? yesterdayRevenueOrders[0].total : 0;
-
-        const yesterdayRevenueEvents = await Event.aggregate([
-            { $match: { date_time: { $gte: yesterday, $lt: today }, status: { $in: ['Past', 'Ongoing'] } } },
-            { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
-        ]);
-        const yesterdayRevenueEventsValue = yesterdayRevenueEvents.length > 0 ? yesterdayRevenueEvents[0].total : 0;
-
-        const yesterdayRevenue = yesterdayRevenueOrdersValue + yesterdayRevenueEventsValue;
-        const dailyRevenueGrowthPercent = yesterdayRevenue > 0 ? 
-            Math.round(((dailyRevenue - yesterdayRevenue) / yesterdayRevenue) * 100) : 0;
+        const dailyRevenue = (dailyRevenueOrdersValue + dailyRevenueEventsValue) * 0.1;
 
         res.json({
             success: true,
@@ -620,17 +564,11 @@ const dashBoardStats = async (req, res) => {
                 totalUsers,
                 totalVendors,
                 totalEventManagers,
+                totalEvents,
                 totalRevenue,
-                 totalEvents,
                 monthlyRevenue,
                 weeklyRevenue,
-                dailyRevenue,
-                userGrowthPercent,
-                vendorGrowthPercent,
-                eventManagerGrowthPercent,
-                monthlyRevenueGrowthPercent,
-                weeklyRevenueGrowthPercent,
-                dailyRevenueGrowthPercent
+                dailyRevenue
             }
         });
     } catch (err) {
@@ -642,111 +580,43 @@ const dashBoardStats = async (req, res) => {
 const getRevenueChartData = async (req, res) => {
     try {
         const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
         const months = [];
-        const petSalesData = [];
-        const productsData = [];
-        const servicesData = [];
+        const orderRevenueData = [];
+        const eventRevenueData = [];
 
         // Generate last 12 months
         for (let i = 11; i >= 0; i--) {
             const monthStart = new Date(today.getFullYear(), today.getMonth() - i, 1);
+            monthStart.setUTCHours(0, 0, 0, 0);
             const monthEnd = new Date(today.getFullYear(), today.getMonth() - i + 1, 0);
+            monthEnd.setUTCHours(23, 59, 59, 999);
             months.push(monthStart.toLocaleString('default', { month: 'short' }));
 
-            // Pet Sales (Assuming pet sales are a category in products, e.g., product_type: 'Pet')
-            const petSales = await Order.aggregate([
+            // Order Revenue (using subtotal)
+            const orderRevenue = await Order.aggregate([
                 { $match: { order_date: { $gte: monthStart, $lte: monthEnd } } },
-                {
-                    $lookup: {
-                        from: 'orderitems',
-                        localField: '_id',
-                        foreignField: 'order_id',
-                        as: 'items'
-                    }
-                },
-                { $unwind: '$items' },
-                {
-                    $lookup: {
-                        from: 'products',
-                        localField: 'items.product_id',
-                        foreignField: '_id',
-                        as: 'product'
-                    }
-                },
-                { $unwind: '$product' },
-                { $match: { 'product.product_type': 'Pet' } },
-                { $group: { _id: null, total: { $sum: '$total_amount' } } }
+                { $group: { _id: null, total: { $sum: '$subtotal' } } }
             ]);
-            petSalesData.push(petSales.length > 0 ? petSales[0].total : 0);
+            const orderRevenueValue = orderRevenue.length > 0 ? orderRevenue[0].total : 0;
 
-            // Products (All other product types except 'Pet' and 'Service')
-            const products = await Order.aggregate([
-                { $match: { order_date: { $gte: monthStart, $lte: monthEnd } } },
-                {
-                    $lookup: {
-                        from: 'orderitems',
-                        localField: '_id',
-                        foreignField: 'order_id',
-                        as: 'items'
-                    }
-                },
-                { $unwind: '$items' },
-                {
-                    $lookup: {
-                        from: 'products',
-                        localField: 'items.product_id',
-                        foreignField: '_id',
-                        as: 'product'
-                    }
-                },
-                { $unwind: '$product' },
-                { $match: { 'product.product_type': { $nin: ['Pet', 'Service'] } } },
-                { $group: { _id: null, total: { $sum: '$total_amount' } } }
-            ]);
-            productsData.push(products.length > 0 ? products[0].total : 0);
+            // Event Revenue (using ticket_price * tickets_sold)
+            const eventRevenue = await Event.aggregate([
+    { $match: { date_time: { $gte: monthStart, $lte: monthEnd }, tickets_sold: { $gt: 0 }, ticket_price: { $gt: 0 } } },
+    { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
+]);
+            const eventRevenueValue = eventRevenue.length > 0 ? eventRevenue[0].total : 0;
 
-            // Services (Assuming product_type: 'Service' or events)
-            const servicesOrders = await Order.aggregate([
-                { $match: { order_date: { $gte: monthStart, $lte: monthEnd } } },
-                {
-                    $lookup: {
-                        from: 'orderitems',
-                        localField: '_id',
-                        foreignField: 'order_id',
-                        as: 'items'
-                    }
-                },
-                { $unwind: '$items' },
-                {
-                    $lookup: {
-                        from: 'products',
-                        localField: 'items.product_id',
-                        foreignField: '_id',
-                        as: 'product'
-                    }
-                },
-                { $unwind: '$product' },
-                { $match: { 'product.product_type': 'Service' } },
-                { $group: { _id: null, total: { $sum: '$total_amount' } } }
-            ]);
-            const servicesOrdersValue = servicesOrders.length > 0 ? servicesOrders[0].total : 0;
-
-            const servicesEvents = await Event.aggregate([
-                { $match: { date_time: { $gte: monthStart, $lte: monthEnd }, status: { $in: ['Past', 'Ongoing'] } } },
-                { $group: { _id: null, total: { $sum: { $multiply: ['$ticket_price', '$tickets_sold'] } } } }
-            ]);
-            const servicesEventsValue = servicesEvents.length > 0 ? servicesEvents[0].total : 0;
-
-            servicesData.push(servicesOrdersValue + servicesEventsValue);
+            orderRevenueData.push(orderRevenueValue * 0.1); // 10% tax
+            eventRevenueData.push(eventRevenueValue * 0.1); // 10% tax
         }
 
         res.json({
             success: true,
             chartData: {
                 labels: months,
-                petSales: petSalesData,
-                products: productsData,
-                services: servicesData
+                orderRevenue: orderRevenueData,
+                eventRevenue: eventRevenueData
             }
         });
     } catch (err) {
@@ -2126,6 +1996,96 @@ const getOrderStats = async (req, res) => {
     }
 };
 
+const getEventRevenue = async (req, res) => {
+    try {
+        const now = new Date();
+        const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+
+        // Total revenue all time (10% of total ticket sales)
+        const totalAgg = await EventAttendee.aggregate([
+            {
+                $lookup: {
+                    from: 'events',
+                    localField: 'event_id',
+                    foreignField: '_id',
+                    as: 'event'
+                }
+            },
+            { $unwind: '$event' },
+            {
+                $group: {
+                    _id: null,
+                    totalSales: { $sum: { $multiply: ['$event.ticket_price', '$seats'] } }
+                }
+            }
+        ]);
+        const totalSales = totalAgg.length > 0 ? totalAgg[0].totalSales : 0;
+        const totalRevenue = totalSales * 0.1;
+
+        // This month's sales (for change calculation)
+        const thisMonthAgg = await EventAttendee.aggregate([
+            { $match: { registration_date: { $gte: thisMonthStart } } },
+            {
+                $lookup: {
+                    from: 'events',
+                    localField: 'event_id',
+                    foreignField: '_id',
+                    as: 'event'
+                }
+            },
+            { $unwind: '$event' },
+            {
+                $group: {
+                    _id: null,
+                    thisMonthSales: { $sum: { $multiply: ['$event.ticket_price', '$seats'] } }
+                }
+            }
+        ]);
+        const thisMonthSales = thisMonthAgg.length > 0 ? thisMonthAgg[0].thisMonthSales : 0;
+
+        // Last month's sales (for change calculation)
+        const lastMonthAgg = await EventAttendee.aggregate([
+            { $match: { registration_date: { $gte: lastMonthStart, $lte: lastMonthEnd } } },
+            {
+                $lookup: {
+                    from: 'events',
+                    localField: 'event_id',
+                    foreignField: '_id',
+                    as: 'event'
+                }
+            },
+            { $unwind: '$event' },
+            {
+                $group: {
+                    _id: null,
+                    lastMonthSales: { $sum: { $multiply: ['$event.ticket_price', '$seats'] } }
+                }
+            }
+        ]);
+        const lastMonthSales = lastMonthAgg.length > 0 ? lastMonthAgg[0].lastMonthSales : 0;
+
+        // Calculate percentage change
+        let change = 0;
+        if (lastMonthSales > 0) {
+            change = ((thisMonthSales - lastMonthSales) / lastMonthSales) * 100;
+        } else if (thisMonthSales > 0) {
+            change = 100; // Treat as 100% growth if last month was zero
+        }
+        const changeStr = (change > 0 ? '+' : '') + change.toFixed(0) + '%';
+
+        res.json({
+            success: true,
+            revenue: totalRevenue.toFixed(2),
+            change: changeStr
+        });
+    } catch (err) {
+        console.error('Error calculating event revenue:', err);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
 module.exports = {
     adminLogin,
     getUsers,
@@ -2170,5 +2130,6 @@ module.exports = {
     getProductCustomers,
     getOrders,
     getOrderDetails,
-    getOrderStats
+    getOrderStats,
+    getEventRevenue
 };
