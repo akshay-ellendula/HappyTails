@@ -59,21 +59,26 @@
                         <h2>Revenue Overview</h2>
                         <% if (period === 'all') { %>
     <div class="stat">
-        <div class="stat-label">Total Revenue</div>
-        <div class="stat-value">₹<%= analytics.revenue.total %></div>
-    </div>
-    <div class="stat">
-        <div class="stat-label">Today</div>
-        <div class="stat-value">₹<%= analytics.revenue.today %> <span class="indicator <%= analytics.revenue.todayChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.todayChange >= 0 ? '+' : '' %><%= analytics.revenue.todayChange.toFixed(1) %>%</span></div>
-    </div>
-    <div class="stat">
-        <div class="stat-label">This Week</div>
-        <div class="stat-value">₹<%= analytics.revenue.week %> <span class="indicator <%= analytics.revenue.weekChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.weekChange >= 0 ? '+' : '' %><%= analytics.revenue.weekChange.toFixed(1) %>%</span></div>
-    </div>
-    <div class="stat">
-        <div class="stat-label">This Month</div>
-        <div class="stat-value">₹<%= analytics.revenue.month %> <span class="indicator <%= analytics.revenue.monthChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.monthChange >= 0 ? '+' : '' %><%= analytics.revenue.monthChange.toFixed(1) %>%</span></div>
-    </div>
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value">₹<%= analytics.revenue.total %></div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label" style="color: #6c757d;">Platform Fees (6%)</div>
+            <div class="stat-value" style="color: #dc3545;">- ₹<%= (parseFloat(analytics.revenue.total) / 0.94 * 0.06).toFixed(2) %></div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Today</div>
+            <div class="stat-value">₹<%= analytics.revenue.today %> <span class="indicator <%= analytics.revenue.todayChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.todayChange >= 0 ? '+' : '' %><%= analytics.revenue.todayChange.toFixed(1) %>%</span></div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">This Week</div>
+            <div class="stat-value">₹<%= analytics.revenue.week %> <span class="indicator <%= analytics.revenue.weekChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.weekChange >= 0 ? '+' : '' %><%= analytics.revenue.weekChange.toFixed(1) %>%</span></div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">This Month</div>
+            <div class="stat-value">₹<%= analytics.revenue.month %> <span class="indicator <%= analytics.revenue.monthChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.monthChange >= 0 ? '+' : '' %><%= analytics.revenue.monthChange.toFixed(1) %>%</span></div>
+        </div>
 <% } else { %>
     <% 
         let revenueLabel = 'Revenue';
