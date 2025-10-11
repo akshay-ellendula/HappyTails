@@ -74,7 +74,7 @@
                 <td><%= order.products %></td>
                 <td>₹<%= order.total %></td>
                 <td><%= order.date %></td>
-                <td><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+                <td class="status-cell"><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
                 <td>
                     <i class="fa fa-eye" data-order-id="<%= order.id %>" onclick="viewOrder('<%= order.id %>')"></i> 
                     <i class="fa fa-print" onclick="printOrder('<%= order.id %>')"></i>

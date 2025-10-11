@@ -270,3 +270,8 @@ td:last-child {
 .show {
     display: block;
 }
+
+.status-cell {
+    display: flex;
+    align-items: center; /* This vertically centers the status pill */
+}
