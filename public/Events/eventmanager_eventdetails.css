@@ -1,0 +1,209 @@
+body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #effe8b;
+            margin: 0;
+            color: #333;
+        }
+        .navbar {
+            background: #effe8b;
+            padding: 10px 5%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navbar header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .badge {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            text-decoration: none;
+        }
+        .menu a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+        }
+        .details-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+        .event-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .event-header img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .event-header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        .event-content {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .left-column {
+            flex: 2;
+            min-width: 300px;
+        }
+        .right-column {
+            flex: 1;
+            min-width: 300px;
+        }
+        .left-column h2 {
+            border-bottom: 2px solid black;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .left-column p {
+            line-height: 1.6;
+            color: #555;
+        }
+        .info-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .info-card h3 {
+            margin-top: 0;
+            border-bottom: 1px solid black;
+            padding-bottom: 10px;
+        }
+        .info-card p {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+        .info-card strong {
+            color: #333;
+        }
+        .back-link {
+            display: inline-block;
+            margin: 10px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .attendees-section {
+            margin-top: 40px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .attendees-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .attendees-header h2 {
+            margin: 0;
+        }
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 250px;
+            font-size: 1rem;
+        }
+        .attendees-section table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .attendees-section th, .attendees-section td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid black;
+        }
+        .attendees-section th {
+            background-color: #f8f8f8;
+            font-weight: 600;
+        }
+        /* Add this inside the <style> tag */
+.edit-btn, .delete-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.edit-btn {
+    background-color: #007bff; /* Blue */
+}
+
+.delete-btn {
+    background-color: #dc3545; /* Red */
+}
+
+/* Basic styling for the modal (can be improved) */
+.modal {
+    display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fefefe; margin: 10% auto; padding: 20px; border-radius: 8px; width: 80%; max-width: 500px;
+}
+.close-btn {
+    color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer;
+}
+/* Add this to your existing <style> tag */
+.attendees-section .edit-btn,
+.attendees-section .delete-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-right: 5px;
+}
+
+.attendees-section .edit-btn { background-color: #007bff; }
+.attendees-section .delete-btn { background-color: #dc3545; }
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    margin:auto;
+    margin-top: 50px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 30px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-content h2 { margin-top: 0; }
+.modal-content .form-group { margin-bottom: 15px; }
+.modal-content label { display: block; margin-bottom: 5px; font-weight: 500; }
+.modal-content input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+.modal-content .book_btn { width: 100%; padding: 12px; background-color: #333; color: white; border: none; border-radius: 5px; font-size: 1rem; cursor: pointer; }
+.close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+    
