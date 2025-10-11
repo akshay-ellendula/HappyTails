@@ -54,7 +54,7 @@ function fetchEventDetails() {
                 document.getElementById('ageLimit').textContent = event.age_limit;
                 document.getElementById('totalTickets').textContent = event.total_tickets;
                 document.getElementById('ticketsSold').textContent = event.tickets_sold;
-                document.getElementById('revenue').textContent = `$${(event.tickets_sold * event.ticket_price).toFixed(2)}`;
+                document.getElementById('revenue').textContent = `$${((event.tickets_sold * event.ticket_price)*0.94).toFixed(2)}`;
                 document.getElementById('about').textContent = event.about;
                 document.getElementById('instructions').textContent = event.instructions || 'N/A';
                 document.getElementById('terms').textContent = event.terms || 'N/A';

@@ -53,7 +53,7 @@ function fetchManagerStats() {
                 const stats = data.stats;
                 // Update stats cards
                 document.querySelector('.stats-container .stat-card:nth-child(1) .number').textContent = stats.total || 0;
-                document.querySelector('.stats-container .stat-card:nth-child(2) .number').textContent = `$${stats.totalRevenue ? stats.totalRevenue.toLocaleString() : 0}`;
+                document.querySelector('.stats-container .stat-card:nth-child(2) .number').textContent = `$${stats.totalRevenue ? stats.totalRevenue.toFixed(2).toLocaleString() : '0.00'}`;
                 document.querySelector('.stats-container .stat-card:nth-child(3) .number').textContent = stats.totalOrders ? stats.totalOrders.toLocaleString() : 0;
                 document.querySelector('.stats-container .stat-card:nth-child(4) .number').textContent = stats.todaysOrders || 0;
 
