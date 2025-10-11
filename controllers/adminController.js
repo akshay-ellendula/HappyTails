@@ -191,6 +191,7 @@ const getProductData = async (productId) => {
                         store_name: '$vendor.store_name',
                         email: '$vendor.email'
                     },
+                    // Extract image_data from the first primary or any image
                     image: {
                         $ifNull: [
                             { $arrayElemAt: [{ $filter: { input: '$images', as: 'img', cond: { $eq: ['$$img.is_primary', true] } } }, 0] },
@@ -213,11 +214,13 @@ const getProductData = async (productId) => {
                     sale_price: 1,
                     stock_quantity: 1,
                     vendor: 1,
-                    image: '$image.image_data'
+                    // **CHANGE HERE**: Directly access image_data from the image object
+                    image: { $ifNull: ['$image.image_data', null] }
                 }
             }
         ]);
 
+        console.log('Aggregated product data:', product[0]); // Debug log
         return product.length > 0 ? product[0] : null;
     } catch (err) {
         console.error('Error in getProductData:', err);
@@ -1517,12 +1520,12 @@ const getTotalEvents = async (req, res) => {
 const getEventManager = async (req, res) => {
     try {
         const managerId = req.params.id;
-        const manager = await EventManager.findById(managerId)
-            .select('id name email contact_number company_name location created_at image');
+        const manager = await EventManager.findById(managerId);
+        if (!manager) return res.status(404).json({ success: false, message: 'Event Manager not found' });
 
-        if (!manager) {
-            return res.status(404).json({ success: false, message: 'Event Manager not found' });
-        }
+        // Use the image as-is from the database, log to debug
+        const imageBase64 = manager.image || null;
+        console.log('Manager image data:', imageBase64); // Debug log
 
         res.json({
             success: true,
@@ -1530,14 +1533,14 @@ const getEventManager = async (req, res) => {
                 id: manager._id.toString(),
                 name: manager.name,
                 email: manager.email,
-                phone: manager.contact_number || null,
-                organization: manager.company_name || null,
-                location: manager.location || null,
+                organization: manager.company_name,
+                phone: manager.contact_number,
                 joined_date: manager.created_at,
-                image: manager.image || null  // Base64 image string
+                image: imageBase64 // Full base64 URL or null
             }
         });
     } catch (err) {
+        console.error('Error in getEventManager:', err);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
@@ -2015,16 +2018,14 @@ const deleteEvent = async (req, res) => {
     }
 };
 
-// In adminController.js, add the following functions:
-
 const getEvent = async (req, res) => {
     try {
         const eventId = req.params.id;
-        const event = await Event.findById(eventId)
-            .populate('event_manager_id', 'name email contact_number company_name')
-            .select('_id event_name about_event language duration ticket_price age_limit instructions venue terms category date_time status total_tickets tickets_sold city contact_number image created_at');
-
+        const event = await Event.findById(eventId).populate('event_manager_id', 'name');
         if (!event) return res.status(404).json({ success: false, message: 'Event not found' });
+
+        // Use the image as-is from the database since it already has the MIME type
+        const imageBase64 = event.image || null; // No modification needed
 
         res.json({
             success: true,
@@ -2046,21 +2047,16 @@ const getEvent = async (req, res) => {
                 tickets_sold: event.tickets_sold,
                 city: event.city,
                 contact_number: event.contact_number,
-                image: event.image || null,  // Base64 string
-                created_at: event.created_at,
-                manager: event.event_manager_id ? {
-                    name: event.event_manager_id.name,
-                    email: event.event_manager_id.email,
-                    phone: event.event_manager_id.contact_number,
-                    organization: event.event_manager_id.company_name
-                } : null
-            }
+                image: imageBase64, // Return the full base64 URL as stored
+                created_at: event.created_at
+            },
+            manager: event.event_manager_id ? { name: event.event_manager_id.name } : null
         });
     } catch (err) {
+        console.error('Error in getEvent:', err);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
-
 const getEventAttendees = async (req, res) => {
     try {
         const eventId = req.params.id;

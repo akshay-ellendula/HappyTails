@@ -12,18 +12,31 @@ function goBack() {
 }
 
 function fetchEventDetails() {
+    const loadingMsg = document.createElement('p');
+    loadingMsg.textContent = 'Loading event details...';
+    loadingMsg.style.color = 'blue';
+    document.getElementById('eventView').prepend(loadingMsg);
+
     fetch(`/admin/event/${eventId}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            return response.json();
+        })
         .then(data => {
+            loadingMsg.remove();
             if (data.success) {
                 const event = data.event;
+                console.log('Received event data:', event); // Debug: Log full event object
+                console.log('Received image data:', event.image); // Debug: Log image specifically
                 const imageElem = document.getElementById('eventImage');
                 if (event.image) {
-                    imageElem.style.backgroundImage = `url('data:image/png;base64,${event.image}')`;
-                    imageElem.style.backgroundColor = 'transparent';
-                    imageElem.textContent = '';
+                    imageElem.src = event.image; // Set the full base64 URL
+                    imageElem.alt = event.name; // Set alt text
+                    imageElem.style.display = 'block'; // Ensure image is visible
                 } else {
-                    imageElem.textContent = event.name.charAt(0);
+                    imageElem.src = 'https://via.placeholder.com/150'; // Fallback placeholder image
+                    imageElem.alt = 'No image available';
+                    imageElem.style.display = 'block';
                 }
                 document.getElementById('eventName').textContent = event.name;
                 document.getElementById('eventDate').textContent = new Date(event.date_time).toLocaleString();
@@ -37,24 +50,30 @@ function fetchEventDetails() {
                 document.getElementById('createdAt').textContent = new Date(event.created_at).toLocaleDateString();
                 document.getElementById('language').textContent = event.language;
                 document.getElementById('duration').textContent = event.duration;
-                document.getElementById('ticketPrice').textContent = `$${event.ticket_price}`;
+                document.getElementById('ticketPrice').textContent = `$${event.ticket_price.toFixed(2)}`;
                 document.getElementById('ageLimit').textContent = event.age_limit;
                 document.getElementById('totalTickets').textContent = event.total_tickets;
                 document.getElementById('ticketsSold').textContent = event.tickets_sold;
+                document.getElementById('revenue').textContent = `$${(event.tickets_sold * event.ticket_price).toFixed(2)}`;
                 document.getElementById('about').textContent = event.about;
                 document.getElementById('instructions').textContent = event.instructions || 'N/A';
                 document.getElementById('terms').textContent = event.terms || 'N/A';
             } else {
-                alert('Failed to load event details: ' + data.message);
+                throw new Error(data.message || 'Failed to load event details');
             }
         })
         .catch(error => {
+            loadingMsg.remove();
+            const errorMsg = document.createElement('p');
+            errorMsg.textContent = `Error: ${error.message}. Please try again later.`;
+            errorMsg.style.color = 'red';
+            document.getElementById('eventView').prepend(errorMsg);
             console.error('Error fetching event details:', error);
-            alert('Error loading event details');
         });
 }
 
 function fetchEventAttendees() {
+    // Similar loading and error handling can be added here if needed
     fetch(`/admin/event/${eventId}/attendees`)
         .then(response => response.json())
         .then(data => {
@@ -79,41 +98,44 @@ function fetchEventAttendees() {
         .catch(error => console.error('Error fetching attendees:', error));
 }
 
+// ... (rest of the functions like showEditForm, handleFormSubmit, deleteEvent remain unchanged)
+
+// Existing code...
 function showEditForm() {
-    const eventName = document.getElementById('eventName').textContent;
-    const about = document.getElementById('about').textContent;
-    const language = document.getElementById('language').textContent;
-    const duration = document.getElementById('duration').textContent;
-    const ticketPrice = document.getElementById('ticketPrice').textContent.replace('$', '');
-    const ageLimit = document.getElementById('ageLimit').textContent;
-    const venue = document.getElementById('venue').textContent;
-    const category = document.getElementById('category').textContent;
-    const dateTime = new Date(document.getElementById('eventDate').textContent).toISOString().slice(0, 16);
-    const totalTickets = document.getElementById('totalTickets').textContent;
-    const city = document.getElementById('city').textContent;
-    const contactNumber = document.getElementById('contactNumber').textContent;
-    const instructions = document.getElementById('instructions').textContent;
-    const terms = document.getElementById('terms').textContent;
+    // Prefill form with current values (handle null/undefined)
+    document.getElementById('editName').value = document.getElementById('eventName').textContent || '';
+    document.getElementById('editAbout').value = document.getElementById('about').textContent || '';
+    document.getElementById('editLanguage').value = document.getElementById('language').textContent || '';
+    document.getElementById('editDuration').value = document.getElementById('duration').textContent || '';
+    document.getElementById('editTicketPrice').value = parseFloat(document.getElementById('ticketPrice').textContent.replace('$', '')) || 0;
+    document.getElementById('editAgeLimit').value = document.getElementById('ageLimit').textContent || '';
+    document.getElementById('editInstructions').value = document.getElementById('instructions').textContent === 'N/A' ? '' : document.getElementById('instructions').textContent;
+    document.getElementById('editVenue').value = document.getElementById('venue').textContent || '';
+    document.getElementById('editTerms').value = document.getElementById('terms').textContent === 'N/A' ? '' : document.getElementById('terms').textContent;
+    document.getElementById('editCategory').value = document.getElementById('category').textContent || '';
+    const dateTime = new Date(document.getElementById('eventDate').textContent);
+    document.getElementById('editDateTime').value = dateTime.toISOString().slice(0, 16) || ''; // Format for datetime-local
+    document.getElementById('editTotalTickets').value = document.getElementById('totalTickets').textContent || 1;
+    document.getElementById('editCity').value = document.getElementById('city').textContent || '';
+    document.getElementById('editContactNumber').value = document.getElementById('contactNumber').textContent || '';
 
-    document.getElementById('editName').value = eventName;
-    document.getElementById('editAbout').value = about;
-    document.getElementById('editLanguage').value = language;
-    document.getElementById('editDuration').value = duration;
-    document.getElementById('editTicketPrice').value = ticketPrice;
-    document.getElementById('editAgeLimit').value = ageLimit;
-    document.getElementById('editVenue').value = venue;
-    document.getElementById('editCategory').value = category;
-    document.getElementById('editDateTime').value = dateTime;
-    document.getElementById('editTotalTickets').value = totalTickets;
-    document.getElementById('editCity').value = city;
-    document.getElementById('editContactNumber').value = contactNumber === 'N/A' ? '' : contactNumber;
-    document.getElementById('editInstructions').value = instructions === 'N/A' ? '' : instructions;
-    document.getElementById('editTerms').value = terms === 'N/A' ? '' : terms;
+    // Clear error messages
+    document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
 
+    // Show edit form, hide view
     document.getElementById('eventView').style.display = 'none';
-    document.getElementById('editForm').style.display = 'block';
+    document.getElementById('editForm').style.display = 'block'; // Matches EJS ID
+    console.log('Edit form shown'); // Debug log
 }
 
+// Ensure DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    fetchEventDetails();
+    fetchEventAttendees();
+    document.getElementById('eventEditForm').addEventListener('submit', handleFormSubmit);
+    // Add click listener for edit button
+    document.querySelector('.edit-btn').addEventListener('click', showEditForm); // Fallback if onclick fails
+});
 function cancelEdit() {
     document.getElementById('editForm').style.display = 'none';
     document.getElementById('eventView').style.display = 'block';

@@ -22,13 +22,17 @@ function fetchManagerDetails() {
             if (data.success) {
                 const manager = data.manager;
                 const avatar = document.getElementById('managerAvatar');
+                console.log('Manager image from API:', manager.image); // Debug log
                 if (manager.image) {
-                    // Assuming image is base64 string without prefix
-                    avatar.style.backgroundImage = `url('data:image/png;base64,${manager.image}')`;
-                    avatar.style.backgroundColor = 'transparent'; // Remove fallback color if image exists
+                    // Check if image already has a data URL prefix
+                    const imageUrl = manager.image.startsWith('data:image') ? manager.image : `data:image/png;base64,${manager.image}`;
+                    avatar.style.backgroundImage = `url('${imageUrl}')`;
+                    avatar.style.backgroundColor = 'transparent'; // Remove fallback color
                     avatar.textContent = ''; // Remove initial letter
                 } else {
-                    avatar.textContent = manager.name.charAt(0);
+                    avatar.textContent = manager.name.charAt(0); // Fallback to initial
+                    avatar.style.backgroundImage = 'none';
+                    avatar.style.backgroundColor = 'var(--event-color)';
                 }
                 document.getElementById('managerName').textContent = manager.name;
                 document.getElementById('managerEmail').textContent = manager.email;
@@ -45,7 +49,6 @@ function fetchManagerDetails() {
             alert('Error loading manager details');
         });
 }
-
 function fetchEventMetrics() {
     fetch(`/admin/event-manager/${managerId}/metrics`)
         .then(response => response.json())

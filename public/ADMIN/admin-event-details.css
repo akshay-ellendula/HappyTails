@@ -86,22 +86,14 @@ body {
 }
 
 .event-image {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: var(--event-color);
-    color: var(--white);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-    font-weight: bold;
+    width: 150px;
+    height: 150px;
+    border-radius: 0;  /* Rectangular as requested */
     margin-right: 20px;
     float: left;
-    background-size: cover;
-    background-position: center;
+    object-fit: cover;  /* Ensures image fits without distortion */
+    display: block;     /* Ensure visibility */
 }
-
 .event-name {
     font-size: 24px;
     margin-bottom: 5px;

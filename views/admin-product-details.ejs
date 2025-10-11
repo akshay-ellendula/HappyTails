@@ -20,8 +20,8 @@
             <div id="productView">
                 <div class="product-profile">
                     <div class="product-image">
-                        <img id="productImage" src="data:image/jpeg;base64,<%= product.image %>" alt="Product Image">
-                    </div>
+    <img id="productImage" src="<%= product.image || 'https://via.placeholder.com/150' %>" alt="Product Image">
+</div>
                     <div class="product-info">
                         <h2 class="product-name" id="productName"><%= product.product_name %></h2>
                         <p class="product-category" id="productCategory"><%= product.product_category %></p>
