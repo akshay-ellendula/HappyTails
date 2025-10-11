@@ -131,11 +131,33 @@ const getVendorProducts = async (req, res) => {
 
     const vendor = req.session.vendor;
     const vendorId = vendor.id;
+    const { category, sort } = req.query;
+
+    // --- FILTER AND SORT LOGIC ---
+    const matchStage = {
+        vendor_id: new mongoose.Types.ObjectId(vendorId),
+        is_deleted: { $ne: true }
+    };
+    if (category && category !== 'All Categories') {
+        matchStage.product_category = category;
+    }
+
+    const sortStage = {};
+    if (sort === 'oldest') {
+        sortStage.created_at = 1;
+    } else if (sort === 'price_asc') {
+        sortStage.price_for_sort = 1;
+    } else if (sort === 'price_desc') {
+        sortStage.price_for_sort = -1;
+    } else {
+        sortStage.created_at = -1; // Default to newest
+    }
+    // -----------------------------
     console.log('Fetching products for vendor:', { vendorId });
 
     try {
         const products = await Product.aggregate([
-            { $match: { vendor_id: new mongoose.Types.ObjectId(vendorId) } },
+            { $match: matchStage },
             {
                 $lookup: {
                     from: 'productvariants',
@@ -155,25 +177,43 @@ const getVendorProducts = async (req, res) => {
             {
                 $addFields: {
                     primary_image: {
-                        $arrayElemAt: [
+                        $ifNull: [
                             {
-                                $filter: {
-                                    input: '$images',
-                                    as: 'img',
-                                    cond: { $eq: ['$$img.is_primary', true] }
-                                }
+                                $arrayElemAt: [
+                                    {
+                                        $filter: {
+                                            input: '$images',
+                                            as: 'img',
+                                            cond: { $eq: ['$$img.is_primary', true] }
+                                        }
+                                    },
+                                    0
+                                ]
                             },
-                            0
+                            {
+                                $arrayElemAt: ['$images', 0]
+                            }
                         ]
                     }
                 }
             },
+            {
+                $addFields: {
+                    price_for_sort: { $ifNull: [{ $arrayElemAt: ['$variants.regular_price', 0] }, 0] }
+                }
+            },
+            { $sort: sortStage },
             {
                 $lookup: {
                     from: 'orderitems',
                     localField: '_id',
                     foreignField: 'product_id',
                     as: 'order_items'
+                }
+            },
+           {
+                $addFields: {
+                    total_stock: { $sum: '$variants.stock_quantity' }
                 }
             },
             {
@@ -184,7 +224,7 @@ const getVendorProducts = async (req, res) => {
                     product_type: 1,
                     sale_price: { $arrayElemAt: ['$variants.sale_price', 0] },
                     regular_price: { $ifNull: [{ $arrayElemAt: ['$variants.regular_price', 0] }, 0] },
-                    stock_quantity: { $arrayElemAt: ['$variants.stock_quantity', 0] },
+                    stock_quantity: '$total_stock', // Use the new total stock
                     image_data: { $ifNull: ['$primary_image.image_data', '/images/default.jpg'] },
                     sold: { $sum: '$order_items.quantity' },
                     _id: 0
@@ -202,195 +242,107 @@ const getVendorProducts = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
-// Fetch vendor profile
 const getVendorProfile = async (req, res) => {
     if (!req.session.vendor) {
-        console.log('No vendor session in getVendorProfile, redirecting to login');
         return res.redirect('/service_provider_login');
     }
 
-    const vendor = req.session.vendor;
-    const vendorId = vendor.id;
-    console.log('Fetching profile for vendor:', { vendorId });
+    const vendorId = req.session.vendor.id;
 
     try {
         const vendorDetails = await Vendor.findById(vendorId);
         if (!vendorDetails) {
-            console.error('Vendor not found:', vendorId);
             return res.status(404).send('Vendor not found');
         }
 
+        // --- NEW: Time Period Definitions ---
+        const now = new Date();
+        const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = currentMonthStart;
+
+        // --- NEW: Helper function for calculations ---
+        const getStatsForPeriod = async (startDate, endDate) => {
+            const revenueResult = await Order.aggregate([
+                { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' } },
+                { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' } },
+                { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId), 'order_date': { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, total: { $sum: '$subtotal' } } }
+            ]);
+
+            const salesResult = await OrderItem.aggregate([
+                { $lookup: { from: 'products', localField: 'product_id', foreignField: '_id', as: 'product' } },
+                { $unwind: '$product' },
+                { $lookup: { from: 'orders', localField: 'order_id', foreignField: '_id', as: 'order' } },
+                { $unwind: '$order' },
+                { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId), 'order.order_date': { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, count: { $sum: '$quantity' } } }
+            ]);
+            
+            return {
+                revenue: revenueResult[0]?.total || 0,
+                productsSold: salesResult[0]?.count || 0
+            };
+        };
+        
+        const currentMonthStats = await getStatsForPeriod(currentMonthStart, now);
+        const lastMonthStats = await getStatsForPeriod(lastMonthStart, lastMonthEnd);
+
+        const calculatePercentageChange = (current, previous) => {
+            if (previous === 0) return current > 0 ? 100 : 0;
+            return ((current - previous) / previous) * 100;
+        };
+
+        const revenueChange = calculatePercentageChange(currentMonthStats.revenue, lastMonthStats.revenue);
+        const productsSoldChange = calculatePercentageChange(currentMonthStats.productsSold, lastMonthStats.productsSold);
+        
+        // --- Original aggregations for all-time stats ---
         const totalRevenue = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' } },
+            { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' } },
             { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
-            {
-                $unwind: '$order_items'
-            },
-            {
-                $group: {
-                    _id: null,
-                    totalRevenue: { $sum: { $multiply: ['$order_items.price', '$order_items.quantity'] } }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalRevenue: { $ifNull: ['$totalRevenue', 0] }
-                }
-            }
+            { $group: { _id: null, totalRevenue: { $sum: '$subtotal' } } }
         ]);
 
         const productsSold = await OrderItem.aggregate([
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'product_id',
-                    foreignField: '_id',
-                    as: 'product'
-                }
-            },
+            { $lookup: { from: 'products', localField: 'product_id', foreignField: '_id', as: 'product' } },
             { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
-            {
-                $group: {
-                    _id: null,
-                    productsSold: { $sum: '$quantity' }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    productsSold: { $ifNull: ['$productsSold', 0] }
-                }
-            }
+            { $group: { _id: null, productsSold: { $sum: '$quantity' } } }
         ]);
 
         const newOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            {
-                $match: {
-                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId),
-                    status: 'Pending'
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    newOrders: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    newOrders: { $ifNull: ['$newOrders', 0] }
-                }
-            }
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' } },
+            { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' } },
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId), status: 'Pending' } },
+            { $group: { _id: null, newOrders: { $sum: 1 } } }
         ]);
 
         const recentOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            {
-                $match: {
-                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId)
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'user_id',
-                    foreignField: '_id',
-                    as: 'user'
-                }
-            },
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'order_items' } },
+            { $lookup: { from: 'products', localField: 'order_items.product_id', foreignField: '_id', as: 'products' } },
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
+            { $lookup: { from: 'users', localField: 'user_id', foreignField: '_id', as: 'user' } },
             { $unwind: '$user' },
             { $unwind: '$order_items' },
-            {
-                $project: {
-                    id: '$_id',
-                    order_date: 1,
-                    status: 1,
-                    total_amount: 1,
-                    user_name: '$user.user_name',
-                    product_name: '$order_items.product_name',
-                    _id: 0
-                }
-            },
+            { $project: { id: '$_id', order_date: 1, status: 1, total_amount: 1, user_name: '$user.user_name', product_name: '$order_items.product_name', _id: 0 } },
             { $sort: { order_date: -1 } },
             { $limit: 4 }
         ]);
 
-        console.log('Profile data fetched:', {
-            totalRevenue: totalRevenue[0]?.totalRevenue,
-            productsSold: productsSold[0]?.productsSold,
-            newOrders: newOrders[0]?.newOrders,
-            recentOrders: recentOrders.length
-        });
-
         res.render('shop-profile', {
-            vendor: {
-                store_name: vendorDetails.store_name,
-                owner_name: vendorDetails.name,
-                email: vendorDetails.email,
-                phone: vendorDetails.contact_number,
-                address: vendorDetails.store_location,
-                description: 'Happy Tails specializes in high-quality, eco-friendly pet accessories for cats and dogs. All our products are designed with pet comfort and safety in mind, using sustainable materials whenever possible.'
-            },
-            totalRevenue: (totalRevenue[0]?.totalRevenue || 0).toFixed(2),
+            vendor: vendorDetails,
+            totalRevenue: ((totalRevenue[0]?.totalRevenue || 0) * 0.94).toFixed(2),
             productsSold: productsSold[0]?.productsSold || 0,
             newOrders: newOrders[0]?.newOrders || 0,
             recentOrders,
-            customerRatings: '4.8/5'
+            revenueChange,
+            productsSoldChange
         });
     } catch (error) {
         console.error('Error fetching profile data:', error);
         res.status(500).send('Server error');
     }
 };
-
 // Service provider login
 const serviceProviderLogin = async (req, res) => {
     const { email, password, role } = req.body;
@@ -454,194 +406,102 @@ const serviceProviderLogin = async (req, res) => {
     }
 };
 
-// Get vendor dashboard
 const getVendorDashboard = async (req, res) => {
-    console.log('Accessing dashboard:', { storeName: req.params.storeName, session: req.session.vendor });
     if (!req.session.vendor) {
-        console.log('No vendor session, redirecting to login');
         return res.redirect('/service_provider_login');
     }
 
-    const vendor = req.session.vendor;
-    const storeNameSlug = req.params.storeName;
-
-    const expectedStoreNameSlug = vendor.store_name.toLowerCase().replace(/\s+/g, '-');
-    console.log('Store name comparison:', { storeNameSlug, expectedStoreNameSlug });
-    if (storeNameSlug !== expectedStoreNameSlug) {
-        console.log('Store name mismatch, rejecting request');
-        return res.status(403).send('Unauthorized: You can only access your own dashboard.');
-    }
-
-    const vendorId = vendor.id;
-    console.log('Fetching dashboard data for vendor:', { vendorId });
+    const vendorId = req.session.vendor.id;
 
     try {
+        // --- NEW: Time Period Definitions ---
+        const now = new Date();
+        const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const lastMonthEnd = currentMonthStart;
+
+        // --- NEW: Helper function for calculations ---
+        const getStatsForPeriod = async (startDate, endDate) => {
+            const revenueResult = await Order.aggregate([
+                { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' } },
+                { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' } },
+                { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId), 'order_date': { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, total: { $sum: '$subtotal' } } }
+            ]);
+
+            const salesResult = await OrderItem.aggregate([
+                { $lookup: { from: 'products', localField: 'product_id', foreignField: '_id', as: 'product' } },
+                { $unwind: '$product' },
+                { $lookup: { from: 'orders', localField: 'order_id', foreignField: '_id', as: 'order' } },
+                { $unwind: '$order' },
+                { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId), 'order.order_date': { $gte: startDate, $lt: endDate } } },
+                { $group: { _id: null, count: { $sum: '$quantity' } } }
+            ]);
+            
+            return {
+                revenue: revenueResult[0]?.total || 0,
+                productsSold: salesResult[0]?.count || 0
+            };
+        };
+        
+        const currentMonthStats = await getStatsForPeriod(currentMonthStart, now);
+        const lastMonthStats = await getStatsForPeriod(lastMonthStart, lastMonthEnd);
+
+        const calculatePercentageChange = (current, previous) => {
+            if (previous === 0) return current > 0 ? 100 : 0;
+            return ((current - previous) / previous) * 100;
+        };
+
+        const revenueChange = calculatePercentageChange(currentMonthStats.revenue, lastMonthStats.revenue);
+        const productsSoldChange = calculatePercentageChange(currentMonthStats.productsSold, lastMonthStats.productsSold);
+        
+        // --- Original aggregations for all-time stats ---
         const totalRevenue = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
-            {
-                $unwind: '$order_items'
-            },
-            {
-                $group: {
-                    _id: null,
-                    totalRevenue: { $sum: { $multiply: ['$order_items.price', '$order_items.quantity'] } }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    totalRevenue: { $ifNull: ['$totalRevenue', 0] }
-                }
-            }
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' }},
+            { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' }},
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) }},
+            { $group: { _id: null, total: { $sum: '$subtotal' }}}
         ]);
 
         const productsSold = await OrderItem.aggregate([
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'product_id',
-                    foreignField: '_id',
-                    as: 'product'
-                }
-            },
-            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) } },
-            {
-                $group: {
-                    _id: null,
-                    productsSold: { $sum: '$quantity' }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    productsSold: { $ifNull: ['$productsSold', 0] }
-                }
-            }
+            { $lookup: { from: 'products', localField: 'product_id', foreignField: '_id', as: 'product' }},
+            { $match: { 'product.vendor_id': new mongoose.Types.ObjectId(vendorId) }},
+            { $group: { _id: null, count: { $sum: '$quantity' }}}
         ]);
 
         const newOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            {
-                $match: {
-                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId),
-                    status: 'Pending'
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    newOrders: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    newOrders: { $ifNull: ['$newOrders', 0] }
-                }
-            }
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'items' }},
+            { $lookup: { from: 'products', localField: 'items.product_id', foreignField: '_id', as: 'products' }},
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId), status: 'Pending' }},
+            { $group: { _id: null, count: { $sum: 1 }}}
         ]);
 
         const recentOrders = await Order.aggregate([
-            {
-                $lookup: {
-                    from: 'orderitems',
-                    localField: '_id',
-                    foreignField: 'order_id',
-                    as: 'order_items'
-                }
-            },
-            {
-                $lookup: {
-                    from: 'products',
-                    localField: 'order_items.product_id',
-                    foreignField: '_id',
-                    as: 'products'
-                }
-            },
-            {
-                $match: {
-                    'products.vendor_id': new mongoose.Types.ObjectId(vendorId)
-                }
-            },
-            {
-                $lookup: {
-                    from: 'users',
-                    localField: 'user_id',
-                    foreignField: '_id',
-                    as: 'user'
-                }
-            },
+            { $lookup: { from: 'orderitems', localField: '_id', foreignField: 'order_id', as: 'order_items' }},
+            { $lookup: { from: 'products', localField: 'order_items.product_id', foreignField: '_id', as: 'products' }},
+            { $match: { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) }},
+            { $lookup: { from: 'users', localField: 'user_id', foreignField: '_id', as: 'user' }},
             { $unwind: '$user' },
             { $unwind: '$order_items' },
-            {
-                $project: {
-                    id: '$_id',
-                    order_date: 1,
-                    status: 1,
-                    total_amount: 1,
-                    user_name: '$user.user_name',
-                    product_name: '$order_items.product_name',
-                    _id: 0
-                }
-            },
+            { $project: { id: '$_id', order_date: 1, status: 1, total_amount: 1, user_name: '$user.user_name', product_name: '$order_items.product_name', _id: 0 }},
             { $sort: { order_date: -1 } },
             { $limit: 4 }
         ]);
 
-        console.log('Dashboard data fetched:', {
-            totalRevenue: totalRevenue[0]?.totalRevenue,
-            productsSold: productsSold[0]?.productsSold,
-            newOrders: newOrders[0]?.newOrders,
-            recentOrders: recentOrders.length
-        });
-                const processedRecentOrders = recentOrders.map(order => ({
-            ...order,
-            status: order.status === 'Pending' ? 'Confirmed' : order.status
-        }));
-                res.render('shop-dashboard', {
+        res.render('shop-dashboard', {
             vendor: req.session.vendor,
-            totalRevenue: (totalRevenue[0]?.totalRevenue || 0).toFixed(2),
-            productsSold: productsSold[0]?.productsSold || 0,
-            newOrders: newOrders[0]?.newOrders || 0,
-            recentOrders: processedRecentOrders // Use the processed orders here
+            totalRevenue: ((totalRevenue[0]?.total || 0) * 0.94).toFixed(2),
+            productsSold: productsSold[0]?.count || 0,
+            newOrders: newOrders[0]?.count || 0,
+            recentOrders: recentOrders.map(o => ({...o, status: o.status === 'Pending' ? 'Confirmed' : o.status })),
+            revenueChange: revenueChange,
+            productsSoldChange: productsSoldChange
         });
     } catch (error) {
         console.error('Error fetching dashboard data:', error);
         res.status(500).send('Server error');
     }
 };
-
 // Store signup
 const storeSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, storename, storelocation } = req.body;
@@ -827,6 +687,13 @@ const updateProduct = [
                 return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to edit it.' });
             }
 
+            const deletedImages = req.body.deletedImages || [];
+            if (deletedImages.length > 0) {
+                await ProductImage.deleteMany({ 
+                    product_id: productId 
+                });
+            }
+
             await Product.updateOne(
                 { _id: productId },
                 {
@@ -866,11 +733,13 @@ const updateProduct = [
 
             if (req.files && req.files.length > 0) {
                 await ProductImage.deleteMany({ product_id: productId });
+
                 const images = req.files.map((file, index) => ({
                     product_id: productId,
-                    image_path: `/uploads/products/${file.filename}`,
+                    image_data: `data:${file.mimetype};base64,${file.buffer.toString('base64')}`,
                     is_primary: index === 0
                 }));
+
                 await ProductImage.insertMany(images);
             }
 
@@ -1103,7 +972,6 @@ const submitProduct = [
     }
 ];
 
-// Fetch order details for a specific order
 const getOrderDetails = async (req, res) => {
     if (!req.session.vendor) {
         console.log('No vendor session in getOrderDetails, redirecting to login');
@@ -1141,79 +1009,67 @@ const getOrderDetails = async (req, res) => {
         const dbStatus = order.status || 'Pending';
         const displayStatus = dbStatus === 'Pending' ? 'Confirmed' : dbStatus;
 
-        // PART 1: Build the timeline array dynamically *before* creating orderData
-const timeline = [];
+        const timeline = [];
+        if (order.order_date) {
+            timeline.push({
+                status: 'Confirmed',
+                date: order.order_date,
+                description: 'Order was placed and confirmed.',
+            });
+        }
+        if (order.shipped_at) {
+            timeline.push({
+                status: 'Shipped',
+                date: order.shipped_at,
+                description: 'Your order has been shipped.',
+            });
+        }
+        if (order.delivered_at) {
+            timeline.push({
+                status: 'Delivered',
+                date: order.delivered_at,
+                description: 'Your order has been delivered.',
+            });
+        }
+        if (order.cancelled_at) {
+            timeline.push({
+                status: 'Cancelled',
+                date: order.cancelled_at,
+                description: 'The order was cancelled.',
+            });
+        }
+        timeline.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-// Event for when the order was placed/confirmed
-if (order.order_date) {
-    timeline.push({
-        status: 'Confirmed',
-        date: order.order_date,
-        description: 'Order was placed and confirmed.',
-    });
-}
-
-// Event for when the order was shipped
-if (order.shipped_at) {
-    timeline.push({
-        status: 'Shipped',
-        date: order.shipped_at,
-        description: 'Your order has been shipped.',
-    });
-}
-
-// Event for when the order was delivered
-if (order.delivered_at) {
-    timeline.push({
-        status: 'Delivered',
-        date: order.delivered_at,
-        description: 'Your order has been delivered.',
-    });
-}
-
-// Event for when the order was cancelled
-if (order.cancelled_at) {
-    timeline.push({
-        status: 'Cancelled',
-        date: order.cancelled_at,
-        description: 'The order was cancelled.',
-    });
-}
-
-// Ensure timeline events are in chronological order
-timeline.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-
-// PART 2: Now define the orderData object and assign the timeline to it
-const orderData = {
-    order_id: `#ORD-${order._id.toString()}`,
-    status: displayStatus,
-    order_date: order.order_date || new Date(),
-    payment_method: 'Credit Card (****4242)',
-    payment_status: 'Paid',
-    customer: {
-        name: order.user_id ? order.user_id.user_name : 'Unknown',
-        email: order.user_id ? order.user_id.user_email : 'N/A',
-        phone: order.user_id ? order.user_id.user_phone || 'N/A' : 'N/A',
-    },
-    shipping: {
-        address: order.user_id ? order.user_id.user_address || 'N/A' : 'N/A',
-        method: 'Standard Shipping',
-        tracking_number: null,
-        estimated_delivery: order.delivery_date || null,
-        shipping_cost: 0,
-    },
-    items: orderItems.map(item => ({
-        product_name: item.product_name,
-        price: item.price,
-        quantity: item.quantity,
-    })),
-    subtotal: order.subtotal,
-    shipping_cost: 0,
-    tax: 0,
-    total: order.total_amount,
-    timeline: timeline, // Assign the completed timeline array here
-};
+        const orderData = {
+            order_id: `#ORD-${order._id.toString()}`,
+            status: displayStatus,
+            order_date: order.order_date || new Date(),
+            payment_method: `Credit Card (**** ${order.payment_last_four || 'XXXX'})`,
+            payment_status: 'Paid',
+            customer: {
+                name: order.user_id ? order.user_id.user_name : 'Unknown',
+                email: order.user_id ? order.user_id.user_email : 'N/A',
+                phone: order.user_id ? order.user_id.user_phone || 'N/A' : 'N/A',
+            },
+            shipping: {
+                address: order.user_id ? order.user_id.user_address || 'N/A' : 'N/A',
+                method: 'Standard Shipping',
+                tracking_number: null,
+                estimated_delivery: order.delivery_date || null,
+                shipping_cost: 0,
+            },
+            items: orderItems.map(item => ({
+                product_name: item.product_name,
+                price: item.price,
+                quantity: item.quantity,
+            })),
+            subtotal: order.subtotal,
+            platform_charge: order.subtotal * 0.04,
+            shipping_cost: 0,
+            tax: 0,
+            total: order.total_amount,
+            timeline: timeline,
+        };
 
         console.log('Order details fetched:', { orderId });
         res.render('shop-order-details', {
@@ -1364,7 +1220,7 @@ console.log('Customer found:', customer ? customer : 'No customer found');
                 date: new Date(order.order_date).toLocaleDateString('en-US'),
                 items: order.items.map(item => `${item.product_name} (${item.quantity})`).join(', '),
                 total: order.total_amount.toFixed(2),
-                status: order.status
+                status: order.status === 'Pending' ? 'Confirmed' : order.status
             }))
         });
     } catch (error) {
@@ -1444,9 +1300,8 @@ const getVendorAnalytics = async (req, res) => {
     }
 
     const vendorId = req.session.vendor.id;
-    const period = req.query.period || 'all'; // Read the period from the URL
+    const period = req.query.period || 'all';
 
-    // Helper function to calculate percentage change
     const calculateChange = (current, previous) => {
         if (previous === 0) {
             return current > 0 ? 100 : 0;
@@ -1455,13 +1310,12 @@ const getVendorAnalytics = async (req, res) => {
     };
 
     try {
-        // --- Time Range Definitions ---
         const now = new Date();
         const todayStart = new Date(new Date().setHours(0, 0, 0, 0));
         const yesterdayStart = new Date(new Date().setDate(todayStart.getDate() - 1));
         yesterdayStart.setHours(0, 0, 0, 0);
 
-        const weekStart = new Date(new Date().setDate(now.getDate() - (now.getDay() === 0 ? 6 : now.getDay() - 1) )); // Monday as start of week
+        const weekStart = new Date(new Date().setDate(now.getDate() - (now.getDay() === 0 ? 6 : now.getDay() - 1) ));
         weekStart.setHours(0, 0, 0, 0);
         const lastWeekStart = new Date(new Date().setDate(weekStart.getDate() - 7));
         lastWeekStart.setHours(0, 0, 0, 0);
@@ -1470,13 +1324,11 @@ const getVendorAnalytics = async (req, res) => {
         const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const lastMonthEnd = monthStart;
 
-        // --- Date Filter based on selected period ---
         let dateFilter = {};
         if (period === 'today') dateFilter = { order_date: { $gte: todayStart } };
         if (period === 'week') dateFilter = { order_date: { $gte: weekStart } };
         if (period === 'month') dateFilter = { order_date: { $gte: monthStart } };
 
-        // --- Reusable Aggregation Functions ---
         const createOrderPipeline = (filter = {}) => {
             const match = { 
                 'products.vendor_id': new mongoose.Types.ObjectId(vendorId),
@@ -1488,8 +1340,7 @@ const getVendorAnalytics = async (req, res) => {
                 { $match: match }
             ];
         };
-
-        // CORRECTED getStats function
+        
         const getStats = async (filter = {}) => {
             const pipeline = createOrderPipeline(filter);
             const result = await Order.aggregate([
@@ -1497,8 +1348,8 @@ const getVendorAnalytics = async (req, res) => {
                 {
                     $group: {
                         _id: null,
-                        revenue: { $sum: '$total_amount' }, // FIX: Correctly sum the total_amount of each order
-                        orderCount: { $sum: 1 },             // FIX: Efficiently count orders
+                        revenue: { $sum: '$subtotal' },
+                        orderCount: { $sum: 1 },
                         customers: { $addToSet: '$user_id' }
                     }
                 },
@@ -1512,11 +1363,10 @@ const getVendorAnalytics = async (req, res) => {
                 }
             ]);
             const stats = result[0] || { revenue: 0, orderCount: 0, customerCount: 0 };
-            stats.avgOrderValue = stats.orderCount > 0 ? stats.revenue / stats.orderCount : 0; // This is now correct
+            stats.avgOrderValue = stats.orderCount > 0 ? stats.revenue / stats.orderCount : 0;
             return stats;
         };
 
-        // --- Fetch All Data in Parallel ---
         const [
             totalStats, todayStats, weekStats, monthStats,
             yesterdayStats, lastWeekStats, lastMonthStats
@@ -1527,74 +1377,70 @@ const getVendorAnalytics = async (req, res) => {
             getStats({ order_date: { $gte: lastMonthStart, $lt: lastMonthEnd } })
         ]);
 
-        // --- Calculations that respect the period filter ---
         const revenueByCategory = await Order.aggregate([...createOrderPipeline(dateFilter), { $unwind: '$order_items' }, { $unwind: '$products' }, { $group: { _id: '$products.product_category', revenue: { $sum: { $multiply: ['$order_items.price', '$order_items.quantity'] } } } }, { $sort: { revenue: -1 } }]);
         const orderStatus = await Order.aggregate([...createOrderPipeline(dateFilter), { $group: { _id: '$status', count: { $sum: 1 } } }]);
-
-        // --- Other calculations that are always "all time" ---
         const productStats = await Product.aggregate([{ $match: { vendor_id: new mongoose.Types.ObjectId(vendorId) } }, { $group: { _id: null, total: { $sum: 1 }, active: { $sum: { $cond: [{ $eq: ['$stock_status', 'In Stock'] }, 1, 0] } }, outOfStock: { $sum: { $cond: [{ $eq: ['$stock_status', 'Out of Stock'] }, 1, 0] } } } }]);
 
-        // Select the stats for the currently active period
-let currentPeriodStats = totalStats;
-if (period === 'today') currentPeriodStats = todayStats;
-if (period === 'week') currentPeriodStats = weekStats;
-if (period === 'month') currentPeriodStats = monthStats;
+        let currentPeriodStats = totalStats;
+        if (period === 'today') currentPeriodStats = todayStats;
+        if (period === 'week') currentPeriodStats = weekStats;
+        if (period === 'month') currentPeriodStats = monthStats;
 
-// --- NEW analyticsData object ---
-const analyticsData = {
-    revenue: {
-        total: totalStats.revenue.toFixed(2),
-        today: todayStats.revenue.toFixed(2),
-        week: weekStats.revenue.toFixed(2),
-        month: monthStats.revenue.toFixed(2),
-        todayChange: calculateChange(todayStats.revenue, yesterdayStats.revenue),
-        weekChange: calculateChange(weekStats.revenue, lastWeekStats.revenue),
-        monthChange: calculateChange(monthStats.revenue, lastMonthStats.revenue)
-    },
-     avgOrderValue: {
-        total: totalStats.avgOrderValue.toFixed(2),
-        today: todayStats.avgOrderValue.toFixed(2),
-        week: weekStats.avgOrderValue.toFixed(2),
-        month: monthStats.avgOrderValue.toFixed(2),
-        todayChange: calculateChange(todayStats.avgOrderValue, yesterdayStats.avgOrderValue),
-        weekChange: calculateChange(weekStats.avgOrderValue, lastWeekStats.avgOrderValue),
-        monthChange: calculateChange(monthStats.avgOrderValue, lastMonthStats.avgOrderValue),
-    },
-    orders: {
-        total: currentPeriodStats.orderCount, // <-- This now correctly uses the period total
-        today: todayStats.orderCount,
-        week: weekStats.orderCount,
-        month: monthStats.orderCount,
-        todayChange: calculateChange(todayStats.orderCount, yesterdayStats.orderCount),
-        weekChange: calculateChange(weekStats.orderCount, lastWeekStats.orderCount),
-        monthChange: calculateChange(monthStats.orderCount, lastMonthStats.orderCount),
-        status: {
-            processing: orderStatus.find(s => s._id === 'Shipped')?.count || 0,
-            confirmed: orderStatus.find(s => s._id === 'Pending')?.count || 0,
-            delivered: orderStatus.find(s => s._id === 'Delivered')?.count || 0,
-            cancelled: orderStatus.find(s => s._id === 'Cancelled')?.count || 0,
-        }
-    },
-    customers: {
-        total: totalStats.customerCount,
-        today: todayStats.customerCount,
-        week: weekStats.customerCount,
-        month: monthStats.customerCount,
-        todayChange: calculateChange(todayStats.customerCount, yesterdayStats.customerCount),
-        weekChange: calculateChange(weekStats.customerCount, lastWeekStats.customerCount),
-        monthChange: calculateChange(monthStats.customerCount, lastMonthStats.customerCount),
-    },
-    revenueByCategory: revenueByCategory.map(cat => ({
-        category: cat._id || 'Other',
-        revenue: (cat.revenue || 0).toFixed(2),
-        percentage: totalStats.revenue ? ((cat.revenue / totalStats.revenue) * 100).toFixed(0) : 0
-    })),
-    products: {
-        total: productStats[0]?.total || 0,
-        active: productStats[0]?.active || 0,
-        outOfStock: productStats[0]?.outOfStock || 0,
-    }
-};
+        const analyticsData = {
+            revenue: {
+                // UPDATED: Calculate all revenue fields minus 6% (multiply by 0.94)
+                total: (totalStats.revenue * 0.94).toFixed(2),
+                today: (todayStats.revenue * 0.94).toFixed(2),
+                week: (weekStats.revenue * 0.94).toFixed(2),
+                month: (monthStats.revenue * 0.94).toFixed(2),
+                todayChange: calculateChange(todayStats.revenue, yesterdayStats.revenue),
+                weekChange: calculateChange(weekStats.revenue, lastWeekStats.revenue),
+                monthChange: calculateChange(monthStats.revenue, lastMonthStats.revenue)
+            },
+            avgOrderValue: {
+                total: totalStats.avgOrderValue.toFixed(2),
+                today: todayStats.avgOrderValue.toFixed(2),
+                week: weekStats.avgOrderValue.toFixed(2),
+                month: monthStats.avgOrderValue.toFixed(2),
+                todayChange: calculateChange(todayStats.avgOrderValue, yesterdayStats.avgOrderValue),
+                weekChange: calculateChange(weekStats.avgOrderValue, lastWeekStats.avgOrderValue),
+                monthChange: calculateChange(monthStats.avgOrderValue, lastMonthStats.avgOrderValue),
+            },
+            orders: {
+                total: currentPeriodStats.orderCount,
+                today: todayStats.orderCount,
+                week: weekStats.orderCount,
+                month: monthStats.orderCount,
+                todayChange: calculateChange(todayStats.orderCount, yesterdayStats.orderCount),
+                weekChange: calculateChange(weekStats.orderCount, lastWeekStats.orderCount),
+                monthChange: calculateChange(monthStats.orderCount, lastMonthStats.orderCount),
+                status: {
+                    processing: orderStatus.find(s => s._id === 'Shipped')?.count || 0,
+                    confirmed: orderStatus.find(s => s._id === 'Pending')?.count || 0,
+                    delivered: orderStatus.find(s => s._id === 'Delivered')?.count || 0,
+                    cancelled: orderStatus.find(s => s._id === 'Cancelled')?.count || 0,
+                }
+            },
+            customers: {
+                total: totalStats.customerCount,
+                today: todayStats.customerCount,
+                week: weekStats.customerCount,
+                month: monthStats.customerCount,
+                todayChange: calculateChange(todayStats.customerCount, yesterdayStats.customerCount),
+                weekChange: calculateChange(weekStats.customerCount, lastWeekStats.customerCount),
+                monthChange: calculateChange(monthStats.customerCount, lastMonthStats.customerCount),
+            },
+            revenueByCategory: revenueByCategory.map(cat => ({
+                category: cat._id || 'Other',
+                revenue: (cat.revenue || 0).toFixed(2),
+                percentage: totalStats.revenue ? ((cat.revenue / totalStats.revenue) * 100).toFixed(0) : 0
+            })),
+            products: {
+                total: productStats[0]?.total || 0,
+                active: productStats[0]?.active || 0,
+                outOfStock: productStats[0]?.outOfStock || 0,
+            }
+        };
 
         res.render('shop-analytics', {
             vendor: req.session.vendor,
@@ -1607,7 +1453,6 @@ const analyticsData = {
         res.status(500).send('Server error');
     }
 };
-
 const updateVendorProfile = async (req, res) => {
     if (!req.session.vendor) {
         return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -1618,12 +1463,17 @@ const updateVendorProfile = async (req, res) => {
 
     console.log('Updating vendor profile:', { vendorId, storeName, ownerName, email, phone, address, description });
 
-    // Basic validation
-    if (!storeName || !ownerName || !email || !phone || !address) {
-        return res.status(400).json({ success: false, message: 'All required fields must be provided' });
+    // --- UPDATED EMAIL DOMAIN VALIDATION ---
+    const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
+    const emailDomain = email.split('@')[1];
+
+    if (!email.includes('@') || !allowedDomains.includes(emailDomain)) {
+        return res.status(400).json({ success: false, message: 'Please use an email from a valid provider (e.g., Gmail, Yahoo, Outlook).' });
     }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        return res.status(400).json({ success: false, message: 'Invalid email format' });
+    // ------------------------------------
+
+    if (!storeName || !ownerName || !phone || !address) {
+        return res.status(400).json({ success: false, message: 'All required fields must be provided' });
     }
     if (!/^\d{10}$/.test(phone)) {
         return res.status(400).json({ success: false, message: 'Phone number must be 10 digits' });
@@ -1654,7 +1504,6 @@ const updateVendorProfile = async (req, res) => {
                 email,
                 contact_number: phone,
                 store_location: address,
-                // Description is not in the schema, so it's ignored unless schema is updated
             },
             { new: true }
         );
@@ -1696,7 +1545,12 @@ const deleteProduct = async (req, res) => {
         }
 
         // Delete the product, its variants, and images
-        await Product.deleteOne({ _id: productId });
+        // Soft delete by flagging the product as deleted, which will hide it from the product list
+        // while preserving it for historical order records.
+        await Product.updateOne(
+            { _id: productId },
+            { $set: { is_deleted: true } }
+        );
         await ProductVariant.deleteMany({ product_id: productId });
         await ProductImage.deleteMany({ product_id: productId });
 

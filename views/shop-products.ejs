@@ -43,18 +43,19 @@
                     <h1 class="dashboard-title">Products</h1>
                 
                     <div class="filter-container">
-                        <select id="category">
-                            <option>All Categories</option>
-                            <option>Dogs</option>
-                            <option>Cats</option>
-                            <option>Accessories</option>
+                        <select id="category" onchange="applyFilters()">
+                            <option value="All Categories">All Categories</option>
+                            <option value="food">Food</option>
+                            <option value="toys">Toys</option>
+                            <option value="grooming">Grooming</option>
+                            <option value="beds">Beds</option>
                         </select>
                 
-                        <select id="sort">
-                            <option>Sort by: Newest</option>
-                            <option>Sort by: Oldest</option>
-                            <option>Sort by: Price Low to High</option>
-                            <option>Sort by: Price High to Low</option>
+                        <select id="sort" onchange="applyFilters()">
+                            <option value="newest">Sort by: Newest</option>
+                            <option value="oldest">Sort by: Oldest</option>
+                            <option value="price_asc">Sort by: Price Low to High</option>
+                            <option value="price_desc">Sort by: Price High to Low</option>
                         </select>
                     </div>
                 </div>
@@ -94,7 +95,24 @@
                     profileDropdown.classList.remove('active');
                 }
             });
+
+            // Set dropdowns to reflect current URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get('category');
+            const sort = urlParams.get('sort');
+            if (category) {
+                document.getElementById('category').value = category;
+            }
+            if (sort) {
+                document.getElementById('sort').value = sort;
+            }
         });
+
+        function applyFilters() {
+            const category = document.getElementById('category').value;
+            const sort = document.getElementById('sort').value;
+            window.location.href = `/shop-products?category=${category}&sort=${sort}`;
+        }
 
         function goToNextPage() {
             window.location.href = "/shop-product-form";

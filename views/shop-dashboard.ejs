@@ -42,25 +42,29 @@
             <div class="page-container active" id="dashboard-page">
                 <h1 class="dashboard-title">Vendor Dashboard</h1>
                 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-title">TOTAL REVENUE</div>
-                        <div class="stat-value">₹<%= totalRevenue %></div>
-                        <div class="stat-comparison">+12.5% from last month</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-title">PRODUCTS SOLD</div>
-                        <div class="stat-value"><%= productsSold %></div>
-                        <div class="stat-comparison">+5.2% from last month</div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-title">NEW ORDERS</div>
-                        <div class="stat-value"><%= newOrders %></div>
-                        <div class="stat-comparison">Awaiting processing</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-title">TOTAL REVENUE</div>
+                    <div class="stat-value">₹<%= totalRevenue %></div>
+                    <div class="stat-comparison <%= revenueChange >= 0 ? 'positive' : 'negative' %>">
+                        <span><%= revenueChange >= 0 ? '+' : '' %><%= revenueChange.toFixed(1) %>%</span> from last month
                     </div>
                 </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">PRODUCTS SOLD</div>
+                    <div class="stat-value"><%= productsSold %></div>
+                    <div class="stat-comparison <%= productsSoldChange >= 0 ? 'positive' : 'negative' %>">
+                        <span><%= productsSoldChange >= 0 ? '+' : '' %><%= productsSoldChange.toFixed(1) %>%</span> from last month
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">NEW ORDERS</div>
+                    <div class="stat-value"><%= newOrders %></div>
+                    <div class="stat-comparison">Awaiting processing</div>
+                </div>
+            </div>
                 
                 <div class="recent-section">
                     <div class="section-header">

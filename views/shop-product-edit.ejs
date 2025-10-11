@@ -49,29 +49,42 @@
                 </div>
                 
                 <h2 class="section-title">Variant Information</h2>
-                <div class="form-row">
+                <% if (product.variants && product.variants.length > 0) { %>
+                    <% product.variants.forEach(function(variant, index) { %>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Variant <%= index + 1 %> Size</label>
+                                <input type="text" value="<%= variant.size || 'N/A' %>" readonly>
+                            </div>
+                             <div class="form-group">
+                                <label>Color</label>
+                                <input type="text" value="<%= variant.color || 'N/A' %>" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Stock Quantity</label>
+                                <input type="number" value="<%= variant.stock_quantity || 0 %>" readonly>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <p>This product has no variants.</p>
+                <% } %>
+                
+                <input type="hidden" name="variant_size" value="<%= product.size || '' %>">
+                <input type="hidden" name="variant_color" value="<%= product.color || '' %>">
+
+                <h3 style="margin-top: 20px; font-weight: normal;">Edit Price for Main Variant</h3>
+                 <div class="form-row">
                     <div class="form-group">
-                        <label for="size">Size</label>
-                        <input type="text" id="size" name="variant_size" value="<%= product.size || '' %>">
-                    </div>
-                    <div class="form-group">
-                        <label for="color">Color</label>
-                        <input type="text" id="color" name="variant_color" value="<%= product.color || '' %>">
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="regularPrice">Regular Price ($)</label>
+                        <label for="regularPrice">Regular Price (₹)</label>
                         <input type="number" id="regularPrice" name="variant_regular_price" step="0.01" min="0.01" value="<%= product.regular_price || '0.01' %>" required>
                     </div>
                     <div class="form-group">
-                        <label for="salePrice">Sale Price ($)</label>
+                        <label for="salePrice">Sale Price (₹)</label>
                         <input type="number" id="salePrice" name="variant_sale_price" step="0.01" min="0" value="<%= product.sale_price || '' %>">
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
-                        <label for="stockQuantity">Stock Quantity</label>
+                        <label for="stockQuantity">Stock Quantity (Main)</label>
                         <input type="number" id="stockQuantity" name="variant_stock_quantity" min="0" value="<%= product.stock_quantity || 0 %>" required>
                     </div>
                 </div>
@@ -81,8 +94,8 @@
                     <div class="photo-row" id="photoRow">
                         <% if (product.images && product.images.length > 0) { %>
                             <% product.images.forEach((image, index) => { %>
-                                <div class="photo-box has-image" id="photoBox<%= index %>">
-                                    <img src="<%= image.image_path %>" alt="Product Photo">
+                                <div class="photo-box has-image" id="photoBox<%= index %>" data-image-id="<%= image._id %>">
+                                    <img src="<%= image.image_data %>" alt="Product Photo">
                                     <button type="button" class="remove-btn" onclick="removeImage('photoBox<%= index %>')">×</button>
                                 </div>
                             <% }) %>
@@ -153,8 +166,9 @@
             }
         }
 
-        function removeImage(boxId) {
+                function removeImage(boxId) {
             const box = document.getElementById(boxId);
+            const imageId = box.getAttribute('data-image-id');
             box.innerHTML = '';
             box.classList.remove('has-image');
             const placeholder = document.createElement('div');
@@ -175,6 +189,13 @@
             box.appendChild(placeholder);
             box.appendChild(text);
             box.appendChild(input);
+            if (imageId) {
+                const deletedInput = document.createElement('input');
+                deletedInput.type = 'hidden';
+                deletedInput.name = 'deletedImages[]';
+                deletedInput.value = imageId;
+                document.getElementById('editProductForm').appendChild(deletedInput);
+            }
             box.onclick = function() {
                 triggerFileInput(boxId + 'Input');
             };

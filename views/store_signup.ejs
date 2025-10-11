@@ -42,7 +42,7 @@
 
             <label for="email">Email</label>
             <input type="text" placeholder="Enter Email" name="email" id="email" required>
-            <div id="emailError" class="error">Please enter a valid email address</div>
+            <div id="emailError" class="error">Please enter a valid Gmail address (e.g., example@gmail.com)</div>
 
             <label for="password">Password</label>
             <input type="password" placeholder="Enter Password" name="password" id="password" required>
@@ -129,7 +129,7 @@
                 isValid = false;
             }
     
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const emailRegex = /^[^\s@]+@gmail\.com$/;
             if (!emailRegex.test(email)) {
                 document.getElementById('emailError').style.display = 'block';
                 isValid = false;
