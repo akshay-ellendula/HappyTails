@@ -379,19 +379,16 @@
             // Checkout functionality
             document.querySelector('.checkout_button button').addEventListener('click', function() {
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
+            
                 if (cart.length === 0) {
                     alert('Your cart is empty!');
                     return;
                 }
             
-                // Remove image data from cart to reduce payload size (but keep for display)
                 const cartWithoutImages = cart.map(item => {
                     const { image_data, ...itemWithoutImage } = item;
                     return itemWithoutImage;
                 });
-            
-                console.log('Cart without images for checkout:', cartWithoutImages);
             
                 fetch('/checkout', {
                     method: 'POST',
@@ -401,6 +398,12 @@
                 .then(response => {
                     if (!response.ok) {
                         return response.text().then(text => {
+                            // If the status is 400 (Bad Request), show the alert and redirect
+                            if (response.status === 400) {
+                                alert(text);
+                                window.location.href = '/profile'; // Redirect to profile page [cite: 164]
+                                throw new Error('Redirecting to profile');
+                            }
                             throw new Error(`HTTP ${response.status}: ${text}`);
                         });
                     }
@@ -408,7 +411,9 @@
                 })
                 .catch(error => {
                     console.error('Checkout error:', error);
-                    alert('Error placing order. Please try again.');
+                    if (error.message !== 'Redirecting to profile') {
+                        alert('Error placing order. Please try again.');
+                    }
                 });
             });
 

@@ -158,7 +158,7 @@
             <h3>Payment Information</h3>
             <div class="form-group">
                 <label for="card-number">Card Number</label>
-                <input type="text" id="card-number" name="cardNumber" required>
+                <input type="text" id="card-number" name="cardNumber" required maxlength="19" placeholder="xxxx xxxx xxxx xxxx">
             </div>
             <div class="card-details-row">
                 <div class="form-group">
@@ -173,5 +173,85 @@
             <button type="submit" class="pay-button">Pay Now</button>
         </form>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cardNumberInput = document.getElementById('card-number');
+        const cvvInput = document.getElementById('cvc');
+        const expiryDateInput = document.getElementById('expiry-date');
+        const form = document.querySelector('.payment-form');
+
+        // Card Number Formatting
+        cardNumberInput.addEventListener('input', (event) => {
+            let { value } = event.target;
+            value = value.replace(/\D/g, '').slice(0, 16); // Remove all non-digits and limit to 16
+            value = value.replace(/(\d{4})/g, '$1 ').trim();
+            event.target.value = value;
+        });
+        
+        // Expiry Date Formatting
+        expiryDateInput.addEventListener('input', (event) => {
+            let { value } = event.target;
+            value = value.replace(/\D/g, ''); // Remove all non-digits
+            if (value.length >= 2) {
+                event.target.value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+        });
+        
+        // CVV Formatting (limit to 3 digits)
+        cvvInput.addEventListener('input', (event) => {
+            let { value } = event.target;
+            event.target.value = value.replace(/\D/g, '').slice(0, 3);
+        });
+
+        // Form Submission Validation
+        form.addEventListener('submit', (event) => {
+            let isValid = true;
+            let errorMessage = '';
+
+            const cardNumberValue = cardNumberInput.value.replace(/\s/g, '');
+            const expiryDateValue = expiryDateInput.value;
+            const cvvValue = cvvInput.value;
+
+            // Card Number Validation
+            if (cardNumberValue.length !== 16) {
+                errorMessage += 'Card number must be 16 digits long.\n';
+                isValid = false;
+            }
+
+            // Expiry Date Validation
+            const [month, year] = expiryDateValue.split('/');
+            const currentYear = new Date().getFullYear().toString().slice(-2);
+            const currentMonth = new Date().getMonth() + 1;
+            
+            if (!expiryDateValue.match(/^\d{2}\/\d{2}$/)) {
+                errorMessage += 'Please enter a valid expiry date in MM/YY format.\n';
+                isValid = false;
+            } else {
+                const enteredMonth = parseInt(month, 10);
+                const enteredYear = parseInt(year, 10);
+
+                if (enteredMonth < 1 || enteredMonth > 12) {
+                    errorMessage += 'Invalid month. Please enter a value between 01 and 12.\n';
+                    isValid = false;
+                } else if (enteredYear < parseInt(currentYear, 10) || (enteredYear === parseInt(currentYear, 10) && enteredMonth < currentMonth)) {
+                    errorMessage += 'This card has expired. Please enter a valid future date.\n';
+                    isValid = false;
+                }
+            }
+
+            // CVV Validation
+            if (cvvValue.length !== 3 || isNaN(cvvValue)) {
+                errorMessage += 'CVV must be a 3-digit number.\n';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+                alert(errorMessage);
+            }
+        });
+    });
+</script>
 </body>
 </html>
