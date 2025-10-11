@@ -235,9 +235,8 @@ margin-left: 10px;
 }
 
 /* Action Dropdown Styles */
-td:last-child {
-    display: flex;
-    align-items: center;
+td:last-child > * {
+    vertical-align: middle;
 }
 .action-dropdown {
     position: relative;
@@ -272,6 +271,21 @@ td:last-child {
 }
 
 .status-cell {
-    display: flex;
-    align-items: center; /* This vertically centers the status pill */
+    vertical-align: middle;
+}
+
+.status.shipped {
+    background-color: #cce5ff; /* Light blue */
+    color: #004085;
+}
+
+.status.cancelled {
+    background-color: #e2e3e5; /* Light gray */
+    color: #383d41;
+}
+
+.action-placeholder {
+    display: inline-block;
+    width: 28px;  /* This is the approximate width of the icon (18px) + its padding (5px + 5px) */
+    margin-left: 10px; /* This matches the margin on all other icons */
 }

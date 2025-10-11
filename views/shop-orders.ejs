@@ -77,23 +77,25 @@
                 <td class="status-cell"><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
                 <td>
                     <i class="fa fa-eye" data-order-id="<%= order.id %>" onclick="viewOrder('<%= order.id %>')"></i> 
-                    <i class="fa fa-print" onclick="printOrder('<%= order.id %>')"></i>
+<i class="fa fa-print" onclick="printOrder('<%= order.id %>')"></i>
 
-                    <% if (order.status === 'Confirmed' || order.status === 'Shipped') { %>
-                    <div class="action-dropdown">
-                        <i class="fa fa-ellipsis-v" onclick="toggleDropdown(this)"></i>
-                        <div class="dropdown-content">
-                            <% if (order.status === 'Confirmed') { %>
-                                <a href="#" onclick="updateStatus('<%= order.id %>', 'Shipped')">Mark as Shipped</a>
-                                <a href="#" onclick="updateStatus('<%= order.id %>', 'Delivered')">Mark as Delivered</a>
-                            <% } %>
-                            <% if (order.status === 'Shipped') { %>
-                                <a href="#" onclick="updateStatus('<%= order.id %>', 'Delivered')">Mark as Delivered</a>
-                            <% } %>
-                            <a href="#" onclick="updateStatus('<%= order.id %>', 'Cancelled')">Cancel Order</a>
-                        </div>
-                    </div>
-                    <% } %>
+<% if (order.status === 'Confirmed' || order.status === 'Shipped') { %>
+    <div class="action-dropdown">
+        <i class="fa fa-ellipsis-v" onclick="toggleDropdown(this)"></i>
+        <div class="dropdown-content">
+            <% if (order.status === 'Confirmed') { %>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Shipped')">Mark as Shipped</a>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Delivered')">Mark as Delivered</a>
+            <% } %>
+            <% if (order.status === 'Shipped') { %>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Delivered')">Mark as Delivered</a>
+            <% } %>
+            <a href="#" onclick="updateStatus('<%= order.id %>', 'Cancelled')">Cancel Order</a>
+        </div>
+    </div>
+<% } else { %>
+    <div class="action-placeholder"></div>
+<% } %>
                 </td>
             </tr>
             <% }); %>
