@@ -1,13 +1,13 @@
 // Navigate back to products list
 function goBack() {
-    window.location.href = "admin-products"
+    window.location.href = "/admin-products";
 }
 
 // Show the edit form
 function showEditForm() {
     document.getElementById("productView").style.display = "none";
     document.getElementById("editForm").style.display = "block";
-    
+
     // Pre-fill the form with current values
     document.getElementById("edit-name").value = document.getElementById("productName").textContent;
     document.getElementById("edit-category").value = document.getElementById("productCategory").textContent;
@@ -25,54 +25,84 @@ function hideEditForm() {
 }
 
 // Save product changes
-function saveProductChanges() {
-    // Get values from form
-    const name = document.getElementById("edit-name").value;
-    const category = document.getElementById("edit-category").value;
-    const price = document.getElementById("edit-price").value;
-    const stock = document.getElementById("edit-stock").value;
-    const sku = document.getElementById("edit-sku").value;
-    const brand = document.getElementById("edit-brand").value;
-    const description = document.getElementById("edit-description").value;
+async function saveProductChanges() {
+    // Get product ID from URL path
+    const productId = window.location.pathname.split('/').pop();
+
+    // Create a new FormData object
+    const formData = new FormData();
     
-    // Update product view with new values
-    document.getElementById("productName").textContent = name;
-    document.getElementById("productCategory").textContent = category;
-    document.getElementById("productPrice").textContent = `$${price}`;
-    document.getElementById("currentStock").textContent = stock;
-    document.getElementById("productSku").textContent = sku;
-    document.getElementById("brand").textContent = brand;
-    document.getElementById("productDescription").textContent = description;
+    // Append fields with the names expected by the backend
+    formData.append('product_name', document.getElementById("edit-name").value);
+    formData.append('product_category', document.getElementById("edit-category").value);
+    formData.append('product_type', 'Pet Food'); // Assuming a static value for this example
+    formData.append('product_description', document.getElementById("edit-description").value);
+    formData.append('stock_status', parseInt(document.getElementById("edit-stock").value) > 0 ? 'In Stock' : 'Out of Stock');
     
-    // Update stock status based on quantity
-    const stockStatus = document.getElementById("stockStatus");
-    if (parseInt(stock) <= 0) {
-        stockStatus.className = "status-badge out-of-stock";
-        stockStatus.textContent = "Out of Stock";
-    } else if (parseInt(stock) < 10) {
-        stockStatus.className = "status-badge low-stock";
-        stockStatus.textContent = "Low Stock";
-    } else {
-        stockStatus.className = "status-badge low-stock";
-        stockStatus.textContent = "In Stock";
+    // Create a variants array and append it as a JSON string
+    const variants = [{
+        size: null,
+        color: null,
+        regular_price: parseFloat(document.getElementById("edit-price").value),
+        sale_price: null,
+        stock_quantity: parseInt(document.getElementById("edit-stock").value),
+        sku: document.getElementById("edit-sku").value
+    }];
+    formData.append('variants', JSON.stringify(variants));
+
+    try {
+        const response = await fetch(`/admin/product/${productId}`, {
+            method: 'POST',
+            body: formData // Send the FormData object
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Product updated successfully!");
+            window.location.reload();
+        } else {
+            alert("Failed to update product: " + result.message);
+        }
+    } catch (error) {
+        console.error('Error updating product:', error);
+        alert("Server error. Failed to update product.");
     }
-    
-    
-    
-    // Show success message
-    alert("Product updated successfully!");
-    
-    // Hide the form and show the product view
-    hideEditForm();
 }
 
+// Delete product
+async function deleteProduct() {
+    if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+        return;
+    }
 
-
-// Initialize any event listeners or other functionality when the page loads
-document.addEventListener("DOMContentLoaded", function() {
-    console.log("Product details page loaded");
+    // Get product ID from URL path
+    const productId = window.location.pathname.split('/').pop();
     
-    // You could fetch product data from an API here if needed
-    // fetchProductData(productId);
-});
+    try {
+        const response = await fetch(`/admin/product/${productId}`, {
+            method: 'DELETE',
+        });
+        const result = await response.json();
+        if (result.success) {
+            alert("Product deleted successfully!");
+            window.location.href = '/admin-products';
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        alert('Server error while deleting product.');
+    }
+}
 
+// The fetchProductData function is now obsolete as data is passed from the server.
+// Remove it entirely
+document.addEventListener('DOMContentLoaded', function() {
+    const imageElem = document.getElementById('productImage');
+    console.log('Rendered image src:', imageElem.src); // Debug log
+    if (!imageElem.src || imageElem.src.includes('undefined')) {
+        imageElem.src = 'https://via.placeholder.com/150'; // Fallback
+        imageElem.alt = 'No image available';
+    }
+});

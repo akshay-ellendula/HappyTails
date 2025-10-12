@@ -50,7 +50,6 @@
                     <button class="<%= period === 'today' ? 'active' : '' %>" data-period="today" onclick="changePeriod('today')">Today</button>
                     <button class="<%= period === 'week' ? 'active' : '' %>" data-period="week" onclick="changePeriod('week')">This Week</button>
                     <button class="<%= period === 'month' ? 'active' : '' %>" data-period="month" onclick="changePeriod('month')">This Month</button>
-                    <button data-period="custom" onclick="alert('Custom period selection not implemented yet')">Custom</button>
                 </div>
                 
                 <!-- Revenue Section -->
@@ -58,22 +57,53 @@
                 <div class="analytics-grid">
                     <div class="card">
                         <h2>Revenue Overview</h2>
-                        <div class="stat">
-                            <div class="stat-label">Total Revenue</div>
-                            <div class="stat-value">$<%= analytics.revenue.total %></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Today</div>
-                            <div class="stat-value">$<%= analytics.revenue.today %> <span class="indicator <%= analytics.revenue.today > 0 ? 'up' : '' %>"><%= analytics.revenue.today > 0 ? '+15%' : '0%' %></span></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">This Week</div>
-                            <div class="stat-value">$<%= analytics.revenue.week %> <span class="indicator <%= analytics.revenue.week > 0 ? 'up' : '' %>"><%= analytics.revenue.week > 0 ? '+8%' : '0%' %></span></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">This Month</div>
-                            <div class="stat-value">$<%= analytics.revenue.month %> <span class="indicator <%= analytics.revenue.month > 0 ? 'up' : '' %>"><%= analytics.revenue.month > 0 ? '+12%' : '0%' %></span></div>
-                        </div>
+                        <% if (period === 'all') { %>
+    <div class="stat">
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value">₹<%= analytics.revenue.total %></div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label" style="color: #6c757d;">Platform Fees (6%)</div>
+            <div class="stat-value" style="color: #dc3545;">- ₹<%= (parseFloat(analytics.revenue.total) / 0.94 * 0.06).toFixed(2) %></div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">Today</div>
+            <div class="stat-value">₹<%= analytics.revenue.today %> <span class="indicator <%= analytics.revenue.todayChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.todayChange >= 0 ? '+' : '' %><%= analytics.revenue.todayChange.toFixed(1) %>%</span></div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">This Week</div>
+            <div class="stat-value">₹<%= analytics.revenue.week %> <span class="indicator <%= analytics.revenue.weekChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.weekChange >= 0 ? '+' : '' %><%= analytics.revenue.weekChange.toFixed(1) %>%</span></div>
+        </div>
+        <div class="stat">
+            <div class="stat-label">This Month</div>
+            <div class="stat-value">₹<%= analytics.revenue.month %> <span class="indicator <%= analytics.revenue.monthChange >= 0 ? 'up' : 'down' %>"><%= analytics.revenue.monthChange >= 0 ? '+' : '' %><%= analytics.revenue.monthChange.toFixed(1) %>%</span></div>
+        </div>
+<% } else { %>
+    <% 
+        let revenueLabel = 'Revenue';
+        let revenueValue = '0.00';
+        let revenueChange = 0;
+        if (period === 'today') {
+            revenueLabel = 'Revenue Today';
+            revenueValue = analytics.revenue.today;
+            revenueChange = analytics.revenue.todayChange;
+        } else if (period === 'week') {
+            revenueLabel = 'Revenue This Week';
+            revenueValue = analytics.revenue.week;
+            revenueChange = analytics.revenue.weekChange;
+        } else if (period === 'month') {
+            revenueLabel = 'Revenue This Month';
+            revenueValue = analytics.revenue.month;
+            revenueChange = analytics.revenue.monthChange;
+        }
+    %>
+    <div class="stat">
+        <div class="stat-label"><%= revenueLabel %></div>
+        <div class="stat-value">₹<%= revenueValue %> <span class="indicator <%= revenueChange >= 0 ? 'up' : 'down' %>"><%= revenueChange >= 0 ? '+' : '' %><%= revenueChange.toFixed(1) %>%</span></div>
+    </div>
+    <p style="font-size: 0.8rem; color: #666; margin-top: 15px;">Compared to the previous period.</p>
+<% } %>
                     </div>
                     
                     <div class="card">
@@ -81,7 +111,7 @@
                         <% analytics.revenueByCategory.forEach((category, index) => { %>
                             <div class="stat">
                                 <div class="stat-label"><%= category.category %></div>
-                                <div class="stat-value">$<%= category.revenue %></div>
+                                <div class="stat-value">₹<%= category.revenue %></div>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress" data-progress="<%= category.percentage %>"></div>
@@ -90,7 +120,7 @@
                         <% if (analytics.revenueByCategory.length === 0) { %>
                             <div class="stat">
                                 <div class="stat-label">No Data</div>
-                                <div class="stat-value">$0.00</div>
+                                <div class="stat-value">₹0.00</div>
                             </div>
                             <div class="progress-bar">
                                 <div class="progress" data-progress="0"></div>
@@ -100,22 +130,48 @@
                     
                     <div class="card">
                         <h2>Average Order Value</h2>
-                        <div class="stat">
-                            <div class="stat-label">Overall Average</div>
-                            <div class="stat-value">$<%= analytics.avgOrderValue.total %></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Today</div>
-                            <div class="stat-value">$<%= analytics.avgOrderValue.today %> <span class="indicator <%= analytics.avgOrderValue.today > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.today > 0 ? '+7%' : '0%' %></span></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">This Week</div>
-                            <div class="stat-value">$<%= analytics.avgOrderValue.week %> <span class="indicator <%= analytics.avgOrderValue.week > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.week > 0 ? '+3%' : '0%' %></span></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">This Month</div>
-                            <div class="stat-value">$<%= analytics.avgOrderValue.month %> <span class="indicator <%= analytics.avgOrderValue.month > 0 ? 'up' : '' %>"><%= analytics.avgOrderValue.month > 0 ? '+1.5%' : '0%' %></span></div>
-                        </div>
+                        <% if (period === 'all') { %>
+    <div class="stat">
+        <div class="stat-label">Overall Average</div>
+        <div class="stat-value">₹<%= analytics.avgOrderValue.total %></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">Today</div>
+        <div class="stat-value">₹<%= analytics.avgOrderValue.today %> <span class="indicator <%= analytics.avgOrderValue.todayChange >= 0 ? 'up' : 'down' %>"><%= analytics.avgOrderValue.todayChange >= 0 ? '+' : '' %><%= analytics.avgOrderValue.todayChange.toFixed(1) %>%</span></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">This Week</div>
+        <div class="stat-value">₹<%= analytics.avgOrderValue.week %> <span class="indicator <%= analytics.avgOrderValue.weekChange >= 0 ? 'up' : 'down' %>"><%= analytics.avgOrderValue.weekChange >= 0 ? '+' : '' %><%= analytics.avgOrderValue.weekChange.toFixed(1) %>%</span></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">This Month</div>
+        <div class="stat-value">₹<%= analytics.avgOrderValue.month %> <span class="indicator <%= analytics.avgOrderValue.monthChange >= 0 ? 'up' : 'down' %>"><%= analytics.avgOrderValue.monthChange >= 0 ? '+' : '' %><%= analytics.avgOrderValue.monthChange.toFixed(1) %>%</span></div>
+    </div>
+<% } else { %>
+    <% 
+        let aovLabel = 'Average Order Value';
+        let aovValue = '0.00';
+        let aovChange = 0;
+        if (period === 'today') {
+            aovLabel = 'AOV Today';
+            aovValue = analytics.avgOrderValue.today;
+            aovChange = analytics.avgOrderValue.todayChange;
+        } else if (period === 'week') {
+            aovLabel = 'AOV This Week';
+            aovValue = analytics.avgOrderValue.week;
+            aovChange = analytics.avgOrderValue.weekChange;
+        } else if (period === 'month') {
+            aovLabel = 'AOV This Month';
+            aovValue = analytics.avgOrderValue.month;
+            aovChange = analytics.avgOrderValue.monthChange;
+        }
+    %>
+    <div class="stat">
+        <div class="stat-label"><%= aovLabel %></div>
+        <div class="stat-value">₹<%= aovValue %> <span class="indicator <%= aovChange >= 0 ? 'up' : 'down' %>"><%= aovChange >= 0 ? '+' : '' %><%= aovChange.toFixed(1) %>%</span></div>
+    </div>
+    <p style="font-size: 0.8rem; color: #666; margin-top: 15px;">Compared to the previous period.</p>
+<% } %>
                     </div>
                 </div>
                 
@@ -124,48 +180,85 @@
                 <div class="analytics-grid">
                     <div class="card">
                         <h2>Order Overview</h2>
-                        <div class="stat">
-                            <div class="stat-label">Total Orders</div>
-                            <div class="stat-value"><%= analytics.orders.total %></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Today</div>
-                            <div class="stat-value"><%= analytics.orders.today %> <span class="indicator <%= analytics.orders.today > 0 ? 'up' : '' %>"><%= analytics.orders.today > 0 ? '+20%' : '0%' %></span></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">This Week</div>
-                            <div class="stat-value"><%= analytics.orders.week %> <span class="indicator <%= analytics.orders.week > 0 ? 'up' : '' %>"><%= analytics.orders.week > 0 ? '+5%' : '0%' %></span></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">This Month</div>
-                            <div class="stat-value"><%= analytics.orders.month %> <span class="indicator <%= analytics.orders.month > 0 ? 'up' : '' %>"><%= analytics.orders.month > 0 ? '+12%' : '0%' %></span></div>
-                        </div>
+                        <% if (period === 'all') { %>
+    <div class="stat">
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-value"><%= analytics.orders.total %></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">Today</div>
+        <div class="stat-value"><%= analytics.orders.today %> <span class="indicator <%= analytics.orders.todayChange >= 0 ? 'up' : 'down' %>"><%= analytics.orders.todayChange >= 0 ? '+' : '' %><%= analytics.orders.todayChange.toFixed(1) %>%</span></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">This Week</div>
+        <div class="stat-value"><%= analytics.orders.week %> <span class="indicator <%= analytics.orders.weekChange >= 0 ? 'up' : 'down' %>"><%= analytics.orders.weekChange >= 0 ? '+' : '' %><%= analytics.orders.weekChange.toFixed(1) %>%</span></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">This Month</div>
+        <div class="stat-value"><%= analytics.orders.month %> <span class="indicator <%= analytics.orders.monthChange >= 0 ? 'up' : 'down' %>"><%= analytics.orders.monthChange >= 0 ? '+' : '' %><%= analytics.orders.monthChange.toFixed(1) %>%</span></div>
+    </div>
+<% } else { %>
+    <% 
+        let ordersLabel = 'Orders';
+        let ordersValue = '0';
+        let ordersChange = 0;
+        if (period === 'today') {
+            ordersLabel = 'Orders Today';
+            ordersValue = analytics.orders.today;
+            ordersChange = analytics.orders.todayChange;
+        } else if (period === 'week') {
+            ordersLabel = 'Orders This Week';
+            ordersValue = analytics.orders.week;
+            ordersChange = analytics.orders.weekChange;
+        } else if (period === 'month') {
+            ordersLabel = 'Orders This Month';
+            ordersValue = analytics.orders.month;
+            ordersChange = analytics.orders.monthChange;
+        }
+    %>
+    <div class="stat">
+        <div class="stat-label"><%= ordersLabel %></div>
+        <div class="stat-value"><%= ordersValue %> <span class="indicator <%= ordersChange >= 0 ? 'up' : 'down' %>"><%= ordersChange >= 0 ? '+' : '' %><%= ordersChange.toFixed(1) %>%</span></div>
+    </div>
+    <p style="font-size: 0.8rem; color: #666; margin-top: 15px;">Compared to the previous period.</p>
+<% } %>
                     </div>
                     
-                    <div class="card">
-                        <h2>Order Status</h2>
-                        <div class="stat">
-                            <div class="stat-label">Completed</div>
-                            <div class="stat-value"><%= analytics.orders.status.completed %></div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.completed / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Processing</div>
-                            <div class="stat-value"><%= analytics.orders.status.processing %></div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.processing / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">Pending</div>
-                            <div class="stat-value"><%= analytics.orders.status.pending %></div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.pending / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
-                        </div>
-                    </div>
+<div class="card">
+    <h2>Order Status</h2>
+
+    <div class="stat">
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-value"><%= analytics.orders.status.confirmed %></div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="background-color: #ffc107;" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.confirmed / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-label">Processing</div>
+        <div class="stat-value"><%= analytics.orders.status.processing %></div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="background-color: #17a2b8;" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.processing / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-label">Delivered</div>
+        <div class="stat-value"><%= analytics.orders.status.delivered %></div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="background-color: #28a745;" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.delivered / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-label">Cancelled</div>
+        <div class="stat-value"><%= analytics.orders.status.cancelled %></div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" style="background-color: #dc3545;" data-progress="<%= analytics.orders.total > 0 ? (analytics.orders.status.cancelled / analytics.orders.total * 100).toFixed(0) : 0 %>"></div>
+    </div>
+</div>
                 </div>
                 
                 <!-- Customers Section -->
@@ -173,22 +266,48 @@
                 <div class="analytics-grid">
                     <div class="card">
                         <h2>Customer Overview</h2>
-                        <div class="stat">
-                            <div class="stat-label">Total Customers</div>
-                            <div class="stat-value"><%= analytics.customers.total %></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">New Today</div>
-                            <div class="stat-value"><%= analytics.customers.today %> <span class="indicator <%= analytics.customers.today > 0 ? 'up' : '' %>"><%= analytics.customers.today > 0 ? '+16%' : '0%' %></span></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">New This Week</div>
-                            <div class="stat-value"><%= analytics.customers.week %> <span class="indicator <%= analytics.customers.week > 0 ? 'up' : '' %>"><%= analytics.customers.week > 0 ? '+10%' : '0%' %></span></div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-label">New This Month</div>
-                            <div class="stat-value"><%= analytics.customers.month %> <span class="indicator <%= analytics.customers.month > 0 ? 'up' : '' %>"><%= analytics.customers.month > 0 ? '+22%' : '0%' %></span></div>
-                        </div>
+                        <% if (period === 'all') { %>
+    <div class="stat">
+        <div class="stat-label">Total Customers</div>
+        <div class="stat-value"><%= analytics.customers.total %></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">Customers Today</div>
+        <div class="stat-value"><%= analytics.customers.today %> <span class="indicator <%= analytics.customers.todayChange >= 0 ? 'up' : 'down' %>"><%= analytics.customers.todayChange >= 0 ? '+' : '' %><%= analytics.customers.todayChange.toFixed(1) %>%</span></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">Customers This Week</div>
+        <div class="stat-value"><%= analytics.customers.week %> <span class="indicator <%= analytics.customers.weekChange >= 0 ? 'up' : 'down' %>"><%= analytics.customers.weekChange >= 0 ? '+' : '' %><%= analytics.customers.weekChange.toFixed(1) %>%</span></div>
+    </div>
+    <div class="stat">
+        <div class="stat-label">Customers This Month</div>
+        <div class="stat-value"><%= analytics.customers.month %> <span class="indicator <%= analytics.customers.monthChange >= 0 ? 'up' : 'down' %>"><%= analytics.customers.monthChange >= 0 ? '+' : '' %><%= analytics.customers.monthChange.toFixed(1) %>%</span></div>
+    </div>
+<% } else { %>
+    <% 
+        let customersLabel = 'Customers';
+        let customersValue = '0';
+        let customersChange = 0;
+        if (period === 'today') {
+            customersLabel = 'Customers Today';
+            customersValue = analytics.customers.today;
+            customersChange = analytics.customers.todayChange;
+        } else if (period === 'week') {
+            customersLabel = 'Customers This Week';
+            customersValue = analytics.customers.week;
+            customersChange = analytics.customers.weekChange;
+        } else if (period === 'month') {
+            customersLabel = 'Customers This Month';
+            customersValue = analytics.customers.month;
+            customersChange = analytics.customers.monthChange;
+        }
+    %>
+    <div class="stat">
+        <div class="stat-label"><%= customersLabel %></div>
+        <div class="stat-value"><%= customersValue %> <span class="indicator <%= customersChange >= 0 ? 'up' : 'down' %>"><%= customersChange >= 0 ? '+' : '' %><%= customersChange.toFixed(1) %>%</span></div>
+    </div>
+    <p style="font-size: 0.8rem; color: #666; margin-top: 15px;">Compared to the previous period.</p>
+<% } %>
                     </div>
                 </div>
                 

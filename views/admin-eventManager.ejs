@@ -46,6 +46,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                         <a href="/admin-orders" class="nav-link">
+                     <span>Orders</span>
+                      </a>
+                  </li>
+                <li class="nav-item">
                     <a href="/admin/logout" class="nav-link">
                         <span>Logout</span>
                     </a>
@@ -67,26 +72,27 @@
             <!-- Stats Cards -->
             
                 <!-- Stats Cards -->
+     <!-- Modify the stats-container in admin-eventManager.ejs to add IDs for easier JS targeting -->
 <div class="stats-container">
-    <div class="stat-card">
+    <div class="stat-card" id="total-managers-card">
         <h3>Total Event Managers</h3>
-        <div class="number"></div> <!-- Remove hardcoded 84 -->
-        <div class="change"></div> <!-- Remove hardcoded +7% -->
+        <div class="number"></div>
+        <div class="change"></div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" id="revenue-card">
         <h3>Total Revenue Generated</h3>
-        <div class="number"></div> <!-- Remove hardcoded $98,750 -->
-        <div class="change"></div> <!-- Remove hardcoded +12% -->
+        <div class="number"></div>
+        <div class="change"></div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" id="total-events-card">
         <h3>Total Events</h3>
-        <div class="number"></div> <!-- Remove hardcoded 942 -->
-        <div class="change"></div> <!-- Remove hardcoded +8% -->
+        <div class="number"></div>
+        <div class="change"></div>
     </div>
-    <div class="stat-card">
+    <div class="stat-card" id="todays-events-card">
         <h3>Today's Events</h3>
-        <div class="number"></div> <!-- Remove hardcoded 23 -->
-        <div class="change"></div> <!-- Remove hardcoded +5 -->
+        <div class="number"></div>
+        <div class="change"></div>
     </div>
 </div>
             

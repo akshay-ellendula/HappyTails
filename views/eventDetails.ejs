@@ -24,8 +24,10 @@
 
     <main class="container">
         <div class="event-details">
-            <div class="event-header">
-                <img src="<%=event.image%>" alt="event image" />
+             <div class="event-header">
+                <div class="image-container">
+                    <img src="<%=event.image%>" alt="<%= event.name %>" />
+                </div>
                 <h1><%= event.name %></h1>
             </div>
 

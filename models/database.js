@@ -64,6 +64,7 @@ const productSchema = new mongoose.Schema({
     sku: { type: String, default: null },
     stock_status: { type: String, required: true },
     created_at: { type: Date, default: Date.now },
+    is_deleted: { type: Boolean, default: false }
 });
 
 const productVariantSchema = new mongoose.Schema({
@@ -89,6 +90,9 @@ const orderSchema = new mongoose.Schema({
     subtotal: { type: Number, required: true },
     total_amount: { type: Number, required: true },
     delivery_date: { type: Date, default: null },
+    shipped_at: { type: Date, default: null },
+    delivered_at: { type: Date, default: null },
+    cancelled_at: { type: Date, default: null },
     payment_last_four: { type: String, default: null },
 });
 

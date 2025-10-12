@@ -5,141 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= event.event_name %> - Event Details</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap">
-    <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #effe8b;
-            margin: 0;
-            color: #333;
-        }
-        .navbar {
-            background: #effe8b;
-            padding: 10px 5%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .navbar header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .badge {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #333;
-            text-decoration: none;
-        }
-        .menu a {
-            margin-left: 20px;
-            text-decoration: none;
-            color: #555;
-            font-weight: 500;
-        }
-        .details-container {
-            max-width: 1200px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-        .event-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .event-header img {
-            width: 100%;
-            max-height: 400px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-        .event-header h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-        }
-        .event-content {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap; /* Allow wrapping on smaller screens */
-        }
-        .left-column {
-            flex: 2;
-            min-width: 300px;
-        }
-        .right-column {
-            flex: 1;
-            min-width: 300px;
-        }
-        .left-column h2 {
-            border-bottom: 2px solid black;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-        .left-column p {
-            line-height: 1.6;
-            color: #555;
-        }
-        .info-card {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-        .info-card h3 {
-            margin-top: 0;
-            border-bottom: 1px solid black;
-            padding-bottom: 10px;
-        }
-        .info-card p {
-            margin: 10px 0;
-            line-height: 1.5;
-        }
-        .info-card strong {
-            color: #333;
-        }
-        .back-link {
-            display: inline-block;
-            margin: 10px;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .attendees-section {
-            margin-top: 40px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .attendees-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .attendees-header h2 {
-            margin: 0;
-        }
-        .search-input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 250px;
-            font-size: 1rem;
-        }
-        .attendees-section table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .attendees-section th, .attendees-section td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid black;
-        }
-        .attendees-section th {
-            background-color: #f8f8f8;
-            font-weight: 600;
-        }
-    </style>
+    <link rel="stylesheet" href="/Events/eventmanager_eventdetails.css">
 </head>
 <body>
     <div class="navbar">
@@ -193,72 +59,79 @@
             </div>
 
             <% if (attendees.length > 0) { %>
-                <table id="attendeeTable">
-                    <thead>
+            <table id="attendeeTable">
+                <thead>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Name</th>
+                        <th>Phone Number</th>
+                        <th>Email</th>
+                        <th>Seats</th>
+                        <th>Pet Guest</th>
+                        <th>Actions</th> </tr>
+                </thead>
+                <tbody id="attendeeTableBody">
+                    <% attendees.forEach(attendee => { %>
                         <tr>
-                            <th>Ticket ID</th>
-                            <th>Name</th>
-                            <th>Phone Number</th>
-                            <th>Email</th>
-                            <th>Seats</th>
-                            <th>Pet Guest</th>
+                            <td><%= attendee.ticketId %></td>
+                            <td><%= attendee.name %></td>
+                            <td><%= attendee.phone_number %></td>
+                            <td><%= attendee.email %></td>
+                            <td><%= attendee.seats %></td>
+                            <td><%= attendee.with_pet ? 'Yes' : 'No' %></td>
+                            <td>
+                                <button class="edit-btn"
+                                        data-id="<%= attendee._id %>"
+                                        data-name="<%= attendee.name %>"
+                                        data-phone="<%= attendee.phone_number %>"
+                                        data-event="<%= event.event_name %>"
+                                        data-date="<%= new Date(event.date_time).toLocaleDateString() %>"
+                                        data-seats="<%= attendee.seats %>">
+                                    Edit
+                                </button>
+                                <button class="delete-btn" data-id="<%= attendee._id %>">
+                                    Delete
+                                </button>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody id="attendeeTableBody">
-                        <% attendees.forEach(attendee => { %>
-                            <tr>
-                                <td><%= attendee.ticketId %></td>
-                                <td><%= attendee.name %></td>
-                                <td><%= attendee.phone_number %></td>
-                                <td><%= attendee.email %></td>
-                                <td><%= attendee.seats %></td>
-                                <td><%= attendee.with_pet ? 'Yes' : 'No' %></td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
+                    <% }) %>
+                </tbody>
+            </table>
             <% } else { %>
                 <p>No attendees have booked this event yet.</p>
             <% } %>
         </div>
     </div>
-
-    <script>
-        function filterAttendees() {
-            // Get the search input value and convert to lower case
-            const filter = document.getElementById('attendeeSearch').value.toLowerCase();
-            
-            // Get the table body and all its rows
-            const tableBody = document.getElementById('attendeeTableBody');
-            const rows = tableBody.getElementsByTagName('tr');
-            
-            // Loop through all table rows
-            for (let i = 0; i < rows.length; i++) {
-                const ticketIdCell = rows[i].getElementsByTagName('td')[0];
-                const nameCell = rows[i].getElementsByTagName('td')[1];
-                const emailCell = rows[i].getElementsByTagName('td')[3];
-                
-                // If the cells exist
-                if (ticketIdCell && nameCell && emailCell) {
-                    const ticketIdText = ticketIdCell.textContent || ticketIdCell.innerText;
-                    const nameText = nameCell.textContent || nameCell.innerText;
-                    const emailText = emailCell.textContent || emailCell.innerText;
-                    
-                    // Check if the search query is found in the ticket ID, name, or email
-                    if (
-                        ticketIdText.toLowerCase().indexOf(filter) > -1 ||
-                        nameText.toLowerCase().indexOf(filter) > -1 ||
-                        emailText.toLowerCase().indexOf(filter) > -1
-                    ) {
-                        // If it's a match, show the row
-                        rows[i].style.display = "";
-                    } else {
-                        // Otherwise, hide the row
-                        rows[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
+<div class="modal" id="editAttendeeModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeEditAttendeeModal()">×</span>
+        <h2>Edit Attendee</h2>
+        <form id="editAttendeeForm" onsubmit="saveAttendee(event)">
+            <input type="hidden" id="editAttendeeId">
+            <div class="form-group">
+                <label for="editName">Name</label>
+                <input type="text" id="editName" required>
+            </div>
+            <div class="form-group">
+                <label for="editPhone">Phone No</label>
+                <input type="number" id="editPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="editEvent">Event<span>(Read only)</span></label>
+                <input type="text" id="editEvent" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editDate">Date<span>(Read only)</span></label>
+                <input type="text" id="editDate" readonly>
+            </div>
+            <div class="form-group">
+                <label for="editSeats">Seats<span>(Read only)</span></label>
+                <input type="number" id="editSeats" required readonly>
+            </div>
+            <button type="submit" class="book_btn">Save Changes</button>
+        </form>
+    </div>
+</div>
+    <script src="/Events/eventmanager_eventdetails.js"></script>
 </body>
 </html>

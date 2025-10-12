@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         labels: chartData.labels, // Dynamic months
                         datasets: [
                             {
-                                label: 'Pet Sales',
-                                data: chartData.petSales, // Dynamic data
+                                label: 'Order Revenue (10% Tax)',
+                                data: chartData.orderRevenue, // Dynamic data
                                 borderColor: '#8fbc8f',
                                 backgroundColor: 'rgba(143, 188, 143, 0.1)',
                                 borderWidth: 2,
@@ -26,17 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 tension: 0.4
                             },
                             {
-                                label: 'Products',
-                                data: chartData.products, // Dynamic data
-                                borderColor: '#f3ef56',
-                                backgroundColor: 'rgba(243, 239, 86, 0.1)',
-                                borderWidth: 2,
-                                fill: true,
-                                tension: 0.4
-                            },
-                            {
-                                label: 'Services',
-                                data: chartData.services, // Dynamic data
+                                label: 'Event Revenue (10% Tax)',
+                                data: chartData.eventRevenue, // Dynamic data
                                 borderColor: '#6495ed',
                                 backgroundColor: 'rgba(100, 149, 237, 0.1)',
                                 borderWidth: 2,
@@ -103,8 +94,8 @@ function fetchDashboardStats() {
                 document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
                 document.getElementById('totalVendors').textContent = stats.totalVendors || 0;
                 document.getElementById('totalEventManagers').textContent = stats.totalEventManagers || 0;
-
-                // Update revenue stats
+                document.getElementById('totalEvents').textContent = stats.totalEvents || 0;
+                // Update revenue stats (10% tax)
                 document.getElementById('totalRevenue').textContent = new Intl.NumberFormat('en-US', {
                     style: 'currency',
                     currency: 'USD'
@@ -121,20 +112,6 @@ function fetchDashboardStats() {
                     style: 'currency',
                     currency: 'USD'
                 }).format(stats.dailyRevenue || 0);
-
-                // Update percentage labels
-                document.getElementById('userGrowthPercent').textContent = 
-                    (stats.userGrowthPercent >= 0 ? '+' : '') + stats.userGrowthPercent + '% from last month';
-                document.getElementById('vendorGrowthPercent').textContent = 
-                    (stats.vendorGrowthPercent >= 0 ? '+' : '') + stats.vendorGrowthPercent + '% from last month';
-                document.getElementById('eventManagerGrowthPercent').textContent = 
-                    (stats.eventManagerGrowthPercent >= 0 ? '+' : '') + stats.eventManagerGrowthPercent + '% from last month';
-                document.getElementById('monthlyRevenueGrowthPercent').textContent = 
-                    (stats.monthlyRevenueGrowthPercent >= 0 ? '+' : '') + stats.monthlyRevenueGrowthPercent + '% from last month';
-                document.getElementById('weeklyRevenueGrowthPercent').textContent = 
-                    (stats.weeklyRevenueGrowthPercent >= 0 ? '+' : '') + stats.weeklyRevenueGrowthPercent + '% from last week';
-                document.getElementById('dailyRevenueGrowthPercent').textContent = 
-                    (stats.dailyRevenueGrowthPercent >= 0 ? '+' : '') + stats.dailyRevenueGrowthPercent + '% from yesterday';
 
                 // Initialize User Distribution Chart with dynamic data
                 const userDistributionCtx = document.getElementById('userDistributionChart').getContext('2d');
@@ -175,7 +152,7 @@ function fetchDashboardStats() {
                                         }
                                         if (context.raw !== null) {
                                             const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                            const percentage = Math.round((context.raw / total) * 100);
+                                            const percentage = total > 0 ? Math.round((context.raw / total) * 100) : 0;
                                             label += context.raw + ' (' + percentage + '%)';
                                         }
                                         return label;
@@ -186,12 +163,19 @@ function fetchDashboardStats() {
                         cutout: '70%'
                     }
                 });
+
+                // Clear growth percentage labels
+                ['userGrowthPercent', 'vendorGrowthPercent', 'eventManagerGrowthPercent', 'monthlyRevenueGrowthPercent', 'weeklyRevenueGrowthPercent', 'dailyRevenueGrowthPercent'].forEach(id => {
+                    const elem = document.getElementById(id);
+                    if (elem) elem.textContent = '';
+                });
             } else {
                 console.error('Failed to fetch dashboard stats:', data.message);
                 // Fallback values in case of error
                 document.getElementById('totalUsers').textContent = 'Error';
                 document.getElementById('totalVendors').textContent = 'Error';
                 document.getElementById('totalEventManagers').textContent = 'Error';
+                document.getElementById('totalEvents').textContent = 'Error';
                 document.getElementById('totalRevenue').textContent = 'Error';
                 document.getElementById('monthlyRevenue').textContent = 'Error';
                 document.getElementById('weeklyRevenue').textContent = 'Error';
@@ -204,6 +188,7 @@ function fetchDashboardStats() {
             document.getElementById('totalUsers').textContent = 'Error';
             document.getElementById('totalVendors').textContent = 'Error';
             document.getElementById('totalEventManagers').textContent = 'Error';
+            document.getElementById('totalEvents').textContent = 'Error';
             document.getElementById('totalRevenue').textContent = 'Error';
             document.getElementById('monthlyRevenue').textContent = 'Error';
             document.getElementById('weeklyRevenue').textContent = 'Error';

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Order Management</title>
+    <link href="/ADMIN/admin-orders.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Happy Tails</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/admin-dashboard" class="nav-link">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-user" class="nav-link">
+                        <span>Users</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-shop-manager" class="nav-link">
+                        <span>Shop Managers</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-eventManager" class="nav-link">
+                        <span>Event Managers</span>
+                    </a>
+                </li>
+                 <li class="nav-item">
+                    <a href="/admin-events" class="nav-link">
+                        <span>Events</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-products" class="nav-link">
+                        <span>Products</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin-orders" class="nav-link active">
+                        <span>Orders</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin/logout" class="nav-link">
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <div class="header">
+                <h2>Order Management</h2>
+                <div class="user-info">
+                    <div class="avatar">A</div>
+                    <span>Admin User</span>
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <div class="number" id="totalOrdersCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Monthly Orders</h3>
+                    <div class="number" id="monthlyOrdersCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Weekly Orders</h3>
+                    <div class="number" id="weeklyOrdersCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Today's Orders</h3>
+                    <div class="number" id="dailyOrdersCount">0</div>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <div class="search-bar">
+                    <input type="text" id="orderSearchInput" placeholder="Search orders by ID or customer...">
+                </div>
+            </div>
+
+            <div class="order-table-container">
+                <div class="table-header">
+                    <h3>Order List</h3>
+                </div>
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Date</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        <tr><td colspan="6">Loading orders...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+    <script src="/ADMIN/admin-orders.js"></script>
+</body>
+</html>

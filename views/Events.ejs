@@ -8,60 +8,50 @@
 </head>
 <body>
     <div class="navbar">
-      <header>
-          <a href="/home" class="badge">Happy Tails</a>
-          <div class="menu">
-              
-              <a href="/pet_accessory">Pet Essentials</a>
-              <% if (user) { %>
-                <a href="/profile">Profile</a>
-              <% } else { %>
-                  <a href="/my_login">Login/SignUp</a>
-              <% } %>
-          </div>
-          <div class="menu-icon" id="menuIcon">
-            <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
-          </div>
-          <div class="side-navbar" id="sideNavbar">
-            <a href="javascript:void(0)" class="close-btn" id="closeBtn">×</a> 
-            <a href="/pet_accessory">Pet Essentials</a>
-            
-            <% if (user) { %>
-              <a href="/profile">Profile</a>
+        <header class="container"> <a href="/home" class="badge">Happy Tails</a>
+            <div class="menu">
+                <a href="/pet_accessory">Pet Essentials</a>
+                <% if (user) { %>
+                    <a href="/profile">Profile</a>
+                <% } else { %>
+                    <a href="/my_login">Login/SignUp</a>
+                <% } %>
+            </div>
+            <div class="menu-icon" id="menuIcon">...</div>
+            <div class="side-navbar" id="sideNavbar">...</div>
+        </header>
+    </div>
+
+    <div class="page-header">
+        <div class="container">
+            <h2>Upcoming Events</h2>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="events_container" id="eventsContainer">
+            <% if (events && events.length > 0) { %>
+                <% events.forEach(event => { %>
+                    <div class="event_card">
+                        <div class="image_container">
+                            <img src="<%= event.image %>" alt="<%= event.name %>">
+                        </div>
+                        <div class="details_container">
+                            <h3><%= event.name %></h3>
+                            <p class="description"><%= event.description %></p>
+                            <p><span>Date:</span> <%= event.date %></p>
+                            <p><span>Time:</span> <%= event.time %></p>
+                            <p><span>Location:</span> <%= event.location %></p>
+                            <p><span>Contact:</span> <a href="tel:<%= event.contact %>"><%= event.contact %></a></p>
+                            <button type="button" class="book_btn" onclick="window.location.href='/eventDetails?eventId=<%= event.id %>'">Book Now</button>
+                        </div>
+                    </div>
+                <% }) %>
             <% } else { %>
-                <a href="/my_login">Login/SignUp</a>
+                <p>No upcoming events found.</p>
             <% } %>
-          </div>
-      </header>
-    </div>
-
-    <div class="heading">
-        <h2>Upcoming Events </h2>
-    </div>
-
-    <div class="events_container" id="eventsContainer">
-        <% if (events && events.length > 0) { %>
-            <% events.forEach(event => { %>
-                <div class="event_card">
-                    <div class="image_container">
-                        <img src="<%= event.image %>" alt="event_image">
-                    </div>
-                    <div class="details_container">
-                        <h3><%= event.name %></h3>
-                        <p class="description"><%= event.description %></p>
-                        <p><span>Date:</span> <%= event.date %></p>
-                        <p><span>Time:</span> <%= event.time %></p>
-                        <p><span>Location:</span> <%= event.location %></p>
-                        <p><span>Contact:</span> <a href="tel:<%= event.contact %>"><%= event.contact %></a></p>
-                        <button type="button" class="book_btn" onclick="event.stopPropagation(); window.location.href='/eventDetails?eventId=<%= event.id %>'">Book Now</button>
-                    </div>
-                </div>
-            <% }) %>
-        <% } else { %>
-            <p id="noEvents">No upcoming events found for this city.</p>
-            <p id="loading" style="display: none;">Loading events...</p>
-        <% } %>
-    </div>
+        </div>
+    </main>
 
     <footer class="footer">
       <div class="footer-container">
@@ -95,30 +85,6 @@
           </div>
       </div>
     </footer>
-
-    <script>
-      document.getElementById('menuIcon').addEventListener('click', function() {
-          document.getElementById('sideNavbar').classList.toggle('open');
-      });
-
-      document.getElementById('closeBtn').addEventListener('click', function() {
-          document.getElementById('sideNavbar').classList.remove('open');
-      });
-
-      document.querySelectorAll('.side-navbar a:not(.close-btn)').forEach(link => {
-          link.addEventListener('click', () => {
-              document.getElementById('sideNavbar').classList.remove('open');
-          });
-      });
-
-      document.getElementById('city').addEventListener('change', () => {
-          document.getElementById('noEvents').style.display = 'none';
-          document.getElementById('loading').style.display = 'block';
-          setTimeout(() => {
-              document.getElementById('loading').style.display = 'none';
-              document.getElementById('noEvents').style.display = 'block';
-          }, 1000);
-      });
-    </script>
+    <script src="/Events/events.js"></script>
 </body>
 </html>

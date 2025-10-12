@@ -20,13 +20,78 @@ async function fetchUserDetails() {
 
         if (data.success) {
             const user = data.user;
-            document.getElementById('userAvatar').textContent = user.name.charAt(0);
-            document.getElementById('userName').textContent = user.name;
-            document.getElementById('userEmail').textContent = user.email;
-            document.getElementById('userId').textContent = `#USR${String(user.id).padStart(3, '0')}`;
-            document.getElementById('joinedDate').textContent = new Date(user.joined_date).toLocaleDateString();
-            document.getElementById('userAddress').textContent = user.address || 'Not provided';
-            document.getElementById('userPhone').textContent = user.phone || 'Not provided';
+            const userAvatar = document.getElementById('userAvatar');
+            const userNameSpan = document.getElementById('userName');
+            const userIdSpan = document.getElementById('userId');
+            const joinedDate = document.getElementById('joinedDate');
+            const address = document.getElementById('userAddress');
+            const phone = document.getElementById('userPhone');
+            const purchaseTable = document.getElementById('purchaseHistoryTable');
+            const eventTable = document.getElementById('eventHistoryTable');
+
+            // Update avatar
+            if (userAvatar) {
+                userAvatar.innerHTML = ''; // Clear existing content
+                if (user.profile_pic) {
+                    userAvatar.classList.remove('no-image');
+                    const avatarBox = document.createElement('div');
+                    avatarBox.classList.add('avatar-box');
+                    const img = document.createElement('img');
+                    img.src = user.profile_pic; // Use full data URL
+                    img.alt = 'User Avatar';
+                    avatarBox.appendChild(img);
+                    userAvatar.appendChild(avatarBox);
+                } else {
+                    userAvatar.classList.add('no-image');
+                    userAvatar.textContent = user.name ? user.name.charAt(0).toUpperCase() : '?';
+                }
+            }
+
+            // Update other fields
+            if (userNameSpan) userNameSpan.textContent = user.name || 'Not provided';
+            if (userIdSpan) userIdSpan.textContent = `#USR${String(user.id).padStart(3, '0')}`;
+            if (joinedDate) joinedDate.textContent = user.joined_date;
+            if (address) address.textContent = user.address || 'Not provided';
+            if (phone) phone.textContent = user.phone || 'Not provided';
+
+            // Populate purchase history
+            if (purchaseTable) {
+                purchaseTable.innerHTML = '';
+                if (data.purchaseHistory.length > 0) {
+                    data.purchaseHistory.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.productId}</td>
+                            <td>${item.productName}</td>
+                            <td>${item.purchaseDate}</td>
+                            <td>${item.price}</td>
+                        `;
+                        purchaseTable.appendChild(row);
+                    });
+                } else {
+                    purchaseTable.innerHTML = '<tr><td colspan="4">No purchase history</td></tr>';
+                }
+            }
+
+            // Populate event history
+            if (eventTable) {
+                eventTable.innerHTML = '';
+                if (data.eventHistory.length > 0) {
+                    data.eventHistory.forEach(ev => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${ev.eventId}</td>
+                            <td>${ev.eventName}</td>
+                            <td>${ev.date}</td>
+                            <td>${ev.location}</td>
+                            <td>${ev.status}</td>
+                        `;
+                        eventTable.appendChild(row);
+                    });
+                } else {
+                    eventTable.innerHTML = '<tr><td colspan="5">No event participation</td></tr>';
+                }
+            }
         } else {
             alert('Failed to load user details: ' + data.message);
             goBack();
@@ -39,20 +104,29 @@ async function fetchUserDetails() {
 
 // Function to show edit form and populate it
 function showEditForm() {
-    document.getElementById('userView').style.display = 'none';
-    document.getElementById('editForm').style.display = 'block';
+    const userView = document.getElementById('userView');
+    const editForm = document.getElementById('editForm');
+    const name = document.getElementById('userName')?.textContent || '';
+    const email = document.getElementById('userEmail')?.textContent || '';
+    const address = document.getElementById('userAddress')?.textContent || '';
+    const phone = document.getElementById('userPhone')?.textContent || '';
 
-    // Load current values into form
-    document.getElementById('editName').value = document.getElementById('userName').textContent;
-    document.getElementById('editEmail').value = document.getElementById('userEmail').textContent;
-    document.getElementById('editAddress').value = document.getElementById('userAddress').textContent === 'Not provided' ? '' : document.getElementById('userAddress').textContent;
-    document.getElementById('editPhone').value = document.getElementById('userPhone').textContent === 'Not provided' ? '' : document.getElementById('userPhone').textContent;
+    if (userView) userView.style.display = 'none';
+    if (editForm) editForm.style.display = 'block';
+
+    document.getElementById('editName').value = name;
+    document.getElementById('editEmail').value = email;
+    document.getElementById('editAddress').value = address === 'Not provided' ? '' : address;
+    document.getElementById('editPhone').value = phone === 'Not provided' ? '' : phone;
+    document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
 }
 
 // Function to cancel edit
 function cancelEdit() {
-    document.getElementById('userView').style.display = 'block';
-    document.getElementById('editForm').style.display = 'none';
+    const userView = document.getElementById('userView');
+    const editForm = document.getElementById('editForm');
+    if (userView) userView.style.display = 'block';
+    if (editForm) editForm.style.display = 'none';
     document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
 }
 
@@ -64,29 +138,26 @@ function validateForm() {
     const address = document.getElementById('editAddress');
     const phone = document.getElementById('editPhone');
 
-    // Reset error messages
+    if (!name || !email || !address || !phone) return false;
+
     document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
 
-    // Name validation
     if (name.value.trim().length < 2) {
         document.getElementById('nameError').textContent = 'Name must be at least 2 characters long';
         isValid = false;
     }
 
-    // Email validation (not editable, but included for completeness)
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.value)) {
         document.getElementById('emailError').textContent = 'Please enter a valid email address';
         isValid = false;
     }
 
-    // Address validation
     if (address.value.trim() && address.value.trim().length < 5) {
         document.getElementById('addressError').textContent = 'Address must be at least 5 characters long if provided';
         isValid = false;
     }
 
-    // Phone validation
     const phoneRegex = /^[0-9]{10}$/;
     if (phone.value.trim() && !phoneRegex.test(phone.value)) {
         document.getElementById('phoneError').textContent = 'Please enter a valid 10-digit phone number if provided';
@@ -115,14 +186,12 @@ async function saveUserChanges(event) {
         const data = await response.json();
 
         if (data.success) {
-            // Update display
             document.getElementById('userName').textContent = name;
             document.getElementById('userAddress').textContent = address || 'Not provided';
             document.getElementById('userPhone').textContent = phone || 'Not provided';
-            document.getElementById('userAvatar').textContent = name.charAt(0);
-
             cancelEdit();
             alert('User information updated successfully!');
+            fetchUserDetails(); // Refresh avatar with new name
         } else {
             alert('Failed to update user: ' + data.message);
         }
@@ -155,8 +224,11 @@ async function deleteUser() {
     }
 }
 
-// Event listener for form submission
-document.getElementById('userEditForm').addEventListener('submit', saveUserChanges);
-
-// Load user details on page load
-window.onload = fetchUserDetails;
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('userEditForm')?.addEventListener('submit', saveUserChanges);
+    document.getElementById('edit-user-btn')?.addEventListener('click', showEditForm);
+    document.getElementById('cancel-edit')?.addEventListener('click', cancelEdit);
+    document.getElementById('delete-user-btn')?.addEventListener('click', deleteUser);
+    fetchUserDetails();
+});

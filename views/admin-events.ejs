@@ -1,3 +1,4 @@
+<!-- Whole file for admin-events.ejs (updated with view button) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,6 +44,11 @@
                         <span>Products</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                         <a href="/admin-orders" class="nav-link">
+                     <span>Orders</span>
+                      </a>
+                  </li>
                 <li class="nav-item">
                     <a href="/admin/logout" class="nav-link">
                         <span>Logout</span>
@@ -146,6 +152,7 @@
                         <td>${event.city}</td>
                         <td><span class="status ${event.status?.toLowerCase() || ''}">${event.status}</span></td>
                         <td>
+                            <button class="action-btn view" data-id="${event._id}">View</button>
                             <button class="action-btn delete" data-id="${event._id}">Delete</button>
                         </td>
                     </tr>
@@ -235,9 +242,12 @@
                     handleDeleteClick(eventId);
                 }
             }
-            // You can add a similar check for the 'view' button here
+            // Handle view button
             if (e.target && e.target.classList.contains('view')) {
-                alert(`View button clicked for event ID: ${e.target.dataset.id}`);
+                const eventId = e.target.dataset.id;
+                if (eventId) {
+                    window.location.href = `/admin-event-details?id=${eventId}`;
+                }
             }
         });
 

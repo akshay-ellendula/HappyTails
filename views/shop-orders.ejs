@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -47,162 +47,189 @@
                 
                 <div class="order-buttons">
                     <button class="order-btn <%= status === 'all' ? 'active' : '' %>" onclick="filterOrders('all')">All Orders</button>
-                    <button class="order-btn <%= status === 'Pending' ? 'active' : '' %>" onclick="filterOrders('Pending')">Pending</button>
+                    <button class="order-btn <%= status === 'Confirmed' ? 'active' : '' %>" onclick="filterOrders('Confirmed')">Confirmed</button>
                     <button class="order-btn <%= status === 'Shipped' ? 'active' : '' %>" onclick="filterOrders('Shipped')">Shipped</button>
                     <button class="order-btn <%= status === 'Delivered' ? 'active' : '' %>" onclick="filterOrders('Delivered')">Delivered</button>
                     <button class="order-btn <%= status === 'Cancelled' ? 'active' : '' %>" onclick="filterOrders('Cancelled')">Cancelled</button>
                 </div>
 
                 <table class="table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Order ID</th>
-                            <th>Customer</th>
-                            <th>Products</th>
-                            <th>Total</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (orders && orders.length > 0) { %>
-                            <% orders.forEach(order => { %>
-                                <tr>
-                                    <td><input type="checkbox" value="<%= order.id %>"></td>
-                                    <td><%= order.order_id %></td>
-                                    <td><%= order.customer %></td>
-                                    <td><%= order.products %></td>
-                                    <td>$<%= order.total %></td>
-                                    <td><%= order.date %></td>
-                                    <td><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
-                                    <td>
-                                        <i class="fa fa-eye" data-order-id="<%= order.id %>" onclick="viewOrder('<%= order.id %>')"></i> 
-                                        <i class="fa fa-print" onclick="printOrder('<%= order.id %>')"></i> 
-                                    </td>
-                                </tr>
-                            <% }); %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="8">No orders found.</td>
-                            </tr>
-                        <% } %>
-                        </tbody>
-                </table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Products</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% if (orders && orders.length > 0) { %>
+            <% orders.forEach(order => { %>
+            <tr>
+                <td><%= order.order_id %></td>
+                <td><%= order.customer %></td>
+                <td><%= order.products %></td>
+                <td>₹<%= order.total %></td>
+                <td><%= order.date %></td>
+                <td class="status-cell"><span class="status <%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+                <td>
+                    <i class="fa fa-eye" data-order-id="<%= order.id %>" onclick="viewOrder('<%= order.id %>')"></i> 
+<i class="fa fa-print" onclick="printOrder('<%= order.id %>')"></i>
+
+<% if (order.status === 'Confirmed' || order.status === 'Shipped') { %>
+    <div class="action-dropdown">
+        <i class="fa fa-ellipsis-v" onclick="toggleDropdown(this)"></i>
+        <div class="dropdown-content">
+            <% if (order.status === 'Confirmed') { %>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Shipped')">Mark as Shipped</a>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Delivered')">Mark as Delivered</a>
+            <% } %>
+            <% if (order.status === 'Shipped') { %>
+                <a href="#" onclick="updateStatus('<%= order.id %>', 'Delivered')">Mark as Delivered</a>
+            <% } %>
+            <a href="#" onclick="updateStatus('<%= order.id %>', 'Cancelled')">Cancel Order</a>
+        </div>
+    </div>
+<% } else { %>
+    <div class="action-placeholder"></div>
+<% } %>
+                </td>
+            </tr>
+            <% }); %>
+        <% } else { %>
+            <tr>
+                <td colspan="7">No orders found.</td>
+            </tr>
+        <% } %>
+    </tbody>
+</table>
             </div>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Profile dropdown toggle
-            const profileTrigger = document.getElementById('profile-trigger');
-            const profileDropdown = document.getElementById('profile-dropdown');
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Profile dropdown toggle
+        const profileTrigger = document.getElementById('profile-trigger');
+        const profileDropdown = document.getElementById('profile-dropdown');
 
-            profileTrigger.addEventListener('click', function() {
-                profileDropdown.classList.toggle('active');
-            });
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
-                    profileDropdown.classList.remove('active');
-                }
-            });
+        profileTrigger.addEventListener('click', function() {
+            profileDropdown.classList.toggle('active');
         });
 
-        // Filter orders by status
-        function filterOrders(status) {
-            window.location.href = `/shop-orders?status=${status}`;
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!profileTrigger.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.remove('active');
+            }
+        });
+    });
+    // Filter orders by status
+    function filterOrders(status) {
+        window.location.href = `/shop-orders?status=${status}`;
+    }
+
+    // View order details
+    function viewOrder(orderId) {
+        window.open(`/shop-order-details/${orderId}`, '_blank');
+    }
+
+    // Print order details
+    function printOrder(orderId) {
+        // Find the order row by finding an element unique to the row, like the view icon
+        const viewIcon = document.querySelector(`i.fa-eye[data-order-id="${orderId}"]`);
+        const orderRow = viewIcon.closest('tr');
+        
+        const orderIdText = orderRow.cells[0].innerText;
+        const customer = orderRow.cells[1].innerText;
+        const products = orderRow.cells[2].innerText;
+        const total = orderRow.cells[3].innerText;
+        const date = orderRow.cells[4].innerText;
+        const status = orderRow.cells[5].innerText;
+
+        // Create a printable HTML content
+        const printContent = `
+            <html>
+            <head>
+                <title>Order ${orderIdText}</title>
+                <style>
+                    body { font-family: Arial, sans-serif; padding: 20px; }
+                    h1 { text-align: center; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                </style>
+            </head>
+            <body>
+                <h1>Order Details</h1>
+                <table>
+                    <tr><th>Order ID</th><td>${orderIdText}</td></tr>
+                    <tr><th>Customer</th><td>${customer}</td></tr>
+                    <tr><th>Products</th><td>${products}</td></tr>
+                    <tr><th>Total</th><td>${total}</td></tr>
+                    <tr><th>Date</th><td>${date}</td></tr>
+                    <tr><th>Status</th><td>${status}</td></tr>
+                </table>
+            </body>
+            </html>
+        `;
+
+        // Open a new window and print
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(printContent);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    function toggleDropdown(element) {
+        // Close all other dropdowns first
+        document.querySelectorAll('.dropdown-content.show').forEach(openDropdown => {
+            if (openDropdown !== element.nextElementSibling) {
+                openDropdown.classList.remove('show');
+            }
+        });
+        // Toggle the current one
+        element.nextElementSibling.classList.toggle('show');
+    }
+
+    // Close dropdowns when clicking elsewhere
+    window.onclick = function(event) {
+        if (!event.target.matches('.fa-ellipsis-v')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
         }
+    }
 
-        // View order details (placeholder for now)
-        function viewOrder(orderId) {
-            window.open(`/shop-order-details/${orderId}`, '_blank');
+    function updateStatus(orderId, status) {
+        if (confirm(`Are you sure you want to change this order status to "${status}"?`)) {
+            fetch(`/update-order-status/${orderId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Order status updated successfully');
+                    window.location.reload();
+                } else {
+                    alert('Error updating status: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Server error while updating status');
+            });
         }
-
-        // Print order details
-        function printOrder(orderId) {
-            // Find the order row
-            const orderRow = document.querySelector(`input[value="${orderId}"]`).closest('tr');
-            const orderIdText = orderRow.cells[1].innerText;
-            const customer = orderRow.cells[2].innerText;
-            const products = orderRow.cells[3].innerText;
-            const total = orderRow.cells[4].innerText;
-            const date = orderRow.cells[5].innerText;
-            const status = orderRow.cells[6].innerText;
-
-            // Create a printable HTML content
-            const printContent = `
-                <html>
-                <head>
-                    <title>Order #${orderId}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; padding: 20px; }
-                        h1 { text-align: center; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                        th { background-color: #f2f2f2; }
-                    </style>
-                </head>
-                <body>
-                    <h1>Order Details</h1>
-                    <table>
-                        <tr><th>Order ID</th><td>${orderIdText}</td></tr>
-                        <tr><th>Customer</th><td>${customer}</td></tr>
-                        <tr><th>Products</th><td>${products}</td></tr>
-                        <tr><th>Total</th><td>${total}</td></tr>
-                        <tr><th>Date</th><td>${date}</td></tr>
-                        <tr><th>Status</th><td>${status}</td></tr>
-                    </table>
-                </body>
-                </html>
-            `;
-
-            // Open a new window and print
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-            printWindow.print();
-        }
-
-        function toggleSelectAll() {
-           const selectAll = document.getElementById('selectAll');
-           const checkboxes = document.querySelectorAll('.order-checkbox');
-           checkboxes.forEach(checkbox => {
-               if (!checkbox.disabled) checkbox.checked = selectAll.checked;
-           });
-       }
-       function deleteSelectedOrders() {
-           const checkboxes = document.querySelectorAll('.order-checkbox:checked');
-           const orderIds = Array.from(checkboxes).map(cb => cb.value);
-           if (orderIds.length === 0) {
-               alert('No pending orders selected');
-               return;
-           }
-           if (confirm('Are you sure you want to delete the selected orders?')) {
-               fetch('/delete-selected-orders', {
-                   method: 'DELETE',
-                   headers: { 'Content-Type': 'application/json' },
-                   body: JSON.stringify({ orderIds })
-               })
-               .then(response => response.json())
-               .then(data => {
-                   if (data.success) {
-                       alert('Selected orders deleted successfully');
-                       window.location.reload();
-                   } else {
-                       alert('Error deleting orders: ' + data.message);
-                   }
-               })
-               .catch(error => {
-                   console.error('Error:', error);
-                   alert('Server error');
-               });
-           }
-       }
-
-    </script>
+    }
+</script>
 </body>
 </html>

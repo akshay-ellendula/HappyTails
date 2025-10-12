@@ -1,3 +1,4 @@
+// Whole file for admin-em-details.js
 // public/ADMIN/admin-em-details.js
 const urlParams = new URLSearchParams(window.location.search);
 const managerId = urlParams.get('id');
@@ -11,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function goBack() {
-    window.location.href = '/admin-events';
+    window.location.href = '/admin-eventManager';
 }
 
 function fetchManagerDetails() {
@@ -20,7 +21,19 @@ function fetchManagerDetails() {
         .then(data => {
             if (data.success) {
                 const manager = data.manager;
-                document.getElementById('managerAvatar').textContent = manager.name.charAt(0);
+                const avatar = document.getElementById('managerAvatar');
+                console.log('Manager image from API:', manager.image); // Debug log
+                if (manager.image) {
+                    // Check if image already has a data URL prefix
+                    const imageUrl = manager.image.startsWith('data:image') ? manager.image : `data:image/png;base64,${manager.image}`;
+                    avatar.style.backgroundImage = `url('${imageUrl}')`;
+                    avatar.style.backgroundColor = 'transparent'; // Remove fallback color
+                    avatar.textContent = ''; // Remove initial letter
+                } else {
+                    avatar.textContent = manager.name.charAt(0); // Fallback to initial
+                    avatar.style.backgroundImage = 'none';
+                    avatar.style.backgroundColor = 'var(--event-color)';
+                }
                 document.getElementById('managerName').textContent = manager.name;
                 document.getElementById('managerEmail').textContent = manager.email;
                 document.getElementById('managerId').textContent = `#${manager.id}`;
@@ -36,7 +49,6 @@ function fetchManagerDetails() {
             alert('Error loading manager details');
         });
 }
-
 function fetchEventMetrics() {
     fetch(`/admin/event-manager/${managerId}/metrics`)
         .then(response => response.json())

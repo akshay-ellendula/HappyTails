@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -52,9 +51,9 @@
                 <button class="new-event-btn" onclick="openEventForm()">New Event</button>
             </div>
 
-            <div class="events-section">
+            <div class="events-section">    
                 <div class="ongoing-events">
-                    <h2>Ongoing Events <a href="/eventmanager_events?status=Ongoing" class="view-all" data-section="ongoing">View all</a></h2>
+                    <h2>Today Events <a href="/eventmanager_events?status=Ongoing" class="view-all" data-section="ongoing">View all</a></h2>
                     <% if (ongoingEvents.length > 0) { %>
                         <% ongoingEvents.forEach(event => { %>
                             <div class="event-card" onclick="showEventDetails('<%= event.event_name %>',' <%= event.tickets_sold %>',' <%= (event.tickets_sold * event.ticket_price).toFixed(2) %>')">
@@ -67,7 +66,7 @@
                             </div>
                         <% }) %>
                     <% } else { %>
-                        <p>No ongoing events.</p>
+                        <p>No events Today.</p>
                     <% } %>
                 </div>
 
@@ -160,7 +159,7 @@
                     <div class="event-guide">
                         <input type="text" id="language" placeholder="Language" required>
                         <input type="text" id="duration" placeholder="Duration (e.g., 2h)" required>
-                        <input type="text" id="tickets" placeholder="Ticket Price" required>
+                        <input type="number" id="tickets" placeholder="Ticket Price" required>
                         <input type="number" id="ageLimit" placeholder="Age Limit" required>
                     </div>
                 </div>
@@ -215,7 +214,7 @@
                 </div>
                 <div class="form-group">
                     <label for="editPhone">Phone No</label>
-                    <input type="text" id="editPhone" required>
+                    <input type="number" id="editPhone" required>
                 </div>
                 <div class="form-group">
                     <label for="editEvent">Event<span>(Read only)</span></label>
@@ -233,139 +232,6 @@
             </form>
         </div>
     </div>
-
-    <script>
-             // MODAL FUNCTIONS (no changes needed here)
-        function openEventForm() {
-            document.getElementById('eventFormModal').style.display = 'block';
-        }
-        function closeEventForm() {
-            document.getElementById('eventFormModal').style.display = 'none';
-        }
-        function showEventDetails(eventName, ticketsSold, revenue) {
-            document.getElementById('eventDetailsTitle').textContent = eventName;
-            document.getElementById('ticketsSold').textContent = ticketsSold;
-            document.getElementById('revenueGenerated').textContent = revenue;
-            document.getElementById('eventDetailsModal').style.display = 'block';
-        }
-        function closeEventDetails() {
-            document.getElementById('eventDetailsModal').style.display = 'none';
-        }
-        function openEditAttendeeModal(attendeeId, name, phone, eventName, date, seats) {
-            document.getElementById('editAttendeeId').value = attendeeId;
-            document.getElementById('editName').value = name;
-            document.getElementById('editPhone').value = phone;
-            document.getElementById('editEvent').value = eventName;
-            document.getElementById('editDate').value = date;
-            document.getElementById('editSeats').value = seats;
-            document.getElementById('editAttendeeModal').style.display = 'block';
-        }
-        function closeEditAttendeeModal() {
-            document.getElementById('editAttendeeModal').style.display = 'none';
-        }
-
-        // API CALLS / ASYNC FUNCTIONS
-        async function saveAttendee(event) {
-            event.preventDefault();
-            const attendeeId = document.getElementById('editAttendeeId').value;
-
-            // Debugging: Check if the ID is present before fetching
-            if (!attendeeId) {
-                alert('Error: Attendee ID is missing. Cannot save.');
-                return;
-            }
-
-            const updatedData = {
-                name: document.getElementById('editName').value,
-                phone_number: document.getElementById('editPhone').value,
-                seats: document.getElementById('editSeats').value
-            };
-
-            try {
-                const response = await fetch(`/eventmanager_dashboard/updateAttendee/${attendeeId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedData)
-                });
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Attendee updated successfully!');
-                    window.location.reload();
-                } else {
-                    alert('Error updating attendee: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error updating attendee:', error);
-                alert('Error updating attendee');
-            }
-            closeEditAttendeeModal();
-        }
-
-        async function deleteAttendee(attendeeId) {
-            // Debugging: Check if the ID is present before fetching
-            if (!attendeeId) {
-                alert('Error: Attendee ID is missing. Cannot delete.');
-                return;
-            }
-            if (confirm('Are you sure you want to delete this attendee?')) {
-                try {
-                    const response = await fetch(`/eventmanager_dashboard/deleteAttendee/${attendeeId}`, {
-                        method: 'DELETE'
-                    });
-                    const result = await response.json();
-                    if (response.ok) {
-                        alert('Attendee deleted successfully!');
-                        window.location.reload();
-                    } else {
-                        alert('Error deleting attendee: ' + result.message);
-                    }
-                } catch (error) {
-                    console.error('Error deleting attendee:', error);
-                    alert('Error deleting attendee');
-                }
-            }
-        }
-
-        // NEW: MAIN EVENT LISTENER USING EVENT DELEGATION
-        document.addEventListener('DOMContentLoaded', function() {
-            const attendeeTable = document.getElementById('attendeeTable');
-
-            if (attendeeTable) {
-                attendeeTable.addEventListener('click', function(event) {
-                    const button = event.target;
-
-                    // Check if an EDIT button was clicked
-                    if (button.classList.contains('edit-btn')) {
-                        const data = button.dataset;
-                        console.log('Edit button clicked. Data ID:', data.id); // DEBUGGING LINE
-                        if (data.id) {
-                            openEditAttendeeModal(
-                                data.id,
-                                data.name,
-                                data.phone,
-                                data.event,
-                                data.date,
-                                data.seats
-                            );
-                        } else {
-                            console.error('ID is missing from the edit button!');
-                        }
-                    }
-
-                    // Check if a DELETE button was clicked
-                    if (button.classList.contains('delete-btn')) {
-                        const attendeeId = button.dataset.id;
-                        console.log('Delete button clicked. Data ID:', attendeeId); // DEBUGGING LINE
-                        if (attendeeId) {
-                            deleteAttendee(attendeeId);
-                        } else {
-                            console.error('ID is missing from the delete button!');
-                        }
-                    }
-                });
-            }
-        });
-    </script>
+    <script src="/Events/eventmanager_dashboard.js"></script>
 </body>
-
 </html>

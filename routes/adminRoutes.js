@@ -36,12 +36,19 @@ const {
     addProduct,
     logout,
     getEventsData,
-    deleteEvent
+    deleteEvent,
+    getEvent, 
+    getEventAttendees,
+    updateEvent,
+    // Add the missing functions here
+    getProductData,
+    getProductCustomers,
+    getOrders,
+    getOrderDetails,
+    getOrderStats,
+    getEventRevenue
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
-
-
-
 
 const multer = require('multer');
 const path = require('path');
@@ -70,19 +77,27 @@ const upload = multer({
     }
 });
 
-
-// Existing routes
+// --- Authentication and Basic Routes ---
 router.post('/admin-login', adminLogin);
+router.get('/admin/logout', isAdminAuthenticated, logout);
+router.get('/admin-login', (req, res) => {
+    res.render('admin_login');
+});
+
+// --- Dashboard Stats Routes ---
+router.get('/admin/user-stats', isAdminAuthenticated, getUserStats);
+router.get('/admin/product-stats', isAdminAuthenticated, getProductStats);
+router.get('/admin/dashboard-stats', isAdminAuthenticated, dashBoardStats);
+router.get('/admin/revenue-chart-data', isAdminAuthenticated, getRevenueChartData);
+
+// --- User Management Routes ---
 router.get('/admin/users', isAdminAuthenticated, getUsers);
 router.get('/admin/user/:id', isAdminAuthenticated, getUser);
 router.put('/admin/user/:id', isAdminAuthenticated, updateUser);
 router.delete('/admin/user/:id', isAdminAuthenticated, deleteUser);
-router.get('/admin/products', isAdminAuthenticated, getProducts);
-router.delete('/admin/product/:id', isAdminAuthenticated, deleteProduct);
-router.get('/admin/user-stats', isAdminAuthenticated, getUserStats);
-router.get('/admin/product-stats', isAdminAuthenticated, getProductStats);
-router.get('/admin/dashboard-stats', isAdminAuthenticated, dashBoardStats);
 router.get('/admin/get-users', isAdminAuthenticated, adminGetUsers);
+
+// --- Vendor Management Routes ---
 router.get('/admin/vendors', isAdminAuthenticated, getVendors);
 router.get('/admin/vendor-stats', isAdminAuthenticated, getVendorStats);
 router.get('/admin/get-vendors', isAdminAuthenticated, adminGetVendors);
@@ -92,6 +107,8 @@ router.get('/admin/vendor/:id/products', isAdminAuthenticated, getVendorProducts
 router.get('/admin/vendor/:id/top-customers', isAdminAuthenticated, getVendorTopCustomers);
 router.put('/admin/vendor/:id', isAdminAuthenticated, updateVendor);
 router.delete('/admin/vendor/:id', isAdminAuthenticated, deleteVendor);
+
+// --- Event Management Routes ---
 router.get('/admin/event-managers', isAdminAuthenticated, getEventManagers);
 router.get('/admin/event-manager-stats', isAdminAuthenticated, getEventManagerStats);
 router.get('/admin/total-events', isAdminAuthenticated, getTotalEvents);
@@ -101,19 +118,20 @@ router.get('/admin/event-manager/:id/upcoming-events', isAdminAuthenticated, get
 router.get('/admin/event-manager/:id/past-events', isAdminAuthenticated, getPastEvents);
 router.put('/admin/event-manager/:id', isAdminAuthenticated, updateEventManager);
 router.delete('/admin/event-manager/:id', isAdminAuthenticated, deleteEventManager);
-router.get('/admin/revenue-chart-data', isAdminAuthenticated, getRevenueChartData);
 router.get('/admin/events', isAdminAuthenticated, getEventsData);
 router.delete('/admin/events/:id', isAdminAuthenticated, deleteEvent);
+router.put('/admin/event/:id', isAdminAuthenticated, updateEvent);
+router.get('/admin/event/:id', isAdminAuthenticated, getEvent);
+router.get('/admin/event/:id/attendees', isAdminAuthenticated, getEventAttendees);
 
-// Render Admin Login Page
-router.get('/admin-login', (req, res) => {
-    res.render('admin_login');
-});
+// --- Product Management Routes ---
+router.get('/admin/products', isAdminAuthenticated, getProducts);
+router.post('/admin/add-product', isAdminAuthenticated, upload.array('productImages', 4), addProduct);
+router.post('/admin/product/:id', isAdminAuthenticated, upload.array('productImages', 4), updateProduct);
+router.delete('/admin/product/:id', isAdminAuthenticated, deleteProduct);
+router.get('/admin/product/:id', isAdminAuthenticated, getProduct); // API route to get single product data
 
-// Logout route
-router.get('/admin/logout', isAdminAuthenticated, logout);
-
-// Render Add Product Page
+// --- Page Rendering Routes ---
 router.get('/admin-add-product', isAdminAuthenticated, (req, res) => {
     res.render('admin-add-product', {
         categories: ['beds', 'food', 'toys', 'grooming', 'other'],
@@ -121,18 +139,48 @@ router.get('/admin-add-product', isAdminAuthenticated, (req, res) => {
     });
 });
 
-// Render Edit Product Page
 router.get('/admin-edit-product', isAdminAuthenticated, (req, res) => {
     res.render('admin-edit-product');
 });
 
-// Fetch Product Data for Editing
-router.get('/admin/product/:id', isAdminAuthenticated, getProduct);
+router.get('/admin-em-details', isAdminAuthenticated, (req, res) => {
+    res.render('admin-em-details');
+});
 
-// Handle Add Product Submission
-router.post('/admin/add-product', isAdminAuthenticated, upload.array('productImages', 4), addProduct);
+router.get('/admin-event-details', isAdminAuthenticated, (req, res) => {
+    res.render('admin-event-details');
+});
 
-// Handle Update Product Submission
-router.post('/admin/product/:id', isAdminAuthenticated, upload.array('productImages', 4), updateProduct);
+// Route to render the dynamic product details page
+router.get('/admin-product-details/:id', isAdminAuthenticated, async (req, res) => {
+    try {
+        const productData = await getProductData(req.params.id);
+        const customersData = await getProductCustomers(req.params.id);
+
+        res.render('admin-product-details', {
+            product: productData,
+            customers: customersData
+        });
+    } catch (err) {
+        console.error('Error fetching data for product details page:', err);
+        res.status(500).render('admin-product-details', { product: null, customers: null });
+    }
+});
+
+// --- New Order Management Routes ---
+router.get('/api/admin/orders', isAdminAuthenticated, getOrders);
+router.get('/api/admin/order/:id', isAdminAuthenticated, getOrderDetails);
+
+// --- New Page Rendering Routes ---
+router.get('/admin-orders', isAdminAuthenticated, (req, res) => {
+    res.render('admin-orders');
+});
+
+router.get('/admin-order-details/:id', isAdminAuthenticated, (req, res) => {
+    res.render('admin-order-details');
+});
+
+router.get('/api/admin/order-stats', isAdminAuthenticated, getOrderStats);
+router.get('/admin/event-revenue', isAdminAuthenticated, getEventRevenue);
 
 module.exports = router;

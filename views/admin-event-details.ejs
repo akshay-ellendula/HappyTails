@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Tails - Event Details</title>
+    <link href="/ADMIN/admin-event-details.css" rel="stylesheet">
+    <style>
+        .error-message { color: red; font-size: 0.8em; margin-top: 5px; display: block; }
+        .form-group { margin-bottom: 15px; }
+        input:invalid:focus, select:invalid:focus { border-color: red; }
+        input:valid:focus, select:valid:focus { border-color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="goBack()">← Back to Events</button>
+            <div class="action-buttons">
+    <button class="edit-btn">Edit Event</button>
+    <button class="delete-btn">Delete Event</button>
+</div>
+        </div>
+
+        <div id="eventView">
+          <div class="event-profile">
+    <img src="" alt="" class="event-image" id="eventImage">
+    <h2 class="event-name" id="eventName"></h2>
+    <p class="event-date" id="eventDate"></p>
+    <div style="clear: both;"></div>
+</div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Basic Information</h3>
+                <table class="details-table">
+                    <tr><td>Event ID:</td><td id="eventId"></td></tr>
+                    <tr><td>Manager:</td><td id="managerName"></td></tr>
+                    <tr><td>Category:</td><td id="category"></td></tr>
+                    <tr><td>Status:</td><td id="status"></td></tr>
+                    <tr><td>Venue:</td><td id="venue"></td></tr>
+                    <tr><td>City:</td><td id="city"></td></tr>
+                    <tr><td>Contact Number:</td><td id="contactNumber"></td></tr>
+                    <tr><td>Created At:</td><td id="createdAt"></td></tr>
+                </table>
+            </div>
+
+            <div class="detail-section">
+    <h3 class="section-title">Event Details</h3>
+    <table class="details-table">
+        <tr><td>Language:</td><td id="language"></td></tr>
+        <tr><td>Duration:</td><td id="duration"></td></tr>
+        <tr><td>Ticket Price:</td><td id="ticketPrice"></td></tr>
+        <tr><td>Age Limit:</td><td id="ageLimit"></td></tr>
+        <tr><td>Total Tickets:</td><td id="totalTickets"></td></tr>
+        <tr><td>Tickets Sold:</td><td id="ticketsSold"></td></tr>
+        <!-- New Row for Revenue -->
+        <tr><td>Revenue Collected:</td><td id="revenue"></td></tr>
+    </table>
+</div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Description</h3>
+                <p id="about"></p>
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Instructions</h3>
+                <p id="instructions"></p>
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Terms</h3>
+                <p id="terms"></p>
+            </div>
+
+            <div class="detail-section">
+                <h3 class="section-title">Attendees</h3>
+                <table class="attendees-table">
+                    <thead>
+                        <tr>
+                            <th>Ticket ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Seats</th>
+                            <th>With Pet</th>
+                            <th>Registration Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendeesTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="editForm" class="edit-form" style="display: none;">
+            <div class="detail-section">
+                <h3 class="section-title">Edit Event Information</h3>
+                <form id="eventEditForm" novalidate>
+                    <div class="form-group">
+                        <label for="editName">Event Name:</label>
+                        <input type="text" id="editName" required minlength="3" maxlength="100">
+                        <span class="error-message" id="nameError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAbout">About Event:</label>
+                        <textarea id="editAbout" required minlength="10" rows="4"></textarea>
+                        <span class="error-message" id="aboutError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLanguage">Language:</label>
+                        <input type="text" id="editLanguage" required minlength="2" maxlength="50">
+                        <span class="error-message" id="languageError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDuration">Duration (e.g., 2h 30m):</label>
+                        <input type="text" id="editDuration" required pattern="\d+h\s*\d*m?">
+                        <span class="error-message" id="durationError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTicketPrice">Ticket Price ($):</label>
+                        <input type="number" id="editTicketPrice" required min="0" step="0.01">
+                        <span class="error-message" id="ticketPriceError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editAgeLimit">Age Limit (e.g., 18+):</label>
+                        <input type="text" id="editAgeLimit" required pattern="\d+\+?">
+                        <span class="error-message" id="ageLimitError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editVenue">Venue:</label>
+                        <input type="text" id="editVenue" required minlength="3" maxlength="100">
+                        <span class="error-message" id="venueError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCategory">Category:</label>
+                        <input type="text" id="editCategory" required minlength="2" maxlength="50">
+                        <span class="error-message" id="categoryError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDateTime">Date and Time:</label>
+                        <input type="datetime-local" id="editDateTime" required>
+                        <span class="error-message" id="dateTimeError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTotalTickets">Total Tickets:</label>
+                        <input type="number" id="editTotalTickets" required min="1">
+                        <span class="error-message" id="totalTicketsError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editCity">City:</label>
+                        <input type="text" id="editCity" required minlength="2" maxlength="50">
+                        <span class="error-message" id="cityError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editContactNumber">Contact Number:</label>
+                        <input type="tel" id="editContactNumber" pattern="^\+91[6-9][0-9]{9}$" maxlength="13">
+                        <span class="error-message" id="contactNumberError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editInstructions">Instructions (Optional):</label>
+                        <textarea id="editInstructions" rows="4"></textarea>
+                        <span class="error-message" id="instructionsError"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="editTerms">Terms (Optional):</label>
+                        <textarea id="editTerms" rows="4"></textarea>
+                        <span class="error-message" id="termsError"></span>
+                    </div>
+                    <button type="submit" class="save-btn">Save Changes</button>
+                    <button type="button" class="cancel-btn" onclick="cancelEdit()">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="/ADMIN/admin-event-details.js"></script>
+</body>
+</html>

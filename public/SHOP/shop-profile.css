@@ -233,3 +233,19 @@ background-color: #444;
 .hidden {
     display: none;
 }
+
+/* For shop-dashboard.css */
+.stat-comparison.positive span {
+    color: #28a745; /* Green */
+}
+.stat-comparison.negative span {
+    color: #dc3545; /* Red */
+}
+
+/* For shop-profile.css */
+.trend.positive span {
+    color: #28a745; /* Green */
+}
+.trend.negative span {
+    color: #dc3545; /* Red */
+}

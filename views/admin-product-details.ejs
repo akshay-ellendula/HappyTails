@@ -16,112 +16,89 @@
             </div>
         </div>
 
-        <div id="productView">
-            <div class="product-profile">
-                <div class="product-image">
-                    <img src="/api/placeholder/100/100" alt="Product Image">
-                </div>
-                <div class="product-info">
-                    <h2 class="product-name" id="productName">Premium Dog Food</h2>
-                    <p class="product-category" id="productCategory">Pet Food > Dog Food</p>
-                    <div>
-                        <span class="product-price" id="productPrice">$49.99</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="detail-section">
-                <h3 class="section-title">Product Information</h3>
-                <table class="details-table">
-                    <tr>
-                        <td>Product ID:</td>
-                        <td id="productId">PROD-5789</td>
-                    </tr>
-                    <tr>
-                        <td>SKU:</td>
-                        <td id="productSku">DOG-FD-PRE-5KG</td>
-                    </tr>
-                    <tr>
-                        <td>Date Added:</td>
-                        <td id="dateAdded">Jan 15, 2025</td>
-                    </tr>
-                    <tr>
-                        <td>Brand:</td>
-                        <td id="brand">Happy Paws</td>
-                    </tr>
-                    <tr>
-                        <td>Weight:</td>
-                        <td id="weight">5 kg</td>
-                    </tr>
-                    <tr>
-                        <td>Current Stock:</td>
-                        <td id="currentStock">45</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="detail-section">
-                <h3 class="section-title">Product Description</h3>
-                <p id="productDescription">Premium dog food formulated for all life stages. Made with high-quality ingredients including real chicken as the first ingredient, wholesome grains, and vegetables. Enriched with vitamins and minerals for complete and balanced nutrition. Contains no artificial colors, flavors, or preservatives. Perfect for maintaining your dog's health and vitality.</p>
-            </div>
-
-            <div class="detail-section">
-                <h3 class="section-title">Performance Metrics</h3>
-                <div class="metrics-cards">
-                    <div class="metrics-card">
-                        <div class="metrics-value">1,254</div>
-                        <div class="metrics-label">Total Units Sold</div>
-                    </div>
-                    <div class="metrics-card">
-                        <div class="metrics-value">$62,675</div>
-                        <div class="metrics-label">Total Revenue</div>
-                    </div>
-                    <div class="metrics-card">
-                        <div class="metrics-value">4.8</div>
-                        <div class="metrics-label">Average Rating</div>
-                    </div>
-                    <div class="metrics-card">
-                        <div class="metrics-value">2.1%</div>
-                        <div class="metrics-label">Return Rate</div>
+        <% if (product) { %>
+            <div id="productView">
+                <div class="product-profile">
+                    <div class="product-image">
+    <img id="productImage" src="<%= product.image || 'https://via.placeholder.com/150' %>" alt="Product Image">
+</div>
+                    <div class="product-info">
+                        <h2 class="product-name" id="productName"><%= product.product_name %></h2>
+                        <p class="product-category" id="productCategory"><%= product.product_category %></p>
+                        <div>
+                            <span class="product-price" id="productPrice">$<%= product.regular_price.toFixed(2) %></span>
+                        </div>
                     </div>
                 </div>
 
-                <table class="metrics-table">
-                    <thead>
+                <div class="detail-section">
+                    <h3 class="section-title">Product Information</h3>
+                    <table class="details-table">
                         <tr>
-                            <th>Month</th>
-                            <th>Units Sold</th>
-                            <th>Revenue</th>
-                            <th>Profit Margin</th>
-                            <th>Growth</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>March 2025</td>
-                            <td>187</td>
-                            <td>$9,346</td>
-                            <td>32.5%</td>
-                            <td>+5.8%</td>
+                            <td>Product ID:</td>
+                            <td id="productId"><%= product.id %></td>
                         </tr>
                         <tr>
-                            <td>February 2025</td>
-                            <td>175</td>
-                            <td>$8,743</td>
-                            <td>31.8%</td>
-                            <td>+3.2%</td>
+                            <td>Date Added:</td>
+                            <td id="dateAdded"><%= new Date(product.created_at).toLocaleDateString() %></td>
                         </tr>
                         <tr>
-                            <td>January 2025</td>
-                            <td>168</td>
-                            <td>$8,395</td>
-                            <td>31.5%</td>
-                            <td>+2.4%</td>
+                            <td>Shop Owner:</td>
+                            <td id="shopOwner"><%= product.vendor.store_name %></td>
                         </tr>
-                    </tbody>
-                </table>
+                        <tr>
+                            <td>Vendor Email:</td>
+                            <td id="vendorEmail"><%= product.vendor.email %></td>
+                        </tr>
+                        <tr>
+                            <td>Current Stock:</td>
+                            <td id="currentStock"><%= product.stock_quantity %></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="detail-section">
+                    <h3 class="section-title">Product Description</h3>
+                    <p id="productDescription"><%= product.product_description %></p>
+                </div>
+                
+                <div class="detail-section">
+                    <h3 class="section-title">Purchased By</h3>
+                    <table class="details-table">
+                        <thead>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Email</th>
+                                <th>Order Date</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (customers && customers.length > 0) { %>
+                                <% customers.forEach(customer => { %>
+                                    <tr>
+                                        <td><%= customer.user_name %></td>
+                                        <td><%= customer.user_email %></td>
+                                        <td><%= new Date(customer.order_date).toLocaleDateString() %></td>
+                                        <td><%= customer.quantity %></td>
+                                    </tr>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4">No purchase history found for this product.</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
+        <% } else { %>
+            <div class="detail-section">
+                <h3 class="section-title">Product not found.</h3>
+                <p>The product you are looking for does not exist or an error occurred.</p>
+                <button class="back-button" onclick="goBack()">← Back to Products</button>
+            </div>
+        <% } %>
 
         <div id="editForm" class="edit-form detail-section">
             <h3 class="section-title">Edit Product</h3>
@@ -129,36 +106,36 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="edit-name">Product Name</label>
-                        <input type="text" id="edit-name" value="Premium Dog Food">
+                        <input type="text" id="edit-name" value="">
                     </div>
                     <div class="form-group">
                         <label for="edit-category">Category</label>
-                        <input type="text" id="edit-category" value="Pet Food > Dog Food">
+                        <input type="text" id="edit-category" value="">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="edit-price">Price ($)</label>
-                        <input type="number" id="edit-price" value="49.99" step="0.01">
+                        <input type="number" id="edit-price" value="" step="0.01">
                     </div>
                     <div class="form-group">
                         <label for="edit-stock">Current Stock</label>
-                        <input type="number" id="edit-stock" value="45">
+                        <input type="number" id="edit-stock" value="">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="edit-sku">SKU</label>
-                        <input type="text" id="edit-sku" value="DOG-FD-PRE-5KG">
+                        <input type="text" id="edit-sku" value="">
                     </div>
                     <div class="form-group">
                         <label for="edit-brand">Brand</label>
-                        <input type="text" id="edit-brand" value="Happy Paws">
+                        <input type="text" id="edit-brand" value="">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="edit-description">Description</label>
-                    <textarea id="edit-description">Premium dog food formulated for all life stages. Made with high-quality ingredients including real chicken as the first ingredient, wholesome grains, and vegetables. Enriched with vitamins and minerals for complete and balanced nutrition. Contains no artificial colors, flavors, or preservatives. Perfect for maintaining your dog's health and vitality.</textarea>
+                    <textarea id="edit-description"></textarea>
                 </div>
                 <div>
                     <button type="button" class="save-btn" onclick="saveProductChanges()">Save Changes</button>

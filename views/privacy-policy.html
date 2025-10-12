@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - HappyTails</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+/* General Body Styles */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: #effe8b;
+    color: #1a1a1a;
+}
+
+/* Header and Navbar Styles */
+.navbar {
+    margin: 5px 75px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 3rem;
+}
+
+.badge a {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1a1a1a;
+    text-decoration: none;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    background-color: transparent;
+    border-bottom: 2px solid #000;
+    padding: 5px;
+    font-size: 20px;
+    margin-left: 5px;
+}
+
+.menu {
+    display: flex;
+    gap: 3rem;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #1a1a1a;
+    font-size: 1.2rem;
+    font-weight: 500;
+}
+
+/* Responsive Menu Styles */
+.menu-icon {
+    display: none; /* Hidden on desktop */
+    cursor: pointer;
+}
+
+.side-navbar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    right: 0; /* Changed from left to match original HTML */
+    background-color: #1a1a1a;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+.side-navbar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 22px;
+    color: #ffffff;
+    display: block;
+    transition: 0.3s;
+}
+
+.side-navbar a:hover {
+    color: #effe8b;
+}
+
+.side-navbar .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 36px;
+    color: #ffffff;
+}
+
+.side-navbar.open {
+    width: 250px;
+}
+
+/* Main Content Styles for Policy Pages */
+.policy-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px 40px;
+}
+
+.policy-container h1 {
+    font-size: 3rem;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.policy-container h2 {
+    font-size: 1.8rem;
+    color: #1a1a1a;
+    margin-top: 30px;
+}
+
+.policy-container p, .policy-container li {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #333;
+}
+
+.policy-container ul {
+    padding-left: 25px;
+    margin-top: 10px;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #1a1d26;
+    color: #ffffff;
+    padding: 40px 20px;
+}
+
+.footer-container {
+    margin: 50px 75px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+}
+
+.footer-column h3 {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 10px;
+}
+
+.footer-column ul li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.footer-column ul li a:hover {
+    text-decoration: underline;
+}
+
+.footer-social {
+    margin-top: 20px;
+}
+
+.footer-social a {
+    margin-right: 15px;
+}
+
+.footer-social img {
+    width: 24px;
+    height: 24px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1200px) {
+    .navbar {
+        margin: 5px 20px;
+    }
+    header {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .menu, .search-bar {
+        display: none;
+    }
+    .menu-icon {
+        display: block;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        margin: 20px;
+    }
+    .policy-container {
+        padding: 20px;
+        margin: 20px 10px;
+    }
+     .policy-container h1 {
+        font-size: 2.5rem;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <div class="badge">
+                <a href="/home" class="badge">Happy Tails</a>
+            </div>
+            <div class="menu">
+                <a href="/pet_accessory">Pet Essentials</a>
+                <a href="/Events">Events</a>
+                <a href="/my_login">Login/SignUp</a>
+            </div>
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="/pet_accessory">Essentials</a>
+                <a href="/Events">Events</a>
+                <a href="/my_login">Login/SignUp</a>
+            </div>
+        </header>
+    </div>
+
+    <main class="policy-container">
+        <h1>Privacy Policy</h1>
+        <p><strong>Last Updated: October 12, 2025</strong></p>
+        <p>Welcome to Happy Tails! We value your privacy and are committed to protecting your personal data. This privacy policy will inform you how we look after your personal data when you visit our website and tell you about your privacy rights.</p>
+
+        <h2>1. Information We Collect</h2>
+        <p>We may collect, use, store, and transfer different kinds of personal data about you which we have grouped together as follows:</p>
+        <ul>
+            <li><strong>Identity Data:</strong> includes first name, last name, username, or similar identifier.</li>
+            <li><strong>Contact Data:</strong> includes billing address, delivery address, email address, and telephone numbers.</li>
+            <li><strong>Transaction Data:</strong> includes details about payments to and from you and other details of products and services you have purchased from us.</li>
+            <li><strong>Usage Data:</strong> includes information about how you use our website, products, and services.</li>
+        </ul>
+
+        <h2>2. How We Use Your Data</h2>
+        <p>We will only use your personal data when the law allows us to. Most commonly, we will use your personal data in the following circumstances:</p>
+        <ul>
+            <li>To process and deliver your order, including managing payments and collecting money owed to us.</li>
+            <li>To manage our relationship with you, which will include notifying you about changes to our terms or privacy policy.</li>
+            <li>To administer and protect our business and this website (including troubleshooting, data analysis, testing, and system maintenance).</li>
+        </ul>
+
+        <h2>3. Data Security</h2>
+        <p>We have put in place appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way. We limit access to your personal data to those employees and partners who have a business need to know.</p>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event manager</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="refund-policy.html">Refund Policy</a></li>
+                    <li><a href="cancellation-policy.html">Cancellation Policy</a></li>
+                    <li><a href="terms-and-conditions.html">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.add('open');
+        });
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+        });
+    </script>
+</body>
+</html>

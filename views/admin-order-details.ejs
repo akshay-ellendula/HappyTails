@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details</title>
+    <link rel="stylesheet" href="/ADMIN/admin-order-details.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/admin-orders" class="back-button">← Back to Orders</a>
+            <div class="action-buttons">
+                <button id="print-order-btn" class="print-btn">Print Order</button>
+            </div>
+        </div>
+
+        <div class="order-profile" id="orderView">
+            <div class="order-summary-box">
+                <h2>Order Summary</h2>
+                <table class="summary-table">
+                    <tr><td>Order ID:</td><td><span id="orderId"></span></td></tr>
+                    <tr><td>Status:</td><td><span id="orderStatus"></span></td></tr>
+                    <tr><td>Date:</td><td><span id="orderDate"></span></td></tr>
+                    <tr><td>Total Amount:</td><td><span id="orderTotal"></span></td></tr>
+                    <tr><td>Payment Method:</td><td><span id="paymentMethod"></span></td></tr>
+                    <tr><td>Transaction ID:</td><td><span id="transactionId"></span></td></tr>
+                </table>
+            </div>
+            
+            <div class="customer-info-box">
+                <h2>Customer Information</h2>
+                <table class="customer-table">
+                    <tr><td>Name:</td><td><span id="customerName"></span></td></tr>
+                    <tr><td>Email:</td><td><span id="customerEmail"></span></td></tr>
+                    <tr><td>Phone:</td><td><span id="customerPhone"></span></td></tr>
+                    <tr><td>Address:</td><td><span id="customerAddress"></span></td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2 class="section-title">Order Items</h2>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Vendor (Shop Manager)</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="orderItemsTable">
+                    <tr><td colspan="6">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="/ADMIN/admin-order-details.js"></script>
+</body>
+</html>

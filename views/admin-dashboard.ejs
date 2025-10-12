@@ -47,6 +47,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                     <a href="/admin-orders" class="nav-link">
+                 <span>Orders</span>
+                  </a>
+              </li>
+                <li class="nav-item">
                     <a href="/admin/logout" class="nav-link">
                         <span>Logout</span>
                     </a>
@@ -86,7 +91,6 @@
                                 <h3>Total Users</h3>
                             </div>
                             <div class="stats-number" id="totalUsers">Loading...</div>
-                            <div class="stats-label" id="userGrowthPercent">Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -97,7 +101,6 @@
                                 <h3>Shop Vendors</h3>
                             </div>
                             <div class="stats-number" id="totalVendors">Loading...</div>
-                            <div class="stats-label" id="vendorGrowthPercent">Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -108,10 +111,20 @@
                                 <h3>Event Managers</h3>
                             </div>
                             <div class="stats-number" id="totalEventManagers">Loading...</div>
-                            <div class="stats-label" id="eventManagerGrowthPercent">Loading...</div>
                         </div>
                     </div>
                 </div>
+                <div class="stats-card">
+                <div class="stats-content">
+                    <div class="stats-info">
+                        <div class="stats-header">
+                            <h3>Number of Events</h3>
+                        </div>
+                        <div class="stats-number" id="totalEvents">Loading...</div>
+                        <div class="stats-label">All-time events</div>
+                    </div>
+                </div>
+            </div>
             </div>
 
             <!-- Second Row: Revenue Stats -->
@@ -120,7 +133,7 @@
                     <div class="stats-content">
                         <div class="stats-info">
                             <div class="stats-header">
-                                <h3>Total Revenue</h3>
+                                <h3>Total Revenue (10% Tax)</h3>
                             </div>
                             <div class="stats-number" id="totalRevenue">Loading...</div>
                             <div class="stats-label">All-time platform revenue</div>
@@ -131,10 +144,9 @@
                     <div class="stats-content">
                         <div class="stats-info">
                             <div class="stats-header">
-                                <h3>Monthly Revenue</h3>
+                                <h3>Monthly Revenue (10% Tax)</h3>
                             </div>
                             <div class="stats-number" id="monthlyRevenue">Loading...</div>
-                            <div class="stats-label" id="monthlyRevenueGrowthPercent">Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -142,10 +154,9 @@
                     <div class="stats-content">
                         <div class="stats-info">
                             <div class="stats-header">
-                                <h3>Weekly Revenue</h3>
+                                <h3>Weekly Revenue (10% Tax)</h3>
                             </div>
                             <div class="stats-number" id="weeklyRevenue">Loading...</div>
-                            <div class="stats-label" id="weeklyRevenueGrowthPercent">Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -153,10 +164,9 @@
                     <div class="stats-content">
                         <div class="stats-info">
                             <div class="stats-header">
-                                <h3>Today's Revenue</h3>
+                                <h3>Today's Revenue (10% Tax)</h3>
                             </div>
                             <div class="stats-number" id="dailyRevenue">Loading...</div>
-                            <div class="stats-label" id="dailyRevenueGrowthPercent">Loading...</div>
                         </div>
                     </div>
                 </div>
@@ -166,7 +176,7 @@
             <div class="charts-container">
                 <div class="chart-card">
                     <div class="section-header">
-                        <h3 class="section-title">Revenue Overview</h3>
+                        <h3 class="section-title">Revenue Overview (10% Tax)</h3>
                     </div>
                     <div class="chart-container">
                         <canvas id="revenueChart"></canvas>
@@ -211,5 +221,3 @@
     </div>
 
     <script src="/ADMIN/admin-dashboard.js"></script>
-</body>
-</html>

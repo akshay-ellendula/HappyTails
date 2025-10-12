@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Manager - Events</title>
     <link rel="stylesheet" href="/Events/eventmanager_events.css">
 </head>
-
 <body>
     <div class="navbar">
         <header>
@@ -38,58 +36,55 @@
 
             <!-- Previous Events -->
             <div class="section">
-                <h2>Previous Events</h2>
+                <h2>Past Events</h2>
                 <div class="appointments">
                     <% if (typeof previousEvents !=='undefined' && previousEvents.length> 0) { %>
                         <% previousEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge" data-time="<%= event.time %>">
-                                    <!-- Time will be set by JavaScript -->
-                                </div>
+                                <a href="/event-details/<%= event.id %>" class="event-card-link">
                                 <h3>
                                     <%= event.event_name %>
                                 </h3>
-                                <p><strong>Date:</strong>
-                                    <%= event.formattedDate %>
-                                </p>
+                                <p><strong>Date:</strong> <%= new Date(event.date_time).toLocaleString('en-IN', { dateStyle: 'full'}) %></p>
+                                <p><strong>Time:</strong> <%= new Date(event.date_time).toLocaleString('en-IN', {timeStyle: 'short' }) %></p>
                                 <p><strong>Registered:</strong>
                                     <%= event.attendeeCount %> Attendees
                                 </p>
                                 <p><strong>Revenue:</strong> ₹<%= (event.revenue || 0).toFixed(2) %>
-                                </p>
+                                </p> 
+                            </a>
                             </div>
+                            
                             <% }) %>
                                 <% } else { %>
-                                    <p>No previous events found.</p>
+                                    <p>No past events </p>
                                     <% } %>
                 </div>
             </div>
 
             <!-- Ongoing Events -->
             <div class="section">
-                <h2>Ongoing Events</h2>
+                <h2>Today's Events</h2>
                 <div class="appointments">
                     <% if (ongoingEvents.length> 0) { %>
                         <% ongoingEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge" data-time="<%= event.time %>">
-                                    <!-- Time will be set by JavaScript -->
-                                </div>
+                                <a href="/event-details/<%= event.id %>" class="event-card-link">
                                 <h3>
                                     <%= event.event_name %>
                                 </h3>
-                                <p><strong>Date:</strong>
-                                    <%= event.formattedDate %>
-                                </p>
+                                <p><strong>Date:</strong> <%= new Date(event.date_time).toLocaleString('en-IN', { dateStyle: 'full'}) %></p>
+                                <p><strong>Time:</strong> <%= new Date(event.date_time).toLocaleString('en-IN', {timeStyle: 'short' }) %></p>
                                 <p><strong>Registered:</strong>
                                     <%= event.attendeeCount %> Attendees
                                 </p>
                                 <p><strong>Revenue:</strong> ₹<%= (event.revenue || 0).toFixed(2) %>
                                 </p>
+                                </a>
                             </div>
                             <% }) %>
                                 <% } else { %>
-                                    <p>No ongoing events found.</p>
+                                    <p>No events Today</p>
                                     <% } %>
                 </div>
             </div>
@@ -101,15 +96,11 @@
                     <% if (typeof upcomingEvents !=='undefined' && upcomingEvents.length> 0) { %>
                         <% upcomingEvents.forEach(event=> { %>
                             <div class="appointment-card" id="event-<%= event.id %>">
-                                <div class="time-badge" data-time="<%= event.time %>">
-                                    <!-- Time will be set by JavaScript -->
-                                </div>
                                 <h3>
                                     <%= event.event_name %>
                                 </h3>
-                                <p><strong>Date:</strong>
-                                    <%= event.formattedDate %>
-                                </p>
+                                <p><strong>Date:</strong> <%= new Date(event.date_time).toLocaleString('en-IN', { dateStyle: 'full'}) %></p>
+                                <p><strong>Time:</strong> <%= new Date(event.date_time).toLocaleString('en-IN', {timeStyle: 'short' }) %></p>
                                 <p><strong>Venue:</strong>
                                     <%= event.venue %>
                                 </p>
@@ -118,11 +109,9 @@
                                 </p>
                                 <p><strong>Ticket Price:</strong> ₹<%= event.ticket_price.toFixed(2) %>
                                 </p>
-                                <p><strong>Description:</strong>
-                                    <%= event.about_event %>
-                                </p>
                                 <div class="card-actions">
                                     <a href="/eventmanager_event_edit?eventId=<%= event.id %>" class="btn-primary">Edit</a>
+                                    <button class="btn-danger" onclick="deleteEvent('<%= event.id %>', event)">Delete</button>
                                 </div>
                             </div>
                             <% }) %>
@@ -131,24 +120,6 @@
                                     <% } %>
                 </div>
             </div>
-
-            <script>
-                // Function to convert 24-hour time to 12-hour format
-                function convertTo12Hour(time) {
-                    const [hours, minutes] = time.split(':').map(Number);
-                    const period = hours >= 12 ? 'PM' : 'AM';
-                    const adjustedHours = hours % 12 || 12; // Convert 0 to 12 for midnight
-                    return `${adjustedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
-                }
-
-                // Apply the conversion to all time badges
-                document.querySelectorAll('.time-badge').forEach(badge => {
-                    const time = badge.getAttribute('data-time');
-                    if (time) {
-                        badge.textContent = convertTo12Hour(time);
-                    }
-                });
-            </script>
+            <script src="/Events/eventmanager_events.js"></script>
 </body>
-
 </html>

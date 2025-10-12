@@ -1,8 +1,9 @@
 const bcrypt = require('bcryptjs');
 const { Event, EventAttendee, EventManager } = require('../models/database');
 const mongoose = require("mongoose");
+const { Console } = require('console');
 
-const eventManagerSignup = async (req, res) => {
+const signup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, companyname, location, termsandconditions } = req.body;
 
     if (!name || !contactnumber || !email || !password || !confirmpassword || !companyname || !location || termsandconditions === undefined) {
@@ -23,8 +24,8 @@ const eventManagerSignup = async (req, res) => {
         return res.status(400).json({ success: false, message: 'Validation failed' });
     }
 
-    if (password.length < 8 || !/\d/.test(password)) {
-        return res.status(400).json({ success: false, message: 'Password must be at least 8 characters long and contain a number' });
+    if (password.length < 6 || !/\d/.test(password)) {
+        return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long and contain a number' });
     }
 
     if (password !== confirmpassword) {
@@ -68,42 +69,42 @@ const eventManagerSignup = async (req, res) => {
         console.error('Error in EventManager Signup controller', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
+
 };
 
-const eventDashbord = async (req, res) => {
+const getDashboard = async (req, res) => {
     try {
-        // Check for a valid session to ensure the user is logged in
         if (!req.session.eventManager || !req.session.eventManager.id) {
-            return res.redirect('/eventmanager/login'); // Redirect if not logged in
+            return res.redirect('/eventmanager/login');
         }
 
         const eventManagerId = new mongoose.Types.ObjectId(req.session.eventManager.id);
         const managedEventIds = await Event.find({ event_manager_id: eventManagerId }).distinct('_id');
 
-        // --- Prepare all database queries to run in parallel ---
+        const now = new Date();
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+
         const promises = [
-            // #################### CHANGED SECTION START ####################
-            // 1. Get ACCURATE overview stats by recalculating from attendees
+            // #################### FIX IS HERE ####################
+            // 1. Get overview stats - The full pipeline must be inside the array
             Event.aggregate([
                 { $match: { _id: { $in: managedEventIds } } },
                 {
-                    // Join with the attendees collection to get real booking data
                     $lookup: {
-                        from: 'eventattendees', // The collection name for EventAttendee model
+                        from: 'eventattendees',
                         localField: '_id',
                         foreignField: 'event_id',
                         as: 'attendees'
                     }
                 },
                 {
-                    // Create new fields for actual bookings and earnings per event
                     $addFields: {
                         actualBookings: { $sum: '$attendees.seats' },
                         actualEarnings: { $multiply: [{ $sum: '$attendees.seats' }, '$ticket_price'] }
                     }
                 },
                 {
-                    // Group all events to get the grand totals for the dashboard
                     $group: {
                         _id: null,
                         totalEvents: { $sum: 1 },
@@ -112,21 +113,30 @@ const eventDashbord = async (req, res) => {
                     }
                 }
             ]),
-            // #################### CHANGED SECTION END ####################
+            // ######################################################
 
-            // 2. Get the next 3 ongoing events
-            Event.find(
-                { _id: { $in: managedEventIds }, status: 'Ongoing' },
-                'event_name tickets_sold ticket_price date_time image'
-            ).sort({ date_time: 1 }).limit(3).lean(),
+            // 2. Get ongoing events
+            Event.find({
+                _id: { $in: managedEventIds },
+                date_time: { $gte: startOfToday, $lte: endOfToday }
+            }, 'event_name tickets_sold ticket_price date_time image')
+                .sort({ date_time: 1 }).limit(3).lean(),
 
-            // 3. Get the next 3 upcoming events
-            Event.find(
-                { _id: { $in: managedEventIds }, status: 'Upcoming' },
-                'event_name tickets_sold ticket_price total_tickets date_time image'
-            ).sort({ date_time: 1 }).limit(3).lean(),
+            // 3. Get upcoming events
+            Event.find({
+                _id: { $in: managedEventIds },
+                date_time: { $gt: endOfToday }
+            }, 'event_name tickets_sold ticket_price total_tickets date_time image')
+                .sort({ date_time: 1 }).limit(3).lean(),
 
-            // 4. Get the 3 most recent attendees for the manager's events
+            // 4. Get previous events
+            Event.find({
+                _id: { $in: managedEventIds },
+                date_time: { $lt: startOfToday }
+            }, 'event_name tickets_sold ticket_price total_tickets date_time image')
+                .sort({ date_time: -1 }).limit(3).lean(),
+
+            // 5. Get recent attendees
             EventAttendee.find({ event_id: { $in: managedEventIds } })
                 .sort({ registration_date: -1 })
                 .limit(3)
@@ -134,14 +144,14 @@ const eventDashbord = async (req, res) => {
                 .lean()
         ];
 
-        // --- Execute all queries at the same time ---
         const [
             overviewData,
             ongoingEvents,
             upcomingEvents,
+            previousEvents,
             attendeesFromDB
         ] = await Promise.all(promises);
-        
+
         const overview = overviewData[0] || { totalEvents: 0, totalBookings: 0, totalEarnings: 0 };
 
         const attendees = attendeesFromDB.map(att => ({
@@ -157,6 +167,7 @@ const eventDashbord = async (req, res) => {
             overview,
             ongoingEvents,
             upcomingEvents,
+            previousEvents,
             attendees,
             eventManager: req.session.eventManager
         });
@@ -166,9 +177,9 @@ const eventDashbord = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+
 // POST /eventmanager_dashboard/createEvent - Create a new event
-// POST /eventmanager_dashboard/createEvent - Create a new event
-const createNewEvent = async (req, res) => {
+const createEvent = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
 
@@ -176,7 +187,7 @@ const createNewEvent = async (req, res) => {
             eventName, aboutEvent, language, duration, tickets, ageLimit,
             instructions, venue, terms, category, dateTime
         } = req.body;
-        
+
         // Change this: Convert to Base64 instead of path (like in vendorController's submitProduct)
         let image = null;
         if (req.file) {
@@ -210,7 +221,7 @@ const createNewEvent = async (req, res) => {
     }
 }
 // PUT /eventmanager_dashboard/updateAttendee/:id - Update an attendees
-const updateAttende = async (req, res) => {
+const updateAttendee = async (req, res) => {
     try {
         const attendeeId = req.params.id;
         const { name, phone_number, seats } = req.body;
@@ -231,19 +242,37 @@ const updateAttende = async (req, res) => {
 const deleteAttendee = async (req, res) => {
     try {
         const attendeeId = req.params.id;
-        console.log(attendeeId)
 
+        // 1. Find the attendee document first to get details
+        const attendee = await EventAttendee.findById(attendeeId);
+
+        // If the attendee doesn't exist, send a 404 error
+        if (!attendee) {
+            return res.status(404).json({ message: 'Attendee not found' });
+        }
+
+        // 2. Update the event's tickets_sold count
+        // Use the $inc operator to decrement the count by the number of seats
+        // This is an atomic operation, which is safe and efficient
+        await Event.findByIdAndUpdate(attendee.event_id, {
+            $inc: { tickets_sold: -attendee.seats } 
+        });
+
+        // 3. Now, delete the attendee document
         await EventAttendee.deleteOne({ _id: attendeeId });
 
-        res.status(200).json({ message: 'Attendee deleted successfully' });
+        res.status(200).json({ 
+            message: `Successfully cancelled registration and returned ${attendee.seats} ticket(s) to the event.` 
+        });
+
     } catch (error) {
         console.error('Error deleting attendee:', error);
         res.status(500).json({ message: 'Error deleting attendee' });
     }
-}
+};
 
 // get-events for dashbord
-const getEvents = async (req, res) => {
+const getManagerEvents = async (req, res) => {
     try {
 
         const eventManagerId = req.session.eventManager.id;
@@ -275,7 +304,6 @@ const getEvents = async (req, res) => {
                     ticket_price: 1,
                     date_time: 1,
                     total_tickets: 1,
-                    image: 1,
                     status: 1,
                     venue: 1,
                     category: 1,
@@ -332,7 +360,6 @@ const getEvents = async (req, res) => {
                     ticket_price: 1,
                     date_time: 1,
                     total_tickets: 1,
-                    image: 1,
                     status: 1,
                     venue: 1,
                     category: 1,
@@ -386,7 +413,6 @@ const getEvents = async (req, res) => {
                     ticket_price: 1,
                     date_time: 1,
                     total_tickets: 1,
-                    image: 1,
                     status: 1,
                     venue: 1,
                     category: 1,
@@ -415,7 +441,6 @@ const getEvents = async (req, res) => {
                 }
             }
         ]);
-
         res.render('eventmanager_events', {
             previousEvents,
             ongoingEvents,
@@ -427,8 +452,9 @@ const getEvents = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
+
 //get-event
-const getEvent = async (req, res) => {
+const getEventForEdit = async (req, res) => {
     try {
         const eventId = req.query.eventId;
         if (!eventId) {
@@ -444,7 +470,7 @@ const getEvent = async (req, res) => {
         if (!event) {
             return res.status(404).send('Event not found');
         }
-
+        
         // Format the date and time for the form
         const dateTime = new Date(event.date_time);
         const formattedDate = dateTime.toISOString().split('T')[0]; // e.g., "2025-05-29"
@@ -510,15 +536,12 @@ const updateEvent = async (req, res) => {
             return res.status(404).send('Event not found.');
         }
 
-        // --- IMAGE HANDLING LOGIC (Requires Multer) ---
-        // If a new file is uploaded, req.file will be populated by multer.
-        // You would save the new path and potentially delete the old image.
-        let imagePath = eventToUpdate.image; // Keep the old image by default
+        let image = undefined;
         if (req.file) {
-            imagePath = '/uploads/' + req.file.filename; // Example path, adjust as needed
-            // Add logic here to delete the old image from your server if necessary
+            const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+            image = base64Image;
         }
-
+        // Only include image if a new file was uploaded
         await Event.updateOne(
             { _id: id, event_manager_id: new mongoose.Types.ObjectId(eventManagerId) },
             {
@@ -536,20 +559,18 @@ const updateEvent = async (req, res) => {
                 category: category,
                 date_time: eventDateTime,
                 total_tickets: parseInt(capacity),
-                image: imagePath // Update image path
+                image: image !== undefined ? image : undefined
             }
         );
-
-        // ONLY send one response. A redirect is appropriate after a successful update.
-        res.redirect('/eventmanager_events');
-
+        // 2. Redirect the user to the main events page
+        res.status(200).json({message:"success"})
     } catch (err) {
         console.error('Error updating event:', err);
         // It's better to render an error page or send a clear error message
         res.status(500).send('Failed to update event.');
     }
 };
-const getAttendes = async (req, res) => {
+const getAttendees = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
         const today = new Date();
@@ -687,13 +708,14 @@ const getAttendes = async (req, res) => {
             pastOngoingAttendees,
             upcomingAttendees
         });
+
     } catch (err) {
         console.error('Error fetching attendees:', err);
         res.status(500).send('Internal Server Error');
     }
 }
 
-const eventAnalytics = async (req, res) => {
+const getAnalytics = async (req, res) => {
     try {
         if (!req.session?.eventManager?.id) {
             return res.status(401).send('Unauthorized: Please log in.');
@@ -707,7 +729,7 @@ const eventAnalytics = async (req, res) => {
         startOfWeek.setDate(today.getDate() - today.getDay());
 
         const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-        
+
         // The server's timezone (ensure this matches your server's environment)
         const serverTimezone = "Asia/Kolkata";
 
@@ -735,7 +757,7 @@ const eventAnalytics = async (req, res) => {
                                 todayRevenue: { $sum: { $cond: [{ $eq: [{ $dateToString: { format: '%Y-%m-%d', date: '$attendees.registration_date', timezone: serverTimezone } }, { $dateToString: { format: '%Y-%m-%d', date: today, timezone: serverTimezone } }] }, { $multiply: ['$attendees.seats', '$ticket_price'] }, 0] } },
                                 thisWeekRevenue: { $sum: { $cond: [{ $gte: ['$attendees.registration_date', startOfWeek] }, { $multiply: ['$attendees.seats', '$ticket_price'] }, 0] } },
                                 thisMonthRevenue: { $sum: { $cond: [{ $gte: ['$attendees.registration_date', startOfMonth] }, { $multiply: ['$attendees.seats', '$ticket_price'] }, 0] } },
-                                
+
                                 // --- AVG TICKET PRICE (based on registration_date) ---
                                 // Note: This is now the average price per booking/sale
                                 avgTotal: { $avg: '$ticket_price' },
@@ -760,7 +782,7 @@ const eventAnalytics = async (req, res) => {
                 }
             }
         ]);
-        
+
         // Destructure from the single analytics object
         const data = analyticsData?.data || {};
 
@@ -801,7 +823,7 @@ const eventAnalytics = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-const getEventManagerProfile = async (req, res) => {
+const getProfile = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
 
@@ -838,7 +860,7 @@ const getEventManagerProfile = async (req, res) => {
     }
 }
 
-const upadatePassword = async (req, res) => {
+const updatePassword = async (req, res) => {
     try {
         const eventManagerId = req.session.eventManager.id;
         const { currentPassword, newPassword } = req.body;
@@ -865,12 +887,12 @@ const upadatePassword = async (req, res) => {
 //@dec data for Events.ejs 
 //@route
 //@access
-const getEventsUser = async (req, res) => {
+const getPublicEvents = async (req, res) => {
     try {
         const city = req.query.city || 'none';
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set time to start of today
-        let query = { 
+        let query = {
             status: 'Upcoming',
             date_time: { $gte: today } // Only events from today onwards
         };
@@ -880,7 +902,7 @@ const getEventsUser = async (req, res) => {
         }
 
         const events = await Event.find(
-            query, 
+            query,
             'id event_name about_event date_time venue contact_number image ticket_price'
         ).lean();
 
@@ -905,7 +927,7 @@ const getEventsUser = async (req, res) => {
 };
 
 
-const registerEvent = async (req, res) => {
+const showBookingForm = async (req, res) => {
     try {
         const eventId = req.query.eventId;
         if (!eventId) {
@@ -932,7 +954,7 @@ const registerEvent = async (req, res) => {
     }
 }
 
-const myEvents = async (req, res) => {
+const getUserEvents = async (req, res) => {
     try {
         if (!req.session.user) {
             return res.status(401).json({ success: false, message: 'Please log in to view your events' });
@@ -958,7 +980,7 @@ const myEvents = async (req, res) => {
                 $project: {
                     event_id: '$event._id',
                     attendee_id: '$_id',
-                    ticketId : '$ticketId',
+                    ticketId: '$ticketId',
                     event_name: '$event.event_name',
                     date_time: '$event.date_time',
                     venue: '$event.venue',
@@ -1031,8 +1053,6 @@ const postTicket = async (req, res) => {
         if (!req.session.user) {
             return res.status(401).json({ success: false, message: 'Please log in to book an event' });
         }
-
-
         const user = req.session.user;
         const {
             eventId,
@@ -1063,9 +1083,6 @@ const postTicket = async (req, res) => {
             return `${prefix}-${timestamp}-${randomPart}`;
         }
 
-        // Example usage:
-        console.log(generateTicketId()); // Output: TKT-LS8QHI-9BZ3K
-
         const ticketId = generateTicketId();
 
         await EventAttendee.create({
@@ -1088,7 +1105,7 @@ const postTicket = async (req, res) => {
             { $inc: { tickets_sold: seats || 1 } }
         );
 
-        return res.redirect('/home');
+        return res.redirect('/my_events');
 
     } catch (err) {
         console.error('Error booking event:', err);
@@ -1096,8 +1113,9 @@ const postTicket = async (req, res) => {
     }
 }
 
-const updateEventManagerProfile = async (req, res) => {
+const updateProfile = async (req, res) => {
     try {
+
         const eventManagerId = req.session.eventManager.id;
         const { firstName, lastName, email, phone, eventType, license, bio } = req.body;
         const name = `${firstName} ${lastName}`.trim();
@@ -1148,8 +1166,7 @@ const updateEventManagerProfile = async (req, res) => {
             bio,
             image: image !== undefined ? image : req.session.eventManager.image // Keep old image if no new upload
         };
-
-        res.redirect('/eventmanager_profile');
+        res.status(200).json({ success: true, message: 'Profile updated successfully!' });
     } catch (err) {
         console.error('Error updating profile:', err);
         res.render('eventmanager_profile', {
@@ -1204,13 +1221,14 @@ const getEventDetails = async (req, res) => {
             event,
             user: req.session.user
         });
+        
     } catch (err) {
         console.error("Error fetching event details:", err);
         res.status(500).send("Internal Server Error");
     }
 };
 
-const editEvent = async(req,res) =>{
+const showEditForm = async(req,res) =>{
 try {
         const eventId = req.query.eventId;
 
@@ -1222,8 +1240,6 @@ try {
         if (!eventData) {
             return res.status(404).send("Event not found");
         }
-
-        console.log(eventData.total_tickets);
         // Transform to match template expectations
         const event = {
             id: eventData._id,
@@ -1238,30 +1254,29 @@ try {
             contact: eventData.contact_number,
             terms: eventData.terms,
             category: eventData.category,
-            total_tickets:eventData.total_tickets,
+            total_tickets: eventData.total_tickets,
             date: new Date(eventData.date_time).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }),
             time: new Date(eventData.date_time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
             ticket_price: eventData.ticket_price,
+            tickets_sold:eventData.tickets_sold,
             image: eventData.image || '/images/default_event.jpg'
         };
-
         res.render("eventmanager_event_edit", {
             event,
             user: req.session.user
         });
+
     } catch (err) {
         console.error("Error fetching event details:", err);
         res.status(500).send("Internal Server Error");
     }
-    
+
 }
 
-const getEventDetail = async(req,res) =>{
+const getEventDetail = async (req, res) => {
     try {
 
         const eventId = req.params.id;
-        console.log(eventId);
-        console.log("11111");
         // 2. ADD THIS VALIDATION BLOCK
         if (!mongoose.Types.ObjectId.isValid(eventId)) {
             // If the ID is not in a valid format, send a 400 error immediately
@@ -1295,9 +1310,44 @@ const getEventDetail = async(req,res) =>{
         res.status(500).render('error', { message: 'A server error occurred.' });
     }
 }
+
+
+const deleteEvent = async (req, res) => {
+    try {
+        console.log(req.params);
+        const { id } = req.params;
+        console.log(id);
+
+        // 2. Find the event to ensure it exists before proceeding
+        const event = await Event.findById(id);
+        if (!event) {
+            return res.status(404).json({ success: false, message: 'Event not found.' });
+        }
+
+        // 3. Delete all attendees associated with this event to maintain data integrity
+        await EventAttendee.deleteMany({ event_id: id });
+
+        // 4. Delete the event itself
+        await Event.findByIdAndDelete(id);
+
+        // 5. Send a success response
+        res.status(200).json({ 
+            success: true, 
+            message: 'Event and all associated attendees deleted successfully.' 
+        });
+
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Internal Server Error' 
+        });
+    }
+};
+
 module.exports = {
-    eventManagerSignup, eventDashbord, createNewEvent, updateAttende, deleteAttendee, getEvents, getEvent, updateEvent
-    , getAttendes, eventAnalytics, getEventManagerProfile, upadatePassword, getEventsUser, registerEvent, myEvents, deleteTicket,
-    postTicket, updateEventManagerProfile, isAuthenticated, getEventDetails,editEvent, getEventDetail
+    signup, getDashboard, createEvent, updateAttendee, deleteAttendee, getManagerEvents, getEventForEdit, updateEvent
+    , getAttendees, getAnalytics, getProfile, updatePassword, getPublicEvents, showBookingForm, getUserEvents, deleteTicket,
+    postTicket, updateProfile, isAuthenticated, getEventDetails,showEditForm, getEventDetail
 };
 
