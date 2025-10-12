@@ -76,9 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
             method: "POST",
             body: formData,
         });
-
         const result = await response.json();
-
+        
         if (response.ok && result.success) {
             alert("🎉 Profile updated successfully!");
             window.location.reload();
@@ -87,7 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         } catch (error) {
         console.error("Error updating profile:", error);
-        alert("⚠️ Network or server error while updating profile.");
         }
     });
     });
