@@ -188,64 +188,147 @@ const getProduct = async (req, res) => {
 
 
 const checkout = async (req, res) => {
-    // Check for required user profile fields
-    const user = req.session.user;
-    if (!user.user_name || !user.user_email || !user.user_phone || !user.user_address) {
-        // Return a 400 Bad Request status with a message
-        return res.status(400).send('Please complete your profile information before proceeding to checkout.');
-    }
-
-    const { cart } = req.body;
-    if (!cart.length === 0) return res.status(400).send('Cart is empty');
-
-    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    const charge = subtotal * 0.04;
-    const total = subtotal + charge;
-
-    req.session.cart = cart;
-    req.session.orderTotals = { subtotal, charge, total };
-
-    res.redirect('/payment');
-};
-
-const processPayment = async (req, res) => {
-    if (!req.session.user) {
-        return res.redirect('/my_login');
-    }
-
-    const { cardNumber } = req.body;
-    const cart = req.session.cart;
-    const { subtotal, total } = req.session.orderTotals;
-
-    if (!cart || !subtotal || !total || !cardNumber) {
-        return res.status(400).send('Session data or card number missing.');
-    }
-
     try {
-        const paymentLastFour = cardNumber.slice(-4);
+        // Check if user is logged in
+        if (!req.session.user) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Please login to checkout' 
+            });
+        }
+
+        // Check for required user profile fields
+        const user = req.session.user;
+        if (!user.user_name || !user.user_email || !user.user_phone || !user.user_address) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Please complete your profile information before proceeding to checkout.' 
+            });
+        }
+
+        const { cart } = req.body;
         
+        // Validate cart
+        if (!cart || !Array.isArray(cart) || cart.length === 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Cart is empty' 
+            });
+        }
 
-        // Create a new order in the database
-        const order = await Order.create({
-            user_id: req.session.user.id,
-            order_date: new Date(),
-            status: 'Pending',
-            subtotal: subtotal,
-            total_amount: total,
-            payment_last_four: paymentLastFour
-        });
-
-        // Add each cart item to the OrderItem collection
-        const orderItems = cart.map(item => ({
-            order_id: order._id,
+        // Clean cart data - remove image_data and ensure proper structure
+        const cleanCart = cart.map(item => ({
             product_id: item.product_id || null,
             variant_id: item.variant_id || null,
             product_name: item.product_name,
-            quantity: item.quantity,
-            price: item.price,
+            quantity: parseInt(item.quantity) || 1,
+            price: parseFloat(item.price) || 0,
             size: item.size || null,
             color: item.color || null
         }));
+
+        // Validate cart items have required fields
+        const invalidItems = cleanCart.filter(item => 
+            !item.product_id || !item.product_name || item.quantity <= 0 || item.price <= 0
+        );
+
+        if (invalidItems.length > 0) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid cart items detected' 
+            });
+        }
+
+        // Calculate totals
+        const subtotal = cleanCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const charge = subtotal * 0.04;
+        const total = subtotal + charge;
+
+        // Store in session
+        req.session.cart = cleanCart;
+        req.session.orderTotals = { 
+            subtotal: parseFloat(subtotal.toFixed(2)), 
+            charge: parseFloat(charge.toFixed(2)), 
+            total: parseFloat(total.toFixed(2)) 
+        };
+
+        console.log('Checkout successful - Redirecting to payment');
+        return res.json({ 
+            success: true, 
+            redirectUrl: '/payment' 
+        });
+
+    } catch (err) {
+        console.error('Checkout error:', err);
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Server error during checkout' 
+        });
+    }
+};
+
+const processPayment = async (req, res) => {
+    try {
+        if (!req.session.user) {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'User not logged in' 
+            });
+        }
+
+        const { cardNumber, expiryDate, cvc } = req.body;
+        const cart = req.session.cart;
+        const orderTotals = req.session.orderTotals;
+
+        // Validate all required data
+        if (!cart || !orderTotals || !cardNumber) {
+            console.error('Missing session data:', { 
+                hasCart: !!cart, 
+                hasOrderTotals: !!orderTotals,
+                hasCardNumber: !!cardNumber 
+            });
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Session data missing. Please restart checkout.' 
+            });
+        }
+
+        // Validate card number (basic validation)
+        const cleanCardNumber = cardNumber.replace(/\s/g, '');
+        if (cleanCardNumber.length !== 16 || isNaN(cleanCardNumber)) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid card number' 
+            });
+        }
+
+        const paymentLastFour = cleanCardNumber.slice(-4);
+
+        // Create order with transaction
+        const session = await mongoose.startSession();
+        session.startTransaction();
+
+        try {
+            const order = await Order.create([{
+                user_id: req.session.user.id,
+                order_date: new Date(),
+                status: 'Pending',
+                subtotal: orderTotals.subtotal,
+                total_amount: orderTotals.total,
+                payment_last_four: paymentLastFour
+            }], { session });
+
+            // Create order items
+            const orderItems = cart.map(item => ({
+                order_id: order[0]._id,
+                product_id: item.product_id || null,
+                variant_id: item.variant_id || null,
+                product_name: item.product_name,
+                quantity: item.quantity,
+                price: item.price,
+                size: item.size || null,
+                color: item.color || null
+            }));
 
         await OrderItem.insertMany(orderItems);
         for (const item of cart) {
@@ -263,12 +346,25 @@ const processPayment = async (req, res) => {
         req.session.cart = null;
         req.session.orderTotals = null;
 
-        // Redirect to a confirmation page or user orders page
-        res.redirect('/my_orders');
+            console.log('Payment processed successfully for order:', order[0]._id);
+            return res.json({ 
+                success: true, 
+                redirectUrl: '/my_orders' 
+            });
+
+        } catch (transactionError) {
+            await session.abortTransaction();
+            throw transactionError;
+        } finally {
+            session.endSession();
+        }
 
     } catch (err) {
         console.error('Payment processing error:', err);
-        res.status(500).send('Error processing payment.');
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Error processing payment. Please try again.' 
+        });
     }
 };
 
