@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refund Policy - HappyTails</title>
+    <link rel="stylesheet" href="/policy/policy.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <div class="badge">
+                <a href="/home" class="badge">Happy Tails</a>
+            </div>
+            <div class="menu">
+                <a href="/pet_accessory">Pet Essentials</a>
+                <a href="/Events">Events</a>
+                <a href="/my_login">Login/SignUp</a>
+            </div>
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="/pet_accessory">Essentials</a>
+                <a href="/Events">Events</a>
+                <a href="/my_login">Login/SignUp</a>
+            </div>
+        </header>
+    </div>
+
+    <main class="policy-container">
+        <h1>Refund Policy</h1>
+        <p><strong>Last Updated: October 12, 2025</strong></p>
+        <p>At Happy Tails, we want you and your pet to be completely satisfied with your purchase. If you are not satisfied for any reason, you may be eligible for a refund subject to the terms below.</p>
+
+        <h2>Eligibility for a Refund</h2>
+        <p>To be eligible for a refund, you must meet the following conditions:</p>
+        <ul>
+            <li>Your refund request must be made within <strong>14 days</strong> of the delivery date.</li>
+            <li>The item must be unused, in the same condition that you received it, and in its original packaging.</li>
+            <li>You must provide a receipt or proof of purchase.</li>
+            <li>Items that are damaged, defective, or incorrect upon arrival are eligible for a full refund or exchange.</li>
+        </ul>
+
+        <h2>Non-Refundable Items</h2>
+        <p>Certain types of items cannot be returned or refunded, including:</p>
+        <ul>
+            <li>Perishable goods such as pet food and treats.</li>
+            <li>Customized or personalized items.</li>
+            <li>Items marked as "Final Sale" or on clearance.</li>
+        </ul>
+
+        <h2>Refund Process</h2>
+        <p>To initiate a refund, please contact our customer support team at <strong>support@happytails.com</strong> with your order number and a brief description of the issue. For damaged items, please include a photo.</p>
+        <p>Once your return is received and inspected, we will notify you of the approval or rejection of your refund. If approved, your refund will be processed, and a credit will automatically be applied to your original method of payment within 7-10 business days.</p>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event manager</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                        <li><a href="/refund-policy">Refund Policy</a></li>
+                        <li><a href="/cancellation-policy">Cancellation Policy</a></li>
+                        <li><a href="/terms-and-conditions">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.add('open');
+        });
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+        });
+    </script>
+</body>
+</html>
