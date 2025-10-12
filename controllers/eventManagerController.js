@@ -1180,7 +1180,6 @@ const isAuthenticated = (req, res, next) => {
     if (req.session.eventManager) {
         next();
     } else {
-        console.log('No eventManager session, redirecting to login');
         res.redirect('/service_provider_login');
     }
 };
@@ -1314,9 +1313,7 @@ const getEventDetail = async (req, res) => {
 
 const deleteEvent = async (req, res) => {
     try {
-        console.log(req.params);
         const { id } = req.params;
-        console.log(id);
 
         // 2. Find the event to ensure it exists before proceeding
         const event = await Event.findById(id);

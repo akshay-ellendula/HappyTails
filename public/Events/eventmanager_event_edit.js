@@ -121,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       const result = await response.json();
-      console.log(result);
       if (response.ok && result.message === "success") {
         alert('✅ Event updated successfully!');
         window.location.href = '/eventmanager_events';

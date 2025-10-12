@@ -14,13 +14,11 @@ const upload = multer({ storage });
 // Fetch vendor orders
 const getVendorOrders = async (req, res) => {
     if (!req.session.vendor) {
-        console.log('No vendor session in getVendorOrders, redirecting to login');
         return res.redirect('/service_provider_login');
     }
 
     const vendorId = req.session.vendor.id;
     const statusFilter = req.query.status || 'all';
-    console.log('Fetching orders for vendor:', { vendorId, statusFilter });
 
     try {
         let matchStage = { 'products.vendor_id': new mongoose.Types.ObjectId(vendorId) };
@@ -97,7 +95,6 @@ const getVendorOrders = async (req, res) => {
             { $sort: { order_date: -1 } }
         ]);
 
-        console.log('Orders fetched:', orders.length);
         res.render('shop-orders', {
             vendor: req.session.vendor,
             orders: orders.map(order => ({
@@ -153,7 +150,6 @@ const getVendorProducts = async (req, res) => {
         sortStage.created_at = -1; // Default to newest
     }
     // -----------------------------
-    console.log('Fetching products for vendor:', { vendorId });
 
     try {
         const products = await Product.aggregate([
@@ -232,7 +228,6 @@ const getVendorProducts = async (req, res) => {
             }
         ]);
 
-        console.log('Products fetched:', products.length);
         res.render('shop-products', {
             vendor: req.session.vendor,
             products
@@ -432,7 +427,6 @@ const serviceProviderLogin = async (req, res) => {
     console.log('Login attempt:', { email, role });
 
     if (!email || !password || !role) {
-        console.log('Missing fields:', { email, password, role });
         return res.status(400).json({ success: false, message: 'Email, password, and role are required' });
     }
 
@@ -454,8 +448,6 @@ const serviceProviderLogin = async (req, res) => {
             console.log('User not found:', { email, role });
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
-        console.log('User found:', { email, role, store_name: user.store_name });
-
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             console.log('Password mismatch:', { email, role });
@@ -468,7 +460,6 @@ const serviceProviderLogin = async (req, res) => {
             role,
             store_name: user.store_name || null
         };
-        console.log('Session set:', req.session[sessionKey]);
 
         if (role === 'store-manager') {
             if (!user.store_name) {
@@ -480,8 +471,6 @@ const serviceProviderLogin = async (req, res) => {
         } else if (role === 'event-manager') {
             redirect = '/eventmanager_dashboard';
         }
-
-        console.log('Redirecting to:', redirect);
         res.status(200).json({ success: true, message: 'Login successful', redirect });
     } catch (error) {
         console.error('Login error:', error);
@@ -600,7 +589,6 @@ const getVendorDashboard = async (req, res) => {
 const storeSignup = async (req, res) => {
     const { name, contactnumber, email, password, confirmpassword, storename, storelocation } = req.body;
 
-    console.log('Store signup attempt:', { email, storename });
 
     // Validate required fields
     if (!name || !contactnumber || !email || !password || !storename || !storelocation) {
@@ -647,12 +635,9 @@ const storeSignup = async (req, res) => {
             store_location: newVendor.store_location, // Maps to address
             role: 'store-manager'
         };
-        console.log('Signup session set:', req.session.vendor);
-
         const storeNameSlug = newVendor.store_name.toLowerCase().replace(/\s+/g, '-');
         const redirectUrl = `/shop-dashboard/${storeNameSlug}`;
 
-        console.log('Signup redirecting to:', redirectUrl);
         res.status(201).json({
             success: true,
             redirect: redirectUrl,
@@ -666,7 +651,6 @@ const storeSignup = async (req, res) => {
 
 // Logout
 const logout = (req, res) => {
-    console.log('Logging out vendor:', req.session.vendor?.email);
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);
@@ -685,8 +669,6 @@ const getProductForEdit = async (req, res) => {
 
     const vendorId = req.session.vendor.id;
     const productId = req.params.productId;
-    console.log('Fetching product for edit:', { vendorId, productId });
-
     try {
         const product = await Product.findOne({ _id: productId, vendor_id: new mongoose.Types.ObjectId(vendorId) });
         if (!product) {
@@ -696,19 +678,6 @@ const getProductForEdit = async (req, res) => {
 
         const variants = await ProductVariant.find({ product_id: productId });
         const images = await ProductImage.find({ product_id: productId });
-
-        console.log('Product data fetched:', {
-            productName: product.product_name,
-            variants: variants.length,
-            images: images.length,
-            variantDetails: variants.map(v => ({
-                size: v.size,
-                color: v.color,
-                regular_price: v.regular_price,
-                sale_price: v.sale_price,
-                stock_quantity: v.stock_quantity
-            }))
-        });
 
         const firstVariant = variants[0] || {};
         res.render('shop-product-edit', {
@@ -759,19 +728,6 @@ const updateProduct = [
             variant_stock_quantity
         } = req.body;
 
-        console.log('Received form data:', {
-            productName,
-            productCategory,
-            productType,
-            productDescription,
-            shortDescription,
-            stockStatus,
-            variant_size,
-            variant_color,
-            variant_regular_price,
-            variant_sale_price,
-            variant_stock_quantity
-        });
 
         if (!productName || !productCategory || !productType || !productDescription || !shortDescription || !stockStatus) {
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
@@ -862,7 +818,6 @@ const getVendorCustomers = async (req, res) => {
     }
 
     const vendorId = req.session.vendor.id;
-    console.log('Fetching customers for vendor:', { vendorId });
 
     try {
         const customers = await Order.aggregate([
@@ -931,10 +886,6 @@ const getVendorCustomers = async (req, res) => {
             { $sort: { total_spent: -1 } }
         ]);
 
-        console.log('Customers fetched:', {
-            vendorId,
-            count: customers.length
-        });
 
         res.render('shop-customers', {
             vendor: req.session.vendor,
@@ -972,25 +923,14 @@ const submitProduct = [
             variants
         } = req.body;
 
-        console.log('Received product data:', {
-            vendorId,
-            product_name,
-            product_category,
-            product_type,
-            stock_status,
-            variants: JSON.stringify(variants),
-            files: req.files ? req.files.map(f => f.originalname) : 'No files'
-        });
-
         // Validate required fields
         if (!product_name || !product_category || !product_type || !product_description || !stock_status) {
-            console.log('Validation failed: Missing required fields');
             return res.status(400).json({ success: false, message: 'All basic information fields are required' });
         }
 
         // Validate variants
         if (!variants || Object.keys(variants).length === 0) {
-            console.log('Validation failed: No variants provided');
+
             return res.status(400).json({ success: false, message: 'At least one variant is required' });
         }
 
@@ -1005,26 +945,24 @@ const submitProduct = [
         // Validate each variant
         for (const variant of variantArray) {
             if (!variant.size || isNaN(variant.regular_price) || isNaN(variant.stock_quantity)) {
-                console.log('Validation failed for variant:', variant);
+               
                 return res.status(400).json({ success: false, message: 'Size, regular price, and stock quantity are required for all variants' });
             }
             if (variant.regular_price <= 0) {
-                console.log('Validation failed: Regular price must be positive');
+               
                 return res.status(400).json({ success: false, message: 'Regular price must be positive' });
             }
             if (variant.stock_quantity < 0) {
-                console.log('Validation failed: Stock quantity must be non-negative');
+                
                 return res.status(400).json({ success: false, message: 'Stock quantity must be non-negative' });
             }
             if (variant.sale_price && variant.sale_price >= variant.regular_price) {
-                console.log('Validation failed: Sale price must be less than regular price');
                 return res.status(400).json({ success: false, message: 'Sale price must be less than regular price' });
             }
         }
 
         // Validate stock status
         if (!['In Stock', 'Out of Stock'].includes(stock_status)) {
-            console.log('Validation failed: Invalid stock status:', stock_status);
             return res.status(400).json({ success: false, message: 'Invalid stock status' });
         }
 
@@ -1040,7 +978,6 @@ const submitProduct = [
             });
 
             const savedProduct = await newProduct.save();
-            console.log('Product saved:', savedProduct._id);
 
             // Save variants
             const variantDocs = variantArray.map(variant => ({
@@ -1049,7 +986,6 @@ const submitProduct = [
             }));
 
             await ProductVariant.insertMany(variantDocs);
-            console.log('Variants saved:', variantDocs.length);
 
             // Save images
             if (req.files && req.files.length > 0) {
@@ -1059,7 +995,7 @@ const submitProduct = [
                     is_primary: index === 0
                 }));
                 await ProductImage.insertMany(images);
-                console.log('Images saved:', images.length);
+
             } else {
                 console.log('No images provided');
             }
@@ -1078,18 +1014,14 @@ const submitProduct = [
 
 const getOrderDetails = async (req, res) => {
     if (!req.session.vendor) {
-        console.log('No vendor session in getOrderDetails, redirecting to login');
         return res.redirect('/service_provider_login');
     }
 
     const vendorId = req.session.vendor.id;
     const orderId = req.params.orderId;
-    console.log('Fetching order details:', { vendorId, orderId });
-
     try {
         const order = await Order.findById(orderId).populate('user_id');
         if (!order) {
-            console.log('Order not found:', { orderId });
             return res.render('shop-order-details', {
                 vendor: req.session.vendor,
                 order: null,
@@ -1106,7 +1038,6 @@ const getOrderDetails = async (req, res) => {
         ]);
 
         if (!productMatch.length) {
-            console.log('Order does not belong to this vendor:', { orderId, vendorId });
             return res.status(403).send('Unauthorized: This order does not belong to your store.');
         }
 
@@ -1175,7 +1106,6 @@ const getOrderDetails = async (req, res) => {
             timeline: timeline,
         };
 
-        console.log('Order details fetched:', { orderId });
         res.render('shop-order-details', {
             vendor: req.session.vendor,
             order: orderData,
@@ -1193,9 +1123,7 @@ const getCustomerDetails = async (req, res) => {
 
     const vendorId = req.session.vendor.id;
     const userId = req.query.customer;
-console.log('Received userId for customer details:', userId);
 if (!mongoose.Types.ObjectId.isValid(userId)) {
-    console.log('Invalid ObjectId:', userId);
     return res.status(404).render('shop-customer-details', {
         vendor: req.session.vendor,
         customer: {
@@ -1218,15 +1146,9 @@ if (!mongoose.Types.ObjectId.isValid(userId)) {
     });
 }
 
-    console.log('Fetching customer details:', { vendorId, userId });
-    
-
     try {
-        console.log('Querying User collection for _id:', userId);
-const customer = await User.findById(userId);
-console.log('Customer found:', customer ? customer : 'No customer found');
-        if (!customer) {
-            console.log('Customer not found:', { userId });
+            const customer = await User.findById(userId);
+            if (!customer) {
             return res.status(404).render('shop-customer-details', {
                 vendor: req.session.vendor,
                 customer: {
@@ -1295,11 +1217,6 @@ console.log('Customer found:', customer ? customer : 'No customer found');
             { $limit: 1 }
         ]);
 
-        console.log('Customer details fetched:', {
-            customerId: userId,
-            totalOrders,
-            totalRevenue
-        });
 
         res.render('shop-customer-details', {
             vendor: req.session.vendor,
@@ -1577,8 +1494,6 @@ const updateVendorProfile = async (req, res) => {
     const vendorId = req.session.vendor.id;
     const { storeName, ownerName, email, phone, address, description } = req.body;
 
-    console.log('Updating vendor profile:', { vendorId, storeName, ownerName, email, phone, address, description });
-
     // Validate email domain
     const allowedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com'];
     const emailDomain = email.split('@')[1];
@@ -1642,7 +1557,6 @@ const updateVendorProfile = async (req, res) => {
             store_location: address
         };
 
-        console.log('Vendor profile updated:', updatedVendor);
         res.status(200).json({ success: true, message: 'Profile updated successfully' });
     } catch (error) {
         console.error('Error updating vendor profile:', error);
@@ -1656,13 +1570,11 @@ const deleteProduct = async (req, res) => {
 
     const vendorId = req.session.vendor.id;
     const productId = req.params.productId;
-    console.log('Attempting to delete product:', { vendorId, productId });
 
     try {
         // Check if the product exists and belongs to the vendor
         const product = await Product.findOne({ _id: productId, vendor_id: new mongoose.Types.ObjectId(vendorId) });
         if (!product) {
-            console.log('Product not found or unauthorized:', { productId, vendorId });
             return res.status(404).json({ success: false, message: 'Product not found or you do not have permission to delete it.' });
         }
 
@@ -1675,8 +1587,6 @@ const deleteProduct = async (req, res) => {
         );
         await ProductVariant.deleteMany({ product_id: productId });
         await ProductImage.deleteMany({ product_id: productId });
-
-        console.log('Product deleted successfully:', { productId });
         res.status(200).json({ success: true, message: 'Product deleted successfully', redirect: '/shop-products' });
     } catch (error) {
         console.error('Error deleting product:', error);
@@ -1693,8 +1603,6 @@ const updateOrderStatus = async (req, res) => {
     const vendorId = req.session.vendor.id;
     const { orderId } = req.params;
     const { status: newStatus } = req.body;
-
-    console.log('Attempting to update order status:', { vendorId, orderId, newStatus });
 
     const validNextStatuses = ['Shipped', 'Delivered', 'Cancelled'];
     if (!validNextStatuses.includes(newStatus)) {

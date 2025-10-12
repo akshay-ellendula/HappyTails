@@ -101,7 +101,6 @@
                     // Check if an EDIT button was clicked
                     if (button.classList.contains('edit-btn')) {
                         const data = button.dataset;
-                        console.log('Edit button clicked. Data ID:', data.id); // DEBUGGING LINE
                         if (data.id) {
                             openEditAttendeeModal(
                                 data.id,
@@ -118,7 +117,6 @@
                     // Check if a DELETE button was clicked
                     if (button.classList.contains('delete-btn')) {
                         const attendeeId = button.dataset.id;
-                        console.log('Delete button clicked. Data ID:', attendeeId); // DEBUGGING LINE
                         if (attendeeId) {
                             deleteAttendee(attendeeId);
                         } else {
