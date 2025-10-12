@@ -1,0 +1,73 @@
+﻿7fb8f2c | akshay-ellendula | 2025-10-12 | fixed policys
+921409a | akshay-ellendula | 2025-10-12 | Merge branch 'final-branch(Main)' into timepass
+bbdda37 | akshay-ellendula | 2025-10-12 | added privacy-policy page
+49d6c93 | akshay-ellendula | 2025-10-12 | changed all forms into fetch except booking form
+28c9966 | akshay-ellendula | 2025-10-12 | removed vercel
+b791466 | akshay-ellendula | 2025-10-12 | add vercel.json
+ebe9dbc | akshay-ellendula | 2025-10-12 | Merge branch 'timepass' into final-branch(Main)
+4f7d621 | akshay-ellendula | 2025-10-12 | Merge branch 'jeevan-fdfed' into final-branch(Main)
+fc92a5b | akshay-ellendula | 2025-10-12 | fixed routes in event manager
+e8ebd8a | akshay-ellendula | 2025-10-11 | fixed all issues in eventManager and events
+af9a65e | akshay-ellendula | 2025-10-09 | AGAIN added admin pages
+5f03976 | akshay-ellendula | 2025-10-09 | added admin chages from veda branch
+e49bf06 | akshay-ellendula | 2025-10-09 | Merge branch 'timepass' into jeevan-fdfed
+cc6e226 | akshay-ellendula | 2025-10-09 | Merge branch 'refactor-project' into timepass
+1e8a1c7 | akshay-ellendula | 2025-10-09 | fixed attendes crud opeations
+75de8d2 | akshay-ellendula | 2025-10-09 | updated event pages
+34ebda6 | akshay-ellendula | 2025-10-04 | change to rupee symbol
+e34f4d4 | akshay-ellendula | 2025-10-02 | chaged events to only ongoing
+51ad7df | akshay-ellendula | 2025-10-02 | fixed my events and booking an canceling issues and edit event page and eventmanager profile
+1eb4a9e | akshay-ellendula | 2025-10-01 | fixed css of dashbaord
+d0ba4b7 | akshay-ellendula | 2025-10-01 | chageg events css and ticket system
+99c6349 | akshay-ellendula | 2025-10-01 | fixed event pages
+655bb89 | akshay-ellendula | 2025-09-30 | added middle event page
+34a046d | akshay-ellendula | 2025-09-30 | chage in readme
+e780b11 | akshay-ellendula | 2025-09-29 | Merge branch 'timepass' into refactor-project
+5607de4 | akshay-ellendula | 2025-09-12 | added price in ejs
+1a7f101 | akshay-ellendula | 2025-09-12 | Merge branch 'timepass' into refactor-project
+9e84547 | akshay-ellendula | 2025-09-12 | fixed controller confilcts
+0d31f78 | akshay-ellendula | 2025-09-06 | recommit last one
+2bd17c0 | akshay-ellendula | 2025-09-06 | chaged routes in eventManager and events
+34ebda6 | akshay-ellendula | 2025-10-04 | change to rupee symbol
+e34f4d4 | akshay-ellendula | 2025-10-02 | chaged events to only ongoing
+51ad7df | akshay-ellendula | 2025-10-02 | fixed my events and booking an canceling issues and edit event page and eventmanager profile
+1eb4a9e | akshay-ellendula | 2025-10-01 | fixed css of dashbaord
+d0ba4b7 | akshay-ellendula | 2025-10-01 | chageg events css and ticket system
+99c6349 | akshay-ellendula | 2025-10-01 | fixed event pages
+655bb89 | akshay-ellendula | 2025-09-30 | added middle event page
+34a046d | akshay-ellendula | 2025-09-30 | chage in readme
+e780b11 | akshay-ellendula | 2025-09-29 | Merge branch 'timepass' into refactor-project
+5607de4 | akshay-ellendula | 2025-09-12 | added price in ejs
+1a7f101 | akshay-ellendula | 2025-09-12 | Merge branch 'timepass' into refactor-project
+9e84547 | akshay-ellendula | 2025-09-12 | fixed controller confilcts
+0d31f78 | akshay-ellendula | 2025-09-06 | recommit last one
+2bd17c0 | akshay-ellendula | 2025-09-06 | chaged routes in eventManager and events
+921409a | akshay-ellendula | 2025-10-12 | Merge branch 'final-branch(Main)' into timepass
+bbdda37 | akshay-ellendula | 2025-10-12 | added privacy-policy page
+49d6c93 | akshay-ellendula | 2025-10-12 | changed all forms into fetch except booking form
+28c9966 | akshay-ellendula | 2025-10-12 | removed vercel
+b791466 | akshay-ellendula | 2025-10-12 | add vercel.json
+ebe9dbc | akshay-ellendula | 2025-10-12 | Merge branch 'timepass' into final-branch(Main)
+4f7d621 | akshay-ellendula | 2025-10-12 | Merge branch 'jeevan-fdfed' into final-branch(Main)
+fc92a5b | akshay-ellendula | 2025-10-12 | fixed routes in event manager
+e8ebd8a | akshay-ellendula | 2025-10-11 | fixed all issues in eventManager and events
+af9a65e | akshay-ellendula | 2025-10-09 | AGAIN added admin pages
+5f03976 | akshay-ellendula | 2025-10-09 | added admin chages from veda branch
+e49bf06 | akshay-ellendula | 2025-10-09 | Merge branch 'timepass' into jeevan-fdfed
+cc6e226 | akshay-ellendula | 2025-10-09 | Merge branch 'refactor-project' into timepass
+1e8a1c7 | akshay-ellendula | 2025-10-09 | fixed attendes crud opeations
+75de8d2 | akshay-ellendula | 2025-10-09 | updated event pages
+34ebda6 | akshay-ellendula | 2025-10-04 | change to rupee symbol
+e34f4d4 | akshay-ellendula | 2025-10-02 | chaged events to only ongoing
+51ad7df | akshay-ellendula | 2025-10-02 | fixed my events and booking an canceling issues and edit event page and eventmanager profile
+1eb4a9e | akshay-ellendula | 2025-10-01 | fixed css of dashbaord
+d0ba4b7 | akshay-ellendula | 2025-10-01 | chageg events css and ticket system
+99c6349 | akshay-ellendula | 2025-10-01 | fixed event pages
+655bb89 | akshay-ellendula | 2025-09-30 | added middle event page
+34a046d | akshay-ellendula | 2025-09-30 | chage in readme
+e780b11 | akshay-ellendula | 2025-09-29 | Merge branch 'timepass' into refactor-project
+5607de4 | akshay-ellendula | 2025-09-12 | added price in ejs
+1a7f101 | akshay-ellendula | 2025-09-12 | Merge branch 'timepass' into refactor-project
+9e84547 | akshay-ellendula | 2025-09-12 | fixed controller confilcts
+0d31f78 | akshay-ellendula | 2025-09-06 | recommit last one
+2bd17c0 | akshay-ellendula | 2025-09-06 | chaged routes in eventManager and events

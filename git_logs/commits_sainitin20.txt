@@ -1,0 +1,80 @@
+﻿472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+b03fa17 | sainitin20 | 2025-10-11 | fixed event_manager_signup page
+f28bdc3 | sainitin20 | 2025-10-11 | fixed event-deatils page
+f4a0c3c | sainitin20 | 2025-10-11 | fixed events page
+896aacf | sainitin20 | 2025-10-11 | fixed eventmanager_event_edit file
+de6ace8 | sainitin20 | 2025-10-11 | fixed eventmanager events page
+5f5c9a1 | sainitin20 | 2025-10-11 | fixed eventmanager profile page
+8c7a621 | sainitin20 | 2025-10-11 | fixed event_manager analytics page
+65b48f2 | sainitin20 | 2025-10-11 | fixed eventManager Attendees
+501ebc2 | sainitin20 | 2025-10-11 | fixed Event Manager Attendees and dashboard
+8f73d25 | sainitin20 | 2025-10-11 | added links and static routes for order in nav bar
+e721f88 | sainitin20 | 2025-10-11 | order and order -deatails routes and controller completed
+a541f30 | sainitin20 | 2025-10-10 | added order and order-details and did orders,ejs and js and css
+3a57910 | sainitin20 | 2025-10-10 | fixed some errors in event booking page
+2513ed1 | sainitin20 | 2025-10-08 | added filter and added events page in admin dashbord
+b3d15fa | sainitin20 | 2025-10-07 | reomved again
+43aeea9 | sainitin20 | 2025-10-07 | removed unwanted urls
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+b03fa17 | sainitin20 | 2025-10-11 | fixed event_manager_signup page
+f28bdc3 | sainitin20 | 2025-10-11 | fixed event-deatils page
+f4a0c3c | sainitin20 | 2025-10-11 | fixed events page
+896aacf | sainitin20 | 2025-10-11 | fixed eventmanager_event_edit file
+de6ace8 | sainitin20 | 2025-10-11 | fixed eventmanager events page
+5f5c9a1 | sainitin20 | 2025-10-11 | fixed eventmanager profile page
+8c7a621 | sainitin20 | 2025-10-11 | fixed event_manager analytics page
+65b48f2 | sainitin20 | 2025-10-11 | fixed eventManager Attendees
+501ebc2 | sainitin20 | 2025-10-11 | fixed Event Manager Attendees and dashboard
+8f73d25 | sainitin20 | 2025-10-11 | added links and static routes for order in nav bar
+e721f88 | sainitin20 | 2025-10-11 | order and order -deatails routes and controller completed
+a541f30 | sainitin20 | 2025-10-10 | added order and order-details and did orders,ejs and js and css
+3a57910 | sainitin20 | 2025-10-10 | fixed some errors in event booking page
+2513ed1 | sainitin20 | 2025-10-08 | added filter and added events page in admin dashbord
+b3d15fa | sainitin20 | 2025-10-07 | reomved again
+43aeea9 | sainitin20 | 2025-10-07 | removed unwanted urls
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title
+472e396 | sainitin20 | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+569615a | sainitin20 | 2025-03-18 | added pages in store pages
+7aa8314 | sainitin20 | 2025-01-21 | add title (#2)
+7f9b306 | sainitin20 | 2025-01-21 | add title

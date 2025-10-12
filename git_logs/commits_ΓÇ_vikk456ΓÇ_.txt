@@ -1,0 +1,877 @@
+﻿dbd8c0e | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | variants updated succesfully
+4497e2a | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | fixing variants inn shop product
+7fda6df | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | logins fixed
+b41d08f | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | fixed login
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+95927b4 | ΓÇ£vikk456ΓÇ¥ | 2025-09-12 | added base64 image rendering logic
+ca4bd5a | ΓÇ£vikk456ΓÇ¥ | 2025-05-09 | uploaded image
+95c34c3 | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | added my events
+202e8ce | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | updated event manager login
+ebdc195 | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | Updated filters
+7d30993 | ΓÇ£vikk456ΓÇ¥ | 2025-05-06 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+e166993 | ΓÇ£vikk456ΓÇ¥ | 2025-05-06 | changed product form
+4497e2a | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | fixing variants inn shop product
+7fda6df | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | logins fixed
+b41d08f | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | fixed login
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+8e56f7e | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | improvements
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+2424e29 | ΓÇ£vikk456ΓÇ¥ | 2025-05-05 | tried to change to mongodb
+4497e2a | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | fixing variants inn shop product
+7fda6df | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | logins fixed
+b41d08f | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | fixed login
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+e94677a | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | added network evidence
+4711cd7 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | Merge branch 'final-branch(Main)' of https://github.com/akshay-ellendula/HappyTails into final-branch(Main)
+9029f2c | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | changed to test_plan folder name
+9d0ae75 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | minor text change
+815f606 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | changed the naming of the images
+50ff8d8 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | added test_plan.md
+8829d9c | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | removed onclick for track button
+6cfcbf4 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | logout logic
+946e0b9 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | made changes to payment
+64a4707 | ΓÇ£vikk456ΓÇ¥ | 2025-10-11 | made the profile fields necessary for ordering
+c0789db | ΓÇ£vikk456ΓÇ¥ | 2025-10-10 | added number validation in profile
+f62d40d | ΓÇ£vikk456ΓÇ¥ | 2025-10-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+a0ea766 | ΓÇ£vikk456ΓÇ¥ | 2025-10-09 | added validations for payment page
+de3b263 | ΓÇ£vikk456ΓÇ¥ | 2025-10-09 | added payment page
+bf30e3c | ΓÇ£vikk456ΓÇ¥ | 2025-10-09 | changed css for order card
+0407456 | ΓÇ£vikk456ΓÇ¥ | 2025-10-08 | added 4% charge to the products
+4e678b3 | ΓÇ£vikk456ΓÇ¥ | 2025-10-08 | removed blogs
+d7f91ac | ΓÇ£vikk456ΓÇ¥ | 2025-10-07 | updated buy again functionality
+a87503b | ΓÇ£vikk456ΓÇ¥ | 2025-09-12 | changed image render logic for my_orders
+95927b4 | ΓÇ£vikk456ΓÇ¥ | 2025-09-12 | added base64 image rendering logic
+ca4bd5a | ΓÇ£vikk456ΓÇ¥ | 2025-05-09 | uploaded image
+95c34c3 | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | added my events
+202e8ce | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | updated event manager login
+ebdc195 | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | Updated filters
+7d30993 | ΓÇ£vikk456ΓÇ¥ | 2025-05-06 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+e166993 | ΓÇ£vikk456ΓÇ¥ | 2025-05-06 | changed product form
+4497e2a | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | fixing variants inn shop product
+7fda6df | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | logins fixed
+b41d08f | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | fixed login
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+4497e2a | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | fixing variants inn shop product
+7fda6df | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | logins fixed
+b41d08f | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | fixed login
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+a87503b | ΓÇ£vikk456ΓÇ¥ | 2025-09-12 | changed image render logic for my_orders
+95927b4 | ΓÇ£vikk456ΓÇ¥ | 2025-09-12 | added base64 image rendering logic
+ca4bd5a | ΓÇ£vikk456ΓÇ¥ | 2025-05-09 | uploaded image
+95c34c3 | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | added my events
+202e8ce | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | updated event manager login
+ebdc195 | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | Updated filters
+7d30993 | ΓÇ£vikk456ΓÇ¥ | 2025-05-06 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+e166993 | ΓÇ£vikk456ΓÇ¥ | 2025-05-06 | changed product form
+4497e2a | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | fixing variants inn shop product
+7fda6df | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | logins fixed
+b41d08f | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | fixed login
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+9d0ae75 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | minor text change
+815f606 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | changed the naming of the images
+50ff8d8 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | added test_plan.md
+8829d9c | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | removed onclick for track button
+6cfcbf4 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | logout logic
+946e0b9 | ΓÇ£vikk456ΓÇ¥ | 2025-10-12 | made changes to payment
+64a4707 | ΓÇ£vikk456ΓÇ¥ | 2025-10-11 | made the profile fields necessary for ordering
+c0789db | ΓÇ£vikk456ΓÇ¥ | 2025-10-10 | added number validation in profile
+f62d40d | ΓÇ£vikk456ΓÇ¥ | 2025-10-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+a0ea766 | ΓÇ£vikk456ΓÇ¥ | 2025-10-09 | added validations for payment page
+de3b263 | ΓÇ£vikk456ΓÇ¥ | 2025-10-09 | added payment page
+bf30e3c | ΓÇ£vikk456ΓÇ¥ | 2025-10-09 | changed css for order card
+0407456 | ΓÇ£vikk456ΓÇ¥ | 2025-10-08 | added 4% charge to the products
+4e678b3 | ΓÇ£vikk456ΓÇ¥ | 2025-10-08 | removed blogs
+d7f91ac | ΓÇ£vikk456ΓÇ¥ | 2025-10-07 | updated buy again functionality
+a87503b | ΓÇ£vikk456ΓÇ¥ | 2025-09-12 | changed image render logic for my_orders
+95927b4 | ΓÇ£vikk456ΓÇ¥ | 2025-09-12 | added base64 image rendering logic
+ca4bd5a | ΓÇ£vikk456ΓÇ¥ | 2025-05-09 | uploaded image
+95c34c3 | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | added my events
+202e8ce | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | updated event manager login
+ebdc195 | ΓÇ£vikk456ΓÇ¥ | 2025-05-07 | Updated filters
+7d30993 | ΓÇ£vikk456ΓÇ¥ | 2025-05-06 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+e166993 | ΓÇ£vikk456ΓÇ¥ | 2025-05-06 | changed product form
+4497e2a | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | fixing variants inn shop product
+7fda6df | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | logins fixed
+b41d08f | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | fixed login
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
+4497e2a | ΓÇ£vikk456ΓÇ¥ | 2025-03-29 | fixing variants inn shop product
+7fda6df | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | logins fixed
+b41d08f | ΓÇ£vikk456ΓÇ¥ | 2025-03-28 | fixed login
+60499ee | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+150c396 | ΓÇ£vikk456ΓÇ¥ | 2025-03-23 | dynamic admin dashboard
+7e17019 | ΓÇ£vikk456ΓÇ¥ | 2025-03-22 | made my_orders dynamic
+b253aea | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated cart , pet accessories and details
+9a27a9f | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | improved pet accessories
+10fecd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | added filter to shop
+a042cd4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-21 | updated user profile(added pic phone address in the session)
+cdcd6e0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-20 | added dynamic change to admin dashboard
+cf7008b | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | added dynamic admin dashboard
+1de55ce | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | server cahnges
+e3dbaf8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-19 | removed services and made pet accessories somewhat dynamic
+b804ed8 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+4cdeca1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-18 | fixed filter function in pet accessory
+5dd1e42 | ΓÇ£vikk456ΓÇ¥ | 2025-03-17 | add dynamic for my_pets
+9e65a58 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | add forms
+c37ede4 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+54876f2 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | added databse to user profile
+c561aae | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed server
+27252c6 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | more_details link changed
+ec7d787 | ΓÇ£vikk456ΓÇ¥ | 2025-03-16 | changed links
+489da3b | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | added responsiveness for more details
+f06b3a5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-15 | Responsiveness of Home
+7d3dcda | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | minute changes to js of login and server
+a58d32f | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added logout action
+32cc723 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+0be5658 | ΓÇ£vikk456ΓÇ¥ | 2025-03-14 | added sessions and user authentication
+2a36869 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changed to ejs
+b15af94 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Removed node_modules from tracking
+1f48287 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | changes css of profile
+f65493e | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+1ec5416 | ΓÇ£vikk456ΓÇ¥ | 2025-03-13 | added myorders and myblogs
+28138d5 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+27df2e7 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added mypets in profile
+ff0bdd1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | changed footer of profile in ipad mode
+d717750 | ΓÇ£vikk456ΓÇ¥ | 2025-03-12 | added user profile
+5abc10d | ΓÇ£vikk456ΓÇ¥ | 2025-03-11 | changed cart css
+8f23fc1 | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | added cart to pet accessories
+08f1ecb | ΓÇ£vikk456ΓÇ¥ | 2025-03-10 | changed some css
+87e49b0 | ΓÇ£vikk456ΓÇ¥ | 2025-03-09 | added pet product page with responsiveness
+32b3577 | ΓÇ£vikk456ΓÇ¥ | 2025-03-08 | added responsiveness for blog
+35b2af8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for Events
+eda2615 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness for shop essentials
+148bdd9 | ΓÇ£vikk456ΓÇ¥ | 2025-02-27 | added responsiveness to services and shop
+5c8ebd8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | added hover effect to book btn in events page
+a1b2a58 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | Added Events page and linked it also changed add logos to login page
+aa3a396 | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | fixed pet adoption css
+6a363ca | ΓÇ£vikk456ΓÇ¥ | 2025-02-24 | removed footer in login page
+e2db52f | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed nav of home page
+9d87ed1 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | changed name of pet adoption folder
+0657a78 | ΓÇ£vikk456ΓÇ¥ | 2025-02-22 | added services page
+3859d06 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer for mobile
+3a289c4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | mobile responsiveness added for home page
+bf7aa66 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed home responsiveness
+27863f4 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+7a11b3d | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | changed footer of home for mobile
+f626fa8 | ΓÇ£vikk456ΓÇ¥ | 2025-02-21 | added responsiveness for homepage
+379ef56 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updated links
+216a357 | ΓÇ£vikk456ΓÇ¥ | 2025-02-20 | updates based on recent changes
+b74fa30 | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | Added blog html
+fd6cc0c | ΓÇ£vikk456ΓÇ¥ | 2025-02-03 | made it prettier
+1aab557 | ΓÇ£vikk456ΓÇ¥ | 2025-02-02 | made progress on pet-accessory and changed home page css filename
+95e07c2 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added pet accessory
+a6dfa7b | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | added js for get started button
+d99f781 | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+d7e23db | ΓÇ£vikk456ΓÇ¥ | 2025-02-01 | completed more details page
+2a29cc4 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+84528f7 | ΓÇ£vikk456ΓÇ¥ | 2025-01-29 | more-details page
+e589b21 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added new link
+a0bbda9 | ΓÇ£vikk456ΓÇ¥ | 2025-01-27 | added reqired files
