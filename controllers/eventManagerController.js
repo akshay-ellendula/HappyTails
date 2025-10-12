@@ -563,7 +563,7 @@ const updateEvent = async (req, res) => {
             }
         );
         // 2. Redirect the user to the main events page
-        res.redirect('/eventmanager_events');
+        res.status(200).json({message:"success"})
     } catch (err) {
         console.error('Error updating event:', err);
         // It's better to render an error page or send a clear error message
@@ -1166,7 +1166,7 @@ const updateProfile = async (req, res) => {
             bio,
             image: image !== undefined ? image : req.session.eventManager.image // Keep old image if no new upload
         };
-        res.redirect('/eventmanager_profile');
+        res.status(200).json({ success: true, message: 'Profile updated successfully!' });
     } catch (err) {
         console.error('Error updating profile:', err);
         res.render('eventmanager_profile', {

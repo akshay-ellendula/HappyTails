@@ -45,7 +45,8 @@ const {
     getProductCustomers,
     getOrders,
     getOrderDetails,
-    getOrderStats
+    getOrderStats,
+    getEventRevenue
 } = require('../controllers/adminController');
 const { isAdminAuthenticated } = require('../middleware/authMiddleware');
 
@@ -180,5 +181,6 @@ router.get('/admin-order-details/:id', isAdminAuthenticated, (req, res) => {
 });
 
 router.get('/api/admin/order-stats', isAdminAuthenticated, getOrderStats);
+router.get('/admin/event-revenue', isAdminAuthenticated, getEventRevenue);
 
 module.exports = router;

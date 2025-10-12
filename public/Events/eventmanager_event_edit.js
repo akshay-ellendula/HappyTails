@@ -1,8 +1,11 @@
-
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('editEventForm');
+  const saveButton = document.getElementById('saveButton'); // make sure this exists in your HTML
+  const eventImageUpload = document.getElementById('eventImageUpload');
+  const imagePreview = document.getElementById('imagePreview');
+  const currentImage = document.getElementById('currentImage');
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     // --- Get input references ---
@@ -21,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const date = document.getElementById('date');
     const time = document.getElementById('time');
     const totalTickets = document.getElementById('total_tickets');
-    const eventImageUpload = document.getElementById('eventImageUpload');
 
     // --- 1️⃣ Check required fields ---
     const requiredFields = [
@@ -37,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // --- 2️⃣ Validate duration format (e.g. “2h”, “1.5h”) ---
+    // --- 2️⃣ Validate duration format ---
     const durationPattern = /^[0-9]+(\.[0-9]+)?h$/;
     if (!durationPattern.test(duration.value.trim())) {
       alert("⚠️ Duration should be in format like '2h' or '1.5h'.");
@@ -69,32 +71,30 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    // // --- 6️⃣ Validate date and time (must be in future) ---
-    // const selectedDateTime = new Date(`${date.value}T${time.value}`);
-    // const now = new Date();
-    // if (selectedDateTime <= now) {
-    //   alert("⚠️ Please select a future date and time for your event.");
-    //   date.focus();
-    //   return;
-    // }
+    // --- 6️⃣ Validate date and time ---
+    const selectedDateTime = new Date(`${date.value}T${time.value}`);
+    const now = new Date();
+    if (selectedDateTime <= now) {
+      alert("⚠️ Please select a future date and time for your event.");
+      date.focus();
+      return;
+    }
 
-    // --- 7️⃣ Validate total capacity (must be >= tickets sold) ---
+    // --- 7️⃣ Validate total capacity ---
     const capacity = parseInt(totalTickets.value);
-    const ticketsSold = parseInt(document.querySelector('input[placeholder="Tickets sold"]').value) || 0;
+    const ticketsSold = parseInt(document.querySelector('input[placeholder="Tickets sold"]')?.value || 0);
 
     if (isNaN(capacity) || capacity <= 0) {
-    alert("⚠️ Capacity must be a positive number.");
-    totalTickets.focus();
-    return;
+      alert("⚠️ Capacity must be a positive number.");
+      totalTickets.focus();
+      return;
     }
 
     if (capacity < ticketsSold) {
-    alert(`⚠️ Capacity cannot be less than tickets already sold (${ticketsSold}).`);
-    totalTickets.focus();
-    return;
+      alert(`⚠️ Capacity cannot be less than tickets already sold (${ticketsSold}).`);
+      totalTickets.focus();
+      return;
     }
-
-
 
     // --- 8️⃣ Validate uploaded image (optional) ---
     if (eventImageUpload.files.length > 0) {
@@ -107,30 +107,46 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    // --- ✅ All validations passed ---
-    if (confirm("✅ Save changes to this event?")) {
-      form.submit(); // Proceed with form submission
+    // --- Submit form ---
+    const formData = new FormData(form);
+    const eventId = document.getElementById('eventId').value;
+
+    saveButton.disabled = true;
+    saveButton.textContent = 'Saving...';
+
+    try {
+      const response = await fetch(`/eventmanager_events/update`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const result = await response.json();
+      console.log(result);
+      if (response.ok && result.message === "success") {
+        alert('✅ Event updated successfully!');
+        window.location.href = '/eventmanager_events';
+      } else {
+        alert(`❌ Error: ${result.message || 'Failed to update the event.'}`);
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      alert('An unexpected error occurred. Please check the console and try again.');
+    } finally {
+      saveButton.disabled = false;
+      saveButton.textContent = 'Save Changes';
     }
   });
 
-  // --- Image preview (already present in your code) ---
-  const eventImageUpload = document.getElementById('eventImageUpload');
-  const imagePreview = document.getElementById('imagePreview');
-  const currentImage = document.getElementById('currentImage');
-  
+  // --- Image preview ---
   if (eventImageUpload) {
-    eventImageUpload.addEventListener('change', function (event) {
+    eventImageUpload.addEventListener('change', (event) => {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = (e) => {
           imagePreview.src = e.target.result;
           imagePreview.style.display = 'block';
-          if (currentImage && currentImage.tagName === 'IMG') {
-            currentImage.style.display = 'none';
-          } else if (currentImage && currentImage.classList.contains('image-placeholder')) {
-            currentImage.style.display = 'none';
-          }
+          if (currentImage) currentImage.style.display = 'none';
         };
         reader.readAsDataURL(file);
       } else {
