@@ -160,7 +160,6 @@
         }
 
         function saveProviderChanges() {
-            console.log('Saving provider changes...');
             document.getElementById('editForm').style.display = 'none';
             document.getElementById('providerView').style.display = 'block';
         }

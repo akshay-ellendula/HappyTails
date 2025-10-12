@@ -100,7 +100,6 @@ async function deleteProduct() {
 // Remove it entirely
 document.addEventListener('DOMContentLoaded', function() {
     const imageElem = document.getElementById('productImage');
-    console.log('Rendered image src:', imageElem.src); // Debug log
     if (!imageElem.src || imageElem.src.includes('undefined')) {
         imageElem.src = 'https://via.placeholder.com/150'; // Fallback
         imageElem.alt = 'No image available';

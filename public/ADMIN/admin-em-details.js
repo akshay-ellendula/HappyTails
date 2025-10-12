@@ -22,7 +22,6 @@ function fetchManagerDetails() {
             if (data.success) {
                 const manager = data.manager;
                 const avatar = document.getElementById('managerAvatar');
-                console.log('Manager image from API:', manager.image); // Debug log
                 if (manager.image) {
                     // Check if image already has a data URL prefix
                     const imageUrl = manager.image.startsWith('data:image') ? manager.image : `data:image/png;base64,${manager.image}`;

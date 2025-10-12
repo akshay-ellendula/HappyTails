@@ -251,8 +251,6 @@ const checkout = async (req, res) => {
             charge: parseFloat(charge.toFixed(2)), 
             total: parseFloat(total.toFixed(2)) 
         };
-
-        console.log('Checkout successful - Redirecting to payment');
         return res.json({ 
             success: true, 
             redirectUrl: '/payment' 
@@ -338,8 +336,6 @@ const processPayment = async (req, res) => {
             // Clear session
             req.session.cart = null;
             req.session.orderTotals = null;
-
-            console.log('Payment processed successfully for order:', order[0]._id);
             return res.json({ 
                 success: true, 
                 redirectUrl: '/my_orders' 
