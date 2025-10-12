@@ -23,7 +23,8 @@ const {
     isAuthenticated,
     getEventDetails,
     showEditForm,
-    getEventDetail
+    getEventDetail,
+    deleteEvent
 } = require('../controllers/eventManagerController');
 
 // Configure multer for memory storage (Base64 conversion)
@@ -66,5 +67,6 @@ router.post('/eventmanager_profile/password', isAuthenticated, updatePassword);
 // User event routes
 router.get('/api/my_events', getUserEvents);
 router.delete('/api/cancel_event_booking/:attendeeId', deleteTicket);
+router.delete("/api/deleteEvent/:id",deleteEvent);
 
 module.exports = router;

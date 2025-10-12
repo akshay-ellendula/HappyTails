@@ -1348,6 +1348,6 @@ const deleteEvent = async (req, res) => {
 module.exports = {
     signup, getDashboard, createEvent, updateAttendee, deleteAttendee, getManagerEvents, getEventForEdit, updateEvent
     , getAttendees, getAnalytics, getProfile, updatePassword, getPublicEvents, showBookingForm, getUserEvents, deleteTicket,
-    postTicket, updateProfile, isAuthenticated, getEventDetails,showEditForm, getEventDetail
+    postTicket, updateProfile, isAuthenticated, getEventDetails,showEditForm, getEventDetail,deleteEvent
 };
 
