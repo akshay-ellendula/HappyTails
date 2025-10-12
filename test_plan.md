@@ -36,7 +36,7 @@
 
 ---
 
-## . Sign Up Test Cases for Shopmanager
+## 5. Sign Up Test Cases for Shopmanager
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -45,7 +45,7 @@
 
 ---
 
-## . Sign In Test Cases for Shopmanager
+## 6. Sign In Test Cases for Shopmanager
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -54,7 +54,7 @@
 
 ---
 
-## . Profile Update Test Cases for Shopmanager
+## 7. Profile Update Test Cases for Shopmanager
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -63,11 +63,11 @@
 
 ---
 
-## . Add New product Test Cases
+## 8. Add New product Test Cases
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Invalid** | `Productname:Pet Scraching Poll`,`Category:Toys`,`Pet Type:Cat`,`Stock Satus:In Stock`,`Description:New Stock`,`Size:medium`,`Regular Price:400`,`Sale price:500`,`Stock Quantity:15` | error message: "Sale price must be less than regular price" | A error message is shown | Passed | ![Invalid Add product Case](./test_plan/adding_product_invalid.png) |
-| **Valid** |  `Productname:Pet Scraching Poll`,`Category:Toys`,`Pet Type:Cat`,`Stock Satus:In Stock`,`Description:New Stock`,`Size:medium`,`Regular Price:400`,`Sale price:350`,`Stock Quantity:15`  | Product added successfully. | Passed | ![Valid Add product Case](./test_plan/adding_product_valid.png) |
+| **Valid** |  `Productname:Pet Scraching Poll`,`Category:Toys`,`Pet Type:Cat`,`Stock Satus:In Stock`,`Description:New Stock`,`Size:medium`,`Regular Price:400`,`Sale price:350`,`Stock Quantity:15` | Product should be added | Product added successfully. | Passed | ![Valid Add product Case](./test_plan/adding_product_valid.png) |
 
 ---
