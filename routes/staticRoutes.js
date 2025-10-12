@@ -13,7 +13,7 @@ const pages = [
     'admin-sm-details',  'admin-user-details', 'admin-user', 'admin_login',
     'eventmanager_analytics', 'eventmanager_profile', 'my_events','admin-add-product', 
     'admin-edit-product','eventmanager_event_edit','eventDetails', 'admin-events','event-details',
-    'admin-orders','admin-order-details'
+    'admin-orders','admin-order-details','terms-and-conditions','refund-policy','privacy-policy','cancellation-policy'
 ];
 
 pages.forEach(page => {

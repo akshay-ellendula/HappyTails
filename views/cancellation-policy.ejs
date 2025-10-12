@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancellation Policy - HappyTails</title>
+    <link rel="stylesheet" href="/policy/policy.css">
+</head>
+<body>
+    <div class="navbar">
+        <header>
+            <div class="badge">
+                <a href="/home" class="badge">Happy Tails</a>
+            </div>
+            <div class="search-bar">
+                <img src="/icons/search-alt-svgrepo-com.svg" height="25px" />
+                <input type="text" placeholder="Search.." size="25" />
+            </div>
+            <div class="menu">
+                <a href="/pet_accessory">Pet Essentials</a>
+                <a href="/Events">Events</a>
+                <a href="/my_login">Login/SignUp</a>
+            </div>
+            <div class="menu-icon" id="menuIcon">
+                <img src="/icons/hamburger-svgrepo-com.svg" alt="Menu" height="25px" />
+            </div>
+            <div class="side-navbar" id="sideNavbar">
+                <a href="javascript:void(0)" class="close-btn" id="closeBtn">&times;</a>
+                <a href="/pet_accessory">Essentials</a>
+                <a href="/Events">Events</a>
+                <a href="/my_login">Login/SignUp</a>
+            </div>
+        </header>
+    </div>
+
+    <main class="policy-container">
+        <h1>Cancellation Policy</h1>
+        <p><strong>Last Updated: October 12, 2025</strong></p>
+        <p>This policy outlines the process for requesting a cancellation for product orders and event registrations. Please note that users cannot cancel orders directly. All cancellation requests must be submitted to our team for review.</p>
+
+        <h2>Cancellation of Product Orders</h2>
+        <p>To request a cancellation for a product order, you must contact our customer support team. Our team will process your request based on the following conditions:</p>
+        <ul>
+            <li>A full refund is only possible if your cancellation request is received and processed by our team <strong>before the item has been shipped</strong>.</li>
+            <li>To submit a request, please email <strong>support@happytails.com</strong> with your order number and "Cancellation Request" in the subject line.</li>
+            <li>If your order has already been shipped, it cannot be cancelled by our team. In this case, you will need to follow our <a href="refund-policy.html">Refund Policy</a> to initiate a return once you receive the item.</li>
+        </ul>
+
+        <h2>Cancellation of Event Registrations / Tickets</h2>
+        <p>To request a cancellation for an event ticket, you must contact our events team. All requests are handled internally and are subject to the following terms:</p>
+        <ul>
+            <li><strong>For a Full Refund:</strong> Your request must be sent at least <strong>72 hours</strong> before the scheduled event start time.</li>
+            <li><strong>For a 50% Refund:</strong> Your request must be sent between <strong>24 and 72 hours</strong> before the event start time.</li>
+            <li><strong>No Refund:</strong> Requests sent less than <strong>24 hours</strong> before the event will not be eligible for a refund.</li>
+        </ul>
+         <p>To submit a request, please email our events team at <strong>events@happytails.com</strong> with your booking details.</p>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Happy Tails</h3>
+                <ul>
+                    <li><a href="/pet_accessory">Online Pet Accessories</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Partner</h3>
+                <ul>
+                    <li><a href="/store_signup">Pet Store Franchise</a></li>
+                    <li><a href="/event_manager_signup">Become an Event manager</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Policy</h3>
+                <ul>
+                    <li><a href="/privacy-policy">Privacy Policy</a></li>
+                        <li><a href="/refund-policy">Refund Policy</a></li>
+                        <li><a href="/cancellation-policy">Cancellation Policy</a></li>
+                        <li><a href="/terms-and-conditions">Terms & Conditions</a></li>
+                </ul>
+                <div class="footer-social">
+                    <a href="#"><img src="/icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook"></a>
+                    <a href="#"><img src="/icons/instagram-2016-logo-svgrepo-com.svg" alt="Instagram"></a>
+                    <a href="#"><img src="/icons/youtube-icon-logo-svgrepo-com.svg" alt="YouTube"></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('menuIcon').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.add('open');
+        });
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            document.getElementById('sideNavbar').classList.remove('open');
+        });
+    </script>
+</body>
+</html>
