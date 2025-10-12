@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "_id",
+    "__v",
+    "color",
+    "order_id",
+    "price",
+    "product_id",
+    "product_name",
+    "quantity",
+    "size",
+    "variant_id"
+  ],
+  "properties": {
+    "_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "__v": {
+      "type": "integer"
+    },
+    "color": {
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    "order_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "price": {
+      "type": "integer"
+    },
+    "product_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "product_name": {
+      "type": "string"
+    },
+    "quantity": {
+      "type": "integer"
+    },
+    "size": {
+      "type": "string"
+    },
+    "variant_id": {
+      "$ref": "#/$defs/ObjectId"
+    }
+  },
+  "$defs": {
+    "ObjectId": {
+      "type": "object",
+      "properties": {
+        "$oid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        }
+      },
+      "required": [
+        "$oid"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
