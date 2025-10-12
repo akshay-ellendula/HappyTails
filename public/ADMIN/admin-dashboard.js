@@ -98,19 +98,19 @@ function fetchDashboardStats() {
                 // Update revenue stats (10% tax)
                 document.getElementById('totalRevenue').textContent = new Intl.NumberFormat('en-US', {
                     style: 'currency',
-                    currency: 'USD'
+                    currency: 'INR'
                 }).format(stats.totalRevenue || 0);
                 document.getElementById('monthlyRevenue').textContent = new Intl.NumberFormat('en-US', {
                     style: 'currency',
-                    currency: 'USD'
+                    currency: 'INR'
                 }).format(stats.monthlyRevenue || 0);
                 document.getElementById('weeklyRevenue').textContent = new Intl.NumberFormat('en-US', {
                     style: 'currency',
-                    currency: 'USD'
+                    currency: 'INR'
                 }).format(stats.weeklyRevenue || 0);
                 document.getElementById('dailyRevenue').textContent = new Intl.NumberFormat('en-US', {
                     style: 'currency',
-                    currency: 'USD'
+                    currency: 'INR'
                 }).format(stats.dailyRevenue || 0);
 
                 // Initialize User Distribution Chart with dynamic data

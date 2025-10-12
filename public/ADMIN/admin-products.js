@@ -72,7 +72,7 @@ function displayProducts(productsToDisplay) {
             <td>#${product.id}</td>
             <td>${product.product_name}</td>
             <td>${product.category}</td>
-            <td>$${product.price.toFixed(2)}</td>
+            <td>₹${product.price.toFixed(2)}</td>
             <td><span class="stock-indicator ${stockClass}">${product.stock}</span></td>
             <td>${new Date(product.added_date).toLocaleDateString()}</td>
             <td>

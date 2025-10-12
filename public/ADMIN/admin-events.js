@@ -82,7 +82,7 @@ function fetchEventManagerStats() {
 
             // Handle revenue data
             if (revenueData.success) {
-                document.querySelector('#revenue-card .number').textContent = `$${parseFloat(revenueData.revenue).toLocaleString()}`;
+                document.querySelector('#revenue-card .number').textContent = `₹${parseFloat(revenueData.revenue).toLocaleString()}`;
                 document.querySelector('#revenue-card .change').textContent = revenueData.change;
             } else {
                 console.error('Failed to fetch revenue data:', revenueData.message);

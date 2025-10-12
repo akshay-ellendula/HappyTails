@@ -49,10 +49,10 @@ async function fetchRevenueMetrics() {
 
         if (data.success) {
             const metrics = data.metrics;
-            document.getElementById('todayRevenue').textContent = `$${metrics.today_revenue.toFixed(2)}`;
-            document.getElementById('weeklyRevenue').textContent = `$${metrics.weekly_revenue.toFixed(2)}`;
-            document.getElementById('monthlyRevenue').textContent = `$${metrics.monthly_revenue.toFixed(2)}`;
-            document.getElementById('quarterlyRevenue').textContent = `$${metrics.quarterly_revenue.toFixed(2)}`;
+            document.getElementById('todayRevenue').textContent = `₹${metrics.today_revenue.toFixed(2)}`;
+            document.getElementById('weeklyRevenue').textContent = `₹${metrics.weekly_revenue.toFixed(2)}`;
+            document.getElementById('monthlyRevenue').textContent = `₹${metrics.monthly_revenue.toFixed(2)}`;
+            document.getElementById('quarterlyRevenue').textContent = `₹${metrics.quarterly_revenue.toFixed(2)}`;
 
             const revenueTableBody = document.getElementById('revenueTableBody');
             revenueTableBody.innerHTML = '';
@@ -61,9 +61,9 @@ async function fetchRevenueMetrics() {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${new Date(row.month + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}</td>
-                        <td>$${row.total_sales.toFixed(2)}</td>
+                        <td>₹${row.total_sales.toFixed(2)}</td>
                         <td>${row.orders}</td>
-                        <td>$${row.avg_order_value.toFixed(2)}</td>
+                        <td>₹${row.avg_order_value.toFixed(2)}</td>
                     `;
                     revenueTableBody.appendChild(tr);
                 });
@@ -99,7 +99,7 @@ async function fetchProducts() {
                     <td>${product.product_id}</td>
                     <td>${product.product_name}</td>
                     <td>${product.category}</td>
-                    <td>$${product.price.toFixed(2)}</td>
+                    <td>₹${product.price.toFixed(2)}</td>
                     <td>${product.stock}</td>
                 `;
                 productsTableBody.appendChild(tr);
@@ -132,7 +132,7 @@ async function fetchTopCustomers() {
                     <td>#USR${String(customer.customer_id).padStart(3, '0')}</td>
                     <td>${customer.customer_name}</td>
                     <td>${customer.total_orders}</td>
-                    <td>$${customer.total_spent.toFixed(2)}</td>
+                    <td>₹${customer.total_spent.toFixed(2)}</td>
                     <td>${new Date(customer.last_purchase).toLocaleDateString()}</td>
                 `;
                 customersTableBody.appendChild(tr);
