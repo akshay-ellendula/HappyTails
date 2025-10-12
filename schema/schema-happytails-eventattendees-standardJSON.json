@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "_id",
+    "__v",
+    "address",
+    "email",
+    "event_id",
+    "name",
+    "pet_breed",
+    "pet_dob",
+    "pet_name",
+    "phone_number",
+    "registration_date",
+    "seats",
+    "ticketId",
+    "user_id",
+    "with_pet"
+  ],
+  "properties": {
+    "_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "__v": {
+      "type": "integer"
+    },
+    "address": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "event_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "name": {
+      "type": "string"
+    },
+    "pet_breed": {
+      "type": "null"
+    },
+    "pet_dob": {
+      "type": "null"
+    },
+    "pet_name": {
+      "type": "null"
+    },
+    "phone_number": {
+      "type": "string"
+    },
+    "registration_date": {
+      "$ref": "#/$defs/Date"
+    },
+    "seats": {
+      "type": "integer"
+    },
+    "ticketId": {
+      "type": "string"
+    },
+    "user_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "with_pet": {
+      "type": "boolean"
+    }
+  },
+  "$defs": {
+    "ObjectId": {
+      "type": "object",
+      "properties": {
+        "$oid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        }
+      },
+      "required": [
+        "$oid"
+      ],
+      "additionalProperties": false
+    },
+    "Date": {
+      "type": "object",
+      "properties": {
+        "$date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "$date"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

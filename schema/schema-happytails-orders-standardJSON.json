@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "_id",
+    "__v",
+    "delivery_date",
+    "order_date",
+    "payment_last_four",
+    "status",
+    "subtotal",
+    "total_amount",
+    "user_id"
+  ],
+  "properties": {
+    "_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "__v": {
+      "type": "integer"
+    },
+    "cancelled_at": {
+      "type": "null"
+    },
+    "delivered_at": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/Date"
+        }
+      ]
+    },
+    "delivery_date": {
+      "type": "null"
+    },
+    "order_date": {
+      "$ref": "#/$defs/Date"
+    },
+    "payment_last_four": {
+      "type": "string"
+    },
+    "shipped_at": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "type": "string"
+    },
+    "subtotal": {
+      "type": "integer"
+    },
+    "total_amount": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Double"
+        },
+        {
+          "type": "integer"
+        }
+      ]
+    },
+    "user_id": {
+      "$ref": "#/$defs/ObjectId"
+    }
+  },
+  "$defs": {
+    "ObjectId": {
+      "type": "object",
+      "properties": {
+        "$oid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        }
+      },
+      "required": [
+        "$oid"
+      ],
+      "additionalProperties": false
+    },
+    "Double": {
+      "oneOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "$numberDouble": {
+              "enum": [
+                "Infinity",
+                "-Infinity",
+                "NaN"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Date": {
+      "type": "object",
+      "properties": {
+        "$date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "$date"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,607 @@
+﻿caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+b383de9 | akshay | 2025-05-09 | Merge remote-tracking branch 'origin/jeevan-endsem' into timepass
+b1c6bd9 | akshay | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+8b80d44 | akshay | 2025-05-09 | null
+54c7738 | akshay | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+6d4eae6 | akshay | 2025-05-09 | events1
+caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+b383de9 | akshay | 2025-05-09 | Merge remote-tracking branch 'origin/jeevan-endsem' into timepass
+b1c6bd9 | akshay | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+8b80d44 | akshay | 2025-05-09 | null
+54c7738 | akshay | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+6d4eae6 | akshay | 2025-05-09 | events1
+caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+b383de9 | akshay | 2025-05-09 | Merge remote-tracking branch 'origin/jeevan-endsem' into timepass
+b1c6bd9 | akshay | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+8b80d44 | akshay | 2025-05-09 | null
+54c7738 | akshay | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+6d4eae6 | akshay | 2025-05-09 | events1
+caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+b383de9 | akshay | 2025-05-09 | Merge remote-tracking branch 'origin/jeevan-endsem' into timepass
+b1c6bd9 | akshay | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+8b80d44 | akshay | 2025-05-09 | null
+54c7738 | akshay | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+6d4eae6 | akshay | 2025-05-09 | events1
+caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit
+caf72c5 | akshay | 2025-03-28 | Fix SQL syntax error in sample data insertion
+829d529 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+a343766 | akshay | 2025-03-28 | Revert "Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails"
+4b14e43 | akshay | 2025-03-27 | Add event management features: integrate event manager routes, create event and attendee tables, and update views for event management. Refactor vendor routes and enhance user experience with improved login and signup forms.
+8095577 | akshay | 2025-03-27 | Refactor footer sections in multiple views to remove redundant service links and streamline layout. Update userRoutes to remove unused authentication middleware.
+3888979 | akshay | 2025-03-22 | add additional console log URLs for home and service provider login
+dc5af26 | akshay | 2025-03-22 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+6ccdd78 | akshay | 2025-03-22 | redirect to shop dashboard after successful vendor signup
+3527d84 | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+3c41077 | akshay | 2025-03-18 | enhance user edit form with validation and error handling
+029f44a | akshay | 2025-03-18 | remove service login page and add validation to all forms
+860ed6f | akshay | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+441b521 | akshay | 2025-03-18 | changes for fotteers
+90eccf5 | akshay | 2025-03-17 | change typo in service_login file
+9c3213c | akshay | 2025-03-16 | added nodemon and also fixed all link except footer
+857b800 | akshay | 2025-03-16 | changed login css
+5501eb2 | akshay | 2025-03-16 | added changes but some left
+fde9fcb | akshay | 2025-03-16 | updateds js in login pages
+075b4f2 | akshay | 2025-03-16 | upadated login css
+451abd5 | akshay | 2025-03-16 | applied all changes
+417bb4b | akshay | 2025-03-16 | applied changes
+05c980e | akshay | 2025-03-16 | removed unwamted files
+22b0775 | akshay | 2025-03-16 | changed all file sructure
+edf70d4 | akshay | 2025-03-14 | added files in view
+f021299 | akshay | 2025-03-13 | added all parteners signup pages
+7830ecf | Akshay | 2025-03-13 | Update index.html
+71de37f | akshay | 2025-02-23 | improved login view
+8c086fa | akshay | 2025-02-23 | added login page
+f09d03a | akshay | 2025-02-23 | added login and signup pages for user
+d5180c7 | akshay | 2025-02-21 | added change  in index.html
+1a352c5 | Akshay | 2025-02-21 | Delete CNAME
+e4c6f34 | Akshay | 2025-02-21 | Create CNAME
+8b79540 | akshay | 2025-02-21 | added index file
+88f5129 | Akshay | 2025-02-20 | Services (#6)
+a1bcb31 | akshay | 2025-02-20 | sign up page completed for services not for user and store and made changes in file structure
+5c9895e | akshay | 2025-02-19 | segrated files accordingly
+f76bd9a | akshay | 2025-02-16 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9acbd21 | akshay | 2025-02-16 | made required changes in home page for sevivces
+cfadf54 | akshay | 2025-02-01 | changes in  home page
+6e67330 | Akshay | 2025-01-21 | change in homescreen (#1)
+5604ad2 | akshay | 2025-01-21 | change in homescreen
+3732598 | akshay | 2025-01-21 | Change
+dad5b06 | akshay | 2025-01-21 | Change in readme file
+f28278f | Akshay | 2025-01-21 | Update README.md
+1931fb3 | akshay | 2025-01-20 | added required files
+eec392e | Akshay | 2025-01-20 | Update README.md
+31e216f | Akshay | 2025-01-19 | Update README.md
+bace471 | Akshay | 2025-01-19 | Update README.md
+3895314 | Akshay | 2025-01-19 | Update README.md
+c970b2f | Akshay | 2025-01-19 | README.md
+504efc2 | Akshay | 2025-01-19 | Initial commit

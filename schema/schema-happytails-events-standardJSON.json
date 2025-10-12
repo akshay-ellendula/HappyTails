@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "_id",
+    "__v",
+    "about_event",
+    "age_limit",
+    "category",
+    "city",
+    "contact_number",
+    "created_at",
+    "date_time",
+    "duration",
+    "event_manager_id",
+    "event_name",
+    "image",
+    "instructions",
+    "language",
+    "status",
+    "terms",
+    "ticket_price",
+    "tickets_sold",
+    "total_tickets",
+    "venue"
+  ],
+  "properties": {
+    "_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "__v": {
+      "type": "integer"
+    },
+    "about_event": {
+      "type": "string"
+    },
+    "age_limit": {
+      "type": "integer"
+    },
+    "category": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "contact_number": {
+      "type": "string"
+    },
+    "created_at": {
+      "$ref": "#/$defs/Date"
+    },
+    "date_time": {
+      "$ref": "#/$defs/Date"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "event_manager_id": {
+      "$ref": "#/$defs/ObjectId"
+    },
+    "event_name": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "terms": {
+      "type": "string"
+    },
+    "ticket_price": {
+      "type": "integer"
+    },
+    "tickets_sold": {
+      "type": "integer"
+    },
+    "total_tickets": {
+      "type": "integer"
+    },
+    "venue": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "ObjectId": {
+      "type": "object",
+      "properties": {
+        "$oid": {
+          "type": "string",
+          "pattern": "^[0-9a-fA-F]{24}$"
+        }
+      },
+      "required": [
+        "$oid"
+      ],
+      "additionalProperties": false
+    },
+    "Date": {
+      "type": "object",
+      "properties": {
+        "$date": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "$date"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

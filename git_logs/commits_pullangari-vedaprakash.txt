@@ -1,0 +1,578 @@
+﻿82f1325 | pullangari-vedaprakash | 2025-03-28 | added code
+49e0dbc | pullangari-vedaprakash | 2025-03-28 | ok
+39a50af | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9ff51c2 | pullangari-vedaprakash | 2025-03-28 | dleted all files
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+8a2d9a5 | pullangari-vedaprakash | 2025-09-12 | Shop $ to Γé╣
+c564cc1 | pullangari-vedaprakash | 2025-09-07 | changed shop and user profile to use base64 storage
+b9d6254 | pullangari-vedaprakash | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+76ace98 | pullangari-vedaprakash | 2025-05-09 | remove product edit
+c103a5c | pullangari-vedaprakash | 2025-05-09 | delete product
+f44db5a | pullangari-vedaprakash | 2025-05-09 | admin logout
+ca9b9f0 | pullangari-vedaprakash | 2025-05-08 | shop analytics
+019292b | pullangari-vedaprakash | 2025-05-08 | events
+57e70bd | pullangari-vedaprakash | 2025-05-08 | admin
+6f9e941 | pullangari-vedaprakash | 2025-05-08 | admin
+4e40cb7 | pullangari-vedaprakash | 2025-05-08 | store manager in admin
+cdda5e6 | pullangari-vedaprakash | 2025-05-08 | admin-dashboard
+044d531 | pullangari-vedaprakash | 2025-05-08 | event side set
+546e7ca | pullangari-vedaprakash | 2025-05-07 | shop-order-deatils into dynamic
+2ec7514 | pullangari-vedaprakash | 2025-05-06 | fixed profile picture
+1e897a6 | pullangari-vedaprakash | 2025-05-06 | updated get users products
+8cbaade | pullangari-vedaprakash | 2025-05-06 | submit product completed
+f335ca2 | pullangari-vedaprakash | 2025-05-06 | fxcjk
+7db6995 | pullangari-vedaprakash | 2025-05-06 | sdfghj
+e99f89d | pullangari-vedaprakash | 2025-05-05 | sdfgnh
+c604dab | pullangari-vedaprakash | 2025-05-05 | mongobd
+42c8760 | pullangari-vedaprakash | 2025-03-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+caba9e2 | pullangari-vedaprakash | 2025-03-29 | store singup
+82f1325 | pullangari-vedaprakash | 2025-03-28 | added code
+49e0dbc | pullangari-vedaprakash | 2025-03-28 | ok
+39a50af | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9ff51c2 | pullangari-vedaprakash | 2025-03-28 | dleted all files
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+82f1325 | pullangari-vedaprakash | 2025-03-28 | added code
+49e0dbc | pullangari-vedaprakash | 2025-03-28 | ok
+39a50af | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9ff51c2 | pullangari-vedaprakash | 2025-03-28 | dleted all files
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+b5f5ce9 | pullangari-vedaprakash | 2025-10-12 | Merge branch 'final-branch(Main)' of https://github.com/akshay-ellendula/HappyTails into final-branch(Main)
+65e2e35 | pullangari-vedaprakash | 2025-10-12 | delete add option
+7ddf8e3 | pullangari-vedaprakash | 2025-10-12 | deleted edit_attendies
+2784063 | pullangari-vedaprakash | 2025-10-12 | edit-form in event-details
+cfadf56 | pullangari-vedaprakash | 2025-10-12 | Merge branch 'final-branch(Main)' of https://github.com/akshay-ellendula/HappyTails into final-branch(Main)
+df2f75c | pullangari-vedaprakash | 2025-10-12 | final dashboard tax revenu with events
+120ca8f | pullangari-vedaprakash | 2025-10-12 | Merge branch 'final-branch(Main)' of https://github.com/akshay-ellendula/HappyTails into final-branch(Main)
+a5ceb80 | pullangari-vedaprakash | 2025-10-12 | revenue this is dashborad
+350ae2d | pullangari-vedaprakash | 2025-10-12 | revenue  after tax
+5267a2e | pullangari-vedaprakash | 2025-10-11 | Merge branch 'jeevan-veda-2.0' of https://github.com/akshay-ellendula/HappyTails into jeevan-veda-2.0
+a4608b1 | pullangari-vedaprakash | 2025-10-11 | images also updated in admin( using base64)
+447bf81 | pullangari-vedaprakash | 2025-10-11 | admin side all complete with features and other things just image left
+869ce85 | pullangari-vedaprakash | 2025-10-10 | admin side user, usee-details,product and product details done with form validation and dom
+932d7eb | pullangari-vedaprakash | 2025-10-10 | all event -manager and event things
+40d91b0 | pullangari-vedaprakash | 2025-10-01 | base64 events
+c564cc1 | pullangari-vedaprakash | 2025-09-07 | changed shop and user profile to use base64 storage
+b9d6254 | pullangari-vedaprakash | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+76ace98 | pullangari-vedaprakash | 2025-05-09 | remove product edit
+c103a5c | pullangari-vedaprakash | 2025-05-09 | delete product
+f44db5a | pullangari-vedaprakash | 2025-05-09 | admin logout
+ca9b9f0 | pullangari-vedaprakash | 2025-05-08 | shop analytics
+019292b | pullangari-vedaprakash | 2025-05-08 | events
+57e70bd | pullangari-vedaprakash | 2025-05-08 | admin
+6f9e941 | pullangari-vedaprakash | 2025-05-08 | admin
+4e40cb7 | pullangari-vedaprakash | 2025-05-08 | store manager in admin
+cdda5e6 | pullangari-vedaprakash | 2025-05-08 | admin-dashboard
+044d531 | pullangari-vedaprakash | 2025-05-08 | event side set
+546e7ca | pullangari-vedaprakash | 2025-05-07 | shop-order-deatils into dynamic
+2ec7514 | pullangari-vedaprakash | 2025-05-06 | fixed profile picture
+1e897a6 | pullangari-vedaprakash | 2025-05-06 | updated get users products
+8cbaade | pullangari-vedaprakash | 2025-05-06 | submit product completed
+f335ca2 | pullangari-vedaprakash | 2025-05-06 | fxcjk
+7db6995 | pullangari-vedaprakash | 2025-05-06 | sdfghj
+e99f89d | pullangari-vedaprakash | 2025-05-05 | sdfgnh
+c604dab | pullangari-vedaprakash | 2025-05-05 | mongobd
+42c8760 | pullangari-vedaprakash | 2025-03-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+caba9e2 | pullangari-vedaprakash | 2025-03-29 | store singup
+82f1325 | pullangari-vedaprakash | 2025-03-28 | added code
+49e0dbc | pullangari-vedaprakash | 2025-03-28 | ok
+39a50af | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9ff51c2 | pullangari-vedaprakash | 2025-03-28 | dleted all files
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+82f1325 | pullangari-vedaprakash | 2025-03-28 | added code
+49e0dbc | pullangari-vedaprakash | 2025-03-28 | ok
+39a50af | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9ff51c2 | pullangari-vedaprakash | 2025-03-28 | dleted all files
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+40d91b0 | pullangari-vedaprakash | 2025-10-01 | base64 events
+c564cc1 | pullangari-vedaprakash | 2025-09-07 | changed shop and user profile to use base64 storage
+b9d6254 | pullangari-vedaprakash | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+76ace98 | pullangari-vedaprakash | 2025-05-09 | remove product edit
+c103a5c | pullangari-vedaprakash | 2025-05-09 | delete product
+f44db5a | pullangari-vedaprakash | 2025-05-09 | admin logout
+ca9b9f0 | pullangari-vedaprakash | 2025-05-08 | shop analytics
+019292b | pullangari-vedaprakash | 2025-05-08 | events
+57e70bd | pullangari-vedaprakash | 2025-05-08 | admin
+6f9e941 | pullangari-vedaprakash | 2025-05-08 | admin
+4e40cb7 | pullangari-vedaprakash | 2025-05-08 | store manager in admin
+cdda5e6 | pullangari-vedaprakash | 2025-05-08 | admin-dashboard
+044d531 | pullangari-vedaprakash | 2025-05-08 | event side set
+546e7ca | pullangari-vedaprakash | 2025-05-07 | shop-order-deatils into dynamic
+2ec7514 | pullangari-vedaprakash | 2025-05-06 | fixed profile picture
+1e897a6 | pullangari-vedaprakash | 2025-05-06 | updated get users products
+8cbaade | pullangari-vedaprakash | 2025-05-06 | submit product completed
+f335ca2 | pullangari-vedaprakash | 2025-05-06 | fxcjk
+7db6995 | pullangari-vedaprakash | 2025-05-06 | sdfghj
+e99f89d | pullangari-vedaprakash | 2025-05-05 | sdfgnh
+c604dab | pullangari-vedaprakash | 2025-05-05 | mongobd
+42c8760 | pullangari-vedaprakash | 2025-03-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+caba9e2 | pullangari-vedaprakash | 2025-03-29 | store singup
+82f1325 | pullangari-vedaprakash | 2025-03-28 | added code
+49e0dbc | pullangari-vedaprakash | 2025-03-28 | ok
+39a50af | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9ff51c2 | pullangari-vedaprakash | 2025-03-28 | dleted all files
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+7ddf8e3 | pullangari-vedaprakash | 2025-10-12 | deleted edit_attendies
+2784063 | pullangari-vedaprakash | 2025-10-12 | edit-form in event-details
+cfadf56 | pullangari-vedaprakash | 2025-10-12 | Merge branch 'final-branch(Main)' of https://github.com/akshay-ellendula/HappyTails into final-branch(Main)
+df2f75c | pullangari-vedaprakash | 2025-10-12 | final dashboard tax revenu with events
+120ca8f | pullangari-vedaprakash | 2025-10-12 | Merge branch 'final-branch(Main)' of https://github.com/akshay-ellendula/HappyTails into final-branch(Main)
+a5ceb80 | pullangari-vedaprakash | 2025-10-12 | revenue this is dashborad
+350ae2d | pullangari-vedaprakash | 2025-10-12 | revenue  after tax
+5267a2e | pullangari-vedaprakash | 2025-10-11 | Merge branch 'jeevan-veda-2.0' of https://github.com/akshay-ellendula/HappyTails into jeevan-veda-2.0
+a4608b1 | pullangari-vedaprakash | 2025-10-11 | images also updated in admin( using base64)
+447bf81 | pullangari-vedaprakash | 2025-10-11 | admin side all complete with features and other things just image left
+869ce85 | pullangari-vedaprakash | 2025-10-10 | admin side user, usee-details,product and product details done with form validation and dom
+932d7eb | pullangari-vedaprakash | 2025-10-10 | all event -manager and event things
+40d91b0 | pullangari-vedaprakash | 2025-10-01 | base64 events
+c564cc1 | pullangari-vedaprakash | 2025-09-07 | changed shop and user profile to use base64 storage
+b9d6254 | pullangari-vedaprakash | 2025-05-09 | Merge branch 'timepass' of https://github.com/akshay-ellendula/HappyTails into timepass
+76ace98 | pullangari-vedaprakash | 2025-05-09 | remove product edit
+c103a5c | pullangari-vedaprakash | 2025-05-09 | delete product
+f44db5a | pullangari-vedaprakash | 2025-05-09 | admin logout
+ca9b9f0 | pullangari-vedaprakash | 2025-05-08 | shop analytics
+019292b | pullangari-vedaprakash | 2025-05-08 | events
+57e70bd | pullangari-vedaprakash | 2025-05-08 | admin
+6f9e941 | pullangari-vedaprakash | 2025-05-08 | admin
+4e40cb7 | pullangari-vedaprakash | 2025-05-08 | store manager in admin
+cdda5e6 | pullangari-vedaprakash | 2025-05-08 | admin-dashboard
+044d531 | pullangari-vedaprakash | 2025-05-08 | event side set
+546e7ca | pullangari-vedaprakash | 2025-05-07 | shop-order-deatils into dynamic
+2ec7514 | pullangari-vedaprakash | 2025-05-06 | fixed profile picture
+1e897a6 | pullangari-vedaprakash | 2025-05-06 | updated get users products
+8cbaade | pullangari-vedaprakash | 2025-05-06 | submit product completed
+f335ca2 | pullangari-vedaprakash | 2025-05-06 | fxcjk
+7db6995 | pullangari-vedaprakash | 2025-05-06 | sdfghj
+e99f89d | pullangari-vedaprakash | 2025-05-05 | sdfgnh
+c604dab | pullangari-vedaprakash | 2025-05-05 | mongobd
+42c8760 | pullangari-vedaprakash | 2025-03-29 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+caba9e2 | pullangari-vedaprakash | 2025-03-29 | store singup
+82f1325 | pullangari-vedaprakash | 2025-03-28 | added code
+49e0dbc | pullangari-vedaprakash | 2025-03-28 | ok
+39a50af | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9ff51c2 | pullangari-vedaprakash | 2025-03-28 | dleted all files
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
+82f1325 | pullangari-vedaprakash | 2025-03-28 | added code
+49e0dbc | pullangari-vedaprakash | 2025-03-28 | ok
+39a50af | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9ff51c2 | pullangari-vedaprakash | 2025-03-28 | dleted all files
+1a6ab67 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+9e47d5a | pullangari-vedaprakash | 2025-03-28 | cnaged
+010d619 | pullangari-vedaprakash | 2025-03-28 | srh loos match
+265fdb5 | pullangari-vedaprakash | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+788418e | pullangari-vedaprakash | 2025-03-28 | store dynamic
+665d129 | pullangari-vedaprakash | 2025-03-28 | store manager dynamic
+b5a01f2 | pullangari-vedaprakash | 2025-03-18 | js for admin
+88137bd | pullangari-vedaprakash | 2025-03-18 | admin singin in server
+bed67b1 | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+28b4d55 | pullangari-vedaprakash | 2025-03-18 | added admin login
+79ab673 | pullangari-vedaprakash | 2025-03-18 | changed server a bit
+772fee6 | pullangari-vedaprakash | 2025-03-18 | phone validation
+02867e5 | pullangari-vedaprakash | 2025-03-18 | changed css for signup
+dcedb22 | pullangari-vedaprakash | 2025-03-18 | changed form of store signup
+1ea369c | pullangari-vedaprakash | 2025-03-18 | event-bboking form
+b58868a | pullangari-vedaprakash | 2025-03-18 | event booking js
+5aeb29e | pullangari-vedaprakash | 2025-03-18 | shop-pro js
+350568e | pullangari-vedaprakash | 2025-03-18 | shop-pro
+6ced7f3 | pullangari-vedaprakash | 2025-03-18 | shop-por
+daa047f | pullangari-vedaprakash | 2025-03-18 | shop-prof
+e95e290 | pullangari-vedaprakash | 2025-03-18 | shop-profile validation
+b508f33 | pullangari-vedaprakash | 2025-03-18 | shop-profile number
+2063fe3 | pullangari-vedaprakash | 2025-03-18 | phone 10
+0e970f6 | pullangari-vedaprakash | 2025-03-18 | phone number in shop profile
+195bd3a | pullangari-vedaprakash | 2025-03-18 | src in shop profile
+ac68c51 | pullangari-vedaprakash | 2025-03-18 | EVENTS FORM PHONE NUMBER
+2f7507b | pullangari-vedaprakash | 2025-03-18 | added path
+aff44a9 | pullangari-vedaprakash | 2025-03-18 | added admin ejs
+0e8f12a | pullangari-vedaprakash | 2025-03-18 | go back in product edit
+56331a9 | pullangari-vedaprakash | 2025-03-18 | added path
+a9f3b2f | pullangari-vedaprakash | 2025-03-18 | Merge branch 'changing-to-ejs' of https://github.com/akshay-ellendula/HappyTails into changing-to-ejs
+ff31075 | pullangari-vedaprakash | 2025-03-18 | added shop fies
+b6230b6 | pullangari-vedaprakash | 2025-03-14 | added events ejs files
+8edadcd | pullangari-vedaprakash | 2025-03-13 | message
+da03d95 | pullangari-vedaprakash | 2025-03-12 | added comment
+1361620 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+121a503 | pullangari-vedaprakash | 2025-03-12 | Update README.md
+fea6a01 | pullangari-vedaprakash | 2025-03-12 | hi
+d351299 | pullangari-vedaprakash | 2025-03-12 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+38ee4e7 | pullangari-vedaprakash | 2025-03-11 | added comment in blog
