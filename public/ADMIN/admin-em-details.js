@@ -49,6 +49,7 @@ function fetchManagerDetails() {
             alert('Error loading manager details');
         });
 }
+
 function fetchEventMetrics() {
     fetch(`/admin/event-manager/${managerId}/metrics`)
         .then(response => response.json())
@@ -58,27 +59,30 @@ function fetchEventMetrics() {
                 document.getElementById('upcomingEvents').textContent = metrics.upcoming;
                 document.getElementById('weeklyEvents').textContent = metrics.weekly;
                 document.getElementById('monthlyEvents').textContent = metrics.monthly;
-                document.getElementById('satisfactionRate').textContent = 'N/A'; // Add satisfaction logic if available
+                document.getElementById('totalRevenue').textContent = `₹${metrics.totalRevenue}`;
 
                 const tbody = document.getElementById('monthlyBreakdown');
                 tbody.innerHTML = '';
-                metrics.monthly_breakdown.forEach((row, index) => {
-                    const growth = index === 0 || !metrics.monthly_breakdown[index - 1].avg_attendance
-                        ? 0
-                        : ((row.avg_attendance - metrics.monthly_breakdown[index - 1].avg_attendance) / metrics.monthly_breakdown[index - 1].avg_attendance * 100).toFixed(1);
+                metrics.monthly_breakdown.forEach(row => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${row.month}</td>
                         <td>${row.total_events}</td>
                         <td>${row.attendees}</td>
                         <td>${row.avg_attendance.toFixed(1)}</td>
-                        <td>${growth > 0 ? '+' : ''}${growth}%</td>
                     `;
                     tbody.appendChild(tr);
                 });
+            } else {
+                console.error('Failed to fetch event metrics:', data.message);
+                // Optionally display an error on the page
+                document.getElementById('totalRevenue').textContent = 'Error';
             }
         })
-        .catch(error => console.error('Error fetching metrics:', error));
+        .catch(error => {
+            console.error('Error fetching event metrics:', error);
+            document.getElementById('totalRevenue').textContent = 'Error';
+        });
 }
 
 function fetchUpcomingEvents() {

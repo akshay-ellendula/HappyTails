@@ -1255,15 +1255,18 @@ const getEventManagerMetrics = async (req, res) => {
                     $group: {
                         _id: { $dateToString: { format: "%Y-%m", date: "$date_time" } },
                         total_events: { $sum: 1 },
-                        attendees: { $sum: "$tickets_sold" }
+                        attendees: { $sum: "$tickets_sold" },
+                        revenue: { $sum: { $multiply: ["$tickets_sold", "$ticket_price"] } }
                     }
                 },
                 {
                     $project: {
+                        _id: 0,
                         month: "$_id",
                         total_events: 1,
                         attendees: 1,
-                        avg_attendance: { $divide: ["$attendees", "$total_events"] }
+                        avg_attendance: { $divide: ["$attendees", "$total_events"] },
+                        totalRevenue: "$revenue"
                     }
                 },
                 { $sort: { month: -1 } },
@@ -1271,20 +1274,31 @@ const getEventManagerMetrics = async (req, res) => {
             ])
         ]);
 
+        const totalRevenueResult = await Event.aggregate([
+            { $match: { event_manager_id: new mongoose.Types.ObjectId(managerId) } },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: { $multiply: ["$tickets_sold", "$ticket_price"] } }
+                }
+            }
+        ]);
+        const totalRevenue = totalRevenueResult.length > 0 ? totalRevenueResult[0].total * 0.94 : 0;
+
         res.json({
             success: true,
             metrics: {
                 upcoming,
                 weekly,
                 monthly,
-                monthly_breakdown: monthlyBreakdown
+                monthly_breakdown: monthlyBreakdown,
+                totalRevenue: totalRevenue.toFixed(2)
             }
         });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
-
 const getUpcomingEvents = async (req, res) => {
     try {
         const managerId = req.params.id;
