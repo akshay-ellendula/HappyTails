@@ -1721,30 +1721,31 @@ const getEvent = async (req, res) => {
         const imageBase64 = event.image || null; // No modification needed
 
         res.json({
-            success: true,
-            event: {
-                id: event._id.toString(),
-                name: event.event_name,
-                about: event.about_event,
-                language: event.language,
-                duration: event.duration,
-                ticket_price: event.ticket_price,
-                age_limit: event.age_limit,
-                instructions: event.instructions,
-                venue: event.venue,
-                terms: event.terms,
-                category: event.category,
-                date_time: event.date_time,
-                status: event.status,
-                total_tickets: event.total_tickets,
-                tickets_sold: event.tickets_sold,
-                city: event.city,
-                contact_number: event.contact_number,
-                image: imageBase64, // Return the full base64 URL as stored
-                created_at: event.created_at
-            },
-            manager: event.event_manager_id ? { name: event.event_manager_id.name } : null
-        });
+    success: true,
+    event: {
+        id: event._id.toString(),
+        name: event.event_name,
+        about: event.about_event,
+        language: event.language,
+        duration: event.duration,
+        ticket_price: event.ticket_price,
+        age_limit: event.age_limit,
+        instructions: event.instructions,
+        venue: event.venue,
+        terms: event.terms,
+        category: event.category,
+        date_time: event.date_time,
+        status: event.status,
+        total_tickets: event.total_tickets,
+        tickets_sold: event.tickets_sold,
+        city: event.city,
+        contact_number: event.contact_number,
+        image: event.image || null, // No need for base64 conversion here, as it's handled in the frontend
+        created_at: event.created_at,
+        // Ensure manager data is correctly added
+        manager: event.event_manager_id ? { name: event.event_manager_id.name } : null
+    }
+});
     } catch (err) {
         console.error('Error in getEvent:', err);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -1799,13 +1800,18 @@ const updateEvent = async (req, res) => {
         if (!language || language.length < 2) return res.status(400).json({ success: false, message: 'Language must be at least 2 characters' });
         if (!duration || !/^\d+h\s*\d*m?$/.test(duration)) return res.status(400).json({ success: false, message: 'Invalid duration format (e.g., 2h 30m)' });
         if (!ticket_price || ticket_price < 0) return res.status(400).json({ success: false, message: 'Ticket price must be a positive number' });
-        if (!age_limit || !/^\d+\+?$/.test(age_limit)) return res.status(400).json({ success: false, message: 'Invalid age limit format (e.g., 18+)' });
+        
+        // Corrected age_limit validation
+        if (!age_limit || isNaN(parseInt(age_limit))) return res.status(400).json({ success: false, message: 'Invalid age limit format (e.g., 18+)' });
+        
         if (!venue || venue.length < 3) return res.status(400).json({ success: false, message: 'Venue must be at least 3 characters' });
         if (!category || category.length < 2) return res.status(400).json({ success: false, message: 'Category must be at least 2 characters' });
         if (!date_time || isNaN(new Date(date_time))) return res.status(400).json({ success: false, message: 'Invalid date and time' });
         if (!total_tickets || total_tickets < 1) return res.status(400).json({ success: false, message: 'Total tickets must be at least 1' });
         if (!city || city.length < 2) return res.status(400).json({ success: false, message: 'City must be at least 2 characters' });
-        if (contact_number && !/^\+91[6-9][0-9]{9}$/.test(contact_number)) return res.status(400).json({ success: false, message: 'Invalid phone number' });
+        
+        // Corrected contact_number validation
+        if (contact_number && !/^(?:\+91)?[6-9][0-9]{9}$/.test(contact_number)) return res.status(400).json({ success: false, message: 'Invalid phone number' });
 
         const event = await Event.findById(eventId);
         if (!event) return res.status(404).json({ success: false, message: 'Event not found' });

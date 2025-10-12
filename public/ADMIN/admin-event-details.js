@@ -2,8 +2,15 @@ const urlParams = new URLSearchParams(window.location.search);
 const eventId = urlParams.get('id');
 
 document.addEventListener('DOMContentLoaded', () => {
+    // This is the single, correct block for all initialization
     fetchEventDetails();
     fetchEventAttendees();
+
+    // Attach event listeners to the buttons
+    document.querySelector('.edit-btn').addEventListener('click', showEditForm);
+    document.querySelector('.delete-btn').addEventListener('click', deleteEvent);
+
+    // Attach the form submit listener
     document.getElementById('eventEditForm').addEventListener('submit', handleFormSubmit);
 });
 
@@ -26,15 +33,13 @@ function fetchEventDetails() {
             loadingMsg.remove();
             if (data.success) {
                 const event = data.event;
-                console.log('Received event data:', event); // Debug: Log full event object
-                console.log('Received image data:', event.image); // Debug: Log image specifically
                 const imageElem = document.getElementById('eventImage');
                 if (event.image) {
-                    imageElem.src = event.image; // Set the full base64 URL
-                    imageElem.alt = event.name; // Set alt text
-                    imageElem.style.display = 'block'; // Ensure image is visible
+                    imageElem.src = event.image;
+                    imageElem.alt = event.name;
+                    imageElem.style.display = 'block';
                 } else {
-                    imageElem.src = 'https://via.placeholder.com/150'; // Fallback placeholder image
+                    imageElem.src = 'https://via.placeholder.com/150';
                     imageElem.alt = 'No image available';
                     imageElem.style.display = 'block';
                 }
@@ -54,10 +59,13 @@ function fetchEventDetails() {
                 document.getElementById('ageLimit').textContent = event.age_limit;
                 document.getElementById('totalTickets').textContent = event.total_tickets;
                 document.getElementById('ticketsSold').textContent = event.tickets_sold;
-                document.getElementById('revenue').textContent = `$${((event.tickets_sold * event.ticket_price)*0.94).toFixed(2)}`;
+                document.getElementById('revenue').textContent = `$${((event.tickets_sold * event.ticket_price) * 0.94).toFixed(2)}`;
                 document.getElementById('about').textContent = event.about;
                 document.getElementById('instructions').textContent = event.instructions || 'N/A';
                 document.getElementById('terms').textContent = event.terms || 'N/A';
+
+                // Store the original date for use in the edit form
+                document.getElementById('eventView').dataset.eventDateTime = event.date_time;
             } else {
                 throw new Error(data.message || 'Failed to load event details');
             }
@@ -73,7 +81,6 @@ function fetchEventDetails() {
 }
 
 function fetchEventAttendees() {
-    // Similar loading and error handling can be added here if needed
     fetch(`/admin/event/${eventId}/attendees`)
         .then(response => response.json())
         .then(data => {
@@ -98,9 +105,6 @@ function fetchEventAttendees() {
         .catch(error => console.error('Error fetching attendees:', error));
 }
 
-// ... (rest of the functions like showEditForm, handleFormSubmit, deleteEvent remain unchanged)
-
-// Existing code...
 function showEditForm() {
     // Prefill form with current values (handle null/undefined)
     document.getElementById('editName').value = document.getElementById('eventName').textContent || '';
@@ -113,8 +117,14 @@ function showEditForm() {
     document.getElementById('editVenue').value = document.getElementById('venue').textContent || '';
     document.getElementById('editTerms').value = document.getElementById('terms').textContent === 'N/A' ? '' : document.getElementById('terms').textContent;
     document.getElementById('editCategory').value = document.getElementById('category').textContent || '';
-    const dateTime = new Date(document.getElementById('eventDate').textContent);
-    document.getElementById('editDateTime').value = dateTime.toISOString().slice(0, 16) || ''; // Format for datetime-local
+    
+    // Corrected code with a validity check
+     const originalDateTime = document.getElementById('eventView').dataset.eventDateTime;
+    if (originalDateTime) {
+        document.getElementById('editDateTime').value = new Date(originalDateTime).toISOString().slice(0, 16);
+    } else {
+        document.getElementById('editDateTime').value = '';
+    }
     document.getElementById('editTotalTickets').value = document.getElementById('totalTickets').textContent || 1;
     document.getElementById('editCity').value = document.getElementById('city').textContent || '';
     document.getElementById('editContactNumber').value = document.getElementById('contactNumber').textContent || '';
@@ -124,24 +134,12 @@ function showEditForm() {
 
     // Show edit form, hide view
     document.getElementById('eventView').style.display = 'none';
-    document.getElementById('editForm').style.display = 'block'; // Matches EJS ID
-    console.log('Edit form shown'); // Debug log
-}
-
-// Ensure DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    fetchEventDetails();
-    fetchEventAttendees();
-    document.getElementById('eventEditForm').addEventListener('submit', handleFormSubmit);
-    // Add click listener for edit button
-    document.querySelector('.edit-btn').addEventListener('click', showEditForm); // Fallback if onclick fails
-});
-function cancelEdit() {
-    document.getElementById('editForm').style.display = 'none';
-    document.getElementById('eventView').style.display = 'block';
+    document.getElementById('editForm').style.display = 'block';
+    console.log('Edit form shown');
 }
 
 function validateForm() {
+    // Validation logic as it was before
     let isValid = true;
     document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
 
@@ -250,7 +248,7 @@ function handleFormSubmit(e) {
         .then(data => {
             if (data.success) {
                 alert('Event updated successfully!');
-                fetchEventDetails(); // Refresh details
+                fetchEventDetails();
                 cancelEdit();
             } else {
                 alert('Failed to update event: ' + data.message);
@@ -260,6 +258,11 @@ function handleFormSubmit(e) {
             console.error('Error updating event:', error);
             alert('Error updating event');
         });
+}
+
+function cancelEdit() {
+    document.getElementById('editForm').style.display = 'none';
+    document.getElementById('eventView').style.display = 'block';
 }
 
 function deleteEvent() {

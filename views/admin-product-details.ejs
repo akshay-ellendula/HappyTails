@@ -39,10 +39,6 @@
                             <td id="productId"><%= product.id %></td>
                         </tr>
                         <tr>
-                            <td>SKU:</td>
-                            <td id="productSku"><%= product.sku || 'N/A' %></td>
-                        </tr>
-                        <tr>
                             <td>Date Added:</td>
                             <td id="dateAdded"><%= new Date(product.created_at).toLocaleDateString() %></td>
                         </tr>
