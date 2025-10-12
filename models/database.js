@@ -23,13 +23,14 @@ const userSchema = new mongoose.Schema({
 });
 
 const vendorSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    contact_number: { type: String, required: true },
+    name: { type: String, required: true }, // Maps to owner_name in shop-profile.ejs
+    contact_number: { type: String, required: true }, // Maps to phone in shop-profile.ejs
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    store_name: { type: String, required: true },
-    store_location: { type: String, required: true },
-    created_at: { type: Date, default: Date.now },
+    store_name: { type: String, required: true, unique: true }, // Added unique constraint to align with signup logic
+    store_location: { type: String, required: true }, // Maps to address in shop-profile.ejs
+    description: { type: String, default: '' }, // Added to support shop-profile.ejs
+    created_at: { type: Date, default: Date.now }
 });
 
 // Sanitize store_name before saving

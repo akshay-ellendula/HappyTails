@@ -166,13 +166,13 @@
         }
 
         function deleteOrder(orderId) {
-           if (confirm('Are you sure you want to delete this order?')) {
-               fetch(`/delete-order/${orderId.replace('#ORD-', '')}`, {
+            if (confirm('Are you sure you want to delete this order?')) {
+                fetch(`/delete-order/${orderId.replace('#ORD-', '')}`, {
                    method: 'DELETE',
                    headers: { 'Content-Type': 'application/json' }
-               })
-               .then(response => response.json())
-               .then(data => {
+                })
+                .then(response => response.json())
+                .then(data => {
                    if (data.success) {
                        alert('Order deleted successfully');
                        window.location.href = '/shop-orders';
@@ -185,31 +185,31 @@
                    alert('Server error');
                });
            }
-       }
+        }
 
-       function updateOrderStatus(orderId, status) {
-    const rawOrderId = orderId.replace('#ORD-', '');
-    if (confirm(`Are you sure you want to change the order status to "${status}"?`)) {
-        fetch(`/update-order-status/${rawOrderId}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: status })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Order status updated successfully.');
-                window.location.reload();
-            } else {
-                alert('Error updating status: ' + data.message);
+        function updateOrderStatus(orderId, status) {
+            const rawOrderId = orderId.replace('#ORD-', '');
+            if (confirm(`Are you sure you want to change the order status to "${status}"?`)) {
+                fetch(`/update-order-status/${rawOrderId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: status })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Order status updated successfully.');
+                        window.location.reload();
+                    } else {
+                        alert('Error updating status: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('A server error occurred.');
+                });
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('A server error occurred.');
-        });
-    }
-}
+        }
 
     </script>
 </body>
