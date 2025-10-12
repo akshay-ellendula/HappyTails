@@ -330,21 +330,14 @@ const processPayment = async (req, res) => {
                 color: item.color || null
             }));
 
-        await OrderItem.insertMany(orderItems);
-        for (const item of cart) {
-            // Ensure we have a specific variant ID to update
-            if (item.variant_id) {
-                // Find the specific variant by its unique ID and decrease its stock
-                await ProductVariant.updateOne(
-                    { _id: item.variant_id },
-                    { $inc: { stock_quantity: -item.quantity } }
-                );
-            }
-        }
-        
-        // Clear the session cart
-        req.session.cart = null;
-        req.session.orderTotals = null;
+            await OrderItem.insertMany(orderItems, { session });
+
+            // Commit transaction
+            await session.commitTransaction();
+            
+            // Clear session
+            req.session.cart = null;
+            req.session.orderTotals = null;
 
             console.log('Payment processed successfully for order:', order[0]._id);
             return res.json({ 
