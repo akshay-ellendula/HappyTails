@@ -16,3 +16,13 @@ in command line use :-
 
 and enter in to file using linux commands!!!!!
 
+`cd HappyTails`
+ 
+ install required nodemodules <br/>
+
+ `npm install`
+
+now start the server
+
+`npm start`
+
