@@ -126,7 +126,7 @@
                                 <p><span>Order Status:</span> ${order.status}</p>
                                 <div class="button_container">
                                     <button onclick="buyAgain('${order.id}')">Buy Again</button>
-                                    <button onclick="window.location.href='/track_package/${order.id}'">Track Order</button>
+                                    <button>Track Order</button>
                                     ${order.status === 'Delivered' ? '<button>Return Product</button>' : ''}
                                 </div>
                             </div>
