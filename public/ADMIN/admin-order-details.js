@@ -11,11 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchOrderDetails(orderId) {
-    console.log('Fetching order details for ID:', orderId);
+
     try {
         const response = await fetch(`/api/admin/order/${orderId}`);
         const data = await response.json();
-        console.log('API Response:', data);
         if (data.success) {
             renderOrderDetails(data.order);
         } else {

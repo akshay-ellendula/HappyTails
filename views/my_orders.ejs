@@ -79,7 +79,6 @@
                     alert('Error fetching orders: ' + data.message);
                     return;
                 }
-                console.log('Orders data received:', data.orders);
                 const orders = data.orders;
                 const currentOrdersContainer = document.querySelector('.current_orders');
                 const previousOrdersContainer = document.querySelector('.previous_orders .order_container');

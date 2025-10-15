@@ -219,8 +219,6 @@ const getProductData = async (productId) => {
                 }
             }
         ]);
-
-        console.log('Aggregated product data:', product[0]); // Debug log
         return product.length > 0 ? product[0] : null;
     } catch (err) {
         console.error('Error in getProductData:', err);
@@ -494,11 +492,6 @@ const dashBoardStats = async (req, res) => {
         const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
         const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-        console.log('Current Time:', now.toISOString());
-        console.log('Today:', today.toISOString());
-        console.log('Week Ago:', weekAgo.toISOString());
-        console.log('Month Ago:', monthAgo.toISOString());
-
         const totalUsers = await User.countDocuments();
         const totalVendors = await Vendor.countDocuments();
         const totalEventManagers = await EventManager.countDocuments();
@@ -515,7 +508,6 @@ const dashBoardStats = async (req, res) => {
             { $unwind: '$event' },
             { $group: { _id: null, total: { $sum: { $multiply: ['$event.ticket_price', '$seats'] } } } }
         ]);
-        console.log('Total Revenue Events Aggregation:', totalRevenueEvents);
         const totalRevenueEventsValue = totalRevenueEvents.length > 0 ? totalRevenueEvents[0].total : 0;
 
         const totalRevenue = (totalRevenueOrdersValue + totalRevenueEventsValue) * 0.1;
@@ -526,7 +518,6 @@ const dashBoardStats = async (req, res) => {
             { $unwind: '$event' },
             { $group: { _id: null, total: { $sum: { $multiply: ['$event.ticket_price', '$seats'] } } } }
         ]);
-        console.log('Monthly Revenue Events Aggregation:', monthlyRevenueEvents);
         const monthlyRevenueEventsValue = monthlyRevenueEvents.length > 0 ? monthlyRevenueEvents[0].total : 0;
 
         const monthlyRevenueOrders = await Order.aggregate([
@@ -543,7 +534,6 @@ const dashBoardStats = async (req, res) => {
             { $unwind: '$event' },
             { $group: { _id: null, total: { $sum: { $multiply: ['$event.ticket_price', '$seats'] } } } }
         ]);
-        console.log('Weekly Revenue Events Aggregation:', weeklyRevenueEvents);
         const weeklyRevenueEventsValue = weeklyRevenueEvents.length > 0 ? weeklyRevenueEvents[0].total : 0;
 
         const weeklyRevenueOrders = await Order.aggregate([
@@ -560,7 +550,6 @@ const dashBoardStats = async (req, res) => {
             { $unwind: '$event' },
             { $group: { _id: null, total: { $sum: { $multiply: ['$event.ticket_price', '$seats'] } } } }
         ]);
-        console.log('Daily Revenue Events Aggregation:', dailyRevenueEvents);
         const dailyRevenueEventsValue = dailyRevenueEvents.length > 0 ? dailyRevenueEvents[0].total : 0;
 
         const dailyRevenueOrders = await Order.aggregate([
@@ -1218,7 +1207,6 @@ const getEventManager = async (req, res) => {
 
         // Use the image as-is from the database, log to debug
         const imageBase64 = manager.image || null;
-        console.log('Manager image data:', imageBase64); // Debug log
 
         res.json({
             success: true,
@@ -1541,26 +1529,15 @@ const updateProduct = async (req, res) => {
             variants
         } = req.body;
 
-        console.log('Received data:', {
-            productId,
-            product_name,
-            product_category,
-            product_type,
-            stock_status,
-            product_description,
-            variants,
-            files: req.files
-        }); // Add this to see the data received by the server
+        
 
         // Validate required fields
         if (!product_name || !product_category || !product_type || !stock_status || !product_description || !variants) {
-            console.log('Validation failed: Missing required fields');
             return res.status(400).json({ success: false, message: 'All required fields must be provided' });
         }
 
         const product = await Product.findById(productId);
         if (!product) {
-            console.log('Product not found:', productId);
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
 
@@ -1585,14 +1562,12 @@ const updateProduct = async (req, res) => {
         try {
             parsedVariants = Array.isArray(variants) ? variants : JSON.parse(variants);
             if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
-                console.log('Validation failed: At least one variant is required');
                 return res.status(400).json({ success: false, message: 'At least one variant is required' });
             }
         } catch (err) {
             console.log('Error parsing variants:', err);
             return res.status(400).json({ success: false, message: 'Invalid variants data' });
         }
-        console.log('Parsed variants:', parsedVariants);
         for (const variant of parsedVariants) {
             const productVariant = new ProductVariant({
                 product_id: productId,

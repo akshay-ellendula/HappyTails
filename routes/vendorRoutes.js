@@ -8,7 +8,6 @@ router.get('/service_provider_login', (req, res) => {
 });
 
 router.get('/shop-dashboard/:storeName', (req, res, next) => {
-    console.log('Dashboard route accessed:', { storeName: req.params.storeName, session: req.session.vendor });
     getVendorDashboard(req, res, next);
 });
 

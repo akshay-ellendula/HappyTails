@@ -135,7 +135,7 @@ function showEditForm() {
     // Show edit form, hide view
     document.getElementById('eventView').style.display = 'none';
     document.getElementById('editForm').style.display = 'block';
-    console.log('Edit form shown');
+   
 }
 
 function validateForm() {

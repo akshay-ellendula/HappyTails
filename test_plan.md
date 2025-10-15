@@ -72,30 +72,34 @@
 
 ---
 
-## Event Manager Signup Test Cases
+## 9. Event Manager Signup Test Cases
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Invalid** | `Name: J` | Error message: "Name must be at least 2 characters long". | Error message is shown under the name field. | Passed | ![Invalid Name Case](test_plan/eventManager_signup_invalid_case.png) |
 | **Valid** | `Name`: John Doe <br> `Contact`: 9876543210 <br> `Email`: john.doe@gmail.com <br> `Password`: password123 <br> `Confirm Password`: password123 <br> `Company`: Doe Events <br> `Location`: Delhi <br> `Terms`: Checked | Form submits successfully and shows a success message. | A "Signup successful! Redirecting..." message is shown. | Passed | ![Valid Signup Case](test_plan/eventManager_signup_invalid_case.png) |
 
-## Sign In Test Cases
+---
+
+## 10. Sign In Test Cases
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Invalid** | `Email: john.doe@gmail.co` <br> `Password: wrongpassword` | Error message: "Invalid email or password". | A red banner with "Invalid email or password" is shown. | Passed | ![Invalid Signin Case](/test_plan/eventManager_signin_invalid_case.png) |
 | **Valid** | `Email: john.doe@gmail.com` <br> `Password: correctpassword` | User is successfully authenticated and redirected. | A green banner with "Login successful" is shown. | Passed | ![Valid Signin Case](/test_plan//eventManager_signin_valid_case.png) |
 
-## Create New Event Test Cases
+---
+
+## 11. Create New Event Test Cases
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Invalid** | `Event Name`: Annual Pet Gala <br> `Date and Time`: October 01, 2025, 12:00 pm| Alert message: "⚠️ Please select a future date and time for your event." | A JavaScript alert appears with the future date error. | Passed | ![Invalid Event Date](/test_plan/create_event_invalid_case.png) |
 | **Valid** | `Event Name`: Annual Pet Gala <br> `Date and Time`: October 25, 2025, 10:00 AM <br> (All other fields validly filled) | Alert message: "🎉 Event created successfully!" followed by a page reload. | A success alert is shown, and the page reloads. | Passed | ![Valid Event Case](/test_plan/create_event_valid_case.png) |
 
-# Test Plan for Happy Tails Platform
+---
 
-## 1. Event Manager Profile Test Cases
+## 12. Event Manager Profile Test Cases
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -103,7 +107,7 @@
 | **Valid** | All fields filled with valid data. | Profile updates successfully without errors. | The modal closes and the profile information is updated on the dashboard. | Passed | ![Valid Profile Update](/test_plan/eventManager_profile_valid_email_case.png) |
 
 ---
-## 3. Update Existing Event Test Cases
+## 13. Update Existing Event Test Cases
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -112,7 +116,7 @@
 
 ---
 
-## 4. Edit Attendee Test Cases
+## 14. Edit Attendee Test Cases
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -121,9 +125,37 @@
 
 ---
 
-## 5. Book Event Test Cases (User View)
+## 15. Book Event Test Cases (User View)
 
 | Case | Input | Expected Result | Actual Result | Status | Screenshot |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Invalid** | `Email Address`: akshay@gmail | Alert message: "Please enter a valid email address." | A JavaScript alert appears with the email validation error. | Passed | ![Invalid Booking Email](/test_plan/book_event_invalid_case.png) |
 | **Valid** | All personal and booking details filled correctly. | The user proceeds to the payment page without validation errors. | The form is validated, and the "Proceed to Payment" button becomes active. | Passed | ![Valid Booking Form](/test_plan/book_event_valid_case.png) |
+
+---
+
+## 16. Admin Login
+
+| Case | Input | Expected Result | Actual Result | Status | Screenshot |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Invalid** | `Email: gautam.thota@example.com`, `Password: dlufgsiudfi` | Error message: "Invalid email or password". | A alert comes "Login failed: Invalid email or password" is displayed. | Passed | ![Invalid Signin Case](./test_plan/Admin_invalid.png) |
+| **Valid** | `Email: admin@gmail.com`, `Password: admin123#` | Admin successfully authenticated. | A alert comes with "Login Successful" is displayed. | Passed | ![Valid Signin Case](./test_plan/Admin_valid.png) |
+
+---
+
+## 17.Admin Side Shop Manager Details Edit
+
+| Case | Input | Expected Result | Actual Result | Status | Screenshot |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Invalid** | `Name: g`, `Email: hello@gmail.com`, `Store Name: T`,`Store Location:hy`| Error message:"Name must be at least 2 characters long, Store name must be at least 2 characters long ,Store location must be at least 5 characters long if provided". | After each column it's criteria will appear| Passed | ![Invalid Signin Case](./test_plan/shop_invalid.png) |
+| **Valid** | `Name: Jeevankumar`, `Email: hello@gmail.com`, `Store Name: Tails`,`Store Location :hyderabad` | Shop Manager Details should be updated| A alert comes on top "Shop manager information updated successfully!" | Passed | ![Valid Signin Case](./test_plan/shop_vaild.png) |
+
+---
+
+## 18.Admin Edit Event Manager Details
+
+| Case | Input | Expected Result | Actual Result | Status | Screenshot |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Invalid** | `Name: j`, `Email: john.doesz`, `Organization :ee`,`Phone:+837383928822`| Error message:"Name must be at least 2 characters long, Please enter a valid email address,Organization must be at least 3 characters,Enter valid Indian mobile number (+91XXXXXXXXXX)". | After each column it's criteria will appear| Passed | ![Invalid Signin Case](./test_plan/eventmanager_invalid.png) |
+| **Valid** | `Name: john doe`, `Email: john.doe@gmail.com`, `Organization :doe events`,`Phone:9876543210` | Event Manager Details should be updated| A alert comes on top "Event manager information updated successfully!" | Passed | ![Valid Signin Case](./test_plan/eventmanager_valid.png) |
+

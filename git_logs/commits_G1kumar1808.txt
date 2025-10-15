@@ -1,0 +1,90 @@
+﻿32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+8c37d74 | G1kumar1808 | 2025-05-09 | customers view button and edit profile
+662bc1e | G1kumar1808 | 2025-05-08 | store-manager delete option
+9237c0f | G1kumar1808 | 2025-05-07 | shop-customers dynamic
+32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+8ff7395 | G1kumar1808 | 2025-10-12 | Refactor vendor profile and dashboard logic to improve data mapping and aggregation; add description field to vendor schema
+beb9a4e | G1kumar1808 | 2025-10-12 | Merge branch 'final-branch(Main)' of https://github.com/akshay-ellendula/HappyTails into final-branch(Main)
+9a8d054 | G1kumar1808 | 2025-10-12 | Refactor status cell styles and update action dropdown in shop orders
+394b807 | G1kumar1808 | 2025-10-12 | status cell in shop-orders
+545bd4c | G1kumar1808 | 2025-10-11 | platform fees 6% change
+40bd63f | G1kumar1808 | 2025-10-11 | Implement stock management for cart items, enhance vendor product filtering and sorting, and update product edit view for better variant display; improve email validation in signup form
+2d2e482 | G1kumar1808 | 2025-10-10 | Enhance vendor profile and dashboard with revenue and products sold percentage change calculations; update CSS for trend indicators
+5663505 | G1kumar1808 | 2025-10-10 | Refactor vendor profile validation and update revenue calculations across vendor analytics and order details
+8dfdd56 | G1kumar1808 | 2025-10-09 | Enhance order management and analytics features
+7ba3156 | G1kumar1808 | 2025-10-09 | Merge remote-tracking branch 'origin/refactor-project' into jeevan-fdfed
+b001635 | G1kumar1808 | 2025-10-09 | Merge branch 'refactor-project' into jeevan-fdfed
+5f34a2c | G1kumar1808 | 2025-10-09 | shop manager orders delivered or shipped or confirmed and analytics also
+8c37d74 | G1kumar1808 | 2025-05-09 | customers view button and edit profile
+662bc1e | G1kumar1808 | 2025-05-08 | store-manager delete option
+9237c0f | G1kumar1808 | 2025-05-07 | shop-customers dynamic
+32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+8c37d74 | G1kumar1808 | 2025-05-09 | customers view button and edit profile
+662bc1e | G1kumar1808 | 2025-05-08 | store-manager delete option
+9237c0f | G1kumar1808 | 2025-05-07 | shop-customers dynamic
+32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+beb9a4e | G1kumar1808 | 2025-10-12 | Merge branch 'final-branch(Main)' of https://github.com/akshay-ellendula/HappyTails into final-branch(Main)
+9a8d054 | G1kumar1808 | 2025-10-12 | Refactor status cell styles and update action dropdown in shop orders
+394b807 | G1kumar1808 | 2025-10-12 | status cell in shop-orders
+545bd4c | G1kumar1808 | 2025-10-11 | platform fees 6% change
+40bd63f | G1kumar1808 | 2025-10-11 | Implement stock management for cart items, enhance vendor product filtering and sorting, and update product edit view for better variant display; improve email validation in signup form
+2d2e482 | G1kumar1808 | 2025-10-10 | Enhance vendor profile and dashboard with revenue and products sold percentage change calculations; update CSS for trend indicators
+5663505 | G1kumar1808 | 2025-10-10 | Refactor vendor profile validation and update revenue calculations across vendor analytics and order details
+8dfdd56 | G1kumar1808 | 2025-10-09 | Enhance order management and analytics features
+7ba3156 | G1kumar1808 | 2025-10-09 | Merge remote-tracking branch 'origin/refactor-project' into jeevan-fdfed
+b001635 | G1kumar1808 | 2025-10-09 | Merge branch 'refactor-project' into jeevan-fdfed
+5f34a2c | G1kumar1808 | 2025-10-09 | shop manager orders delivered or shipped or confirmed and analytics also
+8c37d74 | G1kumar1808 | 2025-05-09 | customers view button and edit profile
+662bc1e | G1kumar1808 | 2025-05-08 | store-manager delete option
+9237c0f | G1kumar1808 | 2025-05-07 | shop-customers dynamic
+32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added
+32bbb0b | G1kumar1808 | 2025-03-28 | Merge branch 'main' of https://github.com/akshay-ellendula/HappyTails
+767daf7 | G1kumar1808 | 2025-03-28 | events and eventmanager fetching
+4e4b953 | G1kumar1808 | 2025-03-18 | added event manager files
+75ffcd5 | G1kumar1808 | 2025-01-28 | Events html added (#4)
+fb48b18 | G1kumar1808 | 2025-01-28 | Events html added

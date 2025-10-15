@@ -221,11 +221,6 @@
                     formData.append('product_images', file);
                 });
     
-                // Debug: Log form data
-                for (let [key, value] of formData.entries()) {
-                    console.log(`${key}: ${value}`);
-                }
-    
                 submitStatus.innerHTML = 'Uploading product...';
                 submitStatus.className = 'submit-status loading';
     

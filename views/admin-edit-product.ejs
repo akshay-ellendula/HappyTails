@@ -405,7 +405,7 @@
         formData.append('productImages', file);
     });
 
-    console.log('Form data being sent:', Object.fromEntries(formData)); // Add this to see the data being sent
+
 
     try {
         const response = await fetch(`/admin/product/${productId}`, {
@@ -413,7 +413,6 @@
             body: formData
         });
         const result = await response.json();
-        console.log('Server response:', result); // Add this to see the server's response
 
         if (result.success) {
             alert(result.message);
