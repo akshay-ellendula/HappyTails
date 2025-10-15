@@ -34,7 +34,7 @@
             
             <label for="name">Name</label>
             <input type="text" placeholder="Enter Name" name="name" id="name" required>
-            <div id="nameError" class="error">Name must be at least 2 characters long</div>
+            <div id="nameError" class="error">Please enter a valid name (only alphabets, at least 2 characters)</div>
 
             <label for="contactnumber">Contact Number</label>
             <input type="text" placeholder="Enter Contact Number" name="contactnumber" id="contactnumber" required>
@@ -118,7 +118,8 @@
             let isValid = true;
     
             // Client-side validation (unchanged)
-            if (name.length < 2) {
+            const nameRegex = /^[A-Za-z\s]+$/; // Allows alphabets and spaces
+            if (name.length < 2 || !nameRegex.test(name)) {
                 document.getElementById('nameError').style.display = 'block';
                 isValid = false;
             }
