@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Sign Up Form Submission
+    
     signUpForm.addEventListener('submit', async function (e) {
         e.preventDefault();
         clearAlerts();
@@ -99,6 +100,11 @@ document.addEventListener('DOMContentLoaded', function () {
             isValid = false;
         } else if (name.value.trim().length < 2) {
             showError(name, 'Name must be at least 2 characters');
+            isValid = false;
+        }
+        // New validation to allow only characters and spaces
+        else if (!/^[a-zA-Z ]+$/.test(name.value.trim())) {
+            showError(name, 'Name can only contain letters and spaces');
             isValid = false;
         }
 
