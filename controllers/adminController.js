@@ -2040,16 +2040,29 @@ const getEventRevenue = async (req, res) => {
 
 
 module.exports = {
+    // admin-login.ejs
     adminLogin,
+    logout,
+
+    // admin-user.ejs, admin-user-details.ejs
     getUsers,
     getUser,
     updateUser,
     deleteUser,
-    getProducts,
     getUserStats,
-    getProductStats,
-    dashBoardStats,
     adminGetUsers,
+
+    // admin-products.ejs, admin-product-details.ejs, admin-add-product.ejs
+    getProducts,
+    getProductStats,
+    deleteProduct,
+    addProduct,
+    getProduct,
+    updateProduct,
+    getProductData,
+    getProductCustomers,
+
+    // admin-shop-manager.ejs, admin-sm-details.ejs
     getVendors,
     getVendorStats,
     adminGetVendors,
@@ -2059,6 +2072,8 @@ module.exports = {
     getVendorTopCustomers,
     updateVendor,
     deleteVendor,
+
+    // admin-events.ejs, admin-em-details.ejs, admin-event-details.ejs
     getEventManagers,
     getEventManagerStats,
     getTotalEvents,
@@ -2068,21 +2083,19 @@ module.exports = {
     getPastEvents,
     updateEventManager,
     deleteEventManager,
-    deleteProduct,
-    getRevenueChartData,
-    addProduct,      
-    getProduct,      
-    updateProduct,
-    logout,
     getEventsData,
     deleteEvent,
-    getEvent, 
+    getEvent,
     getEventAttendees,
     updateEvent,
-      getProductData,
-    getProductCustomers,
+    getEventRevenue,
+
+    // admin-orders.ejs, admin-order-details.ejs
     getOrders,
     getOrderDetails,
     getOrderStats,
-    getEventRevenue
+
+    // admin-dashboard.ejs
+    dashBoardStats,
+    getRevenueChartData,
 };
