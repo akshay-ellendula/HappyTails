@@ -22,14 +22,23 @@
             <!-- Sign In Form (default) -->
             <form id="signInForm" class="active-form" action="#">
                 <h1>Welcome Back!</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><img src="./icons/google-logo-search-new-svgrepo-com.svg" alt="Google logo" height="40px"></a>
+                    <a href="#" class="social"><img src="./icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook Logo" height="40px"></a>
+                </div>
                 <input type="email" name="user_email" placeholder="Email" required />
                 <input type="password" name="user_password" placeholder="Password" required />
                 <button class="signin_button" style="margin-top: 30px;">Sign In</button>
+                <a href="#">Forgot your password?</a>
             </form>
 
             <!-- Sign Up Form -->
             <form id="signUpForm" class="hidden-form" action="#">
-                <h1>Create Account</h1>
+                <h1>Create Account</h1><div class="social-container">
+                    <a href="#" class="social"><img src="./icons/google-logo-search-new-svgrepo-com.svg" alt="Google logo" height="40px"></a>
+                    <a href="#" class="social"><img src="./icons/facebook-3-logo-svgrepo-com.svg" alt="Facebook Logo" height="40px"></a>
+                </div>
+                <span>or use your email for registration</span>
                 <input type="text" name="user_name" placeholder="Name" required />
                 <input type="email" name="user_email" placeholder="Email" required />
                 <input type="password" name="user_password" placeholder="Password" required />
