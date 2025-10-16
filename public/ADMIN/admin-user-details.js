@@ -142,7 +142,11 @@ function validateForm() {
 
     document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
 
-    if (name.value.trim().length < 2) {
+    const nameRegex = /^[a-zA-Z\s]+$/; // Only letters and spaces allowed
+    if (!nameRegex.test(name.value.trim())) {
+        document.getElementById('nameError').textContent = 'Name must contain only letters and spaces';
+        isValid = false;
+    } else if (name.value.trim().length < 2) {
         document.getElementById('nameError').textContent = 'Name must be at least 2 characters long';
         isValid = false;
     }
@@ -158,9 +162,9 @@ function validateForm() {
         isValid = false;
     }
 
-    const phoneRegex = /^[0-9]{10}$/;
+    const phoneRegex = /^\+91[6-9][0-9]{9}$/;
     if (phone.value.trim() && !phoneRegex.test(phone.value)) {
-        document.getElementById('phoneError').textContent = 'Please enter a valid 10-digit phone number if provided';
+        document.getElementById('phoneError').textContent = 'Please enter a valid phone number starting with +91 followed by a 10-digit number (starting with 6, 7, 8, or 9)';
         isValid = false;
     }
 

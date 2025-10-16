@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Tails - Shop Manager Details</title>
     <link href="/ADMIN/admin-sm-details.css" rel="stylesheet">
+    <style>
+        .error-message { color: red; font-size: 0.8em; margin-top: 5px; display: block; }
+        .form-group { margin-bottom: 15px; }
+        input:invalid:focus, select:invalid:focus { border-color: red; }
+        input:valid:focus, select:valid:focus { border-color: green; }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -39,6 +45,10 @@
                     <tr>
                         <td>Store Location:</td>
                         <td id="storeLocation">Loading...</td>
+                    </tr>
+                    <tr>
+                        <td>Contact:</td>
+                        <td id="managerPhone">Loading...</td>
                     </tr>
                     <tr>
                         <td>Joined Date:</td>
@@ -142,13 +152,18 @@
                         <span class="error-message" id="emailError"></span>
                     </div>
                     <div class="form-group">
+                        <label for="editPhone">Phone:</label>
+                        <input type="tel" id="editPhone" required pattern="^\+91[6-9][0-9]{9}$" maxlength="13">
+                        <span class="error-message" id="phoneError"></span>
+                    </div>
+                    <div class="form-group">
                         <label for="editStoreName">Store Name:</label>
                         <input type="text" id="editStoreName" required minlength="2" maxlength="100">
                         <span class="error-message" id="storeNameError"></span>
                     </div>
                     <div class="form-group">
                         <label for="editStoreLocation">Store Location:</label>
-                        <input type="text" id="editStoreLocation" minlength="5">
+                        <input type="text" id="editStoreLocation" required minlength="5">
                         <span class="error-message" id="storeLocationError"></span>
                     </div>
                     <button type="submit" class="save-btn">Save Changes</button>

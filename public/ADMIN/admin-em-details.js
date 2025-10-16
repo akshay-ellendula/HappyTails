@@ -1,4 +1,3 @@
-// Whole file for admin-em-details.js
 // public/ADMIN/admin-em-details.js
 const urlParams = new URLSearchParams(window.location.search);
 const managerId = urlParams.get('id');
@@ -156,7 +155,11 @@ function validateForm() {
     document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
 
     const name = document.getElementById('editName');
-    if (name.value.trim().length < 2) {
+    const nameRegex = /^[a-zA-Z\s]+$/; // Only letters and spaces allowed
+    if (!nameRegex.test(name.value.trim())) {
+        document.getElementById('nameError').textContent = 'Name must contain only letters and spaces';
+        isValid = false;
+    } else if (name.value.trim().length < 2) {
         document.getElementById('nameError').textContent = 'Name must be at least 2 characters';
         isValid = false;
     }

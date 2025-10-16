@@ -770,29 +770,7 @@ const adminGetVendors = async (req, res) => {
     }
 };
 
-const getVendor = async (req, res) => {
-    try {
-        const vendorId = req.params.id;
-        const vendor = await Vendor.findById(vendorId)
-            .select('id name email store_name store_location created_at');
-        if (!vendor) {
-            return res.status(404).json({ success: false, message: 'Vendor not found' });
-        }
-        res.json({
-            success: true,
-            vendor: {
-                id: vendor._id,
-                name: vendor.name,
-                email: vendor.email,
-                store_name: vendor.store_name,
-                store_location: vendor.store_location,
-                joined_date: vendor.created_at
-            }
-        });
-    } catch (err) {
-        res.status(500).json({ success: false, message: 'Server error' });
-    }
-};
+
 
 const getVendorRevenueMetrics = async (req, res) => {
     try {
@@ -1043,22 +1021,49 @@ const getVendorTopCustomers = async (req, res) => {
     }
 };
 
+const getVendor = async (req, res) => {
+    try {
+        const vendorId = req.params.id;
+        const vendor = await Vendor.findById(vendorId)
+            .select('id name email contact_number store_name store_location created_at');
+
+        if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
+
+        res.json({
+            success: true,
+            vendor: {
+                id: vendor._id.toString(),
+                name: vendor.name,
+                email: vendor.email,
+                contact_number: vendor.contact_number,
+                store_name: vendor.store_name,
+                store_location: vendor.store_location,
+                joined_date: vendor.created_at.toLocaleDateString()
+            }
+        });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
 const updateVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
-        const { vendor_name, store_name, store_location } = req.body;
+        const { vendor_name, contact_number, store_name, store_location } = req.body;
 
         if (!vendor_name) return res.status(400).json({ success: false, message: 'Name is required' });
+        if (!/^[a-zA-Z\s]+$/.test(vendor_name)) return res.status(400).json({ success: false, message: 'Name must contain only letters and spaces' });
         if (vendor_name.length < 2) return res.status(400).json({ success: false, message: 'Name must be at least 2 characters' });
-        if (store_name && store_name.length < 2) return res.status(400).json({ success: false, message: 'Store name must be at least 2 characters' });
-        if (store_location && store_location.length < 5) return res.status(400).json({ success: false, message: 'Store location must be at least 5 characters' });
+        if (!contact_number || !/^\+91[6-9][0-9]{9}$/.test(contact_number)) return res.status(400).json({ success: false, message: 'Phone must be a valid Indian number starting with +91' });
+        if (!store_name || store_name.length < 2) return res.status(400).json({ success: false, message: 'Store name must be at least 2 characters' });
+        if (!store_location || store_location.length < 5) return res.status(400).json({ success: false, message: 'Store location must be at least 5 characters' });
 
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) return res.status(404).json({ success: false, message: 'Vendor not found' });
 
         await Vendor.updateOne(
             { _id: vendorId },
-            { name: vendor_name, store_name: store_name || null, store_location: store_location || null }
+            { name: vendor_name, contact_number, store_name, store_location }
         );
         res.json({ success: true, message: 'Vendor updated successfully' });
     } catch (err) {
@@ -2031,6 +2036,8 @@ const getEventRevenue = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
+
+
 
 module.exports = {
     adminLogin,

@@ -24,8 +24,9 @@ async function fetchManagerDetails() {
             document.getElementById('managerName').textContent = manager.name;
             document.getElementById('managerEmail').textContent = manager.email;
             document.getElementById('managerId').textContent = `#${String(manager.id).padStart(3, '0')}`;
-            document.getElementById('storeName').textContent = manager.store_name || 'Not provided';
-            document.getElementById('storeLocation').textContent = manager.store_location || 'Not provided';
+            document.getElementById('storeName').textContent = manager.store_name;
+            document.getElementById('storeLocation').textContent = manager.store_location;
+            document.getElementById('managerPhone').textContent = manager.contact_number;
             document.getElementById('joinedDate').textContent = new Date(manager.joined_date).toLocaleDateString();
         } else {
             alert('Failed to load shop manager details: ' + data.message);
@@ -154,8 +155,9 @@ function showEditForm() {
     // Load current values into form
     document.getElementById('editName').value = document.getElementById('managerName').textContent;
     document.getElementById('editEmail').value = document.getElementById('managerEmail').textContent;
-    document.getElementById('editStoreName').value = document.getElementById('storeName').textContent === 'Not provided' ? '' : document.getElementById('storeName').textContent;
-    document.getElementById('editStoreLocation').value = document.getElementById('storeLocation').textContent === 'Not provided' ? '' : document.getElementById('storeLocation').textContent;
+    document.getElementById('editPhone').value = document.getElementById('managerPhone').textContent;
+    document.getElementById('editStoreName').value = document.getElementById('storeName').textContent;
+    document.getElementById('editStoreLocation').value = document.getElementById('storeLocation').textContent;
 }
 
 // Function to cancel edit
@@ -170,6 +172,7 @@ function validateForm() {
     let isValid = true;
     const name = document.getElementById('editName');
     const email = document.getElementById('editEmail');
+    const phone = document.getElementById('editPhone');
     const storeName = document.getElementById('editStoreName');
     const storeLocation = document.getElementById('editStoreLocation');
 
@@ -177,7 +180,11 @@ function validateForm() {
     document.querySelectorAll('.error-message').forEach(error => error.textContent = '');
 
     // Name validation
-    if (name.value.trim().length < 2) {
+    const nameRegex = /^[a-zA-Z\s]+$/; // Only letters and spaces allowed
+    if (!nameRegex.test(name.value.trim())) {
+        document.getElementById('nameError').textContent = 'Name must contain only letters and spaces';
+        isValid = false;
+    } else if (name.value.trim().length < 2) {
         document.getElementById('nameError').textContent = 'Name must be at least 2 characters long';
         isValid = false;
     }
@@ -189,6 +196,13 @@ function validateForm() {
         isValid = false;
     }
 
+    // Phone validation
+    const phoneRegex = /^\+91[6-9][0-9]{9}$/;
+    if (!phoneRegex.test(phone.value.trim())) {
+        document.getElementById('phoneError').textContent = 'Enter valid Indian mobile number (+91XXXXXXXXXX)';
+        isValid = false;
+    }
+
     // Store Name validation
     if (storeName.value.trim().length < 2) {
         document.getElementById('storeNameError').textContent = 'Store name must be at least 2 characters long';
@@ -196,8 +210,8 @@ function validateForm() {
     }
 
     // Store Location validation
-    if (storeLocation.value.trim() && storeLocation.value.trim().length < 5) {
-        document.getElementById('storeLocationError').textContent = 'Store location must be at least 5 characters long if provided';
+    if (storeLocation.value.trim().length < 5) {
+        document.getElementById('storeLocationError').textContent = 'Store location must be at least 5 characters long';
         isValid = false;
     }
 
@@ -211,22 +225,24 @@ async function saveManagerChanges(event) {
     if (!validateForm()) return;
 
     const name = document.getElementById('editName').value;
+    const phone = document.getElementById('editPhone').value;
     const storeName = document.getElementById('editStoreName').value;
-    const storeLocation = document.getElementById('editStoreLocation').value || null;
+    const storeLocation = document.getElementById('editStoreLocation').value;
 
     try {
         const response = await fetch(`/admin/vendor/${managerId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ vendor_name: name, store_name: storeName, store_location: storeLocation })
+            body: JSON.stringify({ vendor_name: name, contact_number: phone, store_name: storeName, store_location: storeLocation })
         });
         const data = await response.json();
 
         if (data.success) {
             // Update display
             document.getElementById('managerName').textContent = name;
-            document.getElementById('storeName').textContent = storeName || 'Not provided';
-            document.getElementById('storeLocation').textContent = storeLocation || 'Not provided';
+            document.getElementById('managerPhone').textContent = phone;
+            document.getElementById('storeName').textContent = storeName;
+            document.getElementById('storeLocation').textContent = storeLocation;
             document.getElementById('managerAvatar').textContent = name.charAt(0);
 
             cancelEdit();
