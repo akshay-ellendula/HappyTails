@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 3️⃣ Validate ticket price ---
     const price = parseFloat(ticketPrice.value);
-    if (isNaN(price) || price <= 0) {
+    if (isNaN(price) || price < 0) {
       alert("⚠️ Ticket price must be a positive number.");
       ticketPrice.focus();
       return;

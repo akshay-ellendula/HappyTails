@@ -171,7 +171,7 @@
 
         // Validate ticket price
         const ticketPrice = parseFloat(tickets.value);
-        if (isNaN(ticketPrice) || ticketPrice <= 0) {
+        if (isNaN(ticketPrice) || ticketPrice < 0) {
             alert("⚠️ Ticket price must be a positive number.");
             return;
         }
