@@ -323,20 +323,22 @@
                   const petDob = document.getElementById("pet_dob").value;
 
                   // Validate Name
-                  if (!name) return alert("⚠️ Please enter your full name.");
+                  const nameRegex = /^[a-zA-Z]+$/;  
+                  if (!name) {return alert("⚠️ Name must be at least 2 characters long");}else if (!nameRegex.test(name)){return alert("Name can only contain alphabets")}
                   if (name.length < 3) return alert("⚠️ Name must be at least 3 characters long.");
                   
                   // Validate Email (must be a valid format)
-                  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  const emailPattern = /^[a-zA-Z0-9]+@gmail\.com$/;
                   if (!emailPattern.test(email)) return alert("⚠️ Please enter a valid email address.");
                   
                   // Validate Phone Number
-                  const phonePattern = /^\d{10}$/;
+                  const phonePattern = /^[6789]\d{9}$/;
                   if (!phonePattern.test(phoneNumber)) return alert("⚠️ Please enter a valid 10-digit contact number.");
 
                   // Validate Address
+                  const trimmedAddress = address.trim();
                   if (!address) return alert("⚠️ Please enter your address.");
-                  if (address.length < 4) return alert("⚠️ Please enter a more detailed address.");
+                  if (address.length < 4) return alert("⚠️ Please enter a more detailed address using alphabets and numbers.");
 
                   // Conditional Validation for Pet Details (only if 'yes' is checked)
                   if (isBringingPet) {
@@ -353,9 +355,7 @@
                         return alert("⚠️ Pet breed must be at least 3 characters long.");
 
                     if (!petDob) 
-                        return alert("⚠️ Please select your pet's date of birth.");
-
-                                          
+                        return alert("⚠️ Please select your pet's date of birth.");           
                       const today = new Date();
                       const petBirthDate = new Date(petDob);
                       today.setHours(0, 0, 0, 0); // Compare dates only, not time

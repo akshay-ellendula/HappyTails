@@ -30,8 +30,8 @@
             <div id="nameError" class="error"></div>
 
             <label for="contactnumber">Contact Number</label>
-            <input type="number" placeholder="Enter Contact Number" name="contactnumber" id="contactnumber" value="<%= typeof formData !== 'undefined' ? formData.contactnumber : '' %>" required>
-            <div id="contactError" class="error"></div>
+            <input type="number" placeholder="Enter Contact Number" name="contactnumber" id="contactnumber" value="<%= typeof formData !== 'undefined' ? formData.contactnumber : '' %>" required maxlength="10">
+            <div id="contactnumberError" class="error"></div>
 
             <label for="email">Email</label>    
             <input type="email" placeholder="Enter Email" name="email" id="email" value="<%= typeof formData !== 'undefined' ? formData.email : '' %>" required>

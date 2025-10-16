@@ -15,26 +15,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Validation flags
                 let isValid = true;
                 // Name validation
+                const nameRegex = /^[a-zA-Z]+$/;              
                 if (name.length < 2) {
                     showError('name', 'Name must be at least 2 characters long');
                     isValid = false;
+                } else if (!nameRegex.test(name)) {
+                    showError('name', 'Name can only contain alphabets');
+                    isValid = false;
                 }
                 // Contact number validation
-                const phoneRegex = /^\d{10}$/;
+                const phoneRegex = /^[6789]\d{9}$/;
                 if (!phoneRegex.test(contactnumber)) {
-                    showError('contactnumber', 'Please enter a valid 10-digit phone number');
+                    showError('contactnumber', 'Please enter a valid 10-digit phone number starting with 6, 7, 8, or 9');
                     isValid = false;
                 }
                 // Email validation
-                const emailRegex = /^[^\s@]+@gmail\.com$/;
+                const emailRegex = /^[a-zA-Z0-9]+@gmail\.com$/;
                 if (!emailRegex.test(email)) {
                     showError('email', 'Please enter a valid email address');
                     isValid = false;
                 }
-                // Password validation
-                const passwordRegex = /^(?=.*\d).{6,}$/;
-                if (!passwordRegex.test(password)) {
-                    showError('password', 'Password must be at least 6 characters long and contain a number');
+                function validatePassword(password) {
+                return (
+                    password.length >= 8 &&
+                    /[A-Z]/.test(password) && // Checks for at least one uppercase letter
+                    /\d/.test(password) &&    // Checks for at least one number
+                    /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password) // Checks for at least one special character
+                );
+                }
+                // --- In your main validation logic ---
+                if (!validatePassword(password)) {
+                    showError('password', 'Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.');
                     isValid = false;
                 }
                 // Confirm password validation
@@ -43,12 +54,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     isValid = false;
                 }
                 // Company name validation
-                if (companyname.length < 2) {
-                    showError('companyname', 'Company name must be at least 2 characters long');
+                if (companyname.length < 3) {
+                    showError('companyName', 'Company name must be at least 2 characters long');
                     isValid = false;
                 }
+                const trimmedLocation = location.trim();
                 // Location validation
-                if (location.length < 3) {
+                if (trimmedLocation.length < 3) {
                     showError('location', 'Please enter a valid location (minimum 3 characters)');
                     isValid = false;
                 }
